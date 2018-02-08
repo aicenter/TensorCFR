@@ -21,12 +21,8 @@ resolving_player = 1
 mask_players = tf.equal(acting_players, resolving_player)
 shape3x3 = [count_of_actions, count_of_actions, count_of_actions]
 strategies = tf.reshape(tf.range(0, 27), shape3x3)
-# mask_actions = tf.stack([mask_players, mask_players, mask_players])
-# mask_actions = tf.tile(mask_players, count_of_actions)
 
-# mask_actions = tf.parallel_stack([mask_players for _ in range(count_of_actions)])
-# mask_actions = tf.stack(values=[mask_players for _ in range(count_of_actions)], axis=-1)
-mask_actions = tf.stack(values=[acting_players for _ in range(count_of_actions)], axis=-1)
+mask_actions = tf.stack(values=[mask_players for _ in range(count_of_actions)], axis=-1)
 
 # reach_probabilities_lvl_2 = tf.where(mask_actions, tf.ones_like(reach_probabilities), reach_probabilities)
 

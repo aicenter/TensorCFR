@@ -6,11 +6,10 @@ import tensorflow as tf
 # I1 = { s1 }
 # I2 = { s2, s3 }
 # Ic = { s4 } -- chance node
-state2IS = tf.Variable([0, 1, 2, 2, 4])
+from utils.tensor_utils import print_tensor
 
-def print_tensor():
-	print("state2IS: {}\n".format(sess.run(state2IS)))
+state2IS = tf.Variable([0, 1, 2, 2, 4], name="state2IS")
 
 with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
-	print_tensor()
+	print_tensor(sess, state2IS)

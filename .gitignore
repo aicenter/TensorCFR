@@ -224,4 +224,3 @@ auto/*
 # standalone packages
 *.sta
 .idea/*
-/.idea/other.xml

@@ -11,10 +11,8 @@ zero_tensor = tf.zeros_like(tensor, name="zero_tensor")
 original_tensor = tensor
 tensor = tf.where(mask, zero_tensor, tensor, name="tensor_v2")
 
-with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
-    # print_tensor(sess, tensor)
-    # print_tensor(sess, zero_tensor)
-    print_tensor(sess, mask)
-    print_tensor(sess, tensor)
-    print_tensor(sess, original_tensor)
+with tf.Session() as sess_via_tf_where:
+    sess_via_tf_where.run(tf.global_variables_initializer())
+    print_tensor(sess_via_tf_where, mask)
+    print_tensor(sess_via_tf_where, tensor)
+    print_tensor(sess_via_tf_where, original_tensor)

@@ -224,3 +224,5 @@ auto/*
 # standalone packages
 *.sta
 .idea/*
+src/out/
+src/utils/__pycache__/

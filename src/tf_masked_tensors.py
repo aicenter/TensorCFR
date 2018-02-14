@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 import tensorflow as tf
-
-# 1-D example
 from utils.tensor_utils import print_tensor
+import os
 
 
 def masked_assign_via_tf_where():
@@ -25,7 +24,8 @@ def masked_assign_via_equal_operator():
 	original_tensor = tensor
 	mask = tf.cast(tf.less(tensor, 6), tensor.dtype, name="mask")
 	masked_values = tf.fill(shape2x2x2, -1000)
-	new_tensor = tf.add(tf.multiply(tf.ones_like(tensor) - mask, tensor), tf.multiply(mask, masked_values), name="new_tensor")
+	new_tensor = tf.add(tf.multiply(tf.ones_like(tensor) - mask, tensor), tf.multiply(mask, masked_values),
+	                    name="new_tensor")
 	tensor = new_tensor
 	with tf.Session() as sess_via_tf_assign:
 		sess_via_tf_assign.run(tf.global_variables_initializer())
@@ -42,7 +42,8 @@ def masked_assign_via_tf_assign():
 	original_tensor = tensor
 	mask = tf.cast(tf.less(tensor, 6), tensor.dtype, name="mask")
 	masked_values = tf.fill(shape2x2x2, -1000)
-	new_tensor = tf.add(tf.multiply(tf.ones_like(tensor) - mask, tensor), tf.multiply(mask, masked_values), name="new_tensor")
+	new_tensor = tf.add(tf.multiply(tf.ones_like(tensor) - mask, tensor), tf.multiply(mask, masked_values),
+	                    name="new_tensor")
 	masked_assign = tf.assign(ref=tensor, value=new_tensor)
 	tensor = new_tensor
 	with tf.Session() as sess_via_tf_assign:
@@ -62,7 +63,8 @@ def masked_assign_via_scatter_nd_update():
 	original_tensor = tensor
 	mask = tf.less(tensor, 6, name="mask")
 	where_mask = tf.Variable(tf.where(mask), name="where_mask")
-	update_tensor = tf.scatter_nd_update(ref=tensor, indices=where_mask, updates=tf.zeros_like(tensor), name="update_tensor")
+	update_tensor = tf.scatter_nd_update(ref=tensor, indices=where_mask, updates=tf.zeros_like(tensor),
+	                                     name="update_tensor")
 	with tf.Session() as sess_via_tf_scatter_nd_update:
 		sess_via_tf_scatter_nd_update.run(tf.global_variables_initializer())
 		print_tensor(sess_via_tf_scatter_nd_update, tensor)
@@ -73,8 +75,9 @@ def masked_assign_via_scatter_nd_update():
 
 
 if __name__ == '__main__':
+	os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 	masked_assign_via_tf_where()
 	masked_assign_via_equal_operator()
 	masked_assign_via_tf_assign()
-	# masked_assign_via_scatter_nd_update()
-
+# masked_assign_via_scatter_nd_update()

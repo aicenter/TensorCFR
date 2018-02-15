@@ -2,7 +2,7 @@
 
 
 def print_tensor(sess, tensor):
-	print("{}: {}\n".format(tensor.name, sess.run(tensor)))
+	print('"{}"\n {}\n'.format(tensor.name, sess.run(tensor)))
 
 
 def print_tensors(sess, tensors_to_print):

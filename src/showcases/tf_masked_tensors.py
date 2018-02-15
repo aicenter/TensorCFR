@@ -2,7 +2,6 @@
 
 import tensorflow as tf
 from utils.tensor_utils import print_tensor
-import os
 
 
 def masked_assign_via_tf_where():
@@ -75,8 +74,6 @@ def masked_assign_via_scatter_nd_update():
 
 
 if __name__ == '__main__':
-	os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 	masked_assign_via_tf_where()
 	masked_assign_via_equal_operator()
 	masked_assign_via_tf_assign()

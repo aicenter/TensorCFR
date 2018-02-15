@@ -27,6 +27,5 @@ strategies_lvl_2 = tf.where(mask_actions, tf.ones_like(strategies), strategies, 
 
 with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
-	tensors_to_print = [reach_probabilities_lvl_1, acting_players, mask_players, mask_actions,
-	                    strategies, strategies_lvl_2]
-	print_tensors(sess, tensors_to_print)
+	print_tensors(sess, [reach_probabilities_lvl_1, acting_players, mask_players, mask_actions, strategies,
+	                     strategies_lvl_2])

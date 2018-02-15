@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from utils.tensor_utils import print_tensor
+from utils.tensor_utils import print_tensors
 
 count_of_actions = 3
 shape3x3 = [count_of_actions, count_of_actions]
@@ -29,5 +29,4 @@ with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
 	tensors_to_print = [reach_probabilities_lvl_1, acting_players, mask_players, mask_actions,
 	                    strategies, strategies_lvl_2]
-	for tensor_to_print in tensors_to_print:
-		print_tensor(sess, tensor_to_print)
+	print_tensors(sess, tensors_to_print)

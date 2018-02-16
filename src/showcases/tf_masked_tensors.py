@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import tensorflow as tf
-from utils.tensor_utils import print_tensor, print_tensors
+from utils.tensor_utils import print_tensor, print_tensors, masked_assign
 
 
 def masked_assign_via_tf_where():
@@ -64,8 +64,21 @@ def masked_assign_via_scatter_nd_update():
 		print_tensor(sess_via_tf_scatter_nd_update, [tensor, original_tensor])
 
 
+def masked_assign_via_tensor_utils():
+	shape2x2x2 = [2, 2, 2]
+	tensor = tf.Variable(tf.reshape(tf.range(1, 9), shape2x2x2), name="tensor")
+	mask = tf.less(tensor, 6, name="mask")
+	new_values = tf.fill(shape2x2x2, -1000)
+	masked_assignment = masked_assign(ref=tensor, mask=mask, value=new_values)
+	with tf.Session() as sess_via_tensor_utils:
+		sess_via_tensor_utils.run(tf.global_variables_initializer())
+		print("##########\tvia tensor_utils.masked_assign\t##########")
+		print_tensors(sess_via_tensor_utils, [tensor, mask, masked_assignment, tensor])
+
+
 if __name__ == '__main__':
 	masked_assign_via_tf_where()
 	masked_assign_via_equal_operator()
 	masked_assign_via_tf_assign()
 # masked_assign_via_scatter_nd_update()
+	masked_assign_via_tensor_utils()

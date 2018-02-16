@@ -23,3 +23,9 @@ class TestMaskedAssign(TestCase):
 			sess.run(self.masked_assignment)
 			print_tensors(sess, [self.tensor, self.mask, self.masked_assignment, expected_result, are_tensors_equal])
 			self.assertTrue(sess.run(are_tensors_equal))
+
+	def test_mismatched_shape(self):
+		mismatched_shapes = [[1, 8], [8, 1], [2, 4], [4, 2]]
+		for shape in mismatched_shapes:
+			reshaped_values = tf.reshape(self.new_values, shape)
+			self.assertRaises(AssertionError, masked_assign, self.tensor, self.mask, reshaped_values)

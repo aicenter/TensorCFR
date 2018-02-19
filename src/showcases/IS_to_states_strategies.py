@@ -4,6 +4,8 @@ import tensorflow as tf
 
 from utils.tensor_utils import print_tensors
 
+# custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
+
 # level (depth) 0:
 #   I0,0 ... special index - all-1's strategy for counterfactual probability
 #   I0,1 = { s } -- root state, the opponent acts here

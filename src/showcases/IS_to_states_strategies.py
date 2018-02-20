@@ -18,7 +18,8 @@ IS_strategies_lvl0 = tf.Variable([[1.0, 1.0, 1.0, 1.0, 1.0],   # of I0,0
                                  name="IS_strategies_lvl0")
 # tensors to be computed at level 0
 state_strategies_lvl0 = tf.gather(params=IS_strategies_lvl0, indices=state2IS_lvl0, name="state_strategies_lvl0")
-reach_probabilities_lvl1 = tf.multiply(reach_probabilities_lvl0, state_strategies_lvl0, name="reach_probabilities_lvl1")
+reach_probabilities_lvl1 = tf.multiply(tf.expand_dims(reach_probabilities_lvl0, axis=-1), state_strategies_lvl0,
+                                       name="reach_probabilities_lvl1")
 
 # level (depth) 1:
 #   I1,0 ... special index - all-1's strategy for counterfactual probability

@@ -18,8 +18,14 @@ IS_strategies_lvl0 = tf.Variable([[1.0, 1.0, 1.0, 1.0, 1.0],   # of I0,0
                                  name="IS_strategies_lvl0")
 # tensors to be computed at level 0
 state_strategies_lvl0 = tf.gather(params=IS_strategies_lvl0, indices=state2IS_lvl0, name="state_strategies_lvl0")
-reach_probabilities_lvl1 = tf.multiply(tf.expand_dims(reach_probabilities_lvl0, axis=-1), state_strategies_lvl0,
-                                       name="reach_probabilities_lvl1")
+
+
+def expanded_multiply(expandable_tensor, expanded_tensor, name):
+	return tf.multiply(tf.expand_dims(expandable_tensor, axis=-1), expanded_tensor, name=name)
+
+
+reach_probabilities_lvl1 = expanded_multiply(expandable_tensor=reach_probabilities_lvl0,
+                                             expanded_tensor=state_strategies_lvl0, name="reach_probabilities_lvl1")
 
 # level (depth) 1:
 #   I1,0 ... special index - all-1's strategy for counterfactual probability
@@ -35,8 +41,8 @@ IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0
                                  name="IS_strategies_lvl1")
 # tensors to be computed at level 1
 state_strategies_lvl1 = tf.gather(params=IS_strategies_lvl1, indices=state2IS_lvl1, name="state_strategies_lvl1")
-reach_probabilities_lvl2 = tf.multiply(tf.expand_dims(reach_probabilities_lvl1, axis=-1), state_strategies_lvl1,
-                                       name="reach_probabilities_lvl2")
+reach_probabilities_lvl2 = expanded_multiply(expandable_tensor=reach_probabilities_lvl1,
+                                             expanded_tensor=state_strategies_lvl1, name="reach_probabilities_lvl2")
 
 with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())

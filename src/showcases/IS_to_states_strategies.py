@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from utils.tensor_utils import print_tensors
+from utils.tensor_utils import print_tensors, expanded_multiply
 
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
@@ -18,11 +18,6 @@ IS_strategies_lvl0 = tf.Variable([[1.0, 1.0, 1.0, 1.0, 1.0],   # of I0,0
                                  name="IS_strategies_lvl0")
 # tensors to be computed at level 0
 state_strategies_lvl0 = tf.gather(params=IS_strategies_lvl0, indices=state2IS_lvl0, name="state_strategies_lvl0")
-
-
-def expanded_multiply(expandable_tensor, expanded_tensor, name):
-	return tf.multiply(tf.expand_dims(expandable_tensor, axis=-1), expanded_tensor, name=name)
-
 
 reach_probabilities_lvl1 = expanded_multiply(expandable_tensor=reach_probabilities_lvl0,
                                              expanded_tensor=state_strategies_lvl0, name="reach_probabilities_lvl1")

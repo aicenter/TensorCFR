@@ -15,7 +15,7 @@ def print_tensors(sess, tensors_to_print):
 def masked_assign(ref, mask, value):
 	"""Update 'ref' by assigning 'value' to 'ref[mask]'.
 
-	This operation outputs a corresponding TensorFlow operation (from the computation graph)
+	This operation outputs a corresponding TensorFlow operation (from the computation graph).
 
 	Args:
 		ref: A mutable `Tensor`.
@@ -34,3 +34,23 @@ def masked_assign(ref, mask, value):
 			"masked_assign(): mismatched shapes {} and {}!".format(combination[0], combination[1])
 
 	return tf.assign(ref=ref, value=tf.where(mask, value, ref), name="masked_assign")
+
+
+def expanded_multiply(expandable_tensor, expanded_tensor, name):
+	"""Multiply 'expandable_tensor' by 'expanded_tensor' element-wise. If N-dimensional 'expanded_tensor' has a shape
+	'(d_1, d_2, ..., d_n)', then (N-1)-dimensional 'expandable_tensor' needs to have the shape '(d_1, d_2, ..., d_(n-1))'.
+	The 'expandable_tensor' is "uplifted" to a 1-higher-dimensional expansion, where it has the shape
+	'(d_1, ..., d_(n-1), 1)'. This is done in order to support broadcasting in tf.multiply.
+
+
+	This operation outputs a corresponding TensorFlow operation (from the computation graph).
+
+	Args:
+		:param expandable_tensor: An (N-1)-D tensor of the shape '(d_1, d_2, ..., d_(n-1))'.
+		:param expanded_tensor: An N-D tensor of the shape '(d_1, d_2, ..., d_n)'.
+		:param name: A string to name the resulting tensor operation.
+
+	Returns:
+		A corresponding TensorFlow operation (from the computation graph).
+	"""
+	return tf.multiply(tf.expand_dims(expandable_tensor, axis=-1), expanded_tensor, name=name)

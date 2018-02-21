@@ -1,6 +1,8 @@
 from unittest import TestCase
-from utils.tensor_utils import masked_assign, print_tensors
+
 import tensorflow as tf
+
+from utils.tensor_utils import masked_assign, print_tensors
 
 
 class TestMaskedAssign(TestCase):
@@ -28,3 +30,7 @@ class TestMaskedAssign(TestCase):
 		for shape in mismatched_shapes:
 			reshaped_values = tf.reshape(self.new_values, shape)
 			self.assertRaises(AssertionError, masked_assign, self.tensor, self.mask, reshaped_values)
+
+
+if __name__ == '__main__':
+	tf.test.main()

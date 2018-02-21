@@ -60,8 +60,10 @@ IS_strategies_lvl2 = tf.Variable([[1.0, 1.0],   # of I2,0
                                   [0.4, 0.6],   # of I2,4
                                   [0.0, 0.0]],  # of I2,t ... no strategies terminal nodes <- mock-up strategy
                                  name="IS_strategies_lvl2")
-# TODO tensors to be computed at level 2
+# tensors to be computed at level 2
 state_strategies_lvl2 = tf.gather(params=IS_strategies_lvl2, indices=state2IS_lvl2, name="state_strategies_lvl2")
+reach_probabilities_lvl3 = expanded_multiply(expandable_tensor=reach_probabilities_lvl2,
+                                             expanded_tensor=state_strategies_lvl2, name="reach_probabilities_lvl3")
 
 with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
@@ -72,3 +74,5 @@ with tf.Session() as sess:
 	print_tensors(sess, [reach_probabilities_lvl1, state2IS_lvl1, IS_strategies_lvl1, state_strategies_lvl1])
 	print("########## Level 2 ##########")
 	print_tensors(sess, [reach_probabilities_lvl2, state2IS_lvl2, IS_strategies_lvl2, state_strategies_lvl2])
+	print("########## Level 3 ##########")
+	print_tensors(sess, [reach_probabilities_lvl3])

@@ -226,3 +226,4 @@ auto/*
 .idea/*
 src/out/
 src/utils/__pycache__/
+src/showcases/__pycache__/

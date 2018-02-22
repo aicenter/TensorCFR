@@ -2,6 +2,8 @@
 
 import tensorflow as tf
 
+from constants import NON_TERMINAL_UTILITY
+
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
 ########## Level 0 ##########
@@ -9,11 +11,12 @@ import tensorflow as tf
 # I0,1 = { s } ... root state, the opponent acts here
 # there are 5 actions in state s
 reach_probabilities_lvl0 = tf.Variable(1.0, name="reach_probabilities_lvl0")
-state2IS_lvl0 = tf.Variable(1, name="state2IS_lvl0")
-# NOTE: the value above is not [1] in order to remove 1 redundant '[]' represented by choice of empty sequence {}
+state2IS_lvl0 = tf.Variable(1, name="state2IS_lvl0")  # NOTE: the value above is not [1] in order to remove 1
+																											# redundant '[]' represented by choice of empty sequence {}
 IS_strategies_lvl0 = tf.Variable([[1.0, 1.0, 1.0, 1.0, 1.0],   # of I0,0
                                   [0.5, .25, 0.1, 0.1, .05]],  # of I0,1
                                  name="IS_strategies_lvl0")
+utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl0.shape, name="utilities_lvl0")
 
 ########## Level 1 ##########
 # I1,0 = { s' } ... special index - all-1's strategy for counterfactual probability
@@ -27,6 +30,7 @@ IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0
                                   [0.2, 0.8, 0.0],   # of I1,2
                                   [0.3, 0.3, 0.3]],  # of I1,c
                                  name="IS_strategies_lvl1")
+utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl1.shape, name="utilities_lvl1")
 
 ########## Level 2 ##########
 # I2,0 = { s5, s8, s9, s18 } ... special index - all-1's strategy for counterfactual probability
@@ -49,3 +53,10 @@ IS_strategies_lvl2 = tf.Variable([[1.0, 1.0],   # of I2,0
                                   [0.4, 0.6],   # of I2,4
                                   [0.0, 0.0]],  # of I2,t ... no strategies terminal nodes <- mock-up strategy
                                  name="IS_strategies_lvl2")
+# TODO fill terminal utilities on lvl 2
+utilities_lvl2 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl2.shape, name="utilities_lvl2")
+
+########## Level 3 ##########
+# TODO figure out dims
+# TODO fill terminal utilities on lvl 3
+# utilities_lvl3 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl3.shape, name="utilities_lvl3")

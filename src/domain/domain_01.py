@@ -11,6 +11,7 @@ from utils.tensor_utils import print_tensors, masked_assign
 # I0,0 = {} ... special index - all-1's strategy for counterfactual probability
 # I0,1 = { s } ... root state, the opponent acts here
 # there are 5 actions in state s
+shape_lvl0 = []
 reach_probabilities_lvl0 = tf.Variable(1.0, name="reach_probabilities_lvl0")
 state2IS_lvl0 = tf.Variable(1, name="state2IS_lvl0")  # NOTE: the value above is not [1] in order to remove 1
 																											# redundant '[]' represented by choice of empty sequence {}
@@ -18,7 +19,7 @@ node_types_lvl0 = tf.Variable(INNER_NODE, name="node_types_lvl0")
 IS_strategies_lvl0 = tf.Variable([[1.0, 1.0, 1.0, 1.0, 1.0],   # of I0,0
                                   [0.5, .25, 0.1, 0.1, .05]],  # of I0,1
                                  name="IS_strategies_lvl0")
-utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl0.shape, name="utilities_lvl0")
+utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="utilities_lvl0")
 
 ########## Level 1 ##########
 # I1,0 = { s' } ... special index - all-1's strategy for counterfactual probability

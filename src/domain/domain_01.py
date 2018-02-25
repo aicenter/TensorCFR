@@ -7,11 +7,13 @@ from utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
+actions_per_levels = [5, 3, 2]
+
 ########## Level 0 ##########
 # I0,0 = {} ... special index - all-1's strategy for counterfactual probability
 # I0,1 = { s } ... root state, the opponent acts here
 # there are 5 actions in state s
-shape_lvl0 = []
+shape_lvl0 = actions_per_levels[:0]
 reach_probabilities_lvl0 = tf.Variable(1.0, name="reach_probabilities_lvl0")
 state2IS_lvl0 = tf.Variable(1, name="state2IS_lvl0")  # NOTE: the value above is not [1] in order to remove 1
 																											# redundant '[]' represented by choice of empty sequence {}
@@ -27,7 +29,7 @@ utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="util
 # I1,2 = { s2, s3 }
 # I1,3 = Ic = { s4 } ... chance node
 # each state 3 actions
-shape_lvl1 = [5]
+shape_lvl1 = actions_per_levels[:1]
 state2IS_lvl1 = tf.Variable([0, 1, 2, 2, 3], name="state2IS_lvl1")
 node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0
@@ -45,7 +47,7 @@ utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="util
 # I2,4 = { s19 }
 # I2,t = { s7, s10, s13, s16, s17 } ... terminal nodes
 # each state 2 actions
-shape_lvl2 = [5, 3]
+shape_lvl2 = actions_per_levels[:2]
 state2IS_lvl2 = tf.Variable([[0, 1, 5],   # s5, s6, s7
                              [0, 0, 5],   # s8, s9, s10
                              [2, 3, 5],   # s11, s12, s13
@@ -72,8 +74,7 @@ utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=random_values_lvl2, mas
                                name="utilities_lvl2")
 
 ########## Level 3 ##########
-# TODO keep track of shapes?
-shape_lvl3 = [5, 3, 2]
+shape_lvl3 = actions_per_levels[:3]
 node_types_lvl3 = tf.Variable(tf.fill(value=TERMINAL_NODE, dims=shape_lvl3))
 indices_imaginary_nodes_lvl3 = tf.constant([[0, 2],  # children of s7
                                             [1, 2],  # children of s10

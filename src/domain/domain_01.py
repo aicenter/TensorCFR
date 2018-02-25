@@ -14,14 +14,14 @@ actions_per_levels = [5, 3, 2]
 # I0,1 = { s } ... root state, the opponent acts here
 # there are 5 actions in state s
 shape_lvl0 = actions_per_levels[:0]
-reach_probabilities_lvl0 = tf.Variable(1.0, name="reach_probabilities_lvl0")
 state2IS_lvl0 = tf.Variable(1, name="state2IS_lvl0")  # NOTE: the value above is not [1] in order to remove 1
 																											# redundant '[]' represented by choice of empty sequence {}
 node_types_lvl0 = tf.Variable(INNER_NODE, name="node_types_lvl0")
+utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="utilities_lvl0")
 IS_strategies_lvl0 = tf.Variable([[1.0, 1.0, 1.0, 1.0, 1.0],   # of I0,0
                                   [0.5, .25, 0.1, 0.1, .05]],  # of I0,1
                                  name="IS_strategies_lvl0")
-utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="utilities_lvl0")
+reach_probabilities_lvl0 = tf.Variable(1.0, name="reach_probabilities_lvl0")
 
 ########## Level 1 ##########
 # I1,0 = { s' } ... special index - all-1's strategy for counterfactual probability
@@ -32,12 +32,12 @@ utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="util
 shape_lvl1 = actions_per_levels[:1]
 state2IS_lvl1 = tf.Variable([0, 1, 2, 2, 3], name="state2IS_lvl1")
 node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
+utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
 IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0
                                   [0.1, 0.9, 0.0],   # of I1,1
                                   [0.2, 0.8, 0.0],   # of I1,2
                                   [0.3, 0.3, 0.3]],  # of I1,c
                                  name="IS_strategies_lvl1")
-utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
 
 ########## Level 2 ##########
 # I2,0 = { s5, s8, s9, s18 } ... special index - all-1's strategy for counterfactual probability
@@ -60,6 +60,11 @@ node_types_lvl2 = tf.Variable([[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, 
                                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s14, s15, s16
                                [TERMINAL_NODE, INNER_NODE, INNER_NODE]],  # s17, s18, s19
                               name="node_types_lvl2")
+utilities_lvl2 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl2))
+random_values_lvl2 = tf.random_uniform(shape_lvl2)
+mask_terminals_lvl2 = tf.equal(node_types_lvl2, TERMINAL_NODE)
+utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=random_values_lvl2, mask=mask_terminals_lvl2,
+                               name="utilities_lvl2")
 IS_strategies_lvl2 = tf.Variable([[1.0, 1.0],   # of I2,0
                                   [0.7, 0.3],   # of I2,1
                                   [0.5, 0.5],   # of I2,2
@@ -67,11 +72,6 @@ IS_strategies_lvl2 = tf.Variable([[1.0, 1.0],   # of I2,0
                                   [0.4, 0.6],   # of I2,4
                                   [0.0, 0.0]],  # of I2,t ... no strategies terminal nodes <- mock-up strategy
                                  name="IS_strategies_lvl2")
-utilities_lvl2 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl2))
-random_values_lvl2 = tf.random_uniform(shape_lvl2)
-mask_terminals_lvl2 = tf.equal(node_types_lvl2, TERMINAL_NODE)
-utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=random_values_lvl2, mask=mask_terminals_lvl2,
-                               name="utilities_lvl2")
 
 ########## Level 3 ##########
 shape_lvl3 = actions_per_levels[:3]

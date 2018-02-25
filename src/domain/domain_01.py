@@ -8,7 +8,7 @@ from utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
-actions_per_levels = [5, 3, 2]
+actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1, 2)
 
 ########## Level 0 ##########
 # I0,0 = {} ... special index - all-1's strategy for counterfactual probability

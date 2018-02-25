@@ -43,6 +43,7 @@ utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl1.shape, n
 # I2,4 = { s19 }
 # I2,t = { s7, s10, s13, s16, s17 } ... terminal nodes
 # each state 2 actions
+shape_lvl2 = [5, 3]
 state2IS_lvl2 = tf.Variable([[0, 1, 5],   # s5, s6, s7
                              [0, 0, 5],   # s8, s9, s10
                              [2, 3, 5],   # s11, s12, s13
@@ -62,8 +63,8 @@ IS_strategies_lvl2 = tf.Variable([[1.0, 1.0],   # of I2,0
                                   [0.4, 0.6],   # of I2,4
                                   [0.0, 0.0]],  # of I2,t ... no strategies terminal nodes <- mock-up strategy
                                  name="IS_strategies_lvl2")
-utilities_lvl2 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl2.shape))
-random_values_lvl2 = tf.random_uniform(utilities_lvl2.shape)
+utilities_lvl2 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl2))
+random_values_lvl2 = tf.random_uniform(shape_lvl2)
 mask_terminals_lvl2 = tf.equal(node_types_lvl2, TERMINAL_NODE)
 utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=random_values_lvl2, mask=mask_terminals_lvl2,
                                name="utilities_lvl2")

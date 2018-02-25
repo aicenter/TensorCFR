@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import itertools
+
 import tensorflow as tf
 
 
@@ -12,17 +13,18 @@ def print_tensors(sess, tensors_to_print):
 		print_tensor(sess, tensor_to_print)
 
 
-def masked_assign(ref, mask, value):
+def masked_assign(ref, mask, value, name="masked_assign"):
 	"""Update 'ref' by assigning 'value' to 'ref[mask]'.
 
 	This operation outputs a corresponding TensorFlow operation (from the computation graph).
 
 	Args:
-		ref: A mutable `Tensor`.
+		:param ref: A mutable `Tensor`.
 			Should be from a `Variable` node. May be uninitialized.
-    mask:  A boolean tensor. Must have the same shape as `ref`.
-		value: A `Tensor`. Must have the same type and shape as `ref`.
+    :param mask:  A boolean tensor. Must have the same shape as `ref`.
+		:param value: A `Tensor`. Must have the same type and shape as `ref`.
 			The value to be assigned to the variable.
+		:param name: A name for the operation (optional).
 
 	Returns:
 		A corresponding TensorFlow operation (from the computation graph).
@@ -33,7 +35,7 @@ def masked_assign(ref, mask, value):
 		assert combination[0] == combination[1], \
 			"masked_assign(): mismatched shapes {} and {}!".format(combination[0], combination[1])
 
-	return tf.assign(ref=ref, value=tf.where(mask, value, ref), name="masked_assign")
+	return tf.assign(ref=ref, value=tf.where(mask, value, ref), name=name)
 
 
 def expanded_multiply(expandable_tensor, expanded_tensor, name):

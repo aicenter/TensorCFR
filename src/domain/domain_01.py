@@ -26,6 +26,7 @@ utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl0.shape, n
 # I1,2 = { s2, s3 }
 # I1,3 = Ic = { s4 } ... chance node
 # each state 3 actions
+shape_lvl1 = [5]
 state2IS_lvl1 = tf.Variable([0, 1, 2, 2, 3], name="state2IS_lvl1")
 node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0
@@ -33,7 +34,7 @@ IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0
                                   [0.2, 0.8, 0.0],   # of I1,2
                                   [0.3, 0.3, 0.3]],  # of I1,c
                                  name="IS_strategies_lvl1")
-utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl1.shape, name="utilities_lvl1")
+utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
 
 ########## Level 2 ##########
 # I2,0 = { s5, s8, s9, s18 } ... special index - all-1's strategy for counterfactual probability

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # utilities
-NON_TERMINAL_UTILITY = 0
+NON_TERMINAL_UTILITY = 0.0
 
 # type of nodes
 INNER_NODE = 0

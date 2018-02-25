@@ -2,7 +2,8 @@
 
 import tensorflow as tf
 
-from constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE
+from constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, ACTING_PLAYER, \
+	OPPONENT, NO_ACTING_PLAYER
 from utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
@@ -11,17 +12,18 @@ actions_per_levels = [5, 3, 2]
 
 ########## Level 0 ##########
 # I0,0 = {} ... special index - all-1's strategy for counterfactual probability
-# I0,1 = { s } ... root state, the opponent acts here
+# I0,1 = { s } ... root state, the chance player acts here
 # there are 5 actions in state s
+reach_probabilities_lvl0 = tf.Variable(1.0, name="reach_probabilities_lvl0")
 shape_lvl0 = actions_per_levels[:0]
 state2IS_lvl0 = tf.Variable(1, name="state2IS_lvl0")  # NOTE: the value above is not [1] in order to remove 1
 																											# redundant '[]' represented by choice of empty sequence {}
 node_types_lvl0 = tf.Variable(INNER_NODE, name="node_types_lvl0")
 utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="utilities_lvl0")
+IS_acting_players_lvl0 = tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0")
 IS_strategies_lvl0 = tf.Variable([[1.0, 1.0, 1.0, 1.0, 1.0],   # of I0,0
                                   [0.5, .25, 0.1, 0.1, .05]],  # of I0,1
                                  name="IS_strategies_lvl0")
-reach_probabilities_lvl0 = tf.Variable(1.0, name="reach_probabilities_lvl0")
 
 ########## Level 1 ##########
 # I1,0 = { s' } ... special index - all-1's strategy for counterfactual probability
@@ -33,6 +35,11 @@ shape_lvl1 = actions_per_levels[:1]
 state2IS_lvl1 = tf.Variable([0, 1, 2, 2, 3], name="state2IS_lvl1")
 node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
+IS_acting_players_lvl1 = tf.Variable([ACTING_PLAYER,   # I1,0
+                                      OPPONENT,        # I1,1
+                                      OPPONENT,        # I1,2
+                                      CHANCE_PLAYER],  # I1,3
+                                     name="IS_acting_players_lvl1")
 IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0
                                   [0.1, 0.9, 0.0],   # of I1,1
                                   [0.2, 0.8, 0.0],   # of I1,2
@@ -45,7 +52,7 @@ IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0
 # I2,2 = { s11, s14 }
 # I2,3 = { s12, s15 } ... chance nodes
 # I2,4 = { s19 }
-# I2,t = { s7, s10, s13, s16, s17 } ... terminal nodes
+# I2,t = { s7, s10, s13, s16, s17 } ... terminal nodes TODO branch-off imaginary nodes from terminal nodes
 # each state 2 actions
 shape_lvl2 = actions_per_levels[:2]
 state2IS_lvl2 = tf.Variable([[0, 1, 5],   # s5, s6, s7
@@ -65,6 +72,13 @@ random_values_lvl2 = tf.random_uniform(shape_lvl2)
 mask_terminals_lvl2 = tf.equal(node_types_lvl2, TERMINAL_NODE)
 utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=random_values_lvl2, mask=mask_terminals_lvl2,
                                name="utilities_lvl2")
+IS_acting_players_lvl2 = tf.Variable([ACTING_PLAYER,  # of I2,0
+                                      OPPONENT,  # of I2,1
+                                      OPPONENT,  # of I2,2
+                                      CHANCE_PLAYER,  # of I2,3 ... chance player
+                                      OPPONENT,  # of I2,4
+                                      NO_ACTING_PLAYER],  # of I2,t ... no strategies terminal nodes <- mock-up strategy
+                                     name="IS_acting_players_lvl2")
 IS_strategies_lvl2 = tf.Variable([[1.0, 1.0],   # of I2,0
                                   [0.7, 0.3],   # of I2,1
                                   [0.5, 0.5],   # of I2,2
@@ -76,11 +90,11 @@ IS_strategies_lvl2 = tf.Variable([[1.0, 1.0],   # of I2,0
 ########## Level 3 ##########
 shape_lvl3 = actions_per_levels[:3]
 node_types_lvl3 = tf.Variable(tf.fill(value=TERMINAL_NODE, dims=shape_lvl3))
-indices_imaginary_nodes_lvl3 = tf.constant([[0, 2],  # children of s7
-                                            [1, 2],  # children of s10
-                                            [2, 2],  # children of s13
-                                            [3, 2],  # children of s16
-                                            [4, 0]], # children of s17
+indices_imaginary_nodes_lvl3 = tf.constant([[0, 2],   # children of s7
+                                            [1, 2],   # children of s10
+                                            [2, 2],   # children of s13
+                                            [3, 2],   # children of s16
+                                            [4, 0]],  # children of s17
                                            name="indices_imaginary_nodes_lvl3")
 node_types_lvl3 = tf.scatter_nd_update(ref=node_types_lvl3, indices=indices_imaginary_nodes_lvl3,
                                        updates=tf.fill(value=IMAGINARY_NODE, dims=indices_imaginary_nodes_lvl3.shape),
@@ -97,10 +111,10 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		print("########## Level 0 ##########")
 		print_tensors(sess, [reach_probabilities_lvl0])
-		print_tensors(sess, [state2IS_lvl0, node_types_lvl0, utilities_lvl0, IS_strategies_lvl0])
+		print_tensors(sess, [state2IS_lvl0, node_types_lvl0, utilities_lvl0, IS_acting_players_lvl0, IS_strategies_lvl0])
 		print("########## Level 1 ##########")
-		print_tensors(sess, [state2IS_lvl1, node_types_lvl1, utilities_lvl1, IS_strategies_lvl1])
+		print_tensors(sess, [state2IS_lvl1, node_types_lvl1, utilities_lvl1, IS_acting_players_lvl1, IS_strategies_lvl1])
 		print("########## Level 2 ##########")
-		print_tensors(sess, [state2IS_lvl2, node_types_lvl2, utilities_lvl2, IS_strategies_lvl2])
+		print_tensors(sess, [state2IS_lvl2, node_types_lvl2, utilities_lvl2, IS_acting_players_lvl2, IS_strategies_lvl2])
 		print("########## Level 3 ##########")
 		print_tensors(sess, [node_types_lvl3, utilities_lvl3])

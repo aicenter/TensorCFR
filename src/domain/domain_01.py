@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 from constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE
-from utils.tensor_utils import print_tensors
+from utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
@@ -62,14 +62,16 @@ IS_strategies_lvl2 = tf.Variable([[1.0, 1.0],   # of I2,0
                                   [0.4, 0.6],   # of I2,4
                                   [0.0, 0.0]],  # of I2,t ... no strategies terminal nodes <- mock-up strategy
                                  name="IS_strategies_lvl2")
-# TODO fill terminal utilities on lvl 2
-utilities_lvl2 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl2.shape, name="utilities_lvl2")
+utilities_lvl2 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl2.shape))
+random_values_lvl2 = tf.random_uniform(utilities_lvl2.shape)
+mask_terminals_lvl2 = tf.equal(node_types_lvl2, TERMINAL_NODE)
+utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=random_values_lvl2, mask=mask_terminals_lvl2,
+                               name="utilities_lvl2")
 
 ########## Level 3 ##########
-# TODO fill terminal utilities on lvl 3
-# utilities_lvl3 = tf.fill(value=NON_TERMINAL_UTILITY, dims=state2IS_lvl3.shape, name="utilities_lvl3")
 # TODO keep track of shapes?
-node_types_lvl3 = tf.Variable(tf.fill(value=TERMINAL_NODE, dims=[5, 3, 2]))
+shape_lvl3 = [5, 3, 2]
+node_types_lvl3 = tf.Variable(tf.fill(value=TERMINAL_NODE, dims=shape_lvl3))
 indices_imaginary_nodes_lvl3 = tf.constant([[0, 2],  # children of s7
                                             [1, 2],  # children of s10
                                             [2, 2],  # children of s13
@@ -79,6 +81,11 @@ indices_imaginary_nodes_lvl3 = tf.constant([[0, 2],  # children of s7
 node_types_lvl3 = tf.scatter_nd_update(ref=node_types_lvl3, indices=indices_imaginary_nodes_lvl3,
                                        updates=tf.fill(value=IMAGINARY_NODE, dims=indices_imaginary_nodes_lvl3.shape),
                                        name="node_types_lvl3")
+utilities_lvl3 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl3))
+random_values_lvl3 = tf.random_uniform(shape_lvl3)
+mask_terminals_lvl3 = tf.equal(node_types_lvl3, TERMINAL_NODE)
+utilities_lvl3 = masked_assign(ref=utilities_lvl3, value=random_values_lvl3, mask=mask_terminals_lvl3,
+                               name="utilities_lvl3")
 
 
 if __name__ == '__main__':
@@ -86,10 +93,10 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		print("########## Level 0 ##########")
 		print_tensors(sess, [reach_probabilities_lvl0])
-		print_tensors(sess, [state2IS_lvl0, node_types_lvl0, IS_strategies_lvl0, utilities_lvl0])
+		print_tensors(sess, [state2IS_lvl0, node_types_lvl0, utilities_lvl0, IS_strategies_lvl0])
 		print("########## Level 1 ##########")
-		print_tensors(sess, [state2IS_lvl1, node_types_lvl1, IS_strategies_lvl1, utilities_lvl1])
+		print_tensors(sess, [state2IS_lvl1, node_types_lvl1, utilities_lvl1, IS_strategies_lvl1])
 		print("########## Level 2 ##########")
-		print_tensors(sess, [state2IS_lvl2, node_types_lvl2, IS_strategies_lvl2, utilities_lvl2])
+		print_tensors(sess, [state2IS_lvl2, node_types_lvl2, utilities_lvl2, IS_strategies_lvl2])
 		print("########## Level 3 ##########")
-		print_tensors(sess, [node_types_lvl3])
+		print_tensors(sess, [node_types_lvl3, utilities_lvl3])

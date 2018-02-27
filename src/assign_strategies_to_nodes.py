@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-def assign_strategies_to_states(infoset_strategies, states_to_infosets, name):
+def assign_strategies_to_nodes(infoset_strategies, node_to_infoset, name):
 	"""Translate 2-D tensor `infoset_strategies` of strategies per information sets to strategies per game states.
 	The translation is done based on N-D tensor `states_to_infosets`: each state (indexed by N-D coordinate)
 	stores the index of its information set.
@@ -12,10 +12,10 @@ def assign_strategies_to_states(infoset_strategies, states_to_infosets, name):
 
 	Args:
 		:param infoset_strategies: A 2-D tensor of floats.
-		:param states_to_infosets: An N-D tensor of ints.
+		:param node_to_infoset: An N-D tensor of ints.
 		:param name: A string to name the resulting tensor operation.
 
 	Returns:
 		A corresponding TensorFlow operation (from the computation graph).
 	"""
-	return tf.gather(params=infoset_strategies, indices=states_to_infosets, name=name)
+	return tf.gather(params=infoset_strategies, indices=node_to_infoset, name=name)

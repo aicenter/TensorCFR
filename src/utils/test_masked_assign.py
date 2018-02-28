@@ -39,8 +39,7 @@ class TestMaskedAssign(TestCase):
 		                         name="strategies")
 		mask_of_resolving_player = tf.equal(acting_players, ACTING_PLAYER, name="mask_of_resolving_player")
 		masked_strategies = masked_assign(ref=strategies, mask=mask_of_resolving_player,
-		                                  # TODO extract out masked_assign_value
-		                                  value=tf.fill(dims=strategies.shape, value=1.0))
+		                                  value=1.0)
 		expected_result = tf.constant([[1.0, 1.0, 1.0],   # counterfactual strategy of I1,0
 		                               [0.1, 0.9, 0.0],   # of I1,1
 		                               [0.2, 0.8, 0.0],   # of I1,2
@@ -74,7 +73,7 @@ class TestMaskedAssign(TestCase):
 		                         name="strategies")
 		mask_of_resolving_player = tf.equal(acting_players, ACTING_PLAYER, name="mask_of_resolving_player")
 		masked_strategies = masked_assign(ref=strategies, mask=mask_of_resolving_player,
-		                                  value=tf.fill(dims=strategies.shape, value=1.0))
+		                                  value=1)
 		expected_result = tf.constant([[1.0, 1.0],   # counterfactual strategy of the resolving player
 		                               [0.7, 0.3],
 		                               [1.0, 1.0],   # counterfactual strategy of the resolving player

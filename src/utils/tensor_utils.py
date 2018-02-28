@@ -12,6 +12,7 @@ def print_tensors(sess, tensors_to_print):
 		print_tensor(sess, tensor_to_print)
 
 
+# noinspection PySimplifyBooleanCheck
 def masked_assign(ref, mask, value, name="masked_assign"):
 	"""Update 'ref' by assigning 'value' to 'ref[mask]'.
 
@@ -22,20 +23,26 @@ def masked_assign(ref, mask, value, name="masked_assign"):
 			Should be from a `Variable` node. May be uninitialized.
     :param mask:  Either a boolean tensor of the same shape as `ref`, or a vector of the size of 'ref.shape[0]'
       (i.e. row mask).
-		:param value: A `Tensor`. Must have the same type and shape as `ref`.
-			The value to be assigned to the variable.
-		:param name: A name for the operation (optional).
+		:param value: Either a `Tensor` of the same type and shape as `ref`, or a scalar (i.e. broadcasting a scalar
+			value). The value to be assigned to the variable.
+		:param name: A name for the operation (optional), by default `masked_assign`.
 
 	Returns:
 		A corresponding TensorFlow operation (from the computation graph).
 	"""
+	value = tf.to_float(value)    # make sure `value` is TensorFlow scalar of type `float`
+
 	# check: all 3 shapes must match, "row-mask" can be a vector of the size of 'ref.shape[0]'
-	assert ref.shape == value.shape, \
-		"masked_assign(): mismatched ref.shape {} and value.shape {}!".format(ref.shape, value.shape)
+	assert value.shape == [] or ref.shape == value.shape, \
+		"masked_assign(): value needs to be a scalar or a tensor of shape equal to ref.shape == {}!".format(ref.shape)
 	assert ref.shape == mask.shape or mask.shape == [ref.shape[0]], \
 		"masked_assign(): mismatched ref.shape {} and mask.shape {}!".format(ref.shape, mask.shape)
 
-	return tf.assign(ref=ref, value=tf.where(mask, value, ref), name=name)
+	if value.shape == []:
+		tensor_of_values = tf.fill(dims=ref.shape, value=value)
+	else:
+		tensor_of_values = value
+	return tf.assign(ref=ref, value=tf.where(mask, tensor_of_values, ref), name=name)
 
 
 def expanded_multiply(expandable_tensor, expanded_tensor, name):

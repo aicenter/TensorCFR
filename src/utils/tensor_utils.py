@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import itertools
 
 import tensorflow as tf
 
@@ -21,7 +20,8 @@ def masked_assign(ref, mask, value, name="masked_assign"):
 	Args:
 		:param ref: A mutable `Tensor`.
 			Should be from a `Variable` node. May be uninitialized.
-    :param mask:  A boolean tensor. Must have the same shape as `ref`.
+    :param mask:  Either a boolean tensor of the same shape as `ref`, or a vector of the size of 'ref.shape[0]'
+      (i.e. row mask).
 		:param value: A `Tensor`. Must have the same type and shape as `ref`.
 			The value to be assigned to the variable.
 		:param name: A name for the operation (optional).
@@ -29,11 +29,11 @@ def masked_assign(ref, mask, value, name="masked_assign"):
 	Returns:
 		A corresponding TensorFlow operation (from the computation graph).
 	"""
-	# check: all 3 shapes must match
-	shapes_of_args = [tensor.shape for tensor in [ref, mask, value]]
-	for combination in itertools.combinations(shapes_of_args, 2):
-		assert combination[0] == combination[1], \
-			"masked_assign(): mismatched shapes {} and {}!".format(combination[0], combination[1])
+	# check: all 3 shapes must match, "row-mask" can be a vector of the size of 'ref.shape[0]'
+	assert ref.shape == value.shape, \
+		"masked_assign(): mismatched ref.shape {} and value.shape {}!".format(ref.shape, value.shape)
+	assert ref.shape == mask.shape or mask.shape == [ref.shape[0]], \
+		"masked_assign(): mismatched ref.shape {} and mask.shape {}!".format(ref.shape, mask.shape)
 
 	return tf.assign(ref=ref, value=tf.where(mask, value, ref), name=name)
 

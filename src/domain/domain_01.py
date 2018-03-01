@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, ACTING_PLAYER, \
+from constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, UPDATING_PLAYER, \
 	OPPONENT, NO_ACTING_PLAYER
 from utils.tensor_utils import print_tensors, masked_assign
 
@@ -35,12 +35,12 @@ shape_lvl1 = actions_per_levels[:1]
 node_to_IS_lvl1 = tf.Variable([0, 1, 2, 2, 3], name="node_to_IS_lvl1")
 node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
-IS_acting_players_lvl1 = tf.Variable([ACTING_PLAYER,   # I1,0
-                                      OPPONENT,        # I1,1
-                                      OPPONENT,        # I1,2
-                                      CHANCE_PLAYER],  # I1,3
+IS_acting_players_lvl1 = tf.Variable([UPDATING_PLAYER,  # I1,0
+                                      OPPONENT,         # I1,1
+                                      OPPONENT,         # I1,2
+                                      CHANCE_PLAYER],   # I1,3
                                      name="IS_acting_players_lvl1")
-IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0
+IS_strategies_lvl1 = tf.Variable([[1.0, 1.0, 1.0],   # of I1,0 TODO replace dummy strategy with resolver's real strategy
                                   [0.1, 0.9, 0.0],   # of I1,1
                                   [0.2, 0.8, 0.0],   # of I1,2
                                   [0.3, 0.3, 0.3]],  # of I1,c
@@ -72,11 +72,11 @@ random_values_lvl2 = tf.random_uniform(shape_lvl2)
 mask_terminals_lvl2 = tf.equal(node_types_lvl2, TERMINAL_NODE)
 utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=random_values_lvl2, mask=mask_terminals_lvl2,
                                name="utilities_lvl2")
-IS_acting_players_lvl2 = tf.Variable([ACTING_PLAYER,  # of I2,0
-                                      OPPONENT,  # of I2,1
-                                      OPPONENT,  # of I2,2
-                                      CHANCE_PLAYER,  # of I2,3 ... chance player
-                                      OPPONENT,  # of I2,4
+IS_acting_players_lvl2 = tf.Variable([UPDATING_PLAYER,    # of I2,0
+                                      OPPONENT,           # of I2,1
+                                      OPPONENT,           # of I2,2
+                                      CHANCE_PLAYER,      # of I2,3 ... chance player
+                                      OPPONENT,           # of I2,4
                                       NO_ACTING_PLAYER],  # of I2,t ... no strategies terminal nodes <- mock-up strategy
                                      name="IS_acting_players_lvl2")
 IS_strategies_lvl2 = tf.Variable([[1.0, 1.0],   # of I2,0

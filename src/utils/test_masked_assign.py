@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import tensorflow as tf
 
-from constants import ACTING_PLAYER, OPPONENT, CHANCE_PLAYER, NO_ACTING_PLAYER
+from constants import UPDATING_PLAYER, OPPONENT, CHANCE_PLAYER, NO_ACTING_PLAYER
 from utils.tensor_utils import masked_assign, print_tensors
 
 
@@ -27,17 +27,17 @@ class TestMaskedAssign(TestCase):
 			tf.assert_equal(self.tensor, expected_result)
 
 	def test_masked_strategies_domain_01_lvl1(self):
-		acting_players = tf.Variable([ACTING_PLAYER,   # I1,0
-		                              OPPONENT,        # I1,1
-		                              OPPONENT,        # I1,2
-		                              CHANCE_PLAYER],  # I1,3
+		acting_players = tf.Variable([UPDATING_PLAYER,  # I1,0
+		                              OPPONENT,         # I1,1
+		                              OPPONENT,         # I1,2
+		                              CHANCE_PLAYER],   # I1,3
 		                             name="acting_players")
 		strategies = tf.Variable([[0.5, 0.4, 0.1],   # of I1,0
 		                          [0.1, 0.9, 0.0],   # of I1,1
 		                          [0.2, 0.8, 0.0],   # of I1,2
 		                          [0.3, 0.3, 0.3]],  # of I1,3
 		                         name="strategies")
-		mask_of_resolving_player = tf.equal(acting_players, ACTING_PLAYER, name="mask_of_resolving_player")
+		mask_of_resolving_player = tf.equal(acting_players, UPDATING_PLAYER, name="mask_of_resolving_player")
 		masked_strategies = masked_assign(ref=strategies, mask=mask_of_resolving_player,
 		                                  value=1.0)
 		expected_result = tf.constant([[1.0, 1.0, 1.0],   # counterfactual strategy of I1,0
@@ -53,12 +53,12 @@ class TestMaskedAssign(TestCase):
 			tf.assert_equal(masked_strategies, expected_result)
 
 	def test_masked_strategies_domain_01_lvl2(self):
-		acting_players = tf.Variable([ACTING_PLAYER,      # of I2,0
+		acting_players = tf.Variable([UPDATING_PLAYER,    # of I2,0
 		                              OPPONENT,           # of I2,1
-		                              ACTING_PLAYER,      # of I2,2
+		                              UPDATING_PLAYER,    # of I2,2
 		                              OPPONENT,           # of I2,3
 		                              CHANCE_PLAYER,      # of I2,4
-		                              ACTING_PLAYER,      # of I2,5
+		                              UPDATING_PLAYER,    # of I2,5
 		                              OPPONENT,           # of I2,6
 		                              NO_ACTING_PLAYER],  # of I2,t ... pseudo-infoset of terminal/imaginary nodes
 		                             name="acting_players")
@@ -71,7 +71,7 @@ class TestMaskedAssign(TestCase):
 		                          [0.40, 0.60],   # of I2,6
 		                          [0.00, 0.00]],  # of I2,t ... terminal/imaginary nodes <- mock-up zero strategy
 		                         name="strategies")
-		mask_of_resolving_player = tf.equal(acting_players, ACTING_PLAYER, name="mask_of_resolving_player")
+		mask_of_resolving_player = tf.equal(acting_players, UPDATING_PLAYER, name="mask_of_resolving_player")
 		masked_strategies = masked_assign(ref=strategies, mask=mask_of_resolving_player,
 		                                  value=1)
 		expected_result = tf.constant([[1.0, 1.0],   # counterfactual strategy of the resolving player

@@ -17,21 +17,18 @@ node_cf_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies_lvl0, node_to
                                                      updating_player=updating_player,
                                                      acting_players=IS_acting_players_lvl0,
                                                      name="node_cf_strategies_lvl0")
-
 reach_probabilities_lvl1 = expanded_multiply(expandable_tensor=reach_probabilities_lvl0,
                                              expanded_tensor=node_cf_strategies_lvl0, name="reach_probabilities_lvl1")
 node_cf_strategies_lvl1 = assign_strategies_to_nodes(IS_strategies_lvl1, node_to_IS_lvl1,
                                                      updating_player=updating_player,
                                                      acting_players=IS_acting_players_lvl1,
                                                      name="node_cf_strategies_lvl1")
-
 reach_probabilities_lvl2 = expanded_multiply(expandable_tensor=reach_probabilities_lvl1,
                                              expanded_tensor=node_cf_strategies_lvl1, name="reach_probabilities_lvl2")
 node_cf_strategies_lvl2 = assign_strategies_to_nodes(IS_strategies_lvl2, node_to_IS_lvl2,
                                                      updating_player=updating_player,
                                                      acting_players=IS_acting_players_lvl2,
                                                      name="node_cf_strategies_lvl2")
-
 reach_probabilities_lvl3 = expanded_multiply(expandable_tensor=reach_probabilities_lvl2,
                                              expanded_tensor=node_cf_strategies_lvl2, name="reach_probabilities_lvl3")
 

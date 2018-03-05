@@ -2,8 +2,8 @@
 
 import tensorflow as tf
 
-from constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, UPDATING_PLAYER, \
-	OPPONENT, NO_ACTING_PLAYER
+from constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, PLAYER1, \
+	PLAYER2, NO_ACTING_PLAYER
 from utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
@@ -33,10 +33,10 @@ shape_lvl1 = actions_per_levels[:1]
 node_to_IS_lvl1 = tf.Variable([0, 1, 2, 2, 3], name="node_to_IS_lvl1")
 node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
-IS_acting_players_lvl1 = tf.Variable([UPDATING_PLAYER,  # I1,0
-                                      OPPONENT,         # I1,1
-                                      OPPONENT,         # I1,2
-                                      CHANCE_PLAYER],   # I1,3
+IS_acting_players_lvl1 = tf.Variable([PLAYER1,         # I1,0
+                                      PLAYER2,         # I1,1
+                                      PLAYER2,         # I1,2
+                                      CHANCE_PLAYER],  # I1,3
                                      name="IS_acting_players_lvl1")
 IS_strategies_lvl1 = tf.Variable([[0.5, 0.4, 0.1],   # of I1,0
 	                                [0.1, 0.9, 0.0],   # of I1,1
@@ -73,13 +73,13 @@ mask_terminals_lvl2 = tf.equal(node_types_lvl2, TERMINAL_NODE)
 terminal_values_lvl2 = tf.reshape(tf.range(10, 160, delta=10.0), shape_lvl2)
 utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=terminal_values_lvl2, mask=mask_terminals_lvl2,
                                name="utilities_lvl2")
-IS_acting_players_lvl2 = tf.Variable([UPDATING_PLAYER,    # of I2,0
-                                      OPPONENT,           # of I2,1
-                                      UPDATING_PLAYER,    # of I2,2
-                                      OPPONENT,           # of I2,3
+IS_acting_players_lvl2 = tf.Variable([PLAYER1,            # of I2,0
+                                      PLAYER2,            # of I2,1
+                                      PLAYER1,            # of I2,2
+                                      PLAYER2,            # of I2,3
                                       CHANCE_PLAYER,      # of I2,4
-                                      UPDATING_PLAYER,    # of I2,5
-                                      OPPONENT,           # of I2,6
+                                      PLAYER1,            # of I2,5
+                                      PLAYER2,            # of I2,6
                                       NO_ACTING_PLAYER,   # of I2,7 ... pseudo-infoset of terminal nodes
                                       NO_ACTING_PLAYER],  # of I2,8 ... pseudo-infoset of imaginary nodes
                                      name="IS_acting_players_lvl2")

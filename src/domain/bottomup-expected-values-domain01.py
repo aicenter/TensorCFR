@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from assign_strategies_to_nodes import assign_strategies_to_nodes
-from constants import UPDATING_PLAYER, TERMINAL_NODE
+from constants import PLAYER1, TERMINAL_NODE
 from domain.domain_01 import node_to_IS_lvl0, IS_strategies_lvl0, node_to_IS_lvl1, \
 	IS_strategies_lvl1, node_to_IS_lvl2, IS_strategies_lvl2, utilities_lvl3, utilities_lvl2, node_types_lvl2, \
 	utilities_lvl1, node_types_lvl1, node_types_lvl0, utilities_lvl0
@@ -9,7 +9,7 @@ from utils.tensor_utils import print_tensors
 
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
-updating_player = UPDATING_PLAYER
+updating_player = PLAYER1
 
 node_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies_lvl0, node_to_IS_lvl0, name="node_strategies_lvl0")
 node_strategies_lvl1 = assign_strategies_to_nodes(IS_strategies_lvl1, node_to_IS_lvl1, name="node_strategies_lvl1")

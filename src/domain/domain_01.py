@@ -69,9 +69,9 @@ node_types_lvl2 = tf.Variable([[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, 
                                [TERMINAL_NODE, INNER_NODE, INNER_NODE]],  # s17, s18, s19
                               name="node_types_lvl2")
 utilities_lvl2 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl2))
-random_values_lvl2 = tf.random_uniform(shape_lvl2)
 mask_terminals_lvl2 = tf.equal(node_types_lvl2, TERMINAL_NODE)
-utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=random_values_lvl2, mask=mask_terminals_lvl2,
+terminal_values_lvl2 = tf.reshape(tf.range(10, 160, delta=10.0), shape_lvl2)
+utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=terminal_values_lvl2, mask=mask_terminals_lvl2,
                                name="utilities_lvl2")
 IS_acting_players_lvl2 = tf.Variable([UPDATING_PLAYER,    # of I2,0
                                       OPPONENT,           # of I2,1
@@ -107,9 +107,9 @@ node_types_lvl3 = tf.scatter_nd_update(ref=node_types_lvl3, indices=indices_imag
                                        updates=tf.fill(value=IMAGINARY_NODE, dims=indices_imaginary_nodes_lvl3.shape),
                                        name="node_types_lvl3")
 utilities_lvl3 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl3))
-random_values_lvl3 = tf.random_uniform(shape_lvl3)
 mask_terminals_lvl3 = tf.equal(node_types_lvl3, TERMINAL_NODE)
-utilities_lvl3 = masked_assign(ref=utilities_lvl3, value=random_values_lvl3, mask=mask_terminals_lvl3,
+terminal_values_lvl3 = tf.reshape(tf.range(10, 310, delta=10.0), shape_lvl3)
+utilities_lvl3 = masked_assign(ref=utilities_lvl3, value=terminal_values_lvl3, mask=mask_terminals_lvl3,
                                name="utilities_lvl3")
 
 

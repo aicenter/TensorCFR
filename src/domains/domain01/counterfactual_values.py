@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+
 import tensorflow as tf
 
-from domain.bottomup_expected_values_domain01 import get_expected_values
-from domain.domain_01 import levels
-from domain.topdown_reach_probabilities_domain01 import get_reach_probabilities
+from domains.domain01.bottomup_expected_values_domain01 import get_expected_values
+from domains.domain01.domain_01 import levels
+from domains.domain01.topdown_reach_probabilities_domain01 import get_reach_probabilities
 from utils.tensor_utils import print_tensors
 
 

@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 from assign_strategies_to_nodes import assign_strategies_to_nodes
-from domain.domain_01 import IS_strategies_lvl0, node_to_IS_lvl0, IS_strategies_lvl1, node_to_IS_lvl1, \
+from domains.domain01.domain_01 import IS_strategies_lvl0, node_to_IS_lvl0, IS_strategies_lvl1, node_to_IS_lvl1, \
 	IS_strategies_lvl2, \
 	node_to_IS_lvl2
 from utils.tensor_utils import print_tensors

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import tensorflow as tf
 
 from assign_strategies_to_nodes import assign_strategies_to_nodes

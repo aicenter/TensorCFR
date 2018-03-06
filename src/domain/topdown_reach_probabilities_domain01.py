@@ -40,18 +40,18 @@ def get_reach_probabilities():
 	return [reach_probabilities_lvl0, reach_probabilities_lvl1, reach_probabilities_lvl2, reach_probabilities_lvl3]
 
 
-reach_probabilities = get_reach_probabilities()
-
-with tf.Session() as sess:
-	sess.run(tf.global_variables_initializer())
-	print("########## Level 0 ##########")
-	print_tensors(sess, [reach_probabilities[0], node_to_IS_lvl0, IS_strategies_lvl0, node_strategies_lvl0,
-	                     node_cf_strategies_lvl0])
-	print("########## Level 1 ##########")
-	print_tensors(sess, [reach_probabilities[1], node_to_IS_lvl1, IS_strategies_lvl1, node_strategies_lvl1,
-	                     node_cf_strategies_lvl1])
-	print("########## Level 2 ##########")
-	print_tensors(sess, [reach_probabilities[2], node_to_IS_lvl2, IS_strategies_lvl2, node_strategies_lvl2,
-	                     node_cf_strategies_lvl2])
-	print("########## Level 3 ##########")
-	print_tensors(sess, [reach_probabilities[3]])
+if __name__ == '__main__':
+	reach_probabilities = get_reach_probabilities()
+	with tf.Session() as sess:
+		sess.run(tf.global_variables_initializer())
+		print("########## Level 0 ##########")
+		print_tensors(sess, [reach_probabilities[0], node_to_IS_lvl0, IS_strategies_lvl0, node_strategies_lvl0,
+												 node_cf_strategies_lvl0])
+		print("########## Level 1 ##########")
+		print_tensors(sess, [reach_probabilities[1], node_to_IS_lvl1, IS_strategies_lvl1, node_strategies_lvl1,
+												 node_cf_strategies_lvl1])
+		print("########## Level 2 ##########")
+		print_tensors(sess, [reach_probabilities[2], node_to_IS_lvl2, IS_strategies_lvl2, node_strategies_lvl2,
+												 node_cf_strategies_lvl2])
+		print("########## Level 3 ##########")
+		print_tensors(sess, [reach_probabilities[3]])

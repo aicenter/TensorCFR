@@ -11,9 +11,13 @@ from utils.tensor_utils import print_tensors, expanded_multiply
 
 updating_player = PLAYER1
 
-node_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies_lvl0, node_to_IS_lvl0, name="node_strategies_lvl0")
-node_strategies_lvl1 = assign_strategies_to_nodes(IS_strategies_lvl1, node_to_IS_lvl1, name="node_strategies_lvl1")
-node_strategies_lvl2 = assign_strategies_to_nodes(IS_strategies_lvl2, node_to_IS_lvl2, name="node_strategies_lvl2")
+
+def get_node_strategies():
+	node_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies_lvl0, node_to_IS_lvl0, name="node_strategies_lvl0")
+	node_strategies_lvl1 = assign_strategies_to_nodes(IS_strategies_lvl1, node_to_IS_lvl1, name="node_strategies_lvl1")
+	node_strategies_lvl2 = assign_strategies_to_nodes(IS_strategies_lvl2, node_to_IS_lvl2, name="node_strategies_lvl2")
+	return [node_strategies_lvl0, node_strategies_lvl1, node_strategies_lvl2]
+
 
 # TODO generate node_cf_strategies_* with tf.where on node_strategies
 node_cf_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies_lvl0, node_to_IS_lvl0,
@@ -41,17 +45,18 @@ def get_reach_probabilities():
 
 
 if __name__ == '__main__':
+	node_strategies = get_node_strategies()
 	reach_probabilities = get_reach_probabilities()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print("########## Level 0 ##########")
-		print_tensors(sess, [reach_probabilities[0], node_to_IS_lvl0, IS_strategies_lvl0, node_strategies_lvl0,
+		print_tensors(sess, [reach_probabilities[0], node_to_IS_lvl0, IS_strategies_lvl0, node_strategies[0],
 												 node_cf_strategies_lvl0])
 		print("########## Level 1 ##########")
-		print_tensors(sess, [reach_probabilities[1], node_to_IS_lvl1, IS_strategies_lvl1, node_strategies_lvl1,
+		print_tensors(sess, [reach_probabilities[1], node_to_IS_lvl1, IS_strategies_lvl1, node_strategies[1],
 												 node_cf_strategies_lvl1])
 		print("########## Level 2 ##########")
-		print_tensors(sess, [reach_probabilities[2], node_to_IS_lvl2, IS_strategies_lvl2, node_strategies_lvl2,
+		print_tensors(sess, [reach_probabilities[2], node_to_IS_lvl2, IS_strategies_lvl2, node_strategies[2],
 												 node_cf_strategies_lvl2])
 		print("########## Level 3 ##########")
 		print_tensors(sess, [reach_probabilities[3]])

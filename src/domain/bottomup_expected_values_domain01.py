@@ -9,14 +9,14 @@ from domain.domain_01 import node_to_IS_lvl0, IS_strategies_lvl0, node_to_IS_lvl
 	utilities_lvl1, node_types_lvl1, node_types_lvl0, utilities_lvl0
 from utils.tensor_utils import print_tensors
 
-
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
+node_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies_lvl0, node_to_IS_lvl0, name="node_strategies_lvl0")
+node_strategies_lvl1 = assign_strategies_to_nodes(IS_strategies_lvl1, node_to_IS_lvl1, name="node_strategies_lvl1")
+node_strategies_lvl2 = assign_strategies_to_nodes(IS_strategies_lvl2, node_to_IS_lvl2, name="node_strategies_lvl2")
+
+
 def get_expected_values():
-	global node_strategies_lvl0, node_strategies_lvl1, node_strategies_lvl2
-	node_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies_lvl0, node_to_IS_lvl0, name="node_strategies_lvl0")
-	node_strategies_lvl1 = assign_strategies_to_nodes(IS_strategies_lvl1, node_to_IS_lvl1, name="node_strategies_lvl1")
-	node_strategies_lvl2 = assign_strategies_to_nodes(IS_strategies_lvl2, node_to_IS_lvl2, name="node_strategies_lvl2")
 	expected_values_lvl3 = tf.identity(utilities_lvl3, name="expected_values_lvl3")
 	weighted_sum_of_values_lvl2 = tf.reduce_sum(input_tensor=node_strategies_lvl2 * expected_values_lvl3, axis=-1,
 	                                            name="weighted_sum_of_values_lvl2")

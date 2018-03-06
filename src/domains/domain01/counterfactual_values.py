@@ -2,9 +2,9 @@
 
 import tensorflow as tf
 
-from domains.domain01.bottomup_expected_values_domain01 import get_expected_values
+from domains.domain01.bottomup_expected_values import get_expected_values
 from domains.domain01.domain_01 import levels
-from domains.domain01.topdown_reach_probabilities_domain01 import get_reach_probabilities
+from domains.domain01.topdown_reach_probabilities import get_reach_probabilities
 from utils.tensor_utils import print_tensors
 
 

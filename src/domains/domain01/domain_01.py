@@ -96,6 +96,7 @@ IS_strategies_lvl2 = tf.Variable([[0.15, 0.85],   # of I2,0
                                  name="IS_strategies_lvl2")
 
 ########## Level 3 ##########
+# There are never any infosets in the final layer, only terminal / imaginary nodes.
 shape_lvl3 = actions_per_levels[:3]
 node_types_lvl3 = tf.Variable(tf.fill(value=TERMINAL_NODE, dims=shape_lvl3))
 indices_imaginary_nodes_lvl3 = tf.constant([[0, 2],   # children of s7

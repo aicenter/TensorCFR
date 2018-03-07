@@ -10,7 +10,7 @@ from utils.tensor_utils import print_tensors
 
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
-def get_counterfactual_values_of_nodes():   # TODO verify and write a test
+def get_counterfactual_values_of_nodes():   # TODO verify and write a unittest
 	_expected_values = get_expected_values()
 	_reach_probabilities = get_reach_probabilities()
 	counterfactual_values_of_nodes = [tf.multiply(_reach_probabilities[level], _expected_values[level],

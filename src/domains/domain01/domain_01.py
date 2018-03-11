@@ -114,6 +114,10 @@ terminal_values_lvl3 = tf.reshape(tf.range(10, 310, delta=10.0), shape_lvl3)
 utilities_lvl3 = masked_assign(ref=utilities_lvl3, value=terminal_values_lvl3, mask=mask_terminals_lvl3,
                                name="utilities_lvl3")
 
+positive_cumulative_regrets = [tf.Variable(tf.zeros_like(IS_strategies_lvl0), name="pos_cumul_regrets_lvl0"),
+                               tf.Variable(tf.zeros_like(IS_strategies_lvl1), name="pos_cumul_regrets_lvl1"),
+                               tf.Variable(tf.zeros_like(IS_strategies_lvl2), name="pos_cumul_regrets_lvl2")]
+
 
 if __name__ == '__main__':
 	with tf.Session() as sess:

@@ -114,6 +114,10 @@ terminal_values_lvl3 = tf.reshape(tf.range(10, 310, delta=10.0), shape_lvl3)
 utilities_lvl3 = masked_assign(ref=utilities_lvl3, value=terminal_values_lvl3, mask=mask_terminals_lvl3,
                                name="utilities_lvl3")
 
+########## miscellaneous tensors ##########
+cf_values_IS_actions = [tf.Variable(tf.zeros_like(IS_strategies_lvl0), name="cf_values_IS_actions_lvl0"),
+                        tf.Variable(tf.zeros_like(IS_strategies_lvl1), name="cf_values_IS_actions_lvl1"),
+                        tf.Variable(tf.zeros_like(IS_strategies_lvl2), name="cf_values_IS_actions_lvl2")]
 positive_cumulative_regrets = [tf.Variable(tf.zeros_like(IS_strategies_lvl0), name="pos_cumul_regrets_lvl0"),
                                tf.Variable(tf.zeros_like(IS_strategies_lvl1), name="pos_cumul_regrets_lvl1"),
                                tf.Variable(tf.zeros_like(IS_strategies_lvl2), name="pos_cumul_regrets_lvl2")]

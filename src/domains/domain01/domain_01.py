@@ -128,6 +128,11 @@ def get_node_types():
 	return node_types
 
 
+def get_node_to_IS():
+	node_to_IS = [node_to_IS_lvl0, node_to_IS_lvl1, node_to_IS_lvl2]
+	return node_to_IS
+
+
 if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

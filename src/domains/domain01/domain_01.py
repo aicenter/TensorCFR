@@ -123,6 +123,11 @@ positive_cumulative_regrets = [tf.Variable(tf.zeros_like(IS_strategies_lvl0), na
                                tf.Variable(tf.zeros_like(IS_strategies_lvl2), name="pos_cumul_regrets_lvl2")]
 
 
+def get_node_types():
+	node_types = [node_types_lvl0, node_types_lvl1, node_types_lvl2, node_types_lvl3]
+	return node_types
+
+
 if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

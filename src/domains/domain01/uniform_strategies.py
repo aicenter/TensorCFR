@@ -25,7 +25,7 @@ def get_IS_children_types():  # TODO unittest
 	return IS_children_types
 
 
-def get_IS_uniform_strategies():
+def get_IS_uniform_strategies():  # TODO unittest
 	IS_children_types = get_IS_children_types()
 	IS_uniform_strategies = [None] * (levels - 1)
 	for level in range(levels - 1):

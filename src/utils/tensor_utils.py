@@ -63,3 +63,18 @@ def expanded_multiply(expandable_tensor, expanded_tensor, name):
 		A corresponding TensorFlow operation (from the computation graph).
 	"""
 	return tf.multiply(tf.expand_dims(expandable_tensor, axis=-1), expanded_tensor, name=name)
+
+
+def normalize(tensor, axis=-1, order=1):
+	"""
+	Normalize the input tensor along an arbitrary axis with an arbitrary norm.
+
+	Args:
+		:param tensor - Input tf.Tensor.
+		:param axis - Along which axis is to be the input tensor normalized, defaul is -1 (the last axes).
+		:param order - Which norm will be used as in numpy.linalg.norm. Default is 1 (L1 norm).
+
+	Returns:
+		Normalized tensor.
+	"""
+	return tf.divide( tensor, tf.norm( tensor, axis=axis, keepdims=True, ord=order ) )

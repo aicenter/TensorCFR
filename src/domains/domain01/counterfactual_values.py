@@ -20,22 +20,21 @@ def get_cf_values_nodes():  # TODO verify and write a unittest
 
 
 # noinspection PyPep8Naming
-def compute_cf_values_IS_action():
+def get_cf_values_IS_actions():  # TODO verify and write a unittest
 	node_to_IS = [node_to_IS_lvl0, node_to_IS_lvl1, node_to_IS_lvl2]
 	node_cf_values = get_cf_values_nodes()
 	IS_strategies = [IS_strategies_lvl0, IS_strategies_lvl1, IS_strategies_lvl2]
-	initialized_cfv_IS_actions = [tf.assign(ref=cf_values_IS_actions[level], value=tf.zeros_like(IS_strategies[level]))
-	                              for level in range(levels - 1)]             # no IS in final level
-
-	scatter_cfv_ops = [None] * (levels - 1)
-	scatter_cfv_ops[0] = tf.assign(ref=cf_values_IS_actions[0], value=tf.expand_dims(node_cf_values[1], axis=0))
+	new_cf_values_IS_action = [None] * (levels - 1)
+	new_cf_values_IS_action[0] = tf.assign(ref=cf_values_IS_actions[0],
+	                                          value=tf.expand_dims(node_cf_values[1], axis=0))
 	for level in range(1, levels - 1):  # TODO replace for-loop with parallel_map on TensorArray?
-		scatter_nd_add_ref = initialized_cfv_IS_actions[level]
-		scatter_nd_add_indices = tf.expand_dims(node_to_IS[level], axis=-1, name="expanded_node_to_IS_lvl{}".format(level))
+		scatter_nd_add_ref = tf.Variable(tf.zeros_like(IS_strategies[level]))
+		scatter_nd_add_indices = tf.expand_dims(node_to_IS[level], axis=-1)
 		scatter_nd_add_updates = node_cf_values[level + 1]
-		scatter_cfv_ops[level] = tf.scatter_nd_add(ref=scatter_nd_add_ref, indices=scatter_nd_add_indices,
-		                                           updates=scatter_nd_add_updates)
-	return scatter_cfv_ops
+		new_cf_values_IS_action[level] = tf.scatter_nd_add(ref=scatter_nd_add_ref, indices=scatter_nd_add_indices,
+		                                                   updates=scatter_nd_add_updates)
+	return [tf.assign(ref=cf_values_IS_actions[level], value=new_cf_values_IS_action[level],
+	                  name="assign_new_cfv_IS_action_lvl{}".format(level)) for level in range(levels - 1)]
 
 
 def get_cf_values_IS():  # TODO verify and write a unittest
@@ -50,13 +49,14 @@ if __name__ == '__main__':
 	expected_values_ = get_expected_values()
 	cf_values_nodes_ = get_cf_values_nodes()
 	IS_strategies_ = [IS_strategies_lvl0, IS_strategies_lvl1, IS_strategies_lvl2]
-	cf_values_IS = get_cf_values_IS()
+	cf_values_IS_actions_ = get_cf_values_IS_actions()
+	cf_values_IS_ = get_cf_values_IS()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		for i in range(levels):
 			print("########## Level {} ##########".format(i))
 			print_tensors(sess, [reach_probabilities_[i], expected_values_[i], cf_values_nodes_[i]])
 			if i < levels - 1:
-				sess.run(compute_cf_values_IS_action()[i])  # TODO unittest for multiple call of `cf_values_IS` and
-																										# `cf_values_IS_actions`
-				print_tensors(sess, [IS_strategies_[i], cf_values_IS_actions[i], cf_values_IS[i]])
+				print_tensors(sess, [IS_strategies_[i], cf_values_IS_actions_[i], cf_values_IS_actions[i], cf_values_IS_[i]])
+				# TODO unittest for multiple call of `cf_values_IS` and `cf_values_IS_actions` as below:
+				# print_tensors(sess, [cf_values_IS_actions[i], cf_values_IS_actions_[i], cf_values_IS_actions[i]])

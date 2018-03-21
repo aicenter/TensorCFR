@@ -243,14 +243,16 @@ if __name__ == '__main__':
   with tf.Session() as sess:
     sess.run( tf.global_variables_initializer() )
 
-    for level in range(levels):
+    levels_range = range(levels)
+
+    for level in levels_range:
 
       print("########## Level {} ##########".format(level))
 
       if level == 0:
-        print_tensors( sess, [ reach_probabilities[level] ] ) 
+        print_tensors( sess, [ reach_probabilities[level] ] )
 
-      if level == 3:
-        print_tensors( sess, [ node_types[level], utilities[level] ] )
-      else:
-        print_tensors( sess, [ node_to_IS[level], node_types[level], utilities[level], IS_acting_players[level], IS_strategies[level] ] )
+      print_tensors( sess, [ node_types[level], utilities[level] ] )
+
+      if level != levels_range[-1]:
+        print_tensors( sess, [ node_to_IS[level], IS_acting_players[level], IS_strategies[level] ] )

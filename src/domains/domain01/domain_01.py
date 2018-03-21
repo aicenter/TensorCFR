@@ -11,12 +11,25 @@ from utils.tensor_utils import print_tensors, masked_assign
 actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1, 2)
 levels = len(actions_per_levels) + 1  # accounting for 0th level
 
+# Node to IS
+node_to_IS = list()
+node_to_IS.append( tf.Variable( 0, name="node_to_IS_lvl0" ) )
+node_to_IS.append( tf.Variable( [0, 1, 2, 2, 3], name="node_to_IS_lvl1" ) )
+node_to_IS.append( tf.Variable( [[0, 1, 7],  # s5, s6, s7
+                                 [2, 2, 8],  # s8, s9, s10
+                                 [3, 4, 8],  # s11, s12, s13
+                                 [3, 4, 8],  # s14, s15, s16
+                                 [7, 5, 6]], # s17, s18, s19
+                                 name="node_to_IS_lvl2") )
+
+
 ########## Level 0 ##########
 # I0,0 = { s } ... root node, the chance player acts here
 # there are 5 actions in node s
 reach_probabilities_lvl0 = tf.Variable(1.0, name="reach_probabilities_lvl0")
 shape_lvl0 = actions_per_levels[:0]
-node_to_IS_lvl0 = tf.Variable(0, name="node_to_IS_lvl0")  # NOTE: the value above is not [1] in order to remove 1
+node_to_IS_lvl0 = node_to_IS[0]
+#node_to_IS_lvl0 = tf.Variable(0, name="node_to_IS_lvl0")  # NOTE: the value above is not [1] in order to remove 1
 																													# redundant '[]' represented by choice of empty sequence {}
 node_types_lvl0 = tf.Variable(INNER_NODE, name="node_types_lvl0")
 utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="utilities_lvl0")
@@ -31,7 +44,8 @@ IS_strategies_lvl0 = tf.Variable([[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
 # I1,3 = { s4 } ... chance node
 # each node has 3 actions
 shape_lvl1 = actions_per_levels[:1]
-node_to_IS_lvl1 = tf.Variable([0, 1, 2, 2, 3], name="node_to_IS_lvl1")
+node_to_IS_lvl1 = node_to_IS[1]
+#node_to_IS_lvl1 = tf.Variable([0, 1, 2, 2, 3], name="node_to_IS_lvl1")
 node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
 IS_acting_players_lvl1 = tf.Variable([PLAYER1,         # I1,0
@@ -57,12 +71,16 @@ IS_strategies_lvl1 = tf.Variable([[0.5, 0.4, 0.1],   # of I1,0
 # I2,8 = { s10, s13, s16 } ... imaginary nodes
 # each node has 2 actions
 shape_lvl2 = actions_per_levels[:2]
+
+node_to_IS_lvl2 = node_to_IS[2]
+"""
 node_to_IS_lvl2 = tf.Variable([[0, 1, 7],  # s5, s6, s7
                                [2, 2, 8],  # s8, s9, s10
                                [3, 4, 8],  # s11, s12, s13
                                [3, 4, 8],  # s14, s15, s16
                                [7, 5, 6]],  # s17, s18, s19
                               name="node_to_IS_lvl2")
+"""
 node_types_lvl2 = tf.Variable([[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, s6, s7
                                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s8, s9, s10
                                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s11, s12, s13

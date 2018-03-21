@@ -45,6 +45,12 @@ node_types.append( tf.Variable([[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5,
                                 name="node_types_lvl2") )
 node_types.append( tf.Variable( tf.fill( value=TERMINAL_NODE, dims=shape[3] ), name="node_types_lvl3" ) )
 
+# Utilities
+utilities = list()
+utilities.append( tf.fill( value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0" ) )
+utilities.append( tf.fill( value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1" ) )
+utilities.append( tf.Variable( tf.fill( value=NON_TERMINAL_UTILITY, dims=shape[2] ) ) )
+utilities.append( tf.Variable( tf.fill( value=NON_TERMINAL_UTILITY, dims=shape[3] ) ) )
 
 
 ########## Level 0 ##########
@@ -63,7 +69,8 @@ node_to_IS_lvl0 = node_to_IS[0]
 #node_types_lvl0 = tf.Variable(INNER_NODE, name="node_types_lvl0")
 node_types_lvl0 = node_types[0]
 
-utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="utilities_lvl0")
+#utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="utilities_lvl0")
+utilities_lvl0 = utilities[0]
 
 IS_acting_players_lvl0 = tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0")
 
@@ -86,7 +93,8 @@ node_to_IS_lvl1 = node_to_IS[1]
 #node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 node_types_lvl1 = node_types[1]
 
-utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
+#utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
+utilities_lvl1 = utilities[1]
 
 IS_acting_players_lvl1 = tf.Variable([PLAYER1,         # I1,0
                                       PLAYER2,         # I1,1
@@ -136,7 +144,8 @@ node_types_lvl2 = tf.Variable([[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, 
 node_types_lvl2 = node_types[2]
 
 
-utilities_lvl2 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl2))
+#utilities_lvl2 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl2))
+utilities_lvl2 = utilities[2]
 
 mask_terminals_lvl2 = tf.equal(node_types_lvl2, TERMINAL_NODE)
 
@@ -186,7 +195,8 @@ node_types_lvl3 = tf.scatter_nd_update(ref=node_types_lvl3, indices=indices_imag
                                        updates=tf.fill(value=IMAGINARY_NODE, dims=indices_imaginary_nodes_lvl3.shape),
                                        name="node_types_lvl3")
 
-utilities_lvl3 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl3))
+#utilities_lvl3 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl3))
+utilities_lvl3 = utilities[3]
 
 mask_terminals_lvl3 = tf.equal(node_types_lvl3, TERMINAL_NODE)
 

@@ -33,6 +33,18 @@ shape.append( actions_per_levels[:1] )
 shape.append( actions_per_levels[:2] )
 shape.append( actions_per_levels[:3] )
 
+# Node types
+node_types = list()
+node_types.append( tf.Variable(INNER_NODE, name="node_types_lvl0") )
+node_types.append( tf.Variable([INNER_NODE] * 5, name="node_types_lvl1") )
+node_types.append( tf.Variable([[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, s6, s7
+                                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s8, s9, s10
+                                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s11, s12, s13
+                                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s14, s15, s16
+                                [TERMINAL_NODE, INNER_NODE, INNER_NODE]],  # s17, s18, s19
+                                name="node_types_lvl2") )
+node_types.append( tf.Variable( tf.fill( value=TERMINAL_NODE, dims=shape[3] ), name="node_types_lvl3" ) )
+
 
 
 ########## Level 0 ##########
@@ -48,7 +60,8 @@ node_to_IS_lvl0 = node_to_IS[0]
 #node_to_IS_lvl0 = tf.Variable(0, name="node_to_IS_lvl0")  # NOTE: the value above is not [1] in order to remove 1
 																													# redundant '[]' represented by choice of empty sequence {}
 
-node_types_lvl0 = tf.Variable(INNER_NODE, name="node_types_lvl0")
+#node_types_lvl0 = tf.Variable(INNER_NODE, name="node_types_lvl0")
+node_types_lvl0 = node_types[0]
 
 utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="utilities_lvl0")
 
@@ -70,7 +83,8 @@ shape_lvl1 = shape[1]
 node_to_IS_lvl1 = node_to_IS[1]
 #node_to_IS_lvl1 = tf.Variable([0, 1, 2, 2, 3], name="node_to_IS_lvl1")
 
-node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
+#node_types_lvl1 = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
+node_types_lvl1 = node_types[1]
 
 utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
 
@@ -111,12 +125,16 @@ node_to_IS_lvl2 = tf.Variable([[0, 1, 7],  # s5, s6, s7
                               name="node_to_IS_lvl2")
 """
 
+"""
 node_types_lvl2 = tf.Variable([[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, s6, s7
                                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s8, s9, s10
                                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s11, s12, s13
                                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s14, s15, s16
                                [TERMINAL_NODE, INNER_NODE, INNER_NODE]],  # s17, s18, s19
                               name="node_types_lvl2")
+"""
+node_types_lvl2 = node_types[2]
+
 
 utilities_lvl2 = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl2))
 
@@ -155,7 +173,7 @@ IS_strategies_lvl2 = tf.Variable([[0.15, 0.85],   # of I2,0
 #shape_lvl3 = actions_per_levels[:3]
 shape_lvl3 = shape[3]
 
-node_types_lvl3 = tf.Variable(tf.fill(value=TERMINAL_NODE, dims=shape_lvl3))
+node_types_lvl3 = node_types[3]
 
 indices_imaginary_nodes_lvl3 = tf.constant([[0, 2],   # children of s7
                                             [1, 2],   # children of s10

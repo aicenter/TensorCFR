@@ -6,16 +6,19 @@ def assign_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updati
 	The translation is done based on N-D tensor `states_to_infosets`: each state (indexed by N-D coordinate)
 	stores the index of its information set.
 
+	If both `updating_player` and `acting_players` are `None` (default), no masking is used for strategies. Otherwise,
+	the `updating_player` acts with probabilities 1 everywhere (for the reach probability in the formula of
+	counterfactual values).
+
 	The corresponding TensorFlow operation (in the computation graph) outputs (N+1)-D tensor, which gives
 	for every states (indexed by N-D coordinate) the corresponding strategy of its information set. The strategy
-	can be read out in the final (N+1)th dimension
+	can be read out in the final (N+1)th dimension.
 
 	Args:
 		:param infoset_strategies: A 2-D tensor of floats.
 		:param node_to_infoset: An N-D tensor of ints.
 		:param name: A string to name the resulting tensor operation.
-		:param updating_player: The index of the updating player. If both `updating_player` and `acting_acting_players` are
-			`None` (default), no masking is used for strategies.
+		:param updating_player: The index of the updating player to create for counterfactual probabilities.
 		:param acting_players: A tensor of the same shape as `node_to_infoset`, representing acting players per infosets.
 
 	Returns:

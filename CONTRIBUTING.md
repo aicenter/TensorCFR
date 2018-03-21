@@ -24,10 +24,7 @@ Note: Pull Requests in GitLab are called Merge Requests.
     
     d. We favor [rebasing over merging](https://www.atlassian.com/git/tutorials/merging-vs-rebasing#workflow-walkthrough).
     
-    e. Two extremely helpful (and not very commonly used) commands are:
-    
-    * [`git stash`](https://www.atlassian.com/git/tutorials/saving-changes/git-stash)
-    * [`git bisect`](https://git-scm.com/docs/git-bisect)
+    e. Two extremely helpful (and not very commonly used) commands are [`git stash`](https://www.atlassian.com/git/tutorials/saving-changes/git-stash) and [`git bisect`](https://git-scm.com/docs/git-bisect).
     
 5. You may merge the Pull Request in once you have the sign-off of at least one other developers, or if you 
    do not have permission to do that, you may request the second reviewer to merge it for you.

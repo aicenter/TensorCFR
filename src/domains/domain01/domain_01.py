@@ -133,6 +133,7 @@ def get_node_to_IS():
 	return node_to_IS
 
 
+# TODO use get_IS_strategies elsewhere in the code
 def get_IS_strategies():
 	IS_strategies = [IS_strategies_lvl0, IS_strategies_lvl1, IS_strategies_lvl2]
 	return IS_strategies

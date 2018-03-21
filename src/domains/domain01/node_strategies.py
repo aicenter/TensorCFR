@@ -19,7 +19,6 @@ def get_node_strategies():
 
 
 def get_node_cf_strategies(updating_player=PLAYER1):
-	# TODO generate node_cf_strategies_* with tf.where on node_strategies
 	node_cf_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies_lvl0, node_to_IS_lvl0,
 	                                                     updating_player=updating_player,
 	                                                     acting_players=IS_acting_players_lvl0,

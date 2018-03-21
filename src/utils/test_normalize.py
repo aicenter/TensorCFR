@@ -21,7 +21,8 @@ class TestTensorNormalization(tf.test.TestCase):
 			self.assertNDArrayNear(output, expected_output, self.error_tolerance)
 
 	def test_matrix_l1_norm(self):
-		expected_output = np.array([[0., 1.], [0.4, 0.6]])
+		expected_output = np.array([[0., 1.],
+		                            [0.4, 0.6]])
 
 		with self.test_session() as sess:
 			output = sess.run(normalize(self.input_tensor_2dim))
@@ -29,7 +30,11 @@ class TestTensorNormalization(tf.test.TestCase):
 			self.assertNDArrayNear(output, expected_output, self.error_tolerance)
 
 	def test_3d_tensor_l1_norm(self):
-		expected_output = np.array([[[0., 1.], [0.4, 0.6]], [[0.44444444, 0.55555556], [0.46153846, 0.53846154]]])
+		expected_output = np.array([[[0., 1.],
+		                             [0.4, 0.6]],
+
+		                            [[0.44444444, 0.55555556],
+		                             [0.46153846, 0.53846154]]])
 
 		with self.test_session() as sess:
 			output = sess.run(normalize(self.input_tensor_3dim))
@@ -45,7 +50,8 @@ class TestTensorNormalization(tf.test.TestCase):
 			self.assertNDArrayNear(output, expected_output, self.error_tolerance)
 
 	def test_matrix_l2_norm(self):
-		expected_output = np.array([[0., 1.], [0.5547002, 0.83205029]])
+		expected_output = np.array([[0., 1.],
+		                            [0.5547002, 0.83205029]])
 
 		with self.test_session() as sess:
 			output = sess.run(normalize(self.input_tensor_2dim, order=2))
@@ -53,8 +59,11 @@ class TestTensorNormalization(tf.test.TestCase):
 			self.assertNDArrayNear(output, expected_output, self.error_tolerance)
 
 	def test_3d_tensor_l2_norm(self):
-		expected_output = np.array(
-			[[[0., 1.], [0.5547002, 0.83205029]], [[0.62469505, 0.78086881], [0.65079137, 0.7592566]]])
+		expected_output = np.array([[[0., 1.],
+		                             [0.5547002, 0.83205029]],
+
+		                            [[0.62469505, 0.78086881],
+		                             [0.65079137, 0.7592566]]])
 
 		with self.test_session() as sess:
 			output = sess.run(normalize(self.input_tensor_3dim, order=2))

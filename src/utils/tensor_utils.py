@@ -30,7 +30,7 @@ def masked_assign(ref, mask, value, name="masked_assign"):
 	Returns:
 		A corresponding TensorFlow operation (from the computation graph).
 	"""
-	value = tf.to_float(value)    # make sure `value` is TensorFlow scalar of type `float`
+	value = tf.to_float(value)  # make sure `value` is TensorFlow scalar of type `float`
 
 	# check: all 3 shapes must match, "row-mask" can be a vector of the size of 'ref.shape[0]'
 	assert value.shape == [] or ref.shape == value.shape, \
@@ -71,10 +71,10 @@ def normalize(tensor, axis=-1, order=1):
 
 	Args:
 		:param tensor - Input tf.Tensor.
-		:param axis - Along which axis is to be the input tensor normalized, defaul is -1 (the last axes).
+		:param axis - Along which axis is to be the input tensor normalized, default is -1 (the last axis).
 		:param order - Which norm will be used as in numpy.linalg.norm. Default is 1 (L1 norm).
 
 	Returns:
 		Normalized tensor.
 	"""
-	return tf.divide( tensor, tf.norm( tensor, axis=axis, keepdims=True, ord=order ) )
+	return tf.divide(tensor, tf.norm(tensor, axis=axis, keepdims=True, ord=order))

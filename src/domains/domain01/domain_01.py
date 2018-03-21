@@ -11,6 +11,7 @@ from utils.tensor_utils import print_tensors, masked_assign
 actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1, 2)
 levels = len(actions_per_levels) + 1  # accounting for 0th level
 
+
 # Nodes to IS 
 node_to_IS = list()
 # level 0
@@ -29,7 +30,7 @@ node_to_IS.append( tf.Variable( [[0, 1, 7],  # s5, s6, s7
 reach_probabilities = list()
 reach_probabilities.append( tf.Variable(1.0, name="reach_probabilities_lvl0") )
 
-# Shapes
+# Shape
 shape = list()
 # level 0
 shape.append( actions_per_levels[:0] )
@@ -239,14 +240,17 @@ def get_IS_strategies():
 
 
 if __name__ == '__main__':
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		print("########## Level 0 ##########")
-		print_tensors(sess, [reach_probabilities_lvl0])
-		print_tensors(sess, [node_to_IS_lvl0, node_types_lvl0, utilities_lvl0, IS_acting_players_lvl0, IS_strategies_lvl0])
-		print("########## Level 1 ##########")
-		print_tensors(sess, [node_to_IS_lvl1, node_types_lvl1, utilities_lvl1, IS_acting_players_lvl1, IS_strategies_lvl1])
-		print("########## Level 2 ##########")
-		print_tensors(sess, [node_to_IS_lvl2, node_types_lvl2, utilities_lvl2, IS_acting_players_lvl2, IS_strategies_lvl2])
-		print("########## Level 3 ##########")
-		print_tensors(sess, [node_types_lvl3, utilities_lvl3])
+  with tf.Session() as sess:
+    sess.run( tf.global_variables_initializer() )
+
+    for level in range(levels):
+      
+      print("########## Level {} ##########".format(level))
+
+      if level == 0:
+        print_tensors( sess, [ reach_probabilities[level] ] ) 
+
+      if level == 3:
+        print_tensors( sess, [ node_types[level], utilities[level] ] )
+      else:
+        print_tensors( sess, [ node_to_IS[level], node_types[level], utilities[level], IS_acting_players[level], IS_strategies[level] ] )

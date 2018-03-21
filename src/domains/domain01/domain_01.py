@@ -52,6 +52,25 @@ utilities.append( tf.fill( value=NON_TERMINAL_UTILITY, dims=shape[1], name="util
 utilities.append( tf.Variable( tf.fill( value=NON_TERMINAL_UTILITY, dims=shape[2] ) ) )
 utilities.append( tf.Variable( tf.fill( value=NON_TERMINAL_UTILITY, dims=shape[3] ) ) )
 
+# IS acting player
+IS_acting_players = list()
+IS_acting_players.append( tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0") ) 
+IS_acting_players.append( tf.Variable( [PLAYER1,         # I1,0
+                                        PLAYER2,         # I1,1
+                                        PLAYER2,         # I1,2
+                                        CHANCE_PLAYER],  # I1,3
+                                        name="IS_acting_players_lvl1") )
+IS_acting_players.append( tf.Variable( [PLAYER1,            # of I2,0
+                                        PLAYER2,            # of I2,1
+                                        PLAYER1,            # of I2,2
+                                        PLAYER2,            # of I2,3
+                                        CHANCE_PLAYER,      # of I2,4
+                                        PLAYER1,            # of I2,5
+                                        PLAYER2,            # of I2,6
+                                        NO_ACTING_PLAYER,   # of I2,7 ... pseudo-infoset of terminal nodes
+                                        NO_ACTING_PLAYER],  # of I2,8 ... pseudo-infoset of imaginary nodes
+                                        name="IS_acting_players_lvl2") )
+
 
 ########## Level 0 ##########
 # I0,0 = { s } ... root node, the chance player acts here
@@ -72,7 +91,7 @@ node_types_lvl0 = node_types[0]
 #utilities_lvl0 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl0, name="utilities_lvl0")
 utilities_lvl0 = utilities[0]
 
-IS_acting_players_lvl0 = tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0")
+IS_acting_players_lvl0 = IS_acting_players[0]
 
 IS_strategies_lvl0 = tf.Variable([[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
                                  name="IS_strategies_lvl0")
@@ -96,11 +115,7 @@ node_types_lvl1 = node_types[1]
 #utilities_lvl1 = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape_lvl1, name="utilities_lvl1")
 utilities_lvl1 = utilities[1]
 
-IS_acting_players_lvl1 = tf.Variable([PLAYER1,         # I1,0
-                                      PLAYER2,         # I1,1
-                                      PLAYER2,         # I1,2
-                                      CHANCE_PLAYER],  # I1,3
-                                     name="IS_acting_players_lvl1")
+IS_acting_players_lvl1 = IS_acting_players[1]
 
 IS_strategies_lvl1 = tf.Variable([[0.5, 0.4, 0.1],   # of I1,0
 	                                [0.1, 0.9, 0.0],   # of I1,1
@@ -154,16 +169,7 @@ terminal_values_lvl2 = tf.reshape(tf.range(10, 160, delta=10.0), shape_lvl2)
 utilities_lvl2 = masked_assign(ref=utilities_lvl2, value=terminal_values_lvl2, mask=mask_terminals_lvl2,
                                name="utilities_lvl2")
 
-IS_acting_players_lvl2 = tf.Variable([PLAYER1,            # of I2,0
-                                      PLAYER2,            # of I2,1
-                                      PLAYER1,            # of I2,2
-                                      PLAYER2,            # of I2,3
-                                      CHANCE_PLAYER,      # of I2,4
-                                      PLAYER1,            # of I2,5
-                                      PLAYER2,            # of I2,6
-                                      NO_ACTING_PLAYER,   # of I2,7 ... pseudo-infoset of terminal nodes
-                                      NO_ACTING_PLAYER],  # of I2,8 ... pseudo-infoset of imaginary nodes
-                                     name="IS_acting_players_lvl2")
+IS_acting_players_lvl2 = IS_acting_players[2]
 
 IS_strategies_lvl2 = tf.Variable([[0.15, 0.85],   # of I2,0
                                   [0.70, 0.30],   # of I2,1

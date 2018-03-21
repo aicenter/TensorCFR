@@ -27,6 +27,7 @@ Note: Pull Requests in GitLab are called Merge Requests.
     e. Two extremely helpful (and not very commonly used) commands are:
     
     * [`git stash`](https://www.atlassian.com/git/tutorials/saving-changes/git-stash)
+    
     * [`git bisect`](https://git-scm.com/docs/git-bisect)
     
 5. You may merge the Pull Request in once you have the sign-off of at least one other developers, or if you 

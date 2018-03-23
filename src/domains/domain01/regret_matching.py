@@ -20,11 +20,6 @@ def get_strategy_matched_to_regrets():  # TODO unittest
 		# Note: An all-0's row cannot be normalized. Thus, when PCRegrets sum to 0, a uniform strategy is used instead.
 		IS_strategies[level] = tf.where(condition=zero_sums, x=IS_uniform_strategies[level],
 		                                y=normalized_regrets, name="strategies_matched_to_regrets_lvl{}".format(level))
-		# with tf.Session() as sess:
-		# 	print("########## Level {} ##########".format(level))
-		# 	sess.run(tf.global_variables_initializer())
-		# 	print_tensors(sess, [sums_of_regrets, normalized_regrets, zero_sums, IS_uniform_strategies[level],
-		# 	                     IS_strategies[level]])
 	return IS_strategies
 
 

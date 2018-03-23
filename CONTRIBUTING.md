@@ -28,6 +28,10 @@ Note: Pull Requests in GitLab are called Merge Requests.
     
 5. You may merge the Pull Request in once you have the sign-off of at least one other developers, or if you 
    do not have permission to do that, you may request the second reviewer to merge it for you.
+   
+    a. [Resolve WIP status.](https://docs.gitlab.com/ce/user/project/merge_requests/work_in_progress_merge_requests.html)
+    
+    b. Add a comment asking for a [code review](https://smartbear.com/learn/code-review/best-practices-for-peer-code-review/).
 
 ## Code of Conduct
 

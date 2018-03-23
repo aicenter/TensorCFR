@@ -33,7 +33,7 @@ def get_IS_uniform_strategies():  # TODO unittest
 		# Note: An all-0's row cannot be normalized. This is caused when IS has only imaginary children. As of now,
 		# `tf.divide` produces `nan` in the entire row.
 		IS_uniform_strategies[level] = tf.divide(IS_uniform_strategies[level],
-		                                         tf.reduce_sum(IS_uniform_strategies[level], axis=-1, keep_dims=True),
+		                                         tf.reduce_sum(IS_uniform_strategies[level], axis=-1, keepdims=True),
 		                                         name="IS_uniform_strategies_lvl{}".format(level))
 	return IS_uniform_strategies
 

@@ -162,14 +162,14 @@ IS_acting_players[2] = tf.Variable(
 )
 
 # IS strategies
-IS_strategies = [None] * 3
+is_strategies = [None] * 3
 # level 0
-IS_strategies[0] = tf.Variable(
+is_strategies[0] = tf.Variable(
     [[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
     name="IS_strategies_lvl0"
 )
 # level 1
-IS_strategies[1] = tf.Variable(
+is_strategies[1] = tf.Variable(
     [
         [0.5, 0.4, 0.1],   # of I1,0
         [0.1, 0.9, 0.0],   # of I1,1
@@ -178,7 +178,7 @@ IS_strategies[1] = tf.Variable(
     name="IS_strategies_lvl1"
 )
 # level 2
-IS_strategies[2] = tf.Variable(
+is_strategies[2] = tf.Variable(
     [
         [0.15, 0.85],   # of I2,0
         [0.70, 0.30],   # of I2,1
@@ -209,7 +209,7 @@ utilities_lvl0 = utilities[0]
 
 IS_acting_players_lvl0 = IS_acting_players[0]
 
-IS_strategies_lvl0 = IS_strategies[0]
+IS_strategies_lvl0 = is_strategies[0]
 
 ########## Level 1 ##########
 # I1,0 = { s' }
@@ -228,7 +228,7 @@ utilities_lvl1 = utilities[1]
 
 IS_acting_players_lvl1 = IS_acting_players[1]
 
-IS_strategies_lvl1 = IS_strategies[1]
+IS_strategies_lvl1 = is_strategies[1]
 
 ########## Level 2 ##########
 # I2,0 = { s5 }
@@ -252,7 +252,7 @@ utilities_lvl2 = utilities[2]
 
 IS_acting_players_lvl2 = IS_acting_players[2]
 
-IS_strategies_lvl2 = IS_strategies[2]
+IS_strategies_lvl2 = is_strategies[2]
 
 ########## Level 3 ##########
 # There are never any infosets in the final layer, only terminal / imaginary nodes.
@@ -304,4 +304,4 @@ if __name__ == '__main__':
             print_tensors(sess, [node_types[level], utilities[level]])
 
             if level != levels_range[-1]:
-                print_tensors(sess, [node_to_is[level], IS_acting_players[level], IS_strategies[level]])
+                print_tensors(sess, [node_to_is[level], IS_acting_players[level], is_strategies[level]])

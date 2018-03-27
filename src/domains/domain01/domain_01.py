@@ -277,22 +277,6 @@ positive_cumulative_regrets = [
 ]
 
 
-def get_node_types():
-    node_types = [node_types_lvl0, node_types_lvl1, node_types_lvl2, node_types_lvl3]
-    return node_types
-
-
-def get_node_to_IS():
-    node_to_is = [node_to_IS_lvl0, node_to_IS_lvl1, node_to_IS_lvl2]
-    return node_to_is
-
-
-# TODO use get_IS_strategies elsewhere in the code
-def get_IS_strategies():
-    is_strategies = [IS_strategies_lvl0, IS_strategies_lvl1, IS_strategies_lvl2]
-    return is_strategies
-
-
 if __name__ == '__main__':
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())

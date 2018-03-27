@@ -28,25 +28,25 @@ def get_is_children_types():  # TODO unittest
     return is_children_types
 
 
-def get_IS_uniform_strategies():  # TODO unittest
+def get_is_uniform_strategies():  # TODO unittest
     is_children_types = get_is_children_types()
-    IS_uniform_strategies = [None] * (levels - 1)
+    is_uniform_strategies = [None] * (levels - 1)
 
     for level in range(levels - 1):
-        IS_uniform_strategies[level] = tf.to_float(tf.not_equal(is_children_types[level], IMAGINARY_NODE))
+        is_uniform_strategies[level] = tf.to_float(tf.not_equal(is_children_types[level], IMAGINARY_NODE))
         # Note: An all-0's row cannot be normalized. This is caused when IS has only imaginary children. As of now,
         #  `tf.divide` produces `nan` in the entire row.
-        IS_uniform_strategies[level] = tf.divide(
-            IS_uniform_strategies[level],
-            tf.reduce_sum(IS_uniform_strategies[level], axis=-1, keep_dims=True),
+        is_uniform_strategies[level] = tf.divide(
+            is_uniform_strategies[level],
+            tf.reduce_sum(is_uniform_strategies[level], axis=-1, keep_dims=True),
             name="IS_uniform_strategies_lvl{}".format(level)
         )
 
-    return IS_uniform_strategies
+    return is_uniform_strategies
 
 
 if __name__ == '__main__':
-    IS_uniform_strategies_ = get_IS_uniform_strategies()
+    is_uniform_strategies_ = get_is_uniform_strategies()
     is_children_types_ = get_is_children_types()
 
     with tf.Session() as sess:
@@ -54,4 +54,4 @@ if __name__ == '__main__':
 
         for i in range(levels - 1):
             print("########## Level {} ##########".format(i))
-            print_tensors(sess, [node_types[i], is_children_types_[i], IS_uniform_strategies_[i]])
+            print_tensors(sess, [node_types[i], is_children_types_[i], is_uniform_strategies_[i]])

@@ -2,9 +2,6 @@ import tensorflow as tf
 
 from assign_strategies_to_nodes import assign_strategies_to_nodes
 from constants import PLAYER1
-#from domains.domain01.domain_01 import node_to_IS_lvl0, IS_strategies_lvl0, node_to_IS_lvl1, \
-#	IS_strategies_lvl1, node_to_IS_lvl2, IS_strategies_lvl2, IS_acting_players_lvl0, IS_acting_players_lvl1, \
-#	IS_acting_players_lvl2
 from domains.domain01.domain_01 import node_to_is, is_strategies, is_acting_players
 from utils.tensor_utils import print_tensors
 

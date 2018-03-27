@@ -13,25 +13,25 @@ levels = len(actions_per_levels) + 1  # accounting for 0th level
 
 
 # Nodes to IS 
-node_to_IS = [ None ] * 3 
-# level 0
-node_to_IS[0] = tf.Variable( 0, name="node_to_IS_lvl0" )
+node_to_IS = [None] * 3
+# level
+node_to_IS[0] = tf.Variable(0, name="node_to_IS_lvl0")
 # level 1
-node_to_IS[1] = tf.Variable( [0, 1, 2, 2, 3], name="node_to_IS_lvl1" ) 
+node_to_IS[1] = tf.Variable([0, 1, 2, 2, 3], name="node_to_IS_lvl1")
 # level 2
-node_to_IS[2] = tf.Variable( [[0, 1, 7],  # s5, s6, s7
-                                 [2, 2, 8],  # s8, s9, s10
-                                 [3, 4, 8],  # s11, s12, s13
+node_to_IS[2] = tf.Variable([[0, 1, 7],  # s5, s6, s7
+                             [2, 2, 8],  # s8, s9, s10
+                             [3, 4, 8],  # s11, s12, s13
                                  [3, 4, 8],  # s14, s15, s16
                                  [7, 5, 6]], # s17, s18, s19
                                  name="node_to_IS_lvl2") 
 
 # Reach probabilities
-reach_probabilities = [ None ] 
+reach_probabilities = [None]
 reach_probabilities[0] = tf.Variable(1.0, name="reach_probabilities_lvl0")
 
 # Shape
-shape = [ None ] * 4
+shape = [None] * 4
 # level 0
 shape[0] = actions_per_levels[:0]
 # level 1
@@ -42,7 +42,7 @@ shape[2] = actions_per_levels[:2]
 shape[3] = actions_per_levels[:3]
 
 # Node types
-node_types = [ None ] * 4
+node_types = [None] * 4
 # level 0
 node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
 # level 1
@@ -103,11 +103,13 @@ IS_acting_players = [ None ] * 3
 # level 0
 IS_acting_players[0] = tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0") 
 # level 1
-IS_acting_players[1] = tf.Variable( [PLAYER1,         # I1,0
-                                        PLAYER2,         # I1,1
-                                        PLAYER2,         # I1,2
-                                        CHANCE_PLAYER],  # I1,3
-                                        name="IS_acting_players_lvl1")
+IS_acting_players[1] = tf.Variable(
+    [PLAYER1,         # I1,0
+     PLAYER2,         # I1,1
+     PLAYER2,         # I1,2
+     CHANCE_PLAYER],  # I1,3
+    name="IS_acting_players_lvl1"
+)
 # level 2
 IS_acting_players[2] = tf.Variable( [PLAYER1,            # of I2,0
                                         PLAYER2,            # of I2,1
@@ -121,12 +123,12 @@ IS_acting_players[2] = tf.Variable( [PLAYER1,            # of I2,0
                                         name="IS_acting_players_lvl2")
 
 # IS strategies
-IS_strategies = [ None ] * 3
+IS_strategies = [None] * 3
 # level 0
-IS_strategies[0] =  tf.Variable( [ [ 0.5, .25, 0.1, 0.1, .05] ],  # of I0,0
-  name="IS_strategies_lvl0")
+IS_strategies[0] = tf.Variable([[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
+                                name="IS_strategies_lvl0")
 # level 1
-IS_strategies[1] = tf.Variable( [ [0.5, 0.4, 0.1],   # of I1,0
+IS_strategies[1] = tf.Variable([[0.5, 0.4, 0.1],   # of I1,0
                                      [0.1, 0.9, 0.0],   # of I1,1
                                      [0.2, 0.8, 0.0],   # of I1,2
                                      [0.3, 0.3, 0.3] ],  # of I1,3
@@ -235,24 +237,25 @@ def get_node_to_IS():
 
 # TODO use get_IS_strategies elsewhere in the code
 def get_IS_strategies():
-	IS_strategies = [IS_strategies_lvl0, IS_strategies_lvl1, IS_strategies_lvl2]
-	return IS_strategies
+    IS_strategies = [IS_strategies_lvl0, IS_strategies_lvl1, IS_strategies_lvl2]
+
+    return IS_strategies
 
 
 if __name__ == '__main__':
-  with tf.Session() as sess:
-    sess.run( tf.global_variables_initializer() )
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
 
-    levels_range = range(levels)
+        levels_range = range(levels)
 
-    for level in levels_range:
+        for level in levels_range:
 
-      print("########## Level {} ##########".format(level))
+            print("########## Level {} ##########".format(level))
 
-      if level == 0:
-        print_tensors( sess, [ reach_probabilities[level] ] )
+            if level == 0:
+                print_tensors(sess, [reach_probabilities[level]])
 
-      print_tensors( sess, [ node_types[level], utilities[level] ] )
+            print_tensors(sess, [node_types[level], utilities[level]])
 
-      if level != levels_range[-1]:
-        print_tensors( sess, [ node_to_IS[level], IS_acting_players[level], IS_strategies[level] ] )
+            if level != levels_range[-1]:
+                print_tensors(sess, [node_to_IS[level], IS_acting_players[level], IS_strategies[level]])

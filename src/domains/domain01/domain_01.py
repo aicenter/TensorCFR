@@ -264,12 +264,17 @@ node_types_lvl3 = node_types[3]
 utilities_lvl3 = utilities[3]
 
 ########## miscellaneous tensors ##########
-cf_values_IS_actions = [tf.Variable(tf.zeros_like(IS_strategies_lvl0), name="cf_values_IS_actions_lvl0"),
-                        tf.Variable(tf.zeros_like(IS_strategies_lvl1), name="cf_values_IS_actions_lvl1"),
-                        tf.Variable(tf.zeros_like(IS_strategies_lvl2), name="cf_values_IS_actions_lvl2")]
-positive_cumulative_regrets = [tf.Variable(tf.zeros_like(IS_strategies_lvl0), name="pos_cumul_regrets_lvl0"),
-                               tf.Variable(tf.zeros_like(IS_strategies_lvl1), name="pos_cumul_regrets_lvl1"),
-                               tf.Variable(tf.zeros_like(IS_strategies_lvl2), name="pos_cumul_regrets_lvl2")]
+cf_values_is_actions = [
+    tf.Variable(tf.zeros_like(is_strategies[0]), name="cf_values_IS_actions_lvl0"),
+    tf.Variable(tf.zeros_like(is_strategies[1]), name="cf_values_IS_actions_lvl1"),
+    tf.Variable(tf.zeros_like(is_strategies[2]), name="cf_values_IS_actions_lvl2")
+]
+
+positive_cumulative_regrets = [
+    tf.Variable(tf.zeros_like(is_strategies[0]), name="pos_cumul_regrets_lvl0"),
+    tf.Variable(tf.zeros_like(is_strategies[1]), name="pos_cumul_regrets_lvl1"),
+    tf.Variable(tf.zeros_like(is_strategies[2]), name="pos_cumul_regrets_lvl2")
+]
 
 
 def get_node_types():

@@ -191,8 +191,10 @@ is_strategies[2] = tf.Variable(
         [0.00, 0.00]],  # of I2,8 ... imaginary nodes <- mock-up zero strategy
     name="IS_strategies_lvl2"
 )
+# level 3
+# There are never any infosets in the final layer, only terminal / imaginary nodes.
 
-
+"""
 ########## Level 0 ##########
 # I0,0 = { s } ... root node, the chance player acts here
 # there are 5 actions in node s
@@ -262,6 +264,7 @@ shape_lvl3 = shape[3]
 node_types_lvl3 = node_types[3]
 
 utilities_lvl3 = utilities[3]
+"""
 
 ########## miscellaneous tensors ##########
 cf_values_is_actions = [

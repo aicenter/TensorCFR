@@ -136,11 +136,11 @@ utilities_lvl3_tmp = masked_assign(
 utilities[3] = utilities_lvl3_tmp
 
 # IS acting player
-IS_acting_players = [None] * 3
+is_acting_players = [None] * 3
 # level 0
-IS_acting_players[0] = tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0") 
+is_acting_players[0] = tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0")
 # level 1
-IS_acting_players[1] = tf.Variable(
+is_acting_players[1] = tf.Variable(
     [PLAYER1,         # I1,0
      PLAYER2,         # I1,1
      PLAYER2,         # I1,2
@@ -148,7 +148,7 @@ IS_acting_players[1] = tf.Variable(
     name="IS_acting_players_lvl1"
 )
 # level 2
-IS_acting_players[2] = tf.Variable(
+is_acting_players[2] = tf.Variable(
     [PLAYER1,            # of I2,0
      PLAYER2,            # of I2,1
      PLAYER1,            # of I2,2
@@ -207,7 +207,7 @@ node_types_lvl0 = node_types[0]
 
 utilities_lvl0 = utilities[0]
 
-IS_acting_players_lvl0 = IS_acting_players[0]
+IS_acting_players_lvl0 = is_acting_players[0]
 
 IS_strategies_lvl0 = is_strategies[0]
 
@@ -226,7 +226,7 @@ node_types_lvl1 = node_types[1]
 
 utilities_lvl1 = utilities[1]
 
-IS_acting_players_lvl1 = IS_acting_players[1]
+IS_acting_players_lvl1 = is_acting_players[1]
 
 IS_strategies_lvl1 = is_strategies[1]
 
@@ -250,7 +250,7 @@ node_types_lvl2 = node_types[2]
 
 utilities_lvl2 = utilities[2]
 
-IS_acting_players_lvl2 = IS_acting_players[2]
+IS_acting_players_lvl2 = is_acting_players[2]
 
 IS_strategies_lvl2 = is_strategies[2]
 
@@ -304,4 +304,4 @@ if __name__ == '__main__':
             print_tensors(sess, [node_types[level], utilities[level]])
 
             if level != levels_range[-1]:
-                print_tensors(sess, [node_to_is[level], IS_acting_players[level], is_strategies[level]])
+                print_tensors(sess, [node_to_is[level], is_acting_players[level], is_strategies[level]])

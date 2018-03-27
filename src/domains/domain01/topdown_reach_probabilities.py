@@ -9,6 +9,7 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply
 # custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
 
 
+
 def get_reach_probabilities():
     node_cf_strategies = get_node_cf_strategies()
     reach_probabilities_lvl1 = expanded_multiply(

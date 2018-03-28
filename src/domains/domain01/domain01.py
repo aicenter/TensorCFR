@@ -4,6 +4,7 @@ import tensorflow as tf
 
 from src.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, PLAYER1, \
 	PLAYER2, NO_ACTING_PLAYER
+from src.domains.domain01.domain_01 import node_to_IS_lvl0
 from src.utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
@@ -179,6 +180,22 @@ positive_cumulative_regrets = [
 	tf.Variable(tf.zeros_like(infoset_strategies[1]), name="pos_cumul_regrets_lvl1"),
 	tf.Variable(tf.zeros_like(infoset_strategies[2]), name="pos_cumul_regrets_lvl2")
 ]
+
+
+def get_node_types():
+	return node_types
+
+
+def get_node_to_infoset():
+	return node_to_infoset
+
+
+def get_infoset_strategies():
+	return infoset_strategies
+
+
+def get_infoset_acting_players():
+	return infoset_acting_players
 
 
 if __name__ == '__main__':

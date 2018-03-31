@@ -1,13 +1,13 @@
 image: ubuntu:latest
 
 before_script:
- - apt-get update
- - apt-get -y upgrade
- - apt-get -y install python3 python3-dev python3-pip git-core 
- - pip3 install -r requirements-test.txt
- - cd src
- - cp utils/test_*.py .
+  - apt-get update
+  - apt-get -y upgrade
+  - apt-get -y install python3 python3-dev python3-pip git-core 
+  - pip3 install -r requirements-test.txt
+  - cd src
+  - cp utils/test_*.py .
 
-test:
+unittest:
   script:
     - python3 -m unittest

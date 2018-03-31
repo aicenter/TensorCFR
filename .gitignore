@@ -227,3 +227,5 @@ auto/*
 src/out/
 src/utils/__pycache__/
 src/showcases/__pycache__/
+src/domains/domain01/__pycache__/
+.cache/

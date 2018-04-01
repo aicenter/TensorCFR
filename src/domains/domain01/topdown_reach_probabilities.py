@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1
-from src.domains.domain01.domain_01 import reach_probabilities_, node_to_infoset, infoset_strategies, levels
+from src.domains.domain01.domain_01 import reach_probability_of_root_node, node_to_infoset, infoset_strategies, levels
 from src.domains.domain01.node_strategies import get_node_cf_strategies
 from src.utils.tensor_utils import print_tensors, expanded_multiply
 
@@ -12,7 +12,7 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply
 def get_reach_probabilities():
 	node_cf_strategies = get_node_cf_strategies()
 	reach_probabilities = [None] * levels
-	reach_probabilities[0] = reach_probabilities[0]
+	reach_probabilities[0] = reach_probability_of_root_node
 	for level in range(1, levels):
 		reach_probabilities[level] = expanded_multiply(
 				expandable_tensor=reach_probabilities[level - 1],

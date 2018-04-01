@@ -4,17 +4,17 @@ import tensorflow as tf
 
 from assign_strategies_to_nodes import assign_strategies_to_nodes
 from constants import TERMINAL_NODE
-from domains.domain01.domain_01 import node_to_IS, IS_strategies, utilities, node_types
+from domains.domain01.domain_01 import node_to_infoset, infoset_strategies, utilities, node_types
 from utils.tensor_utils import print_tensors
 
 # custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
 
 node_strategies = [None] * 3
-node_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies[0], node_to_IS[0], name="node_strategies_lvl0")
+node_strategies_lvl0 = assign_strategies_to_nodes(infoset_strategies[0], node_to_infoset[0], name="node_strategies_lvl0")
 node_strategies[0] = node_strategies_lvl0
-node_strategies_lvl1 = assign_strategies_to_nodes(IS_strategies[1], node_to_IS[1], name="node_strategies_lvl1")
+node_strategies_lvl1 = assign_strategies_to_nodes(infoset_strategies[1], node_to_infoset[1], name="node_strategies_lvl1")
 node_strategies[1] = node_strategies_lvl1
-node_strategies_lvl2 = assign_strategies_to_nodes(IS_strategies[2], node_to_IS[2], name="node_strategies_lvl2")
+node_strategies_lvl2 = assign_strategies_to_nodes(infoset_strategies[2], node_to_infoset[2], name="node_strategies_lvl2")
 node_strategies[2] = node_strategies_lvl2
 
 

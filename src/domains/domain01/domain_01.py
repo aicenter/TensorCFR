@@ -12,7 +12,7 @@ actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1
 levels = len(actions_per_levels) + 1  # accounting for 0th level
 
 # Init
-node_to_IS = [None] * 3
+node_to_infoset = [None] * 3
 
 reach_probabilities = [None]
 
@@ -22,15 +22,15 @@ node_types = [None] * 4
 
 utilities = [None] * 4
 
-IS_acting_players = [None] * 3
+infoset_acting_players = [None] * 3
 
-IS_strategies = [None] * 3
+infoset_strategies = [None] * 3
 
 
 ########## Level 0 ##########
 # I0,0 = { s } ... root node, the chance player acts here
 # there are 5 actions in node s
-node_to_IS[0] = tf.Variable(0, name="node_to_IS_lvl0")
+node_to_infoset[0] = tf.Variable(0, name="node_to_infoset_lvl0")
 
 reach_probabilities[0] = tf.Variable(1.0, name="reach_probabilities_lvl0")
 
@@ -40,11 +40,11 @@ node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
 
 utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
 
-IS_acting_players[0] = tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0")
+infoset_acting_players[0] = tf.Variable(CHANCE_PLAYER, name="infoset_acting_players_lvl0")
 
-IS_strategies[0] = tf.Variable(
+infoset_strategies[0] = tf.Variable(
 	[[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
-    name="IS_strategies_lvl0"
+	name="infoset_strategies_lvl0"
 )
 
 
@@ -54,7 +54,7 @@ IS_strategies[0] = tf.Variable(
 # I1,2 = { s2, s3 }
 # I1,3 = { s4 } ... chance node
 # each node has 3 actions
-node_to_IS[1] = tf.Variable([0, 1, 2, 2, 3], name="node_to_IS_lvl1")
+node_to_infoset[1] = tf.Variable([0, 1, 2, 2, 3], name="node_to_infoset_lvl1")
 
 shape[1] = actions_per_levels[:1]
 
@@ -62,21 +62,21 @@ node_types[1] = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 
 utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
 
-IS_acting_players[1] = tf.Variable(
+infoset_acting_players[1] = tf.Variable(
     [PLAYER1,         # I1,0
      PLAYER2,         # I1,1
      PLAYER2,         # I1,2
      CHANCE_PLAYER],  # I1,3
-    name="IS_acting_players_lvl1"
+    name="infoset_acting_players_lvl1"
 )
 
-IS_strategies[1] = tf.Variable(
+infoset_strategies[1] = tf.Variable(
     [
         [0.5, 0.4, 0.1],   # of I1,0
         [0.1, 0.9, 0.0],   # of I1,1
         [0.2, 0.8, 0.0],   # of I1,2
         [0.3, 0.3, 0.3]],  # of I1,3
-    name="IS_strategies_lvl1"
+    name="infoset_strategies_lvl1"
 )
 
 ########## Level 2 ##########
@@ -90,15 +90,15 @@ IS_strategies[1] = tf.Variable(
 # I2,7 = { s7, s17 } ... terminal nodes
 # I2,8 = { s10, s13, s16 } ... imaginary nodes
 # each node has 2 actions
-node_to_IS[2] = tf.Variable(
-	[
+node_to_infoset[2] = tf.Variable(
+    [
 		[0, 1, 7],  # s5, s6, s7
 		[2, 2, 8],  # s8, s9, s10
-		[3, 4, 8],  # s11, s12, s13
+		[3, 4, 8],  # s11, s12, s1
 		[3, 4, 8],  # s14, s15, s16
 		[7, 5, 6]   # s17, s18, s19
 	],
-	name="node_to_IS_lvl2"
+	name="node_to_infoset_lvl2"
 )
 
 shape[2] = actions_per_levels[:2]
@@ -129,7 +129,7 @@ utilities_lvl2_tmp = masked_assign(
 
 utilities[2] = utilities_lvl2_tmp
 
-IS_acting_players[2] = tf.Variable(
+infoset_acting_players[2] = tf.Variable(
     [PLAYER1,            # of I2,0
      PLAYER2,            # of I2,1
      PLAYER1,            # of I2,2
@@ -139,10 +139,10 @@ IS_acting_players[2] = tf.Variable(
      PLAYER2,            # of I2,6
      NO_ACTING_PLAYER,   # of I2,7 ... pseudo-infoset of terminal nodes
      NO_ACTING_PLAYER],  # of I2,8 ... pseudo-infoset of imaginary nodes
-    name="IS_acting_players_lvl2"
+    name="infoset_acting_players_lvl2"
 )
 
-IS_strategies[2] = tf.Variable(
+infoset_strategies[2] = tf.Variable(
     [
         [0.15, 0.85],   # of I2,0
         [0.70, 0.30],   # of I2,1
@@ -153,7 +153,7 @@ IS_strategies[2] = tf.Variable(
         [0.40, 0.60],   # of I2,6
         [0.00, 0.00],   # of I2,7 ... terminal nodes <- mock-up zero strategy
         [0.00, 0.00]],  # of I2,8 ... imaginary nodes <- mock-up zero strategy
-    name="IS_strategies_lvl2"
+    name="infoset_strategies_lvl2"
 )
 
 ########## Level 3 ##########
@@ -212,16 +212,16 @@ utilities[3] = utilities_lvl3_tmp
 
 
 ########## miscellaneous tensors ##########
-cf_values_IS_actions = [
-    tf.Variable(tf.zeros_like(IS_strategies[0]), name="cf_values_IS_actions_lvl0"),
-    tf.Variable(tf.zeros_like(IS_strategies[1]), name="cf_values_IS_actions_lvl1"),
-    tf.Variable(tf.zeros_like(IS_strategies[2]), name="cf_values_IS_actions_lvl2")
+cf_values_infoset_actions = [
+    tf.Variable(tf.zeros_like(infoset_strategies[0]), name="cf_values_infoset_actions_lvl0"),
+    tf.Variable(tf.zeros_like(infoset_strategies[1]), name="cf_values_infoset_actions_lvl1"),
+    tf.Variable(tf.zeros_like(infoset_strategies[2]), name="cf_values_infoset_actions_lvl2")
 ]
 
 positive_cumulative_regrets = [
-    tf.Variable(tf.zeros_like(IS_strategies[0]), name="pos_cumul_regrets_lvl0"),
-    tf.Variable(tf.zeros_like(IS_strategies[1]), name="pos_cumul_regrets_lvl1"),
-    tf.Variable(tf.zeros_like(IS_strategies[2]), name="pos_cumul_regrets_lvl2")
+    tf.Variable(tf.zeros_like(infoset_strategies[0]), name="pos_cumul_regrets_lvl0"),
+    tf.Variable(tf.zeros_like(infoset_strategies[1]), name="pos_cumul_regrets_lvl1"),
+    tf.Variable(tf.zeros_like(infoset_strategies[2]), name="pos_cumul_regrets_lvl2")
 ]
 
 
@@ -241,4 +241,4 @@ if __name__ == '__main__':
             print_tensors(sess, [node_types[level], utilities[level]])
 
             if level != levels_range[-1]:
-                print_tensors(sess, [node_to_IS[level], IS_acting_players[level], IS_strategies[level]])
+                print_tensors(sess, [node_to_infoset[level], infoset_acting_players[level], infoset_strategies[level]])

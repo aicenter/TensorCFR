@@ -12,7 +12,7 @@ actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1
 levels = len(actions_per_levels) + 1  # accounting for 0th level
 
 # Init
-node_to_is = [None] * 3
+node_to_IS = [None] * 3
 
 reach_probabilities = [None]
 
@@ -22,15 +22,15 @@ node_types = [None] * 4
 
 utilities = [None] * 4
 
-is_acting_players = [None] * 3
+IS_acting_players = [None] * 3
 
-is_strategies = [None] * 3
+IS_strategies = [None] * 3
 
 
 ########## Level 0 ##########
 # I0,0 = { s } ... root node, the chance player acts here
 # there are 5 actions in node s
-node_to_is[0] = tf.Variable(0, name="node_to_IS_lvl0")
+node_to_IS[0] = tf.Variable(0, name="node_to_IS_lvl0")
 
 reach_probabilities[0] = tf.Variable(1.0, name="reach_probabilities_lvl0")
 
@@ -40,9 +40,9 @@ node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
 
 utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
 
-is_acting_players[0] = tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0")
+IS_acting_players[0] = tf.Variable(CHANCE_PLAYER, name="IS_acting_players_lvl0")
 
-is_strategies[0] = tf.Variable(
+IS_strategies[0] = tf.Variable(
 	[[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
     name="IS_strategies_lvl0"
 )
@@ -54,7 +54,7 @@ is_strategies[0] = tf.Variable(
 # I1,2 = { s2, s3 }
 # I1,3 = { s4 } ... chance node
 # each node has 3 actions
-node_to_is[1] = tf.Variable([0, 1, 2, 2, 3], name="node_to_IS_lvl1")
+node_to_IS[1] = tf.Variable([0, 1, 2, 2, 3], name="node_to_IS_lvl1")
 
 shape[1] = actions_per_levels[:1]
 
@@ -62,7 +62,7 @@ node_types[1] = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 
 utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
 
-is_acting_players[1] = tf.Variable(
+IS_acting_players[1] = tf.Variable(
     [PLAYER1,         # I1,0
      PLAYER2,         # I1,1
      PLAYER2,         # I1,2
@@ -70,7 +70,7 @@ is_acting_players[1] = tf.Variable(
     name="IS_acting_players_lvl1"
 )
 
-is_strategies[1] = tf.Variable(
+IS_strategies[1] = tf.Variable(
     [
         [0.5, 0.4, 0.1],   # of I1,0
         [0.1, 0.9, 0.0],   # of I1,1
@@ -90,7 +90,7 @@ is_strategies[1] = tf.Variable(
 # I2,7 = { s7, s17 } ... terminal nodes
 # I2,8 = { s10, s13, s16 } ... imaginary nodes
 # each node has 2 actions
-node_to_is[2] = tf.Variable(
+node_to_IS[2] = tf.Variable(
 	[
 		[0, 1, 7],  # s5, s6, s7
 		[2, 2, 8],  # s8, s9, s10
@@ -129,7 +129,7 @@ utilities_lvl2_tmp = masked_assign(
 
 utilities[2] = utilities_lvl2_tmp
 
-is_acting_players[2] = tf.Variable(
+IS_acting_players[2] = tf.Variable(
     [PLAYER1,            # of I2,0
      PLAYER2,            # of I2,1
      PLAYER1,            # of I2,2
@@ -142,7 +142,7 @@ is_acting_players[2] = tf.Variable(
     name="IS_acting_players_lvl2"
 )
 
-is_strategies[2] = tf.Variable(
+IS_strategies[2] = tf.Variable(
     [
         [0.15, 0.85],   # of I2,0
         [0.70, 0.30],   # of I2,1
@@ -212,16 +212,16 @@ utilities[3] = utilities_lvl3_tmp
 
 
 ########## miscellaneous tensors ##########
-cf_values_is_actions = [
-    tf.Variable(tf.zeros_like(is_strategies[0]), name="cf_values_IS_actions_lvl0"),
-    tf.Variable(tf.zeros_like(is_strategies[1]), name="cf_values_IS_actions_lvl1"),
-    tf.Variable(tf.zeros_like(is_strategies[2]), name="cf_values_IS_actions_lvl2")
+cf_values_IS_actions = [
+    tf.Variable(tf.zeros_like(IS_strategies[0]), name="cf_values_IS_actions_lvl0"),
+    tf.Variable(tf.zeros_like(IS_strategies[1]), name="cf_values_IS_actions_lvl1"),
+    tf.Variable(tf.zeros_like(IS_strategies[2]), name="cf_values_IS_actions_lvl2")
 ]
 
 positive_cumulative_regrets = [
-    tf.Variable(tf.zeros_like(is_strategies[0]), name="pos_cumul_regrets_lvl0"),
-    tf.Variable(tf.zeros_like(is_strategies[1]), name="pos_cumul_regrets_lvl1"),
-    tf.Variable(tf.zeros_like(is_strategies[2]), name="pos_cumul_regrets_lvl2")
+    tf.Variable(tf.zeros_like(IS_strategies[0]), name="pos_cumul_regrets_lvl0"),
+    tf.Variable(tf.zeros_like(IS_strategies[1]), name="pos_cumul_regrets_lvl1"),
+    tf.Variable(tf.zeros_like(IS_strategies[2]), name="pos_cumul_regrets_lvl2")
 ]
 
 
@@ -241,4 +241,4 @@ if __name__ == '__main__':
             print_tensors(sess, [node_types[level], utilities[level]])
 
             if level != levels_range[-1]:
-                print_tensors(sess, [node_to_is[level], is_acting_players[level], is_strategies[level]])
+                print_tensors(sess, [node_to_IS[level], IS_acting_players[level], IS_strategies[level]])

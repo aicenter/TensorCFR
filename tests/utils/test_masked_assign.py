@@ -23,7 +23,7 @@ class TestMaskedAssign(TestCase):
 		with tf.Session() as sess:
 			sess.run(tf.global_variables_initializer())
 			sess.run(self.masked_assignment)
-			print_tensors(sess, [self.tensor, self.mask, self.masked_assignment, expected_result])
+			#print_tensors(sess, [self.tensor, self.mask, self.masked_assignment, expected_result])
 			tf.assert_equal(self.tensor, expected_result)
 
 	def test_masked_strategies_domain_01_lvl1(self):
@@ -47,9 +47,9 @@ class TestMaskedAssign(TestCase):
 		                              dtype=self.tensor.dtype, name="expected_result")
 		with tf.Session() as sess:
 			sess.run(tf.global_variables_initializer())
-			print_tensors(sess, [strategies, acting_players, mask_of_resolving_player,
-			                     masked_strategies,
-			                     expected_result])
+			#print_tensors(sess, [strategies, acting_players, mask_of_resolving_player,
+			#                     masked_strategies,
+			#                    expected_result])
 			tf.assert_equal(masked_strategies, expected_result)
 
 	def test_masked_strategies_domain_01_lvl2(self):
@@ -85,9 +85,9 @@ class TestMaskedAssign(TestCase):
 		                              dtype=self.tensor.dtype, name="expected_result")
 		with tf.Session() as sess:
 			sess.run(tf.global_variables_initializer())
-			print_tensors(sess, [strategies, acting_players, mask_of_resolving_player,
-			                     masked_strategies,
-			                     expected_result])
+			#print_tensors(sess, [strategies, acting_players, mask_of_resolving_player,
+			#                     masked_strategies,
+			#                     expected_result])
 			tf.assert_equal(masked_strategies, expected_result)
 
 	def test_mismatched_shape(self):

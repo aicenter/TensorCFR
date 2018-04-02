@@ -22,7 +22,7 @@ class TestTensorNormalization(tf.test.TestCase):
 
 	def test_matrix_l1_norm(self):
 		expected_output = np.array([[0., 1.],
-									[0.4, 0.6]])
+		                            [0.4, 0.6]])
 
 		with self.test_session() as sess:
 			output = sess.run(normalize(self.input_tensor_2dim))

@@ -15,7 +15,7 @@ class TestExpandedMultiply(tf.test.TestCase):
 		expected_result = tf.Variable([1.0, 0.5, 0.2, 0.2, 0.1], name="expected_result")
 		with tf.Session() as sess:
 			sess.run(tf.global_variables_initializer())
-			#print_tensors(sess, [result, expected_result])
+			print_tensors(sess, [result, expected_result])
 			self.assertAllEqual(result.eval(), expected_result.eval())
 
 	def test_expanded_multiply_1D_by_2D(self):
@@ -35,9 +35,9 @@ class TestExpandedMultiply(tf.test.TestCase):
 		                               [0.015, 0.015, 0.015]], name="expected_result")
 		with tf.Session() as sess:
 			sess.run(tf.global_variables_initializer())
-			#print_tensors(sess, [result, expected_result])
+			print_tensors(sess, [result, expected_result])
 			difference = tf.subtract(result, expected_result, name="difference")
-			#print_tensors(sess, [difference])
+			print_tensors(sess, [difference])
 			self.assertNDArrayNear(result.eval(), expected_result.eval(), err=self.tolerance)
 
 

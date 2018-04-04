@@ -1,13 +1,13 @@
 import numpy as np
 import tensorflow as tf
 
+from src.constants import small_error_tolerance
 from src.domains.domain01.topdown_reach_probabilities import get_reach_probabilities
 
 
 class TestTopDownReachProbabilities(tf.test.TestCase):
 	def setUp(self):
-		self.error_tolerance = 0.0000001
-
+		self.error_tolerance = small_error_tolerance
 		self.reach_probabilities = get_reach_probabilities()
 
 	def test_level_0(self):
@@ -46,24 +46,24 @@ class TestTopDownReachProbabilities(tf.test.TestCase):
 
 	def test_level_3(self):
 		expected_output = np.array([[[0.5, 0.5],
-									[0.35, 0.15],
-									[0, 0]],
+									 [0.35, 0.15],
+									 [0, 0]],
 
 									[[0.025, 0.025],
-									[0.225, 0.225],
-									[0, 0]],
+									 [0.225, 0.225],
+									 [0, 0]],
 
 									[[0.01, 0.01],
-									[0.008, 0.072],
-									[0, 0]],
+									 [0.008, 0.072],
+									 [0, 0]],
 
 									[[0.01, 0.01],
-									[0.008, 0.072],
-									[0, 0]],
+									 [0.008, 0.072],
+									 [0, 0]],
 
 									[[0, 0],
-									[0.015, 0.015],
-									[0.006, 0.009]]])
+									 [0.015, 0.015],
+									 [0.006, 0.009]]])
 
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())

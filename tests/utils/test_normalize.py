@@ -1,12 +1,13 @@
 import numpy as np
 import tensorflow as tf
 
+from src.constants import small_error_tolerance
 from src.utils.tensor_utils import normalize
 
 
 class TestTensorNormalization(tf.test.TestCase):
 	def setUp(self):
-		self.error_tolerance = 0.0000001
+		self.error_tolerance = small_error_tolerance
 
 		self.input_tensor_1dim = tf.constant(np.arange(4), tf.float32)
 		self.input_tensor_2dim = tf.constant(np.arange(4).reshape(2, 2), tf.float64)

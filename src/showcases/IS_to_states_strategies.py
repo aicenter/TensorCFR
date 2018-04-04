@@ -8,7 +8,7 @@ from domains.domain01.domain_01 import IS_strategies_lvl0, node_to_IS_lvl0, IS_s
 	node_to_IS_lvl2
 from utils.tensor_utils import print_tensors
 
-# custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
+# custom-made game: doc/domain_01_via_drawing.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 # TODO extract to a test
 
 node_strategies_lvl0 = assign_strategies_to_nodes(IS_strategies_lvl0, node_to_IS_lvl0, name="node_strategies_lvl0")

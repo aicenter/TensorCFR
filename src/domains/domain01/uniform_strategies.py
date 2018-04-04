@@ -5,7 +5,7 @@ from domains.domain01.domain_01 import levels, get_node_types, get_node_to_IS, g
 from utils.tensor_utils import print_tensors
 
 
-# custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
+# custom-made game: doc/domain_01_via_drawing.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
 
 def get_IS_children_types():  # TODO unittest

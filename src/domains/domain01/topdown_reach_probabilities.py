@@ -7,7 +7,7 @@ from domains.domain01.node_strategies import get_node_cf_strategies
 from utils.tensor_utils import print_tensors, expanded_multiply
 
 
-# custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
+# custom-made game: doc/domain_01_via_drawing.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
 
 def get_reach_probabilities():
 	_node_cf_strategies = get_node_cf_strategies()

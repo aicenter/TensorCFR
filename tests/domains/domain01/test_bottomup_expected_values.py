@@ -5,7 +5,7 @@ from src.constants import small_error_tolerance, large_error_tolerance
 from src.domains.domain01.bottomup_expected_values import get_expected_values
 
 
-class TestTopDownReachProbabilities(tf.test.TestCase):
+class TestBottomUpExpectedValues(tf.test.TestCase):
 	def setUp(self):
 		self.expected_values = get_expected_values()
 

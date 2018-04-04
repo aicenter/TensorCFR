@@ -31,13 +31,11 @@ class TestTopDownReachProbabilities(tf.test.TestCase):
 			self.assertNDArrayNear(output, expected_output, self.error_tolerance)
 
 	def test_level_2(self):
-		expected_output = np.array([
-									[0.5, 0.5, 0.5],
+		expected_output = np.array([[0.5, 0.5, 0.5],
 									[0.025, 0.225, 0],
 									[0.02, 0.08, 0],
 									[0.02, 0.08, 0],
-									[0.015, 0.015, 0.015]
-		])
+									[0.015, 0.015, 0.015]])
 
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
@@ -71,7 +69,5 @@ class TestTopDownReachProbabilities(tf.test.TestCase):
 			sess.run(tf.global_variables_initializer())
 
 			output = sess.run(self.reach_probabilities[3])
-
-			print(output)
 
 			self.assertNDArrayNear(output, expected_output, self.error_tolerance)

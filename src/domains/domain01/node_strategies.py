@@ -8,7 +8,7 @@ from domains.domain01.domain_01 import node_to_IS_lvl0, IS_strategies_lvl0, node
 from utils.tensor_utils import print_tensors
 
 
-# custom-made game: doc/domain_01_via_drawing.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
+# custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
 
 
 def get_node_strategies():

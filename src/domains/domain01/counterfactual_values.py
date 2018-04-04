@@ -9,7 +9,7 @@ from domains.domain01.topdown_reach_probabilities import get_reach_probabilities
 from utils.tensor_utils import print_tensors
 
 
-# custom-made game: doc/domain_01_via_drawing.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
+# custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
 
 def get_cf_values_nodes():  # TODO verify and write a unittest
 	expected_values = get_expected_values()

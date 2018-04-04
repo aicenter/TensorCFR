@@ -13,3 +13,7 @@ PLAYER1 = 1
 PLAYER2 = 2
 CHANCE_PLAYER = 0
 NO_ACTING_PLAYER = -1  # dummy acting-player value in nodes without acting players, i.e. terminal and imaginary nodes
+
+# Test error tolerances
+large_error_tolerance = 0.0001
+small_error_tolerance = 0.0000001

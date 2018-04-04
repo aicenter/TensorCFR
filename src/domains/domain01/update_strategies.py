@@ -16,10 +16,11 @@ def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	update_IS_strategies_ops = [None] * acting_depth
 	for level in range(acting_depth):
 		# TODO fix and solve TF complaints (Run)
+		infosets_of_acting_player = tf.equal(IS_acting_players[level], acting_player)
 		update_IS_strategies_ops[level] = masked_assign(ref=IS_strategies,
-		                                                mask=tf.equal(IS_acting_players[level], acting_player),
-		                                                value=IS_strategies_matched_to_regrets,
-		                                                name="update_IS_strategies_ops_lvl{}".format(level))
+																										mask=infosets_of_acting_player,
+																										value=IS_strategies_matched_to_regrets,
+																										name="update_IS_strategies_ops_lvl{}".format(level))
 	return IS_strategies
 
 

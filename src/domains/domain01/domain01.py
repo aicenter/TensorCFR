@@ -4,7 +4,6 @@ import tensorflow as tf
 
 from src.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, PLAYER1, \
 	PLAYER2, NO_ACTING_PLAYER
-from src.domains.domain01.domain_01 import node_to_IS_lvl0
 from src.utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png

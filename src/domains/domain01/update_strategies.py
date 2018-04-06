@@ -1,9 +1,9 @@
 import tensorflow as tf
 
-from constants import PLAYER1
-from domains.domain01.domain_01 import levels, get_IS_strategies, get_IS_acting_players
-from domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
-from utils.tensor_utils import print_tensors, masked_assign
+from src.constants import PLAYER1
+from src.domains.domain01.domain_01 import levels, get_IS_strategies, get_IS_acting_players
+from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
+from src.utils.tensor_utils import print_tensors, masked_assign
 
 
 # custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)

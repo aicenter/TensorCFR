@@ -15,17 +15,12 @@ def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	acting_depth = len(IS_strategies)
 	update_IS_strategies_ops = [None] * acting_depth
 	for level in range(acting_depth):
-		# TODO fix and solve TF complaints (Run)
-
-		# TODO use 1-D list instead of expand_dims <- reshape
-		infosets_of_acting_player = tf.equal(IS_acting_players[level], acting_player)
-		print("########## Level {} ##########".format(level))
-		with tf.Session() as sess:
-			sess.run(tf.global_variables_initializer())
-			print_tensors(sess, [IS_strategies[level], infosets_of_acting_player, IS_strategies_matched_to_regrets[level]])
-		update_IS_strategies_ops[level] = masked_assign(ref=IS_strategies[level], mask=infosets_of_acting_player,
-																										value=IS_strategies_matched_to_regrets[level],
-																										name="update_IS_strategies_ops_lvl{}".format(level))
+		infosets_belonging_to_acting_player = tf.reshape(tf.equal(IS_acting_players[level], acting_player),
+		                                                 shape=[IS_strategies[level].shape[0]],
+		                                                 name="infosets_of_acting_player_lvl{}".format(level))
+		update_IS_strategies_ops[level] = masked_assign(ref=IS_strategies[level], mask=infosets_belonging_to_acting_player,
+		                                                value=IS_strategies_matched_to_regrets[level],
+		                                                name="update_IS_strategies_ops_lvl{}".format(level))
 	return update_IS_strategies_ops
 
 
@@ -35,6 +30,7 @@ def cumulate_strategy_of_opponent():  # TODO unittest
 
 if __name__ == '__main__':
 	IS_strategies_ = get_IS_strategies()
+	IS_acting_players_ = get_IS_acting_players()
 	IS_strategies_matched_to_regrets_ = get_strategy_matched_to_regrets()
 	update_IS_strategies = update_strategy_of_acting_player(acting_player=PLAYER1)
 	with tf.Session() as sess:
@@ -43,6 +39,7 @@ if __name__ == '__main__':
 			print("########## Level {} ##########".format(i))
 			print_tensors(sess, [
 				IS_strategies_[i],
+				IS_acting_players_[i],
 				IS_strategies_matched_to_regrets_[i],
 				update_IS_strategies[i],
 				IS_strategies_[i]

@@ -1,8 +1,8 @@
 import tensorflow as tf
 
-from constants import IMAGINARY_NODE
-from domains.domain01.domain_01 import levels, node_types, node_to_infoset, infoset_strategies
-from utils.tensor_utils import print_tensors
+from src.constants import IMAGINARY_NODE
+from src.domains.domain01.domain_01 import levels, node_types, node_to_infoset, infoset_strategies
+from src.utils.tensor_utils import print_tensors
 
 
 # custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png

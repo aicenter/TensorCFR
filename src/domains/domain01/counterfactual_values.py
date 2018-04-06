@@ -2,48 +2,48 @@
 
 import tensorflow as tf
 
-from domains.domain01.bottomup_expected_values import get_expected_values
-from domains.domain01.domain_01 import levels, infoset_strategies, node_to_infoset, cf_values_infoset_actions
-from domains.domain01.topdown_reach_probabilities import get_reach_probabilities
-from utils.tensor_utils import print_tensors
+from src.domains.domain01.bottomup_expected_values import get_expected_values
+from src.domains.domain01.domain_01 import levels, infoset_strategies, node_to_infoset, cf_values_infoset_actions
+from src.domains.domain01.topdown_reach_probabilities import get_reach_probabilities
+from src.utils.tensor_utils import print_tensors
 
 
 # custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
 
 def get_cf_values_nodes():  # TODO verify and write a unittest
-    expected_values = get_expected_values()
-    reach_probabilities = get_reach_probabilities()
-    cf_values_of_nodes = [tf.multiply(reach_probabilities[level], expected_values[level],
-                                      name="node_cf_val_lvl{}".format(level)) for level in range(levels)]
-    return cf_values_of_nodes
+		expected_values = get_expected_values()
+		reach_probabilities = get_reach_probabilities()
+		cf_values_of_nodes = [tf.multiply(reach_probabilities[level], expected_values[level],
+																			name="node_cf_val_lvl{}".format(level)) for level in range(levels)]
+		return cf_values_of_nodes
 
 
 # noinspection PyPep8Naming
 def get_cf_values_infoset_actions():  # TODO verify and write a unittest
-    node_cf_values = get_cf_values_nodes()
-    new_cf_values_infoset_action = [None] * (levels - 1)
-    new_cf_values_infoset_action[0] = tf.assign(
-        ref=cf_values_infoset_actions[0],
-        value=tf.expand_dims(node_cf_values[1], axis=0)
-    )
-    for level in range(1, levels - 1):  # TODO replace for-loop with parallel_map on TensorArray?
-        scatter_nd_add_ref = tf.Variable(tf.zeros_like(infoset_strategies[level]))
-        scatter_nd_add_indices = tf.expand_dims(node_to_infoset[level], axis=-1)
-        scatter_nd_add_updates = node_cf_values[level + 1]
-        new_cf_values_infoset_action[level] = tf.scatter_nd_add(
-            ref=scatter_nd_add_ref,
-            indices=scatter_nd_add_indices,
-            updates=scatter_nd_add_updates
-        )
+		node_cf_values = get_cf_values_nodes()
+		new_cf_values_infoset_action = [None] * (levels - 1)
+		new_cf_values_infoset_action[0] = tf.assign(
+				ref=cf_values_infoset_actions[0],
+				value=tf.expand_dims(node_cf_values[1], axis=0)
+		)
+		for level in range(1, levels - 1):  # TODO replace for-loop with parallel_map on TensorArray?
+				scatter_nd_add_ref = tf.Variable(tf.zeros_like(infoset_strategies[level]))
+				scatter_nd_add_indices = tf.expand_dims(node_to_infoset[level], axis=-1)
+				scatter_nd_add_updates = node_cf_values[level + 1]
+				new_cf_values_infoset_action[level] = tf.scatter_nd_add(
+						ref=scatter_nd_add_ref,
+						indices=scatter_nd_add_indices,
+						updates=scatter_nd_add_updates
+				)
 
-    return [tf.assign(ref=cf_values_infoset_actions[level], value=new_cf_values_infoset_action[level],
-                      name="assign_new_cfv_infoset_action_lvl{}".format(level)) for level in range(levels - 1)]
+		return [tf.assign(ref=cf_values_infoset_actions[level], value=new_cf_values_infoset_action[level],
+											name="assign_new_cfv_infoset_action_lvl{}".format(level)) for level in range(levels - 1)]
 
 
 def get_cf_values_infoset():  # TODO verify and write a unittest
-    return [tf.expand_dims(tf.reduce_sum(infoset_strategies[level] * cf_values_infoset_actions[level], axis=-1), axis=-1,
-                           name="cf_values_infoset_lvl{}".format(level))
-            for level in range(levels - 1)]
+		return [tf.expand_dims(tf.reduce_sum(infoset_strategies[level] * cf_values_infoset_actions[level], axis=-1),
+		                       axis=-1, name="cf_values_infoset_lvl{}".format(level))
+						for level in range(levels - 1)]
 
 
 if __name__ == '__main__':
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 			print_tensors(sess, [reach_probabilities_[i], expected_values_[i], cf_values_nodes_[i]])
 
 			if i < levels - 1:
-				print_tensors(sess, [infoset_strategies_[i], cf_values_infoset_actions_[i], cf_values_infoset_actions[i], cf_values_infoset_[i]])
+				print_tensors(sess, [infoset_strategies_[i], cf_values_infoset_actions_[i], cf_values_infoset_actions[i],
+				                     cf_values_infoset_[i]])
 				# TODO unittest for multiple call of `cf_values_infoset` and `cf_values_infoset_actions` as below:
 				#  print_tensors(sess, [cf_values_infoset_actions[i], cf_values_infoset_actions_[i], cf_values_infoset_actions[i]])
-

@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from utils.tensor_utils import print_tensors
+from src.utils.tensor_utils import print_tensors
 
 shape2x2 = [2, 2]
 tensor2x2 = tf.reshape(tf.range(0, 4), shape2x2, name="tensor2x2")

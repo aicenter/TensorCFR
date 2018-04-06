@@ -1,9 +1,9 @@
 import tensorflow as tf
 
-from assign_strategies_to_nodes import assign_strategies_to_nodes
-from constants import PLAYER1
-from domains.domain01.domain_01 import node_to_infoset, infoset_strategies, infoset_acting_players
-from utils.tensor_utils import print_tensors
+from src.assign_strategies_to_nodes import assign_strategies_to_nodes
+from src.constants import PLAYER1
+from src.domains.domain01.domain_01 import node_to_infoset, infoset_strategies, infoset_acting_players
+from src.utils.tensor_utils import print_tensors
 
 
 # custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png

@@ -1,9 +1,9 @@
 import tensorflow as tf
 
-from constants import PLAYER1
-from domains.domain01.domain_01 import reach_probabilities, node_to_infoset, infoset_strategies
-from domains.domain01.node_strategies import get_node_cf_strategies
-from utils.tensor_utils import print_tensors, expanded_multiply
+from src.constants import PLAYER1
+from src.domains.domain01.domain_01 import reach_probabilities, node_to_infoset, infoset_strategies
+from src.domains.domain01.node_strategies import get_node_cf_strategies
+from src.utils.tensor_utils import print_tensors, expanded_multiply
 
 
 # custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png

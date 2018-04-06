@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import tensorflow as tf
-from utils.tensor_utils import print_tensor, print_tensors, masked_assign
+
+from src.utils.tensor_utils import print_tensor, print_tensors, masked_assign
 
 
 def masked_assign_via_tf_where():

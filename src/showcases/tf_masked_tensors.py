@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.utils.tensor_utils import print_tensor, print_tensors, masked_assign
+from src.utils.tensor_utils import print_tensors, masked_assign
 
 
 def masked_assign_via_tf_where():
@@ -49,20 +49,19 @@ def masked_assign_via_tf_assign():
 		print_tensors(sess_via_tf_assign, [new_tensor_value, original_tensor, tensor])
 
 
-# TODO resolve or delete this method
 def masked_assign_via_scatter_nd_update():
+	# tensor = tf.Variable(tf.reshape(tf.range(1, 9), [2, 2, 2]), name="tensor")
+	# original_tensor = tensor
+	# mask = tf.less(tensor, 6, name="mask")
+	# where_mask = tf.Variable(tf.where(mask), name="where_mask")
+	# update_tensor = tf.scatter_nd_update(ref=tensor, indices=where_mask, updates=tf.zeros_like(tensor),
+	#                                      name="update_tensor")
+	# with tf.Session() as sess_via_tf_scatter_nd_update:
+	# 	sess_via_tf_scatter_nd_update.run(tf.global_variables_initializer())
+	# 	print_tensors(sess_via_tf_scatter_nd_update, [tensor, where_mask])
+	# 	sess_via_tf_scatter_nd_update.run(update_tensor)
+	# 	print_tensor(sess_via_tf_scatter_nd_update, [tensor, original_tensor])
 	raise NotImplementedError
-	tensor = tf.Variable(tf.reshape(tf.range(1, 9), [2, 2, 2]), name="tensor")
-	original_tensor = tensor
-	mask = tf.less(tensor, 6, name="mask")
-	where_mask = tf.Variable(tf.where(mask), name="where_mask")
-	update_tensor = tf.scatter_nd_update(ref=tensor, indices=where_mask, updates=tf.zeros_like(tensor),
-	                                     name="update_tensor")
-	with tf.Session() as sess_via_tf_scatter_nd_update:
-		sess_via_tf_scatter_nd_update.run(tf.global_variables_initializer())
-		print_tensors(sess_via_tf_scatter_nd_update, [tensor, where_mask])
-		sess_via_tf_scatter_nd_update.run(update_tensor)
-		print_tensor(sess_via_tf_scatter_nd_update, [tensor, original_tensor])
 
 
 def masked_assign_via_tensor_utils():

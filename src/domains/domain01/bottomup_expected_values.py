@@ -2,9 +2,9 @@
 
 import tensorflow as tf
 
-from src.assign_strategies_to_nodes import assign_strategies_to_nodes
-from src.domains.domain01.domain_01 import node_to_infoset, infoset_strategies, utilities, node_types, levels
 from src.constants import TERMINAL_NODE
+from src.domains.domain01.domain_01 import node_to_infoset, infoset_strategies, utilities, node_types, levels
+from src.utils.assign_strategies_to_nodes import assign_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
 
 

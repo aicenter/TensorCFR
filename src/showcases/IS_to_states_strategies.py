@@ -2,8 +2,8 @@
 
 import tensorflow as tf
 
-from src.assign_strategies_to_nodes import assign_strategies_to_nodes
 from src.domains.domain01.domain_01 import infoset_strategies, node_to_infoset
+from src.utils.assign_strategies_to_nodes import assign_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
 
 # custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png

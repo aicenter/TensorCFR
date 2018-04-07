@@ -23,19 +23,19 @@ def get_node_strategies():
 
 def get_expected_values():
 	node_strategies = get_node_strategies()
-	expected_values_tmp = [None] * levels
-	expected_values_tmp[levels - 1] = tf.identity(utilities[levels - 1], name="expected_values_lvl{}".format(levels - 1))
+	expected_values = [None] * levels
+	expected_values[levels - 1] = tf.identity(utilities[levels - 1], name="expected_values_lvl{}".format(levels - 1))
 	for level in reversed(range(levels - 1)):
 		weighted_sum_of_values_lvl2 = tf.reduce_sum(
-				input_tensor=node_strategies[level] * expected_values_tmp[level + 1],
+				input_tensor=node_strategies[level] * expected_values[level + 1],
 				axis=-1,
 				name="weighted_sum_of_values_lvl{}".format(level))
-		expected_values_tmp[level] = tf.where(
+		expected_values[level] = tf.where(
 				condition=tf.equal(node_types[level], TERMINAL_NODE),
 				x=utilities[level],
 				y=weighted_sum_of_values_lvl2,
 				name="expected_values_lvl{}".format(level))
-	return expected_values_tmp
+	return expected_values
 
 
 if __name__ == '__main__':

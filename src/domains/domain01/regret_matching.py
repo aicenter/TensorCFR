@@ -42,5 +42,12 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
-			print_tensors(sess, [infoset_strategies_matched_to_regrets_[i], update_regrets[i], infoset_strategies_matched_to_regrets_[i]])
-
+			print_tensors(sess, [infoset_strategies_matched_to_regrets_[i],
+			                     infoset_strategies_matched_to_regrets_[i],
+			                     update_regrets[i],
+			                     infoset_strategies_matched_to_regrets_[i],
+			                     infoset_strategies_matched_to_regrets_[i],
+			                     update_regrets[i],
+			                     infoset_strategies_matched_to_regrets_[i],
+			                     infoset_strategies_matched_to_regrets_[i],
+			                     ])

@@ -13,7 +13,7 @@ levels = len(actions_per_levels) + 1  # accounting for 0th level
 
 # Init
 node_to_infoset = [None] * 3
-reach_probability_of_root_node = [None]
+reach_probability_of_root_node = None
 shape = [None] * 4
 node_types = [None] * 4
 utilities = [None] * 4
@@ -25,7 +25,7 @@ infoset_strategies = [None] * 3
 # I0,0 = { s } ... root node, the chance player acts here
 # there are 5 actions in node s
 node_to_infoset[0] = tf.Variable(0, name="node_to_infoset_lvl0")
-reach_probability_of_root_node[0] = tf.Variable(1.0, name="reach_probabilities_lvl0")
+reach_probability_of_root_node = tf.Variable(1.0, name="reach_probabilities_lvl0")
 shape[0] = actions_per_levels[:0]
 node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
 utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
@@ -187,8 +187,7 @@ if __name__ == '__main__':
 		levels_range = range(levels)
 		for level in levels_range:
 			print("########## Level {} ##########".format(level))
-			if level == 0:
-				print_tensors(sess, [reach_probability_of_root_node[level]])
+			print_tensors(sess, [reach_probability_of_root_node])
 			print_tensors(sess, [node_types[level], utilities[level]])
 			if level != levels_range[-1]:
 				print_tensors(sess, [node_to_infoset[level], infoset_acting_players[level], infoset_strategies[level]])

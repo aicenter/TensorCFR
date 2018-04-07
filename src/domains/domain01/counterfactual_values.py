@@ -18,8 +18,7 @@ def get_cf_values_nodes():  # TODO verify and write a unittest
 		return cf_values_of_nodes
 
 
-# noinspection PyPep8Naming
-def get_cf_values_infoset_actions():  # TODO verify and write a unittest
+def assign_new_cf_values_infoset_actions():  # TODO verify and write a unittest
 		node_cf_values = get_cf_values_nodes()
 		new_cf_values_infoset_action = [None] * (levels - 1)
 		new_cf_values_infoset_action[0] = tf.assign(
@@ -51,19 +50,24 @@ if __name__ == '__main__':
 	expected_values_ = get_expected_values()
 	cf_values_nodes_ = get_cf_values_nodes()
 	infoset_strategies_ = infoset_strategies
-	cf_values_infoset_actions_ = get_cf_values_infoset_actions()
+	assign_new_cf_values_infoset_actions_ = assign_new_cf_values_infoset_actions()
 	cf_values_infoset_ = get_cf_values_infoset()
-
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-
 		for i in range(levels):
 			print("########## Level {} ##########".format(i))
-
-			print_tensors(sess, [reach_probabilities_[i], expected_values_[i], cf_values_nodes_[i]])
-
+			# print_tensors(sess, [reach_probabilities_[i], expected_values_[i], cf_values_nodes_[i]])
 			if i < levels - 1:
-				print_tensors(sess, [infoset_strategies_[i], cf_values_infoset_actions_[i], cf_values_infoset_actions[i],
-				                     cf_values_infoset_[i]])
+				# print_tensors(sess, [infoset_strategies_[i], assign_new_cf_values_infoset_actions_[i],
+				#                      cf_values_infoset_actions[i], cf_values_infoset_[i]])
 				# TODO unittest for multiple call of `cf_values_infoset` and `cf_values_infoset_actions` as below:
-				#  print_tensors(sess, [cf_values_infoset_actions[i], cf_values_infoset_actions_[i], cf_values_infoset_actions[i]])
+				print_tensors(sess, [
+					cf_values_infoset_actions[i],
+					cf_values_infoset_actions[i],
+					assign_new_cf_values_infoset_actions_[i],
+					cf_values_infoset_actions[i],
+					cf_values_infoset_actions[i],
+					assign_new_cf_values_infoset_actions_[i],
+					cf_values_infoset_actions[i],
+					cf_values_infoset_actions[i],
+				])

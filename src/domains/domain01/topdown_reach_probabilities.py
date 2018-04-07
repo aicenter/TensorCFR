@@ -1,12 +1,12 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1
-from src.domains.domain01.domain_01 import reach_probability_of_root_node, node_to_infoset, infoset_strategies, levels
+from src.domains.domain01.domain01 import reach_probability_of_root_node, node_to_infoset, infoset_strategies, levels
 from src.domains.domain01.node_strategies import get_node_cf_strategies
 from src.utils.tensor_utils import print_tensors, expanded_multiply
 
 
-# custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
+# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 
 def get_reach_probabilities():

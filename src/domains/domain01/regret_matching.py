@@ -1,12 +1,12 @@
 import tensorflow as tf
 
-from src.domains.domain01.domain_01 import levels, positive_cumulative_regrets
+from src.domains.domain01.domain01 import levels, positive_cumulative_regrets
 from src.domains.domain01.regrets import update_positive_cumulative_regrets
 from src.domains.domain01.uniform_strategies import get_infoset_uniform_strategies
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
+# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_strategy_matched_to_regrets():  # TODO unittest
 	infoset_uniform_strategies = get_infoset_uniform_strategies()

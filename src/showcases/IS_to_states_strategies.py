@@ -2,11 +2,11 @@
 
 import tensorflow as tf
 
-from src.domains.domain01.domain_01 import infoset_strategies, node_to_infoset
+from src.domains.domain01.domain01 import infoset_strategies, node_to_infoset
 from src.utils.assign_strategies_to_nodes import assign_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
 
-# custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
+# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 # TODO extract to a test
 
 node_strategies_lvl0 = assign_strategies_to_nodes(infoset_strategies[0], node_to_infoset[0], name="node_strategies_lvl0")

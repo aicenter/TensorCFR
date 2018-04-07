@@ -3,11 +3,11 @@
 import tensorflow as tf
 
 from src.domains.domain01.counterfactual_values import assign_new_cf_values_infoset_actions, get_cf_values_infoset
-from src.domains.domain01.domain_01 import levels, positive_cumulative_regrets
+from src.domains.domain01.domain01 import levels, positive_cumulative_regrets
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
+# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_regrets():  # TODO verify and write a unittest
 		cf_values_infoset_actions = assign_new_cf_values_infoset_actions()

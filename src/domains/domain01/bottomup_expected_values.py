@@ -3,12 +3,12 @@
 import tensorflow as tf
 
 from src.constants import TERMINAL_NODE
-from src.domains.domain01.domain_01 import node_to_infoset, infoset_strategies, utilities, node_types, levels
+from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, utilities, node_types, levels
 from src.utils.assign_strategies_to_nodes import assign_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
+# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 
 def get_node_strategies():

@@ -3,12 +3,12 @@
 import tensorflow as tf
 
 from src.domains.domain01.bottomup_expected_values import get_expected_values
-from src.domains.domain01.domain_01 import levels, infoset_strategies, node_to_infoset, cf_values_infoset_actions
+from src.domains.domain01.domain01 import levels, infoset_strategies, node_to_infoset, cf_values_infoset_actions
 from src.domains.domain01.topdown_reach_probabilities import get_reach_probabilities
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png
+# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_cf_values_nodes():  # TODO verify and write a unittest
 		expected_values = get_expected_values()

@@ -22,27 +22,23 @@ def assign_new_cf_values_infoset_actions():  # TODO verify and write a unittest
 		node_cf_values = get_cf_values_nodes()
 		new_cf_values_infoset_action = [None] * (levels - 1)
 		new_cf_values_infoset_action[0] = tf.assign(
-				ref=cf_values_infoset_actions[0],
-				value=tf.expand_dims(node_cf_values[1], axis=0)
+			ref=cf_values_infoset_actions[0],
+			value=tf.expand_dims(node_cf_values[1], axis=0)
 		)
 		for level in range(1, levels - 1):  # TODO replace for-loop with parallel_map on TensorArray?
-				scatter_nd_add_ref = tf.Variable(tf.zeros_like(infoset_strategies[level]))
-				scatter_nd_add_indices = tf.expand_dims(node_to_infoset[level], axis=-1)
-				scatter_nd_add_updates = node_cf_values[level + 1]
-				new_cf_values_infoset_action[level] = tf.scatter_nd_add(
-						ref=scatter_nd_add_ref,
-						indices=scatter_nd_add_indices,
-						updates=scatter_nd_add_updates
-				)
-
+			new_cf_values_infoset_action[level] = tf.scatter_nd(
+				indices=tf.expand_dims(node_to_infoset[level], axis=-1),
+				updates=node_cf_values[level + 1],
+				shape=infoset_strategies[level].shape,
+			)
 		return [tf.assign(ref=cf_values_infoset_actions[level], value=new_cf_values_infoset_action[level],
-											name="assign_new_cfv_infoset_action_lvl{}".format(level)) for level in range(levels - 1)]
+		                  name="assign_new_cfv_infoset_action_lvl{}".format(level)) for level in range(levels - 1)]
 
 
 def get_cf_values_infoset():  # TODO verify and write a unittest
 		return [tf.expand_dims(tf.reduce_sum(infoset_strategies[level] * cf_values_infoset_actions[level], axis=-1),
 		                       axis=-1, name="cf_values_infoset_lvl{}".format(level))
-						for level in range(levels - 1)]
+		        for level in range(levels - 1)]
 
 
 if __name__ == '__main__':

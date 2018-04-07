@@ -1,9 +1,9 @@
 import tensorflow as tf
 
-from domains.domain01.domain_01 import levels, positive_cumulative_regrets
-from domains.domain01.regrets import update_positive_cumulative_regrets
-from domains.domain01.uniform_strategies import get_infoset_uniform_strategies
-from utils.tensor_utils import print_tensors
+from src.domains.domain01.domain_01 import levels, positive_cumulative_regrets
+from src.domains.domain01.regrets import update_positive_cumulative_regrets
+from src.domains.domain01.uniform_strategies import get_infoset_uniform_strategies
+from src.utils.tensor_utils import print_tensors
 
 
 # custom-made game: see doc/domain_01_via_drawing.png and doc/domain_01_via_gambit.png

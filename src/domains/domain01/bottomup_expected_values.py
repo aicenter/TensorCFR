@@ -26,14 +26,14 @@ def get_expected_values():
 	expected_values = [None] * levels
 	expected_values[levels - 1] = tf.identity(utilities[levels - 1], name="expected_values_lvl{}".format(levels - 1))
 	for level in reversed(range(levels - 1)):
-		weighted_sum_of_values_lvl2 = tf.reduce_sum(
+		weighted_sum_of_values = tf.reduce_sum(
 				input_tensor=node_strategies[level] * expected_values[level + 1],
 				axis=-1,
 				name="weighted_sum_of_values_lvl{}".format(level))
 		expected_values[level] = tf.where(
 				condition=tf.equal(node_types[level], TERMINAL_NODE),
 				x=utilities[level],
-				y=weighted_sum_of_values_lvl2,
+				y=weighted_sum_of_values,
 				name="expected_values_lvl{}".format(level))
 	return expected_values
 

@@ -36,10 +36,19 @@ if __name__ == '__main__':
 	cf_values_infoset_actions_ = assign_new_cf_values_infoset_actions()
 	cf_values_infoset_ = get_cf_values_infoset()
 	regrets_ = get_regrets()
-
+	update_regrets_ops = update_positive_cumulative_regrets()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
 			print_tensors(sess, [cf_values_infoset_actions_[i], cf_values_infoset_[i], regrets_[i]])
+			# TODO create a unit out of the following `print_tensors()`
+			print_tensors(sess, [positive_cumulative_regrets[i],
+			                     positive_cumulative_regrets[i],
+			                     update_regrets_ops[i],
+			                     positive_cumulative_regrets[i],
+			                     positive_cumulative_regrets[i],
+			                     update_regrets_ops[i],
+			                     positive_cumulative_regrets[i],
+			                     positive_cumulative_regrets[i]])

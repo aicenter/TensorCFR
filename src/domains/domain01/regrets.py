@@ -35,11 +35,11 @@ def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify an
 if __name__ == '__main__':
 	cf_values_infoset_actions_ = assign_new_cf_values_infoset_actions()
 	cf_values_infoset_ = get_cf_values_infoset()
-	regrets = get_regrets()
+	regrets_ = get_regrets()
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
-			print_tensors(sess, [cf_values_infoset_actions_[i], cf_values_infoset_[i], regrets[i]])
+			print_tensors(sess, [cf_values_infoset_actions_[i], cf_values_infoset_[i], regrets_[i]])

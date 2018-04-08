@@ -203,7 +203,8 @@ if __name__ == '__main__':
 		levels_range = range(levels)
 		for level in levels_range:
 			print("########## Level {} ##########".format(level))
-			print_tensors(sess, [reach_probability_of_root_node])
+			if level == 0:
+				print_tensors(sess, [reach_probability_of_root_node])
 			print_tensors(sess, [node_types[level], utilities[level]])
 			if level != levels_range[-1]:
 				print_tensors(sess, [node_to_infoset[level], infoset_acting_players[level], infoset_strategies[level]])

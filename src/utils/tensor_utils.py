@@ -78,3 +78,9 @@ def normalize(tensor, axis=-1, order=1):
 		Normalized tensor.
 	"""
 	return tf.divide(tensor, tf.norm(tensor, axis=axis, keepdims=True, ord=order))
+
+
+def scatter_nd_sum(indices, updates, shape, name="scatter_nd_sum"):
+	# TODO unittest
+	# TODO write a docstring
+	return tf.scatter_nd(indices=indices, updates=updates, shape=shape, name=name)

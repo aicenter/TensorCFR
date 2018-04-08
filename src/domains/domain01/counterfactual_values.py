@@ -5,7 +5,7 @@ import tensorflow as tf
 from src.domains.domain01.bottomup_expected_values import get_expected_values
 from src.domains.domain01.domain01 import levels, infoset_strategies, node_to_infoset, cf_values_infoset_actions
 from src.domains.domain01.topdown_reach_probabilities import get_reach_probabilities
-from src.utils.tensor_utils import print_tensors
+from src.utils.tensor_utils import print_tensors, scatter_nd_sum
 
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
@@ -33,12 +33,6 @@ def assign_new_cf_values_infoset_actions():  # TODO verify and write a unittest
 		)
 	return [tf.assign(ref=cf_values_infoset_actions[level], value=new_cf_values_infoset_action[level],
 	                  name="assign_new_cfv_infoset_action_lvl{}".format(level)) for level in range(levels - 1)]
-
-
-# TODO unittest
-# TODO write a docstring
-def scatter_nd_sum(indices, updates, shape, name="scatter_nd_sum"):
-	return tf.scatter_nd(indices=indices, updates=updates, shape=shape, name=name)
 
 
 def get_cf_values_infoset():  # TODO verify and write a unittest

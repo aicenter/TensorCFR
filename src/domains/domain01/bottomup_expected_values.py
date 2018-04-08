@@ -43,8 +43,8 @@ if __name__ == '__main__':
 	expected_values_ = get_expected_values()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		for lvl in reversed(range(levels)):
-			print("########## Level {} ##########".format(lvl))
-			if lvl < len(node_strategies_):
-				print_tensors(sess, [node_strategies_[lvl]])
-			print_tensors(sess, [utilities[lvl], expected_values_[lvl]])
+		for level_ in reversed(range(levels)):
+			print("########## Level {} ##########".format(level_))
+			if level_ < len(node_strategies_):
+				print_tensors(sess, [node_strategies_[level_]])
+			print_tensors(sess, [utilities[level_], expected_values_[level_]])

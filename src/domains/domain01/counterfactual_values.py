@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from src.domains.domain01.bottomup_expected_values import get_expected_values
 from src.domains.domain01.domain01 import levels, infoset_strategies, node_to_infoset, cf_values_infoset_actions
-from src.domains.domain01.topdown_reach_probabilities import get_reach_probabilities
+from src.domains.domain01.topdown_reach_probabilities import get_nodal_reach_probabilities
 from src.utils.tensor_utils import print_tensors, scatter_nd_sum
 
 
@@ -12,7 +12,7 @@ from src.utils.tensor_utils import print_tensors, scatter_nd_sum
 
 def get_cf_values_nodes():  # TODO verify and write a unittest
 	expected_values = get_expected_values()
-	reach_probabilities = get_reach_probabilities()
+	reach_probabilities = get_nodal_reach_probabilities()
 	cf_values_of_nodes = [tf.multiply(reach_probabilities[level], expected_values[level],
 	                                  name="node_cf_val_lvl{}".format(level)) for level in range(levels)]
 	return cf_values_of_nodes
@@ -42,7 +42,7 @@ def get_cf_values_infoset():  # TODO verify and write a unittest
 
 
 if __name__ == '__main__':
-	reach_probabilities_ = get_reach_probabilities()
+	nodal_reach_probabilities_ = get_nodal_reach_probabilities()
 	expected_values_ = get_expected_values()
 	cf_values_nodes_ = get_cf_values_nodes()
 	infoset_strategies_ = infoset_strategies
@@ -52,10 +52,10 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		for i in range(levels):
 			print("########## Level {} ##########".format(i))
-			# print_tensors(sess, [reach_probabilities_[i], expected_values_[i], cf_values_nodes_[i]])
+			print_tensors(sess, [nodal_reach_probabilities_[i], expected_values_[i], cf_values_nodes_[i]])
 			if i < levels - 1:
-				# print_tensors(sess, [infoset_strategies_[i], assign_new_cf_values_infoset_actions_[i],
-				#                      cf_values_infoset_actions[i], cf_values_infoset_[i]])
+				print_tensors(sess, [infoset_strategies_[i], assign_new_cf_values_infoset_actions_[i],
+				                     cf_values_infoset_actions[i], cf_values_infoset_[i]])
 				# TODO unittest for multiple call of `cf_values_infoset` and `cf_values_infoset_actions` as below:
 				print_tensors(sess, [
 					cf_values_infoset_actions[i],

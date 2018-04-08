@@ -25,7 +25,7 @@ infoset_strategies = [None] * 3
 # I0,0 = { s } ... root node, the chance player acts here
 # there are 5 actions in node s
 node_to_infoset[0] = tf.Variable(0, name="node_to_infoset_lvl0")
-reach_probability_of_root_node = tf.Variable(1.0, name="reach_probabilities_lvl0")
+reach_probability_of_root_node = tf.Variable(1.0, name="reach_probability_of_root_node")
 shape[0] = actions_per_levels[:0]
 node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
 utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")

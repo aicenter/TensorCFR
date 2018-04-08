@@ -27,11 +27,10 @@ if __name__ == '__main__':
 	nodal_reach_probabilities_ = get_nodal_reach_probabilities()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		print("########## Level 0 ##########")
-		print_tensors(sess, [nodal_reach_probabilities_[0], node_to_infoset[0], infoset_strategies[0], node_cf_strategies_[0]])
-		print("########## Level 1 ##########")
-		print_tensors(sess, [nodal_reach_probabilities_[1], node_to_infoset[1], infoset_strategies[1], node_cf_strategies_[1]])
-		print("########## Level 2 ##########")
-		print_tensors(sess, [nodal_reach_probabilities_[2], node_to_infoset[2], infoset_strategies[2], node_cf_strategies_[2]])
-		print("########## Level 3 ##########")
-		print_tensors(sess, [nodal_reach_probabilities_[3]])
+		for level_ in range(levels):
+			print("########## Level {} ##########".format(level_))
+			print_tensors(sess, [nodal_reach_probabilities_[level_]])
+			if level_ < levels - 1:
+				print_tensors(sess, [node_to_infoset[level_],
+				                     infoset_strategies[level_],
+				                     node_cf_strategies_[level_]])

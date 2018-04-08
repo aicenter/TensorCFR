@@ -11,17 +11,17 @@ from src.utils.tensor_utils import print_tensors
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_cf_values_nodes():  # TODO verify and write a unittest
-		expected_values = get_expected_values()
-		reach_probabilities = get_reach_probabilities()
-		cf_values_of_nodes = [tf.multiply(reach_probabilities[level], expected_values[level],
-																			name="node_cf_val_lvl{}".format(level)) for level in range(levels)]
-		return cf_values_of_nodes
+	expected_values = get_expected_values()
+	reach_probabilities = get_reach_probabilities()
+	cf_values_of_nodes = [tf.multiply(reach_probabilities[level], expected_values[level],
+	                                  name="node_cf_val_lvl{}".format(level)) for level in range(levels)]
+	return cf_values_of_nodes
 
 
 def assign_new_cf_values_infoset_actions():  # TODO verify and write a unittest
-		node_cf_values = get_cf_values_nodes()
-		new_cf_values_infoset_action = [None] * (levels - 1)
-		new_cf_values_infoset_action[0] = tf.assign(
+	node_cf_values = get_cf_values_nodes()
+	new_cf_values_infoset_action = [None] * (levels - 1)
+	new_cf_values_infoset_action[0] = tf.assign(
 			ref=cf_values_infoset_actions[0],
 			value=tf.expand_dims(node_cf_values[1], axis=0)
 		)
@@ -36,9 +36,9 @@ def assign_new_cf_values_infoset_actions():  # TODO verify and write a unittest
 
 
 def get_cf_values_infoset():  # TODO verify and write a unittest
-		return [tf.expand_dims(tf.reduce_sum(infoset_strategies[level] * cf_values_infoset_actions[level], axis=-1),
-		                       axis=-1, name="cf_values_infoset_lvl{}".format(level))
-		        for level in range(levels - 1)]
+	return [tf.expand_dims(tf.reduce_sum(infoset_strategies[level] * cf_values_infoset_actions[level], axis=-1),
+	                       axis=-1, name="cf_values_infoset_lvl{}".format(level))
+	        for level in range(levels - 1)]
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1
-from src.domains.domain01.domain01 import levels, get_infoset_strategies, get_infoset_acting_players
+from src.domains.domain01.domain01 import levels, get_infoset_strategies, get_infoset_acting_players, acting_depth
 from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
 from src.utils.tensor_utils import print_tensors, masked_assign
 
@@ -12,7 +12,6 @@ def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	infoset_strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	infoset_strategies = get_infoset_strategies()
 	infoset_acting_players = get_infoset_acting_players()
-	acting_depth = len(infoset_strategies)
 	update_infoset_strategies_ops = [None] * acting_depth
 	for level in range(acting_depth):
 		infosets_belonging_to_acting_player = tf.reshape(tf.equal(infoset_acting_players[level], acting_player),

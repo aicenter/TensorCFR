@@ -10,6 +10,7 @@ from src.utils.tensor_utils import print_tensors, masked_assign
 
 actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1, 2)
 levels = len(actions_per_levels) + 1  # accounting for 0th level
+acting_depth = len(actions_per_levels)
 
 # Init
 node_to_infoset = [None] * 3

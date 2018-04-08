@@ -180,6 +180,9 @@ positive_cumulative_regrets = [
 	tf.Variable(tf.zeros_like(infoset_strategies[1]), name="pos_cumul_regrets_lvl1"),
 	tf.Variable(tf.zeros_like(infoset_strategies[2]), name="pos_cumul_regrets_lvl2")
 ]
+cumulative_infoset_strategies = [tf.Variable(tf.zeros_like(infoset_strategies[level]),
+                                             name="cumulative_infoset_strategies_lvl{}".format(level))
+                                 for level in range(acting_depth)]      # used for the final average strategy
 
 
 def get_node_types():
@@ -209,3 +212,5 @@ if __name__ == '__main__':
 			print_tensors(sess, [node_types[level], utilities[level]])
 			if level != levels_range[-1]:
 				print_tensors(sess, [node_to_infoset[level], infoset_acting_players[level], infoset_strategies[level]])
+				print_tensors(sess, [cf_values_infoset_actions[level], positive_cumulative_regrets[level],
+														 cumulative_infoset_strategies[level]])

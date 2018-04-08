@@ -45,7 +45,7 @@ def masked_assign(ref, mask, value, name="masked_assign"):
 	return tf.assign(ref=ref, value=tf.where(mask, tensor_of_values, ref), name=name)
 
 
-def expanded_multiply(expandable_tensor, expanded_tensor, name):
+def expanded_multiply(expandable_tensor, expanded_tensor, name="expanded_multiply"):
 	"""Multiply 'expandable_tensor' by 'expanded_tensor' element-wise. If N-dimensional 'expanded_tensor' has a shape
 	'(d_1, d_2, ..., d_n)', then (N-1)-dimensional 'expandable_tensor' needs to have the shape '(d_1, d_2, ..., d_(n-1))'.
 	The 'expandable_tensor' is "uplifted" to a 1-higher-dimensional expansion, where it has the shape

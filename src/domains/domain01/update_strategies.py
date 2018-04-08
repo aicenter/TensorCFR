@@ -14,11 +14,11 @@ def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	infoset_acting_players = get_infoset_acting_players()
 	update_infoset_strategies_ops = [None] * acting_depth
 	for level in range(acting_depth):
-		infosets_belonging_to_acting_player = tf.reshape(tf.equal(infoset_acting_players[level], acting_player),
-		                                                 shape=[infoset_strategies[level].shape[0]],
-		                                                 name="infosets_of_acting_player_lvl{}".format(level))
+		infosets_of_acting_player = tf.reshape(tf.equal(infoset_acting_players[level], acting_player),
+		                                       shape=[infoset_strategies[level].shape[0]],
+		                                       name="infosets_of_acting_player_lvl{}".format(level))
 		update_infoset_strategies_ops[level] = masked_assign(ref=infoset_strategies[level],
-		                                                     mask=infosets_belonging_to_acting_player,
+		                                                     mask=infosets_of_acting_player,
 		                                                     value=infoset_strategies_matched_to_regrets[level],
 		                                                     name="update_infoset_strategies_ops_lvl{}".format(level))
 	return update_infoset_strategies_ops
@@ -35,6 +35,7 @@ if __name__ == '__main__':
 	update_infoset_strategies = update_strategy_of_acting_player(acting_player=PLAYER1)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
+		print("########## Update strategy ##########")
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
 			print_tensors(sess, [

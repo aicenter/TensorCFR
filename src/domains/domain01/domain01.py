@@ -171,11 +171,13 @@ utilities[3] = utilities_lvl3_tmp
 
 ########## miscellaneous tensors ##########
 cf_values_infoset_actions = [
+	# TODO rewrite to list comprehension
 	tf.Variable(tf.zeros_like(infoset_strategies[0]), name="cf_values_infoset_actions_lvl0"),
 	tf.Variable(tf.zeros_like(infoset_strategies[1]), name="cf_values_infoset_actions_lvl1"),
 	tf.Variable(tf.zeros_like(infoset_strategies[2]), name="cf_values_infoset_actions_lvl2")
 ]
 positive_cumulative_regrets = [
+	# TODO rewrite to list comprehension
 	tf.Variable(tf.zeros_like(infoset_strategies[0]), name="pos_cumul_regrets_lvl0"),
 	tf.Variable(tf.zeros_like(infoset_strategies[1]), name="pos_cumul_regrets_lvl1"),
 	tf.Variable(tf.zeros_like(infoset_strategies[2]), name="pos_cumul_regrets_lvl2")

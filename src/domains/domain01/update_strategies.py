@@ -8,7 +8,7 @@ from src.domains.domain01.topdown_reach_probabilities import get_infoset_reach_p
 from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multiply
 
 
-# custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
+# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	infoset_strategies_matched_to_regrets = get_strategy_matched_to_regrets()

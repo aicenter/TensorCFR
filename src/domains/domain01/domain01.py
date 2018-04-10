@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from src.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, PLAYER1, \
 	PLAYER2, NO_ACTING_PLAYER
-from src.utils.tensor_utils import print_tensors, masked_assign
+from src.utils.tensor_utils import print_tensors, masked_assign, print_tensor
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
@@ -185,6 +185,7 @@ positive_cumulative_regrets = [
 cumulative_infoset_strategies = [tf.Variable(tf.zeros_like(infoset_strategies[level]),
                                              name="cumulative_infoset_strategies_lvl{}".format(level))
                                  for level in range(acting_depth)]      # used for the final average strategy
+global_step = tf.Variable(initial_value=0, dtype=tf.int64, name="global_step")   # counter of CFR+ iterations
 
 
 def get_node_types():
@@ -216,3 +217,4 @@ if __name__ == '__main__':
 				print_tensors(sess, [node_to_infoset[level], infoset_acting_players[level], infoset_strategies[level]])
 				print_tensors(sess, [cf_values_infoset_actions[level], positive_cumulative_regrets[level],
 														 cumulative_infoset_strategies[level]])
+		print_tensor(sess, global_step)

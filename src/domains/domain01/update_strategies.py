@@ -26,6 +26,16 @@ def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	return update_infoset_strategies_ops
 
 
+def get_weighted_averaging_factor(delay=averaging_delay):   # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
+	if delay is None:
+		return tf.constant(1.0, name="weighted_averaging_factor")
+	else:
+		return tf.to_float(
+				tf.maximum(cfr_step - delay, 0),
+				name="weighted_averaging_factor",
+		)
+
+
 def cumulate_strategy_of_opponent(opponent):  # TODO unittest
 	infoset_strategies = get_infoset_strategies()
 	infoset_acting_players = get_infoset_acting_players()
@@ -37,11 +47,13 @@ def cumulate_strategy_of_opponent(opponent):  # TODO unittest
 				shape=[infoset_strategies[level].shape[0]],
 				name="infosets_of_opponent_lvl{}".format(level)
 		)
+		# averaging_factor = get_weighted_averaging_factor(delay=None)
+		averaging_factor = get_weighted_averaging_factor()
 		cumulate_infoset_strategies_ops[level] = masked_assign(
 				# TODO implement and use `masked_assign_add` here
 				ref=cumulative_infoset_strategies[level],
 				mask=infosets_of_opponent,
-				value=cumulative_infoset_strategies[level] + expanded_multiply(
+				value=cumulative_infoset_strategies[level] + averaging_factor * expanded_multiply(
 						expandable_tensor=infoset_reach_probabilities[level],
 						expanded_tensor=infoset_strategies[level],
 				),

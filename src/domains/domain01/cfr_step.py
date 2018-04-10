@@ -19,13 +19,14 @@ def process_strategies(acting_player=PLAYER1, opponent=PLAYER2):
 	return ops
 
 
-def do_cfr_step():  # TODO unittest
+def do_cfr_step():
 	increment_cfr_step_op = tf.assign_add(
 			ref=cfr_step,
 			value=1,
 			name="increment_cfr_step_op"
 	)
-	return increment_cfr_step_op
+	cfr_ops = process_strategies(acting_player=PLAYER1, opponent=PLAYER2) + [increment_cfr_step_op]
+	return tf.group(cfr_ops, name="cfr_step")
 
 
 if __name__ == '__main__':
@@ -36,7 +37,11 @@ if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print("########## Process strategies ##########")
-		print_tensors(sess, process_strategies_ops)
 		print_tensors(sess, [cfr_step, cfr_step])
+		print_tensors(sess, infoset_strategies_)
 		sess.run(cfr_step_op)
 		print_tensors(sess, [cfr_step, cfr_step])
+		print_tensors(sess, infoset_strategies_)
+		sess.run(cfr_step_op)
+		print_tensors(sess, [cfr_step, cfr_step])
+		print_tensors(sess, infoset_strategies_)

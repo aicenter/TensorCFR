@@ -184,8 +184,13 @@ positive_cumulative_regrets = [
 ]
 cumulative_infoset_strategies = [tf.Variable(tf.zeros_like(infoset_strategies[level]),
                                              name="cumulative_infoset_strategies_lvl{}".format(level))
-                                 for level in range(acting_depth)]      # used for the final average strategy
+                                 for level in range(acting_depth)]         # used for the final average strategy
 cfr_step = tf.Variable(initial_value=0, dtype=tf.int64, name="cfr_step")   # counter of CFR+ iterations
+averaging_delay = tf.constant(         # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
+		250,
+		dtype=cfr_step.dtype,
+		name="averaging_delay"
+)
 
 
 def get_node_types():

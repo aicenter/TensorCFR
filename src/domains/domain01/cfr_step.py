@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1, PLAYER2
-from src.domains.domain01.domain01 import get_infoset_strategies, get_infoset_acting_players
+from src.domains.domain01.domain01 import get_infoset_strategies, get_infoset_acting_players, cfr_step
 from src.domains.domain01.update_strategies import update_strategy_of_acting_player, cumulate_strategy_of_opponent
 from src.utils.tensor_utils import print_tensors
 
@@ -19,11 +19,24 @@ def process_strategies(acting_player=PLAYER1, opponent=PLAYER2):
 	return ops
 
 
+def do_cfr_step():  # TODO unittest
+	increment_cfr_step_op = tf.assign_add(
+			ref=cfr_step,
+			value=1,
+			name="increment_cfr_step_op"
+	)
+	return increment_cfr_step_op
+
+
 if __name__ == '__main__':
 	infoset_strategies_ = get_infoset_strategies()
 	infoset_acting_players_ = get_infoset_acting_players()
 	process_strategies_ops = process_strategies()
+	cfr_step_op = do_cfr_step()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print("########## Process strategies ##########")
 		print_tensors(sess, process_strategies_ops)
+		print_tensors(sess, [cfr_step, cfr_step])
+		sess.run(cfr_step_op)
+		print_tensors(sess, [cfr_step, cfr_step])

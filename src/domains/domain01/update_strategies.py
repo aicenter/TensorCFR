@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from src.constants import PLAYER1, PLAYER2
 from src.domains.domain01.domain01 import levels, get_infoset_strategies, get_infoset_acting_players, acting_depth, \
-	cumulative_infoset_strategies
+	cumulative_infoset_strategies, averaging_delay, cfr_step
 from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
 from src.domains.domain01.topdown_reach_probabilities import get_infoset_reach_probabilities
 from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multiply
@@ -22,7 +22,7 @@ def update_strategy_of_acting_player(acting_player):  # TODO unittest
 		update_infoset_strategies_ops[level] = masked_assign(ref=infoset_strategies[level],
 		                                                     mask=infosets_of_acting_player,
 		                                                     value=infoset_strategies_matched_to_regrets[level],
-		                                                     name="update_infoset_strategies_ops_lvl{}".format(level))
+		                                                     name="op_update_infoset_strategies_lvl{}".format(level))
 	return update_infoset_strategies_ops
 
 
@@ -45,7 +45,7 @@ def cumulate_strategy_of_opponent(opponent):  # TODO unittest
 						expandable_tensor=infoset_reach_probabilities[level],
 						expanded_tensor=infoset_strategies[level],
 				),
-				name="cumulate_infoset_strategies_ops_lvl{}".format(level)
+				name="op_cumulate_infoset_strategies_lvl{}".format(level)
 		)
 	return cumulate_infoset_strategies_ops
 

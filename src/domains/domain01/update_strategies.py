@@ -1,6 +1,7 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1, PLAYER2
+from src.domains.domain01.cfr_step import increment_cfr_step
 from src.domains.domain01.domain01 import levels, get_infoset_strategies, get_infoset_acting_players, acting_depth, \
 	cumulative_infoset_strategies, averaging_delay, cfr_step
 from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
@@ -60,6 +61,17 @@ def cumulate_strategy_of_opponent(opponent):  # TODO unittest
 				name="op_cumulate_infoset_strategies_lvl{}".format(level)
 		)
 	return cumulate_infoset_strategies_ops
+
+
+def process_strategies(acting_player=PLAYER1, opponent=PLAYER2):
+	update_ops = update_strategy_of_acting_player(acting_player=acting_player)
+	cumulate_ops = cumulate_strategy_of_opponent(opponent=opponent)
+	ops = [
+		op
+		for sublist in map(list, zip(update_ops, cumulate_ops))
+		for op in sublist
+	]
+	return ops
 
 
 if __name__ == '__main__':

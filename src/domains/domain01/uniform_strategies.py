@@ -36,7 +36,7 @@ def get_infoset_uniform_strategies():  # TODO unittest
 		#  `tf.divide` produces `nan` in the entire row.
 		infoset_uniform_strategies[level] = tf.divide(
 			infoset_uniform_strategies[level],
-			tf.reduce_sum(infoset_uniform_strategies[level], axis=-1, keep_dims=True),
+			tf.reduce_sum(infoset_uniform_strategies[level], axis=-1, keepdims=True),
 			name="infoset_uniform_strategies_lvl{}".format(level))
 	return infoset_uniform_strategies
 

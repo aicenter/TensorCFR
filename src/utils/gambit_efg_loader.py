@@ -38,7 +38,7 @@ class GambitEFGLoader:
 
 	def parse_chance_node(self, input_line):
 		parse_line = re.search(
-			r'^(?P<type>c) "(?P<name>[^"]*)" (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) \"\" \{ (?P<payoffs_str>.*) \}',
+			r'^(?P<type>c) "(?P<name>[^"]*)" (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
 			input_line
 		)
 
@@ -52,12 +52,13 @@ class GambitEFGLoader:
 			'information_set_name': parse_line.group('information_set_name'),
 			'actions': actions,
 			'outcome': parse_line.group('outcome'),
+			'outcome_name': parse_line.group('outcome_name'),
 			'payoffs': payoffs
 		}
 
 	def parse_player_node(self, input_line):
 		parse_line = re.search(
-			r'^(?P<type>p) "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) \"\" \{ (?P<payoffs_str>.*) \}',
+			r'^(?P<type>p) "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
 			input_line
 		)
 
@@ -72,12 +73,13 @@ class GambitEFGLoader:
 			'information_set_name': parse_line.group('information_set_name'),
 			'actions': actions,
 			'outcome': parse_line.group('outcome'),
+			'outcome_name': parse_line.group('outcome_name'),
 			'payoffs': payoffs
 		}
 
 	def parse_terminal_node(self, input_line):
 		parse_line = re.search(
-			r'^(?P<type>t) "(?P<name>[^"]*)" (?P<outcome>\d+) \"\" \{ (?P<payoffs_str>.*) \}',
+			r'^(?P<type>t) "(?P<name>[^"]*)" (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
 			input_line
 		)
 
@@ -87,6 +89,7 @@ class GambitEFGLoader:
 			'type': parse_line.group('type'),
 			'name': parse_line.group('name'),
 			'outcome': parse_line.group('outcome'),
+			'outcome_name': parse_line.group('outcome_name'),
 			'payoffs': payoffs
 		}
 

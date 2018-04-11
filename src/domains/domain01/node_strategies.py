@@ -8,7 +8,6 @@ from src.utils.tensor_utils import print_tensors
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
-
 def get_node_strategies():
     node_strategies_lvl0 = assign_strategies_to_nodes(infoset_strategies[0], node_to_infoset[0], name="node_strategies_lvl0")
     node_strategies_lvl1 = assign_strategies_to_nodes(infoset_strategies[1], node_to_infoset[1], name="node_strategies_lvl1")

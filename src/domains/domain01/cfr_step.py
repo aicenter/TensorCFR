@@ -6,8 +6,7 @@ from src.domains.domain01.update_strategies import process_strategies
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: doc/domain_01.png (https://gitlab.com/beyond-deepstack/TensorCFR/blob/master/doc/domain_01.png)
-
+# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def increment_cfr_step():
 	return tf.assign_add(

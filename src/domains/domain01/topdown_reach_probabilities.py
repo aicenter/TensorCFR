@@ -9,7 +9,6 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
-
 def get_nodal_reach_probabilities():
 	node_cf_strategies = get_node_cf_strategies()
 	nodal_reach_probabilities = [None] * levels

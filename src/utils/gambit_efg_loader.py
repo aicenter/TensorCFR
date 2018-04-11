@@ -106,3 +106,19 @@ if __name__ == '__main__':
 	print(gambit_efg_loader.parse_node(input_line_player))
 	print("Terminal:")
 	print(gambit_efg_loader.parse_node(input_line_terminal))
+
+	# exampel del
+	print('Del list')
+	a = [0, 1, 2, 3]
+	print(a)
+	del a[1]
+	print(a)
+
+	print('Del dict')
+	a = {'jedna': 1, 'dva': 2, 'tri': 3}
+	print(a)
+	del a['dva']
+	print(a)
+
+
+

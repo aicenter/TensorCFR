@@ -14,7 +14,6 @@ acting_depth = len(actions_per_levels)
 
 # Init
 node_to_infoset = [None] * 3
-reach_probability_of_root_node = None
 shape = [None] * 4
 node_types = [None] * 4
 utilities = [None] * 4

@@ -33,7 +33,7 @@ class GambitEFGLoader:
 		return [{'name': action[0], 'probability': float(action[1])} for action in parse_actions]
 
 	def parse_payoffs(self, input_payoffs_str):
-		parse_payoffs = re.findall(r'\d+', input_payoffs_str)
+		parse_payoffs = re.findall(r'[\-]?[\d]+', input_payoffs_str)
 		return [int(payoff) for payoff in parse_payoffs]
 
 	def parse_chance_node(self, input_line):

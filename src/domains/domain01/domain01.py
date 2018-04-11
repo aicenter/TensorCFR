@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from src.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, PLAYER1, \
 	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY
-from src.utils.tensor_utils import print_tensors, masked_assign, print_tensor
+from src.utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
@@ -191,6 +191,8 @@ averaging_delay = tf.constant(         # https://arxiv.org/pdf/1407.5042.pdf (Fi
 		dtype=cfr_step.dtype,
 		name="averaging_delay"
 )
+current_updating_player = tf.Variable(initial_value=PLAYER1, name="current_updating_player")
+current_opponent = tf.Variable(initial_value=PLAYER2, name="current_opponent")
 
 
 def get_node_types():
@@ -222,4 +224,4 @@ if __name__ == '__main__':
 				print_tensors(sess, [node_to_infoset[level], infoset_acting_players[level], infoset_strategies[level]])
 				print_tensors(sess, [cf_values_infoset_actions[level], positive_cumulative_regrets[level],
 														 cumulative_infoset_strategies[level]])
-		print_tensor(sess, cfr_step)
+		print_tensors(sess, [cfr_step, current_updating_player, current_opponent])

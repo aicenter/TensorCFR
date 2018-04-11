@@ -68,7 +68,7 @@ if __name__ == '__main__':
 	infoset_strategies_matched_to_regrets_ = get_strategy_matched_to_regrets()
 	infoset_reach_probabilities_ = get_infoset_reach_probabilities()
 	update_infoset_strategies = update_strategy_of_acting_player(acting_player=PLAYER1)
-	cumulate_infoset_strategies = cumulate_strategy_of_opponent(opponent=PLAYER2)
+	ops_cumulate_infoset_strategies = cumulate_strategy_of_opponent(opponent=PLAYER2)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print("########## Update strategy ##########")
@@ -84,17 +84,15 @@ if __name__ == '__main__':
 		print("########## Cumulate strategy ##########")
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
+			# TODO add to the unittest of ops_cumulate_infoset_strategies()
 			print_tensors(sess, [
-				# TODO add to the unittest of cumulate_infoset_strategies()
 				infoset_acting_players_[i],
 				infoset_reach_probabilities_[i],
 				infoset_strategies_[i],
-				cumulative_infoset_strategies[i],
-				cumulative_infoset_strategies[i],
-				cumulate_infoset_strategies[i],
-				cumulative_infoset_strategies[i],
-				cumulative_infoset_strategies[i],
-				cumulate_infoset_strategies[i],
-				cumulative_infoset_strategies[i],
-				cumulative_infoset_strategies[i],
 			])
+			for _ in range(3):
+				print_tensors(sess, [
+					cumulative_infoset_strategies[i],
+					cumulative_infoset_strategies[i],
+					ops_cumulate_infoset_strategies[i],
+				])           # TODO test with increasing `crf_step`

@@ -100,58 +100,9 @@ if __name__ == '__main__':
 	input_line_terminal = 't "" 38 "" { 10, -10 }'
 
 	gambit_efg_loader = GambitEFGLoader('dummy')
-	#print(gambit_efg_loader.parse_node(input_line_chance))
-	#print(gambit_efg_loader.parse_node(input_line_player))
+	print("Chance:")
+	print(gambit_efg_loader.parse_node(input_line_chance))
+	print("Player:")
+	print(gambit_efg_loader.parse_node(input_line_player))
+	print("Terminal:")
 	print(gambit_efg_loader.parse_node(input_line_terminal))
-
-
-"""
-	search_result = re.search(
-		r'^(?P<type>c) "(?P<name>[^"]*)" (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" ',
-		input_line)
-
-
-	# parse chance witout payoffs and actions
-	search_result = re.search(
-		r'^(?P<type>c) "(?P<name>[^"]*)" (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions>.*) \} (?P<outcome>\d+) \"\" \{ (?P<payoffs>.*) \}',
-		input_line)
-
-	payoffs_str = search_result.group('payoffs')
-
-	all_payoffs = re.findall(r'\d+', input_line)
-
-
-input_line = "0, 0"
->>> search_result = re.findall(r' \d+,', input_line)inp
-  File "<stdin>", line 1
-    search_result = re.findall(r' \d+,', input_line)inp
-                                                      ^
-SyntaxError: invalid syntax
->>> search_result = re.findall(r' \d+,', input_line)
->>> search_result
-[' 0,', ' 0,']
->>> search_result = re.findall(r' \d+', input_line)
->>> search_result
-[' 0', ' 0']
->>> search_result = re.findall(r'\d+', input_line)
->>> search_result
-['0', '0']
->>>
-
-#get action name and probabilities
-input_line = '"Ea (0.05)" 0.05 "Da (0.1)" 0.1 "Ca (0.1)" 0.1 "Ba (0.25)" 0.25 "Aa (0.5)" 0.5'
-
-search_result = re.findall(r'"(?P<name>[^"]*)" (?P<probability>[\d\.]+)', input_line)
-
-search_result = re.findall(r'"(?P<name>[^"]*)" (?P<probability>[\d\.]+)', input_line)
->>> search_result
-[('Ea (0.05)', '0.05'), ('Da (0.1)', '0.1'), ('Ca (0.1)', '0.1'), ('Ba (0.25)', '0.25'), ('Aa (0.5)', '0.5')]
->>>
-
-
-
-# priklad
-del kus listu
-
-
-"""

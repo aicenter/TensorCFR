@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 from src.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, PLAYER1, \
-	PLAYER2, NO_ACTING_PLAYER
+	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY
 from src.utils.tensor_utils import print_tensors, masked_assign, print_tensor
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
@@ -187,7 +187,7 @@ cumulative_infoset_strategies = [tf.Variable(tf.zeros_like(infoset_strategies[le
                                  for level in range(acting_depth)]         # used for the final average strategy
 cfr_step = tf.Variable(initial_value=0, dtype=tf.int64, name="cfr_step")   # counter of CFR+ iterations
 averaging_delay = tf.constant(         # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
-		250,
+		DEFAULT_AVERAGING_DELAY,
 		dtype=cfr_step.dtype,
 		name="averaging_delay"
 )

@@ -17,3 +17,4 @@ NO_ACTING_PLAYER = -1  # dummy acting-player value in nodes without acting playe
 # Test error tolerances
 large_error_tolerance = 0.0001
 small_error_tolerance = 0.0000001
+DEFAULT_AVERAGING_DELAY = 250

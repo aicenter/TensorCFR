@@ -1,7 +1,6 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1, PLAYER2
-from src.domains.domain01.cfr_step import increment_cfr_step
 from src.domains.domain01.domain01 import levels, get_infoset_strategies, get_infoset_acting_players, acting_depth, \
 	cumulative_infoset_strategies, averaging_delay, cfr_step
 from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
@@ -27,7 +26,7 @@ def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	return update_infoset_strategies_ops
 
 
-def get_weighted_averaging_factor(delay=averaging_delay):   # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
+def get_weighted_averaging_factor(delay=averaging_delay):  # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
 	if delay is None:
 		return tf.constant(1.0, name="weighted_averaging_factor")
 	else:
@@ -48,7 +47,6 @@ def cumulate_strategy_of_opponent(opponent):  # TODO unittest
 				shape=[infoset_strategies[level].shape[0]],
 				name="infosets_of_opponent_lvl{}".format(level)
 		)
-		# averaging_factor = get_weighted_averaging_factor(delay=None)
 		averaging_factor = get_weighted_averaging_factor()
 		cumulate_infoset_strategies_ops[level] = masked_assign(
 				# TODO implement and use `masked_assign_add` here
@@ -102,9 +100,11 @@ if __name__ == '__main__':
 				infoset_reach_probabilities_[i],
 				infoset_strategies_[i],
 			])
-			for _ in range(3):
+			for _ in range(3):      # TODO extract `3` to `constants.py`
 				print_tensors(sess, [
-					cumulative_infoset_strategies[i],
+					cfr_step,
 					cumulative_infoset_strategies[i],
 					ops_cumulate_infoset_strategies[i],
-				])           # TODO test with increasing `crf_step`
+					cumulative_infoset_strategies[i],
+				])
+				sess.run(tf.assign_add(ref=cfr_step, value=1, name="increment_cfr_step_op"))  # simulate increasing `crf_step`

@@ -19,12 +19,16 @@ def process_strategies(acting_player=PLAYER1, opponent=PLAYER2):
 	return ops
 
 
-def do_cfr_step():
-	increment_cfr_step_op = tf.assign_add(
+def increment_cfr_step():
+	return tf.assign_add(
 			ref=cfr_step,
 			value=1,
 			name="increment_cfr_step_op"
 	)
+
+
+def do_cfr_step():
+	increment_cfr_step_op = increment_cfr_step()
 	cfr_ops = process_strategies(acting_player=PLAYER1, opponent=PLAYER2) + [increment_cfr_step_op]
 	return tf.group(cfr_ops, name="cfr_step")
 

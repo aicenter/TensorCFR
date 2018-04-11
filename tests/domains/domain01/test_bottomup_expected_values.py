@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from src.constants import small_error_tolerance, large_error_tolerance
+from src.constants import SMALL_ERROR_TOLERANCE, LARGE_ERROR_TOLERANCE
 from src.domains.domain01.bottomup_expected_values import get_expected_values
 
 
@@ -17,7 +17,7 @@ class TestBottomUpExpectedValues(tf.test.TestCase):
 
 			output = sess.run(self.expected_values[0])
 
-			self.assertNDArrayNear(output, expected_output, large_error_tolerance)
+			self.assertNDArrayNear(output, expected_output, LARGE_ERROR_TOLERANCE)
 
 	def test_level_1(self):
 		expected_output = np.array([25.45, 95.5, 154.2, 214.2, 210.45])
@@ -27,7 +27,7 @@ class TestBottomUpExpectedValues(tf.test.TestCase):
 
 			output = sess.run(self.expected_values[1])
 
-			self.assertNDArrayNear(output, expected_output, large_error_tolerance)
+			self.assertNDArrayNear(output, expected_output, LARGE_ERROR_TOLERANCE)
 
 	def test_level_2(self):
 		expected_output = np.array([[18.5, 33, 30],
@@ -41,7 +41,7 @@ class TestBottomUpExpectedValues(tf.test.TestCase):
 
 			output = sess.run(self.expected_values[2])
 
-			self.assertNDArrayNear(output, expected_output, small_error_tolerance)
+			self.assertNDArrayNear(output, expected_output, SMALL_ERROR_TOLERANCE)
 
 	def test_level_3(self):
 		expected_output = np.array([[[10, 20],
@@ -69,4 +69,4 @@ class TestBottomUpExpectedValues(tf.test.TestCase):
 
 			output = sess.run(self.expected_values[3])
 
-			self.assertNDArrayNear(output, expected_output, small_error_tolerance)
+			self.assertNDArrayNear(output, expected_output, SMALL_ERROR_TOLERANCE)

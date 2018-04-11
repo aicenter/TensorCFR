@@ -1,13 +1,13 @@
 import numpy as np
 import tensorflow as tf
 
-from src.constants import small_error_tolerance
+from src.constants import SMALL_ERROR_TOLERANCE
 from src.domains.domain01.topdown_reach_probabilities import get_nodal_reach_probabilities
 
 
 class TestTopDownReachProbabilities(tf.test.TestCase):
 	def setUp(self):
-		self.error_tolerance = small_error_tolerance
+		self.error_tolerance = SMALL_ERROR_TOLERANCE
 		self.reach_probabilities = get_nodal_reach_probabilities()
 
 	def test_level_0(self):

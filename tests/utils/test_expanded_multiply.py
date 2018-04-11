@@ -1,12 +1,12 @@
 import tensorflow as tf
 
-from src.constants import small_error_tolerance
+from src.constants import SMALL_ERROR_TOLERANCE
 from src.utils.tensor_utils import expanded_multiply, print_tensors
 
 
 class TestExpandedMultiply(tf.test.TestCase):
 	def setUp(self):
-		self.tolerance = small_error_tolerance
+		self.tolerance = SMALL_ERROR_TOLERANCE
 
 	def test_expanded_multiply_0D_by_1D(self):
 		expandable_tensor = tf.Variable(2.0, name="expandable_tensor")

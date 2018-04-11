@@ -15,6 +15,6 @@ CHANCE_PLAYER = 0
 NO_ACTING_PLAYER = -1  # dummy acting-player value in nodes without acting players, i.e. terminal and imaginary nodes
 
 # Test error tolerances
-large_error_tolerance = 0.0001
-small_error_tolerance = 0.0000001
+LARGE_ERROR_TOLERANCE = 0.0001
+SMALL_ERROR_TOLERANCE = 0.0000001
 DEFAULT_AVERAGING_DELAY = 250

@@ -18,9 +18,10 @@ def increment_cfr_step():
 
 
 def do_cfr_step():
-	increment_cfr_step_op = increment_cfr_step()
-	cfr_ops = process_strategies(acting_player=PLAYER1, opponent=PLAYER2) + [increment_cfr_step_op]
-	return tf.group(cfr_ops, name="cfr_step")
+	return tf.group(
+			process_strategies(acting_player=PLAYER1, opponent=PLAYER2) + [increment_cfr_step()],
+			name="cfr_step"
+	)
 
 
 if __name__ == '__main__':

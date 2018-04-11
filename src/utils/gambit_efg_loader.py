@@ -22,7 +22,7 @@ class GambitEFGLoader:
 		if node_type == NODE_TYPE_CHANCE:
 			return self.parse_chance_node(input_line)
 		elif node_type == NODE_TYPE_PLAYER:
-			raise NotImplemented
+			return self.parse_player_node(input_line)
 		elif node_type == NODE_TYPE_TERMINAL:
 			raise NotImplemented
 		else:
@@ -55,6 +55,26 @@ class GambitEFGLoader:
 			'payoffs': payoffs
 		}
 
+	def parse_player_node(self, input_line):
+		parse_line = re.search(
+			r'^(?P<type>p) "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) \"\" \{ (?P<payoffs_str>.*) \}',
+			input_line
+		)
+
+		actions = self.parse_actions(parse_line.group('actions_str'))
+		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
+
+		return {
+			'type': parse_line.group('type'),
+			'name': parse_line.group('name'),
+			'player_number': parse_line.group('player_number'),
+			'information_set_number': parse_line.group('information_set_number'),
+			'information_set_name': parse_line.group('information_set_name'),
+			'actions': actions,
+			'outcome': parse_line.group('outcome'),
+			'payoffs': payoffs
+		}
+
 
 if __name__ == '__main__':
 	input_line_chance = 'c "" 1 "" { "Ea (0.05)" 0.05 "Da (0.1)" 0.1 "Ca (0.1)" 0.1 "Ba (0.25)" 0.25 "Aa (0.5)" 0.5 } 1 "" { 0, 0 }'
@@ -62,8 +82,8 @@ if __name__ == '__main__':
 	input_line_terminal = 't "" 38 "" { 10, -10 }'
 
 	gambit_efg_loader = GambitEFGLoader('dummy')
-	print(gambit_efg_loader.parse_node(input_line_chance))
-	#print(gambit_efg_loader.parse_node(input_line_player))
+	#print(gambit_efg_loader.parse_node(input_line_chance))
+	print(gambit_efg_loader.parse_node(input_line_player))
 	#print(gambit_efg_loader.parse_node(input_line_terminal))
 
 

@@ -229,3 +229,5 @@ src/utils/__pycache__/
 src/showcases/__pycache__/
 src/domains/domain01/__pycache__/
 .cache/
+src/__pycache__/
+src/domains/__pycache__/

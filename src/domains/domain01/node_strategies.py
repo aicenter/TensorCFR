@@ -69,33 +69,12 @@ if __name__ == '__main__':
 	node_cf_strategies = get_node_cf_strategies(updating_player=updating_player)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		print("########## Level 0 ##########")
-		print_tensors(
-				sess,
-				[
-					node_to_infoset[0],
-					infoset_strategies[0],
-					node_strategies[0],
-					node_cf_strategies[0]
-				]
-		)
-		print("########## Level 1 ##########")
-		print_tensors(
-				sess,
-				[
-					node_to_infoset[1],
-					infoset_strategies[1],
-					node_strategies[1],
-					node_cf_strategies[1]
-				]
-		)
-		print("########## Level 2 ##########")
-		print_tensors(
-				sess,
-				[
-					node_to_infoset[2],
-					infoset_strategies[2],
-					node_strategies[2],
-					node_cf_strategies[2]
-				]
-		)
+		for level_ in range(acting_depth):
+			print("########## Level {} ##########".format(level_))
+			print_tensors(sess, [
+						node_to_infoset[level_],
+						infoset_strategies[level_],
+						node_strategies[level_],
+						node_cf_strategies[level_]
+					]
+			)

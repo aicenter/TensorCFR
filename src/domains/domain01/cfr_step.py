@@ -26,7 +26,7 @@ def do_cfr_step():
 
 
 if __name__ == '__main__':
-	total_steps = 10
+	total_steps = 1000
 	infoset_strategies_ = get_infoset_strategies()
 	infoset_acting_players_ = get_infoset_acting_players()
 	process_strategies_ops = process_strategies()

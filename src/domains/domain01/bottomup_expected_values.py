@@ -5,8 +5,8 @@ import tensorflow as tf
 from src.constants import TERMINAL_NODE
 from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, utilities, node_types, levels, \
 	signum_of_current_player, print_player_variables
+from src.domains.domain01.node_strategies import assign_strategies_to_nodes
 from src.domains.domain01.swap_players import swap_players
-from src.utils.assign_strategies_to_nodes import assign_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
 
 

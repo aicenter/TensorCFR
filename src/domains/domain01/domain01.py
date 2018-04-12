@@ -190,6 +190,8 @@ averaging_delay = tf.constant(         # https://arxiv.org/pdf/1407.5042.pdf (Fi
 		dtype=cfr_step.dtype,
 		name="averaging_delay"
 )
+player_owning_the_utilities = tf.constant(PLAYER1, name="player_owning_the_utilities")  # utilities defined from this...
+#  ...player's point of view
 current_updating_player = tf.Variable(initial_value=PLAYER1, name="current_updating_player")
 current_opponent = tf.Variable(initial_value=PLAYER2, name="current_opponent")
 

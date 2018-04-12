@@ -196,8 +196,8 @@ current_updating_player = tf.Variable(initial_value=PLAYER1, name="current_updat
 current_opponent = tf.Variable(initial_value=PLAYER2, name="current_opponent")
 signum_of_current_player = tf.where(
 		condition=tf.equal(current_updating_player, player_owning_the_utilities),
-		x=1,
-		y=-1,
+		x=1.0,
+		y=-1.0,                   # Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
 		name="signum_of_current_player",
 )
 

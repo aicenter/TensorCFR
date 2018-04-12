@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1
-from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, infoset_acting_players
+from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, infoset_acting_players, acting_depth
 from src.utils.tensor_utils import print_tensors
 
 
@@ -41,13 +41,13 @@ def assign_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updati
 
 
 def get_node_strategies():
-	node_strategies_lvl0 = assign_strategies_to_nodes(infoset_strategies[0], node_to_infoset[0],
-	                                                  name="node_strategies_lvl0")
-	node_strategies_lvl1 = assign_strategies_to_nodes(infoset_strategies[1], node_to_infoset[1],
-	                                                  name="node_strategies_lvl1")
-	node_strategies_lvl2 = assign_strategies_to_nodes(infoset_strategies[2], node_to_infoset[2],
-	                                                  name="node_strategies_lvl2")
-	return [node_strategies_lvl0, node_strategies_lvl1, node_strategies_lvl2]
+	return [
+		assign_strategies_to_nodes(
+				infoset_strategies[level],
+				node_to_infoset[level],
+				name="node_strategies_lvl{}".format(level)
+		) for level in range(acting_depth)
+	]
 
 
 def get_node_cf_strategies(updating_player=PLAYER1):

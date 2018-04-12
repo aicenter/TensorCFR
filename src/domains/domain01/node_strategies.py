@@ -64,9 +64,9 @@ def get_node_cf_strategies(updating_player=PLAYER1):
 
 
 if __name__ == '__main__':
-	updating_player = PLAYER1
+	updating_player_ = PLAYER1
 	node_strategies = get_node_strategies()
-	node_cf_strategies = get_node_cf_strategies(updating_player=updating_player)
+	node_cf_strategies = get_node_cf_strategies(updating_player=updating_player_)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		for level_ in range(acting_depth):

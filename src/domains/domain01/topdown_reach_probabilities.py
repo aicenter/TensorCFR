@@ -1,9 +1,9 @@
 import tensorflow as tf
 
-from src.constants import PLAYER1
 from src.domains.domain01.domain01 import reach_probability_of_root_node, node_to_infoset, infoset_strategies, levels, \
 	infoset_acting_players
 from src.domains.domain01.node_strategies import get_node_cf_strategies
+from src.domains.domain01.swap_players import swap_players
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum
 
 
@@ -56,11 +56,13 @@ def show_reach_probabilities(session):
 
 
 if __name__ == '__main__':
-	updating_player = PLAYER1
-	node_cf_strategies_ = get_node_cf_strategies(updating_player=updating_player)
+	node_cf_strategies_ = get_node_cf_strategies()
 	nodal_reach_probabilities_ = get_nodal_reach_probabilities()
 	infoset_reach_probabilities_ = get_infoset_reach_probabilities()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		# TODO test with swapping players
+		show_reach_probabilities(sess)
+		print("-----------Swap players-----------\n")
+		sess.run(swap_players())
 		show_reach_probabilities(sess)

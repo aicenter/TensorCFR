@@ -42,6 +42,19 @@ def get_infoset_reach_probabilities():
 	return infoset_reach_probabilities
 
 
+def show_reach_probabilities(session):
+	for level_ in range(levels):
+		print("########## Level {} ##########".format(level_))
+		print_tensors(sess, [nodal_reach_probabilities_[level_]])
+		if level_ < levels - 1:
+			print_tensors(session, [
+				node_to_infoset[level_],
+				infoset_reach_probabilities_[level_],
+				infoset_strategies[level_],
+				node_cf_strategies_[level_],
+			])
+
+
 if __name__ == '__main__':
 	updating_player = PLAYER1
 	node_cf_strategies_ = get_node_cf_strategies(updating_player=updating_player)
@@ -50,13 +63,4 @@ if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		# TODO test with swapping players
-		for level_ in range(levels):
-			print("########## Level {} ##########".format(level_))
-			print_tensors(sess, [nodal_reach_probabilities_[level_]])
-			if level_ < levels - 1:
-				print_tensors(sess, [
-					node_to_infoset[level_],
-					infoset_reach_probabilities_[level_],
-					infoset_strategies[level_],
-					node_cf_strategies_[level_],
-				])
+		show_reach_probabilities(sess)

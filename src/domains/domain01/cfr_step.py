@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from src.constants import PLAYER1, PLAYER2
-from src.domains.domain01.domain01 import get_infoset_strategies, get_infoset_acting_players, cfr_step
+from src.domains.domain01.domain01 import get_infoset_strategies, get_infoset_acting_players, cfr_step, \
+	current_updating_player, current_opponent
 from src.domains.domain01.update_strategies import process_strategies
 from src.utils.tensor_utils import print_tensors
 
@@ -31,11 +31,7 @@ if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print("########## Process strategies ##########")
-		print_tensors(sess, [cfr_step, cfr_step])
-		print_tensors(sess, infoset_strategies_)
-		sess.run(cfr_step_op)
-		print_tensors(sess, [cfr_step, cfr_step])
-		print_tensors(sess, infoset_strategies_)
-		sess.run(cfr_step_op)
-		print_tensors(sess, [cfr_step, cfr_step])
-		print_tensors(sess, infoset_strategies_)
+		for _ in range(4):
+			print("########## Start of CFR step {} ##########".format(cfr_step.eval()))
+			print_tensors(sess, infoset_strategies_)
+			sess.run(cfr_step_op)

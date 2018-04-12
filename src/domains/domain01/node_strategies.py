@@ -52,28 +52,15 @@ def get_node_strategies():
 
 def get_node_cf_strategies(updating_player=PLAYER1):
 	# TODO generate node_cf_strategies_* with tf.where on node_strategies
-	node_cf_strategies_lvl0 = assign_strategies_to_nodes(
-			infoset_strategies[0],
-			node_to_infoset[0],
-			updating_player=updating_player,
-			acting_players=infoset_acting_players[0],
-			name="node_cf_strategies_lvl0"
-	)
-	node_cf_strategies_lvl1 = assign_strategies_to_nodes(
-			infoset_strategies[1],
-			node_to_infoset[1],
-			updating_player=updating_player,
-			acting_players=infoset_acting_players[1],
-			name="node_cf_strategies_lvl1"
-	)
-	node_cf_strategies_lvl2 = assign_strategies_to_nodes(
-			infoset_strategies[2],
-			node_to_infoset[2],
-			updating_player=updating_player,
-			acting_players=infoset_acting_players[2],
-			name="node_cf_strategies_lvl2"
-	)
-	return [node_cf_strategies_lvl0, node_cf_strategies_lvl1, node_cf_strategies_lvl2]
+	return [
+		assign_strategies_to_nodes(
+				infoset_strategies[level],
+				node_to_infoset[level],
+				updating_player=updating_player,
+				acting_players=infoset_acting_players[level],
+				name="node_cf_strategies_lvl{}".format(level)
+		) for level in range(acting_depth)
+	]
 
 
 if __name__ == '__main__':

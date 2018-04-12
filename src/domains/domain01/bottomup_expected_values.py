@@ -3,7 +3,8 @@
 import tensorflow as tf
 
 from src.constants import TERMINAL_NODE
-from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, utilities, node_types, levels
+from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, utilities, node_types, levels, \
+	signum_of_current_player, print_player_variables
 from src.utils.assign_strategies_to_nodes import assign_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
 
@@ -31,10 +32,19 @@ def get_expected_values():
 				name="weighted_sum_of_values_lvl{}".format(level))
 		expected_values[level] = tf.where(
 				condition=tf.equal(node_types[level], TERMINAL_NODE),
-				x=utilities[level],
+				x=tf.to_float(signum_of_current_player) * utilities[level],
 				y=weighted_sum_of_values,
 				name="expected_values_lvl{}".format(level))
 	return expected_values
+
+
+def show_expected_values(session):
+	print_player_variables(session=session)
+	for level_ in reversed(range(levels)):
+		print("########## Level {} ##########".format(level_))
+		if level_ < len(node_strategies_):
+			print_tensors(session, [node_strategies_[level_]])
+		print_tensors(session, [utilities[level_], expected_values_[level_]])
 
 
 if __name__ == '__main__':
@@ -42,8 +52,4 @@ if __name__ == '__main__':
 	expected_values_ = get_expected_values()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		for level_ in reversed(range(levels)):
-			print("########## Level {} ##########".format(level_))
-			if level_ < len(node_strategies_):
-				print_tensors(sess, [node_strategies_[level_]])
-			print_tensors(sess, [utilities[level_], expected_values_[level_]])
+		show_expected_values(sess)

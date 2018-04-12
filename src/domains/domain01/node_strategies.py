@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from src.constants import PLAYER1
-from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, infoset_acting_players, acting_depth
+from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, infoset_acting_players, acting_depth, \
+	current_updating_player
 from src.utils.tensor_utils import print_tensors
 
 
@@ -50,7 +50,7 @@ def get_node_strategies():
 	]
 
 
-def get_node_cf_strategies(updating_player=PLAYER1):
+def get_node_cf_strategies(updating_player=current_updating_player):
 	# TODO generate node_cf_strategies_* with tf.where on node_strategies
 	return [
 		assign_strategies_to_nodes(
@@ -64,9 +64,8 @@ def get_node_cf_strategies(updating_player=PLAYER1):
 
 
 if __name__ == '__main__':
-	updating_player_ = PLAYER1
 	node_strategies = get_node_strategies()
-	node_cf_strategies = get_node_cf_strategies(updating_player=updating_player_)
+	node_cf_strategies = get_node_cf_strategies()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		for level_ in range(acting_depth):

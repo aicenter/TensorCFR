@@ -194,6 +194,12 @@ player_owning_the_utilities = tf.constant(PLAYER1, name="player_owning_the_utili
 #  ...player's point of view
 current_updating_player = tf.Variable(initial_value=PLAYER1, name="current_updating_player")
 current_opponent = tf.Variable(initial_value=PLAYER2, name="current_opponent")
+signum_of_current_player = tf.where(
+		condition=tf.equal(current_updating_player, player_owning_the_utilities),
+		x=1,
+		y=-1,
+		name="signum_of_current_player",
+)
 
 
 def get_node_types():

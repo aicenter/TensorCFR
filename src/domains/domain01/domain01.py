@@ -223,6 +223,9 @@ if __name__ == '__main__':
 			print_tensors(sess, [node_types[level], utilities[level]])
 			if level != levels_range[-1]:
 				print_tensors(sess, [node_to_infoset[level], infoset_acting_players[level], infoset_strategies[level]])
-				print_tensors(sess, [cf_values_infoset_actions[level], positive_cumulative_regrets[level],
-														 cumulative_infoset_strategies[level]])
-		print_tensors(sess, [cfr_step, current_updating_player, current_opponent])
+				print_tensors(sess, [
+					cf_values_infoset_actions[level],
+					positive_cumulative_regrets[level],
+					cumulative_infoset_strategies[level]
+				])
+		print_tensors(sess, [cfr_step, current_updating_player, current_opponent, player_owning_the_utilities])

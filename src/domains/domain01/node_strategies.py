@@ -2,6 +2,7 @@ import tensorflow as tf
 
 from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, infoset_acting_players, acting_depth, \
 	current_updating_player
+from src.domains.domain01.swap_players import swap_players
 from src.utils.tensor_utils import print_tensors
 
 
@@ -63,17 +64,25 @@ def get_node_cf_strategies(updating_player=current_updating_player):
 	]
 
 
+def show_strategies(session):
+	for level_ in range(acting_depth):
+		print("########## Level {} ##########".format(level_))
+		print_tensors(session, [
+			node_to_infoset[level_],
+			infoset_strategies[level_],
+			node_strategies[level_],
+			infoset_acting_players[level_],
+			node_cf_strategies[level_],
+		])
+
+
 if __name__ == '__main__':
 	node_strategies = get_node_strategies()
 	node_cf_strategies = get_node_cf_strategies()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		for level_ in range(acting_depth):
-			print("########## Level {} ##########".format(level_))
-			print_tensors(sess, [
-						node_to_infoset[level_],
-						infoset_strategies[level_],
-						node_strategies[level_],
-						node_cf_strategies[level_]
-					]
-			)
+		# TODO extract following lines to a UnitTest
+		show_strategies(session=sess)
+		print("-----------Swap players-----------\n")
+		sess.run(swap_players())
+		show_strategies(session=sess)

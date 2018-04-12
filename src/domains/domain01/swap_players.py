@@ -1,7 +1,6 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1, PLAYER2
-from src.domains.domain01.cfr_step import increment_cfr_step
 from src.domains.domain01.domain01 import cfr_step, \
 	current_updating_player, current_opponent
 from src.utils.tensor_utils import print_tensors
@@ -25,10 +24,11 @@ def swap_players():
 
 
 if __name__ == '__main__':
+	increment_cfr_step_op = tf.assign_add(ref=cfr_step, value=1, name="increment_cfr_step_op")
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print("PLAYER1 is {}, PLAYER2 is {}".format(PLAYER1, PLAYER2))
 		for _ in range(5):
 			print("########## CFR step {} ##########\n".format(cfr_step.eval()))
 			print_tensors(sess, [current_updating_player, current_opponent])
-			sess.run([swap_players(), increment_cfr_step()])
+			sess.run([swap_players(), increment_cfr_step_op])

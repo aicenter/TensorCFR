@@ -2,6 +2,7 @@ import tensorflow as tf
 
 from src.domains.domain01.domain01 import get_infoset_strategies, get_infoset_acting_players, cfr_step, \
 	current_updating_player, current_opponent
+from src.domains.domain01.swap_players import swap_players
 from src.domains.domain01.update_strategies import process_strategies
 from src.utils.tensor_utils import print_tensors
 
@@ -18,7 +19,8 @@ def increment_cfr_step():
 
 def do_cfr_step():
 	return tf.group(
-			process_strategies(acting_player=PLAYER1, opponent=PLAYER2) + [increment_cfr_step()],
+			process_strategies(acting_player=current_updating_player, opponent=current_opponent)
+			+ [swap_players(), increment_cfr_step()],
 			name="cfr_step"
 	)
 

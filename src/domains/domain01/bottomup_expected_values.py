@@ -5,6 +5,7 @@ import tensorflow as tf
 from src.constants import TERMINAL_NODE
 from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, utilities, node_types, levels, \
 	signum_of_current_player, print_player_variables
+from src.domains.domain01.swap_players import swap_players
 from src.utils.assign_strategies_to_nodes import assign_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
 
@@ -52,4 +53,7 @@ if __name__ == '__main__':
 	expected_values_ = get_expected_values()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
+		show_expected_values(sess)
+		sess.run(swap_players())
+		print("-----------Players swapped.-----------\n")
 		show_expected_values(sess)

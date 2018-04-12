@@ -61,6 +61,7 @@ if __name__ == '__main__':
 	expected_values_ = get_expected_values()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
+		# TODO extract following lines to a UnitTest
 		show_expected_values(sess)
 		sess.run(swap_players())
 		print("-----------Swap players-----------\n")

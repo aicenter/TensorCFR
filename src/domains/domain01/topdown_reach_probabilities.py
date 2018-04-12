@@ -61,7 +61,7 @@ if __name__ == '__main__':
 	infoset_reach_probabilities_ = get_infoset_reach_probabilities()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		# TODO test with swapping players
+		# TODO extract following lines to a UnitTest
 		show_reach_probabilities(sess)
 		print("-----------Swap players-----------\n")
 		sess.run(swap_players())

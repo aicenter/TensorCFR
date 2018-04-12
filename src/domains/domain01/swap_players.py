@@ -2,8 +2,7 @@ import tensorflow as tf
 
 from src.constants import PLAYER1, PLAYER2
 from src.domains.domain01.domain01 import cfr_step, \
-	current_updating_player, current_opponent
-from src.utils.tensor_utils import print_tensors
+	current_updating_player, current_opponent, print_player_variables
 
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
@@ -30,5 +29,5 @@ if __name__ == '__main__':
 		print("PLAYER1 is {}, PLAYER2 is {}".format(PLAYER1, PLAYER2))
 		for _ in range(5):
 			print("########## CFR step {} ##########\n".format(cfr_step.eval()))
-			print_tensors(sess, [current_updating_player, current_opponent])
+			print_player_variables(session=sess)
 			sess.run([swap_players(), increment_cfr_step_op])

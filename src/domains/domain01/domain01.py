@@ -218,6 +218,16 @@ def get_infoset_acting_players():
 	return infoset_acting_players
 
 
+def print_player_variables(session):
+	print_tensors(session, [
+		cfr_step,
+		current_updating_player,
+		current_opponent,
+		signum_of_current_player,
+		player_owning_the_utilities,
+	])
+
+
 if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
@@ -234,4 +244,4 @@ if __name__ == '__main__':
 					positive_cumulative_regrets[level],
 					cumulative_infoset_strategies[level]
 				])
-		print_tensors(sess, [cfr_step, current_updating_player, current_opponent, player_owning_the_utilities])
+		print_player_variables(session=sess)

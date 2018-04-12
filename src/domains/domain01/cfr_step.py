@@ -26,14 +26,16 @@ def do_cfr_step():
 
 
 if __name__ == '__main__':
+	total_steps = 10
 	infoset_strategies_ = get_infoset_strategies()
 	infoset_acting_players_ = get_infoset_acting_players()
 	process_strategies_ops = process_strategies()
 	cfr_step_op = do_cfr_step()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		print("########## Process strategies ##########")
-		for _ in range(4):
-			print("########## Start of CFR step {} ##########".format(cfr_step.eval()))
+		print("Running {} CFR+ iterations...\n".format(total_steps))
+		for _ in range(total_steps):
+			print("########## Start of CFR+ step {} ##########".format(cfr_step.eval()))
+			print_tensors(sess, [current_updating_player, current_opponent])
 			print_tensors(sess, infoset_strategies_)
 			sess.run(cfr_step_op)

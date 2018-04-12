@@ -10,6 +10,7 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_nodal_reach_probabilities():
+	# TODO take into account swapping players
 	node_cf_strategies = get_node_cf_strategies()
 	nodal_reach_probabilities = [None] * levels
 	nodal_reach_probabilities[0] = reach_probability_of_root_node
@@ -48,6 +49,7 @@ if __name__ == '__main__':
 	infoset_reach_probabilities_ = get_infoset_reach_probabilities()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
+		# TODO test with swapping players
 		for level_ in range(levels):
 			print("########## Level {} ##########".format(level_))
 			print_tensors(sess, [nodal_reach_probabilities_[level_]])

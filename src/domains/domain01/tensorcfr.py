@@ -23,18 +23,15 @@ def run_cfr(total_steps=1000):
 	]
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-
 		print("Initializing strategies to uniform ones...\n")
 		sess.run(ops_assign_uniform_strategies)
 		print_tensors(sess, current_infoset_strategies)
-
 		print("Running {} CFR+ iterations...\n".format(total_steps))
 		for _ in range(total_steps):
 			print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
 			sess.run(cfr_step_op)
 			print_tensors(sess, current_infoset_strategies)  # TODO rename immediate -> current
 			print_tensors(sess, cumulative_infoset_strategies)
-
 		print_tensors(sess, average_infoset_strategies)
 
 

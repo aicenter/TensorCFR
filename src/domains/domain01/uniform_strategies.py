@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.constants import IMAGINARY_NODE
-from src.domains.domain01.domain01 import levels, node_types, node_to_infoset, immediate_infoset_strategies, \
+from src.domains.domain01.domain01 import levels, node_types, node_to_infoset, current_infoset_strategies, \
 	infosets_of_non_chance_player, acting_depth
 from src.utils.tensor_utils import print_tensors, masked_assign
 
@@ -17,7 +17,7 @@ def get_infoset_children_types():  # TODO unittest
 			infoset_children_types[level] = tf.scatter_nd_update(
 				ref=tf.Variable(
 					tf.zeros_like(
-						immediate_infoset_strategies[level],
+						current_infoset_strategies[level],
 						dtype=node_types[level + 1].dtype
 					)
 				),
@@ -45,7 +45,7 @@ def assign_uniform_strategies_to_players():
 	uniform_strategies = get_infoset_uniform_strategies()
 	return [
 		masked_assign(
-				ref=immediate_infoset_strategies[level],
+				ref=current_infoset_strategies[level],
 				mask=infosets_of_non_chance_player[level],
 				value=uniform_strategies[level])
 		for level in range(acting_depth)

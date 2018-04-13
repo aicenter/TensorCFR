@@ -65,19 +65,20 @@ def expanded_multiply(expandable_tensor, expanded_tensor, name="expanded_multipl
 	return tf.multiply(tf.expand_dims(expandable_tensor, axis=-1), expanded_tensor, name=name)
 
 
-def normalize(tensor, axis=-1, order=1):
+def normalize(tensor, axis=-1, order=1, name="normalize"):
 	"""
 	Normalize the input tensor along an arbitrary axis with an arbitrary norm.
 
 	Args:
 		:param tensor - Input tf.Tensor.
 		:param axis - Along which axis is to be the input tensor normalized, default is -1 (the last axis).
-		:param order - Which norm will be used as in numpy.linalg.norm. Default is 1 (L1 norm).
+		:param order - Which norm will be used as in `numpy.linalg.norm`. Default is 1 (L1 norm).
+		:param name: A string to name the resulting tensor operation.
 
 	Returns:
 		Normalized tensor.
 	"""
-	return tf.divide(tensor, tf.norm(tensor, axis=axis, keepdims=True, ord=order))
+	return tf.divide(tensor, tf.norm(tensor, axis=axis, keepdims=True, ord=order), name=name)
 
 
 def scatter_nd_sum(indices, updates, shape, name="scatter_nd_sum"):

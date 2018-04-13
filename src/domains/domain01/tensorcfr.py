@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.domains.domain01.cfr_step import do_cfr_step
-from src.domains.domain01.domain01 import cfr_step, infoset_strategies, acting_depth
+from src.domains.domain01.domain01 import cfr_step, infoset_strategies, acting_depth, cumulative_infoset_strategies
 from src.domains.domain01.uniform_strategies import get_infoset_uniform_strategies
 from src.utils.tensor_utils import print_tensors
 
@@ -14,10 +14,10 @@ uniform_strategies = get_infoset_uniform_strategies()
 with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
 	print("Initializing strategies to uniform ones...\n")
-	sess.run([tf.assign(ref=infoset_strategies[level], value=uniform_strategies[level]) for level in range(acting_depth)])
+	sess.run([tf.assign(ref=infoset_strategies[level], value=uniform_strategies[level]) for level in range(acting_depth)]) # TODO extract to a method in `uniform_strategies.py`
 	print_tensors(sess, infoset_strategies)
 	print("Running {} CFR+ iterations...\n".format(total_steps))
 	for _ in range(total_steps):
 		print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
 		sess.run(cfr_step_op)
-		print_tensors(sess, infoset_strategies)
+		print_tensors(sess, cumulative_infoset_strategies)

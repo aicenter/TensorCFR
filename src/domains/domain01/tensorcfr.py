@@ -11,7 +11,7 @@ from src.utils.tensor_utils import print_tensors, normalize, masked_assign
 
 
 # TODO extract to a method with `total_steps` as a parameter
-total_steps = 1500
+total_steps = 50
 cfr_step_op = do_cfr_step()
 infosets_of_non_chance_player = [
 	tf.reshape(tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),

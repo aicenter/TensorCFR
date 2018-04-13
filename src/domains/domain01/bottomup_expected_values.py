@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 from src.constants import TERMINAL_NODE
-from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, utilities, node_types, levels, \
+from src.domains.domain01.domain01 import node_to_infoset, immediate_infoset_strategies, utilities, node_types, levels, \
 	signum_of_current_player, print_player_variables
 from src.domains.domain01.node_strategies import assign_strategies_to_nodes
 from src.domains.domain01.swap_players import swap_players
@@ -16,7 +16,7 @@ def get_node_strategies():
 	node_strategies = [None] * (levels - 1)
 	for level in range(levels - 1):
 		node_strategies[level] = assign_strategies_to_nodes(
-				infoset_strategies[level],
+				immediate_infoset_strategies[level],
 				node_to_infoset[level],
 				name="node_strategies_lvl{}".format(level)
 		)

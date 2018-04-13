@@ -1,6 +1,7 @@
 import tensorflow as tf
 
-from src.domains.domain01.domain01 import reach_probability_of_root_node, node_to_infoset, infoset_strategies, levels, \
+from src.domains.domain01.domain01 import reach_probability_of_root_node, node_to_infoset, immediate_infoset_strategies, \
+	levels, \
 	infoset_acting_players
 from src.domains.domain01.node_strategies import get_node_cf_strategies
 from src.domains.domain01.swap_players import swap_players
@@ -50,7 +51,7 @@ def show_reach_probabilities(session):
 			print_tensors(session, [
 				node_to_infoset[level_],
 				infoset_reach_probabilities_[level_],
-				infoset_strategies[level_],
+				immediate_infoset_strategies[level_],
 				node_cf_strategies_[level_],
 			])
 

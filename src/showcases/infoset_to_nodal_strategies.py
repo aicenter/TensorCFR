@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.domains.domain01.domain01 import infoset_strategies, node_to_infoset, acting_depth
+from src.domains.domain01.domain01 import immediate_infoset_strategies, node_to_infoset, acting_depth
 from src.domains.domain01.node_strategies import assign_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
 
@@ -12,7 +12,7 @@ from src.utils.tensor_utils import print_tensors
 # node_strategies = [None] * acting_depth
 node_strategies = [
 	assign_strategies_to_nodes(
-			infoset_strategies[level],
+			immediate_infoset_strategies[level],
 			node_to_infoset[level],
 			name="node_strategies_lvl{}".format(level)
 	) for level in range(acting_depth)
@@ -23,4 +23,4 @@ with tf.Session() as sess:
 	# more verbose output
 	for level in range(acting_depth):
 		print("########## Level {} ##########".format(level))
-		print_tensors(sess, [node_to_infoset[level], infoset_strategies[level], node_strategies[level]])
+		print_tensors(sess, [node_to_infoset[level], immediate_infoset_strategies[level], node_strategies[level]])

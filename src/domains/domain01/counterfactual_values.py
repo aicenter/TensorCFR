@@ -3,7 +3,8 @@
 import tensorflow as tf
 
 from src.domains.domain01.bottomup_expected_values import get_expected_values
-from src.domains.domain01.domain01 import levels, infoset_strategies, node_to_infoset, cf_values_infoset_actions
+from src.domains.domain01.domain01 import levels, immediate_infoset_strategies, node_to_infoset, \
+	cf_values_infoset_actions
 from src.domains.domain01.topdown_reach_probabilities import get_nodal_reach_probabilities
 from src.utils.tensor_utils import print_tensors, scatter_nd_sum
 
@@ -29,14 +30,14 @@ def assign_new_cf_values_infoset_actions():  # TODO verify and write a unittest
 		new_cf_values_infoset_action[level] = scatter_nd_sum(
 				indices=tf.expand_dims(node_to_infoset[level], axis=-1),
 				updates=node_cf_values[level + 1],
-				shape=infoset_strategies[level].shape,
+				shape=immediate_infoset_strategies[level].shape,
 		)
 	return [tf.assign(ref=cf_values_infoset_actions[level], value=new_cf_values_infoset_action[level],
 	                  name="assign_new_cfv_infoset_action_lvl{}".format(level)) for level in range(levels - 1)]
 
 
 def get_cf_values_infoset():  # TODO verify and write a unittest
-	return [tf.expand_dims(tf.reduce_sum(infoset_strategies[level] * cf_values_infoset_actions[level], axis=-1),
+	return [tf.expand_dims(tf.reduce_sum(immediate_infoset_strategies[level] * cf_values_infoset_actions[level], axis=-1),
 	                       axis=-1, name="cf_values_infoset_lvl{}".format(level))
 	        for level in range(levels - 1)]
 
@@ -45,7 +46,7 @@ if __name__ == '__main__':
 	nodal_reach_probabilities_ = get_nodal_reach_probabilities()
 	expected_values_ = get_expected_values()
 	cf_values_nodes_ = get_cf_values_nodes()
-	infoset_strategies_ = infoset_strategies
+	infoset_strategies_ = immediate_infoset_strategies
 	assign_new_cf_values_infoset_actions_ = assign_new_cf_values_infoset_actions()
 	cf_values_infoset_ = get_cf_values_infoset()
 	with tf.Session() as sess:

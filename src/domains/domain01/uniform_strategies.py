@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.constants import IMAGINARY_NODE
-from src.domains.domain01.domain01 import levels, node_types, node_to_infoset, infoset_strategies
+from src.domains.domain01.domain01 import levels, node_types, node_to_infoset, immediate_infoset_strategies
 from src.utils.tensor_utils import print_tensors
 
 
@@ -16,7 +16,7 @@ def get_infoset_children_types():  # TODO unittest
 			infoset_children_types[level] = tf.scatter_nd_update(
 				ref=tf.Variable(
 					tf.zeros_like(
-						infoset_strategies[level],
+						immediate_infoset_strategies[level],
 						dtype=node_types[level + 1].dtype
 					)
 				),

@@ -1,6 +1,7 @@
 import tensorflow as tf
 
-from src.domains.domain01.domain01 import node_to_infoset, infoset_strategies, infoset_acting_players, acting_depth, \
+from src.domains.domain01.domain01 import node_to_infoset, immediate_infoset_strategies, infoset_acting_players, \
+	acting_depth, \
 	current_updating_player
 from src.domains.domain01.swap_players import swap_players
 from src.utils.tensor_utils import print_tensors
@@ -44,7 +45,7 @@ def assign_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updati
 def get_node_strategies():
 	return [
 		assign_strategies_to_nodes(
-				infoset_strategies[level],
+				immediate_infoset_strategies[level],
 				node_to_infoset[level],
 				name="node_strategies_lvl{}".format(level)
 		) for level in range(acting_depth)
@@ -55,7 +56,7 @@ def get_node_cf_strategies(updating_player=current_updating_player):
 	# TODO generate node_cf_strategies_* with tf.where on node_strategies
 	return [
 		assign_strategies_to_nodes(
-				infoset_strategies[level],
+				immediate_infoset_strategies[level],
 				node_to_infoset[level],
 				updating_player=updating_player,
 				acting_players=infoset_acting_players[level],
@@ -69,7 +70,7 @@ def show_strategies(session):
 		print("########## Level {} ##########".format(level_))
 		print_tensors(session, [
 			node_to_infoset[level_],
-			infoset_strategies[level_],
+			immediate_infoset_strategies[level_],
 			node_strategies[level_],
 			infoset_acting_players[level_],
 			node_cf_strategies[level_],

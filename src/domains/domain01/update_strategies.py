@@ -1,8 +1,8 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1, PLAYER2
-from src.domains.domain01.domain01 import levels, get_infoset_strategies, get_infoset_acting_players, acting_depth, \
-	cumulative_infoset_strategies, averaging_delay, cfr_step
+from src.domains.domain01.domain01 import levels, get_infoset_acting_players, acting_depth, \
+	cumulative_infoset_strategies, averaging_delay, cfr_step, immediate_infoset_strategies
 from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
 from src.domains.domain01.topdown_reach_probabilities import get_infoset_reach_probabilities
 from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multiply
@@ -12,14 +12,13 @@ from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multip
 
 def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	infoset_strategies_matched_to_regrets = get_strategy_matched_to_regrets()
-	infoset_strategies = get_infoset_strategies()
 	infoset_acting_players = get_infoset_acting_players()
 	update_infoset_strategies_ops = [None] * acting_depth
 	for level in range(acting_depth):
 		infosets_of_acting_player = tf.reshape(tf.equal(infoset_acting_players[level], acting_player),
-		                                       shape=[infoset_strategies[level].shape[0]],
+		                                       shape=[immediate_infoset_strategies[level].shape[0]],
 		                                       name="infosets_of_acting_player_lvl{}".format(level))
-		update_infoset_strategies_ops[level] = masked_assign(ref=infoset_strategies[level],
+		update_infoset_strategies_ops[level] = masked_assign(ref=immediate_infoset_strategies[level],
 		                                                     mask=infosets_of_acting_player,
 		                                                     value=infoset_strategies_matched_to_regrets[level],
 		                                                     name="op_update_infoset_strategies_lvl{}".format(level))
@@ -37,14 +36,13 @@ def get_weighted_averaging_factor(delay=averaging_delay):  # see https://arxiv.o
 
 
 def cumulate_strategy_of_opponent(opponent):  # TODO unittest
-	infoset_strategies = get_infoset_strategies()
 	infoset_acting_players = get_infoset_acting_players()
 	infoset_reach_probabilities = get_infoset_reach_probabilities()
 	cumulate_infoset_strategies_ops = [None] * acting_depth
 	for level in range(acting_depth):
 		infosets_of_opponent = tf.reshape(
 				tf.equal(infoset_acting_players[level], opponent),
-				shape=[infoset_strategies[level].shape[0]],
+				shape=[immediate_infoset_strategies[level].shape[0]],
 				name="infosets_of_opponent_lvl{}".format(level)
 		)
 		averaging_factor = get_weighted_averaging_factor()
@@ -54,7 +52,7 @@ def cumulate_strategy_of_opponent(opponent):  # TODO unittest
 				mask=infosets_of_opponent,
 				value=cumulative_infoset_strategies[level] + averaging_factor * expanded_multiply(
 						expandable_tensor=infoset_reach_probabilities[level],
-						expanded_tensor=infoset_strategies[level],
+						expanded_tensor=immediate_infoset_strategies[level],
 				),
 				name="op_cumulate_infoset_strategies_lvl{}".format(level)
 		)
@@ -73,7 +71,6 @@ def process_strategies(acting_player=PLAYER1, opponent=PLAYER2):
 
 
 if __name__ == '__main__':
-	infoset_strategies_ = get_infoset_strategies()
 	infoset_acting_players_ = get_infoset_acting_players()
 	infoset_strategies_matched_to_regrets_ = get_strategy_matched_to_regrets()
 	infoset_reach_probabilities_ = get_infoset_reach_probabilities()
@@ -85,11 +82,11 @@ if __name__ == '__main__':
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
 			print_tensors(sess, [
-				infoset_strategies_[i],
+				immediate_infoset_strategies[i],
 				infoset_acting_players_[i],
 				infoset_strategies_matched_to_regrets_[i],
 				update_infoset_strategies[i],
-				infoset_strategies_[i]
+				immediate_infoset_strategies[i]
 			])
 		print("########## Cumulate strategy ##########")
 		for i in range(levels - 1):
@@ -98,7 +95,7 @@ if __name__ == '__main__':
 			print_tensors(sess, [
 				infoset_acting_players_[i],
 				infoset_reach_probabilities_[i],
-				infoset_strategies_[i],
+				immediate_infoset_strategies[i],
 			])
 			for _ in range(3):      # TODO extract `3` to `constants.py`
 				print_tensors(sess, [

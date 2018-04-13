@@ -210,10 +210,6 @@ def get_node_to_infoset():
 	return node_to_infoset
 
 
-def get_infoset_strategies():
-	return immediate_infoset_strategies
-
-
 def get_infoset_acting_players():
 	return infoset_acting_players
 

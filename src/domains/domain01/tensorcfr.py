@@ -9,7 +9,8 @@ from src.utils.tensor_utils import print_tensors
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 
-total_steps = 1000
+# TODO extract to a method with `total_steps` as a parameter
+total_steps = 1500
 cfr_step_op = do_cfr_step()
 uniform_strategies = get_infoset_uniform_strategies()
 with tf.Session() as sess:

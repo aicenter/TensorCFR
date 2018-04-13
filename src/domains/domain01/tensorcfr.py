@@ -30,7 +30,7 @@ def run_cfr(total_steps=1000):
 		for _ in range(total_steps):
 			print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
 			sess.run(cfr_step_op)
-			print_tensors(sess, current_infoset_strategies)  # TODO rename immediate -> current
+			print_tensors(sess, current_infoset_strategies)
 			print_tensors(sess, cumulative_infoset_strategies)
 		print_tensors(sess, average_infoset_strategies)
 

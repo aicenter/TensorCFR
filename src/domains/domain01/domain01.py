@@ -184,6 +184,12 @@ positive_cumulative_regrets = [
 cumulative_infoset_strategies = [tf.Variable(tf.zeros_like(immediate_infoset_strategies[level]),
                                              name="cumulative_infoset_strategies_lvl{}".format(level))
                                  for level in range(acting_depth)]         # used for the final average strategy
+infosets_of_non_chance_player = [
+	tf.reshape(tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
+	           shape=[immediate_infoset_strategies[level].shape[0]],
+	           name="infosets_of_acting_player_lvl{}".format(level))
+	for level in range(acting_depth)
+]
 cfr_step = tf.Variable(initial_value=0, dtype=tf.int64, name="cfr_step")   # counter of CFR+ iterations
 averaging_delay = tf.constant(         # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
 		0,  # averaging delay of 0 means that there is no delay

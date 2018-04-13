@@ -22,9 +22,14 @@ infosets_of_non_chance_player = [
 uniform_strategies = get_infoset_uniform_strategies()
 with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
-	print("Initializing strategies to uniform ones...\n")  # TODO initialize only for real players, not the chance player
-	sess.run([tf.assign(ref=immediate_infoset_strategies[level], value=uniform_strategies[level])
-	          for level in range(acting_depth)])  # TODO extract to a method in `uniform_strategies.py`
+	print("Initializing strategies to uniform ones...\n")
+	sess.run([
+		masked_assign(  # TODO extract to a method in `uniform_strategies.py`
+				ref=immediate_infoset_strategies[level],
+				mask=infosets_of_non_chance_player[level],
+				value=uniform_strategies[level])
+		for level in range(acting_depth)
+	])
 	print_tensors(sess, immediate_infoset_strategies)
 	print("Running {} CFR+ iterations...\n".format(total_steps))
 	for _ in range(total_steps):

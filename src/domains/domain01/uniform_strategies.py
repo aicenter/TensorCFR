@@ -3,7 +3,6 @@ import tensorflow as tf
 from src.constants import IMAGINARY_NODE
 from src.domains.domain01.domain01 import levels, node_types, node_to_infoset, immediate_infoset_strategies, \
 	infosets_of_non_chance_player, acting_depth
-from src.domains.domain01.tensorcfr import uniform_strategies
 from src.utils.tensor_utils import print_tensors, masked_assign
 
 
@@ -43,6 +42,7 @@ def get_infoset_uniform_strategies():  # TODO unittest
 
 
 def assign_uniform_strategies_to_players():
+	uniform_strategies = get_infoset_uniform_strategies()
 	return [
 		masked_assign(
 				ref=immediate_infoset_strategies[level],

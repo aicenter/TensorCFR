@@ -1,8 +1,10 @@
 import tensorflow as tf
 
 from src.constants import IMAGINARY_NODE
-from src.domains.domain01.domain01 import levels, node_types, node_to_infoset, immediate_infoset_strategies
-from src.utils.tensor_utils import print_tensors
+from src.domains.domain01.domain01 import levels, node_types, node_to_infoset, immediate_infoset_strategies, \
+	infosets_of_non_chance_player, acting_depth
+from src.domains.domain01.tensorcfr import uniform_strategies
+from src.utils.tensor_utils import print_tensors, masked_assign
 
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
@@ -38,6 +40,16 @@ def get_infoset_uniform_strategies():  # TODO unittest
 			tf.reduce_sum(infoset_uniform_strategies[level], axis=-1, keepdims=True),
 			name="infoset_uniform_strategies_lvl{}".format(level))
 	return infoset_uniform_strategies
+
+
+def assign_uniform_strategies_to_players():
+	return [
+		masked_assign(
+				ref=immediate_infoset_strategies[level],
+				mask=infosets_of_non_chance_player[level],
+				value=uniform_strategies[level])
+		for level in range(acting_depth)
+	]
 
 
 if __name__ == '__main__':

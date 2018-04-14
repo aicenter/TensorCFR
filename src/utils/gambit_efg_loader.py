@@ -7,11 +7,13 @@ from src import constants
 
 class GambitEFGLoader:
 
-	def __init__(self, input_efg_file):
-		self.domain_filename = input_efg_file
-		#self.domain_f = open(self.domain_filename)
+	def __init__(self, efg_file):
+		self.gambit_filename = efg_file
 		self.nodes = list()
 		self.number_of_players = 2
+
+		with open(efg_file) as self.gambit_file:
+			self.load()
 
 	def parse_node(self, input_line):
 		if len(input_line) == 0:
@@ -28,9 +30,13 @@ class GambitEFGLoader:
 		else:
 			return False
 
-	def parse_actions(self, input_actions_str):
+	def parse_actions_chance(self, input_actions_str):
 		parse_actions = re.findall(r'"(?P<name>[^"]*)" (?P<probability>[\d\.]+)', input_actions_str)
 		return [{'name': action[0], 'probability': float(action[1])} for action in parse_actions]
+
+	def parse_actions_player(self, input_actions_str):
+		parse_actions = re.findall(r'"(?P<name>[^"]*)"', input_actions_str)
+		return [{'name': action[0]} for action in parse_actions]
 
 	def parse_payoffs(self, input_payoffs_str):
 		parse_payoffs = re.findall(r'[\-]?[\d]+', input_payoffs_str)
@@ -42,7 +48,7 @@ class GambitEFGLoader:
 			input_line
 		)
 
-		actions = self.parse_actions(parse_line.group('actions_str'))
+		actions = self.parse_actions_chance(parse_line.group('actions_str'))
 		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
 
 		return {
@@ -62,7 +68,7 @@ class GambitEFGLoader:
 			input_line
 		)
 
-		actions = self.parse_actions(parse_line.group('actions_str'))
+		actions = self.parse_actions_player(parse_line.group('actions_str'))
 		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
 
 		return {
@@ -93,32 +99,71 @@ class GambitEFGLoader:
 			'payoffs': payoffs
 		}
 
+	def load(self):
+		level = None
+
+		# max actions per level
+		struct_actions_per_level = []
+
+		stack_nodes_lvl = [0]
+
+		last_node_type = None
+
+		cnt = 1
+		for line in self.gambit_file:
+			# in domain01 nodes starts at line 4
+			if cnt >= 4:
+				node = self.parse_node(line)
+
+				level = stack_nodes_lvl.pop()
+
+				print(node['type'], 'level {}'.format(level), struct_actions_per_level)
+
+				# actions per level
+				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
+					if len(struct_actions_per_level) < (level + 1):
+						struct_actions_per_level.append(0)
+
+					print(node['actions'])
+
+					for action in reversed(node['actions']):
+						print(" - add {}".format(level + 1))
+						stack_nodes_lvl.append(level + 1)
+
+					struct_actions_per_level[level] = max(len(node['actions']), struct_actions_per_level[level])
+
+				if cnt == 9:
+					break
+			cnt += 1
+
 
 if __name__ == '__main__':
-	input_line_chance = 'c "" 1 "" { "Ea (0.05)" 0.05 "Da (0.1)" 0.1 "Ca (0.1)" 0.1 "Ba (0.25)" 0.25 "Aa (0.5)" 0.5 } 1 "" { 0, 0 }'
-	input_line_player = 'p "" 2 4 "" { "Ja (0.9)" "Ia (0.1)" } 24 "" { 0, 0 }'
-	input_line_terminal = 't "" 38 "" { 10, -10 }'
+	#input_line_chance = 'c "" 1 "" { "Ea (0.05)" 0.05 "Da (0.1)" 0.1 "Ca (0.1)" 0.1 "Ba (0.25)" 0.25 "Aa (0.5)" 0.5 } 1 "" { 0, 0 }'
+	#input_line_player = 'p "" 2 4 "" { "Ja (0.9)" "Ia (0.1)" } 24 "" { 0, 0 }'
+	#input_line_terminal = 't "" 38 "" { 10, -10 }'
 
-	gambit_efg_loader = GambitEFGLoader('dummy')
-	print("Chance:")
-	print(gambit_efg_loader.parse_node(input_line_chance))
-	print("Player:")
-	print(gambit_efg_loader.parse_node(input_line_player))
-	print("Terminal:")
-	print(gambit_efg_loader.parse_node(input_line_terminal))
+	#gambit_efg_loader = GambitEFGLoader('doc/domain01_via_gambit.efg')
+	#print("Chance:")
+	#print(gambit_efg_loader.parse_node(input_line_chance))
+	#print("Player:")
+	#print(gambit_efg_loader.parse_node(input_line_player))
+	#print("Terminal:")
+	#print(gambit_efg_loader.parse_node(input_line_terminal))
 
 	# exampel del
-	print('Del list')
-	a = [0, 1, 2, 3]
-	print(a)
-	del a[1]
-	print(a)
+	#print('Del list')
+	#a = [0, 1, 2, 3]
+	#print(a)
+	#del a[1]
+	#print(a)
 
-	print('Del dict')
-	a = {'jedna': 1, 'dva': 2, 'tri': 3}
-	print(a)
-	del a['dva']
-	print(a)
+	#print('Del dict')
+	#a = {'jedna': 1, 'dva': 2, 'tri': 3}
+	#print(a)
+	#del a['dva']
+	#print(a)
+
+	gambit_efg_loader = GambitEFGLoader('doc/domain01_via_gambit.efg')
 
 
 

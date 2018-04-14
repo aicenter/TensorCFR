@@ -5,11 +5,8 @@ import tensorflow as tf
 from src.utils.gambit_efg_loader import GambitEFGLoader
 
 
-class TestGambibitEFGLoader(unittest.TestCase):
+class TestGambbitEFGLoaderParse(unittest.TestCase):
 	def setUp(self):
-		pass
-
-	def tearDown(self):
 		pass
 
 	def test_parse_chance_node(self):
@@ -35,6 +32,13 @@ class TestGambibitEFGLoader(unittest.TestCase):
 		}
 
 		self.assertEqual(gambit_loader.parse_chance_node(input_str), expected_output)
+
+class TestGambitEFGLoaderDomain01(unittest.TestCase)
+	def setUp(self):
+		pass
+
+
+
 
 if __name__ == '__main__':
 	unittest.main()

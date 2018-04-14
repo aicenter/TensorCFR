@@ -32,7 +32,7 @@ utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilitie
 infoset_acting_players[0] = tf.Variable(CHANCE_PLAYER, name="infoset_acting_players_lvl0")
 current_infoset_strategies[0] = tf.Variable(
 	[[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
-	name="infoset_strategies_lvl0"
+	name="current_infoset_strategies_lvl0"
 )
 
 
@@ -58,7 +58,7 @@ current_infoset_strategies[1] = tf.Variable(
 	 [0.1, 0.9, 0.0],   # of I1,1
 	 [0.2, 0.8, 0.0],   # of I1,2
 	 [0.3, 0.3, 0.3]],  # of I1,3
-	name="infoset_strategies_lvl1"
+	name="current_infoset_strategies_lvl1"
 )
 
 ########## Level 2 ##########
@@ -121,7 +121,7 @@ current_infoset_strategies[2] = tf.Variable(
 	 [0.40, 0.60],   # of I2,6
 	 [0.00, 0.00],   # of I2,7 ... terminal nodes <- mock-up zero strategy
 	 [0.00, 0.00]],  # of I2,8 ... imaginary nodes <- mock-up zero strategy
-	name="infoset_strategies_lvl2"
+	name="current_infoset_strategies_lvl2"
 )
 
 ########## Level 3 ##########
@@ -221,6 +221,7 @@ def get_infoset_acting_players():
 
 
 def print_player_variables(session):
+	print("########## Misc ##########")
 	print_tensors(session, [
 		cfr_step,
 		current_updating_player,

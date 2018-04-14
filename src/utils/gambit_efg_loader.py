@@ -6,6 +6,9 @@ import tensorflow as tf
 
 from src import constants
 
+TMP_NODE_TO_INFOSET_TERMINAL = 7
+TMP_NODE_TO_INFOSET_IMAGINERY = 8
+
 
 class TreeNode:
 	def __init__(self, level=None, coordinates=[]):
@@ -161,9 +164,10 @@ class GambitEFGLoader:
 		self.node_to_infoset = [None] * len(self.max_actions_per_level)
 		self.cumulative_regrets = [None] * len(self.max_actions_per_level)
 		self.positive_cumulative_regrets = [None] * len(self.max_actions_per_level)
+		
 
 		for idx in range(len(self.max_actions_per_level)):
-			self.node_to_infoset[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
+			self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * TMP_NODE_TO_INFOSET_IMAGINERY
 			self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
 			self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
 
@@ -178,10 +182,16 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-
-				pass
+				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
+					for index, action in enumerate(reversed(node['actions'])):
+						new_level = level + 1
+						new_coordinates = copy.deepcopy(coordinates)
+						new_coordinates.append(index)
+						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
+				else:
+					self.node_to_infoset[level-1][tuple(coordinates)] = TMP_NODE_TO_INFOSET_TERMINAL
 			cnt += 1
-		"""
+
 		return True
 
 

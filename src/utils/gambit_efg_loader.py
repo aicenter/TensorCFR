@@ -20,12 +20,13 @@ class GambitEFGLoader:
 		self.nodes = list()
 		self.number_of_players = 2
 
-		self.domain = {
-			'actions_per_level': []
-		}
+		self.max_actions_per_level = []
 
 		with open(efg_file) as self.gambit_file:
 			self.load()
+
+		with open(efg_file) as self.gambit_file:
+			self.load_post()
 
 	def parse_node(self, input_line):
 		if len(input_line) == 0:
@@ -112,11 +113,7 @@ class GambitEFGLoader:
 		}
 
 	def load(self):
-		level = None
-
 		# max actions per level
-		struct_actions_per_level = []
-
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
 		cnt = 1
@@ -130,12 +127,12 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-				print(node['type'], 'level {}'.format(level), struct_actions_per_level)
+				print(node['type'], 'level {}'.format(level), self.max_actions_per_level)
 
 				# actions per level
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
-					if len(struct_actions_per_level) < (level + 1):
-						struct_actions_per_level.append(0)
+					if len(self.max_actions_per_level) < (level + 1):
+						self.max_actions_per_level.append(0)
 
 					print(node['actions'], coordinates)
 
@@ -146,7 +143,7 @@ class GambitEFGLoader:
 						new_coordinates.append(index)
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 
-					struct_actions_per_level[level] = max(len(node['actions']), struct_actions_per_level[level])
+					self.max_actions_per_level[level] = max(len(node['actions']), self.max_actions_per_level[level])
 
 				#if cnt == 9:
 				#	break
@@ -154,6 +151,38 @@ class GambitEFGLoader:
 
 		print("Po for cyklu:")
 		print(stack_nodes_lvl)
+
+		print(self.max_actions_per_level)
+
+	def load_post(self):
+		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
+
+		#create positive cumulative regrets
+		self.node_to_infoset = [None] * len(self.max_actions_per_level)
+		self.cumulative_regrets = [None] * len(self.max_actions_per_level)
+		self.positive_cumulative_regrets = [None] * len(self.max_actions_per_level)
+
+		for idx in range(len(self.max_actions_per_level)):
+			self.node_to_infoset[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
+			self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
+			self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
+
+		# walk the tree
+		cnt = 1
+		for line in self.gambit_file:
+			if cnt >= 4:
+				node = self.parse_node(line)
+
+				tree_node = stack_nodes_lvl.pop()
+
+				level = tree_node.level
+				coordinates = tree_node.coordinates
+
+
+				pass
+			cnt += 1
+		"""
+		return True
 
 
 if __name__ == '__main__':

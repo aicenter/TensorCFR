@@ -2,10 +2,10 @@
 
 import tensorflow as tf
 
-from src.domains.domain01.bottomup_expected_values import get_expected_values
-from src.domains.domain01.domain01 import levels, current_infoset_strategies, node_to_infoset, \
+from src.domains.matching_pennies.bottomup_expected_values import get_expected_values
+from src.domains.matching_pennies.domain_definitions import levels, current_infoset_strategies, node_to_infoset, \
 	cf_values_infoset_actions
-from src.domains.domain01.topdown_reach_probabilities import get_nodal_reach_probabilities
+from src.domains.matching_pennies.topdown_reach_probabilities import get_nodal_reach_probabilities
 from src.utils.tensor_utils import print_tensors, scatter_nd_sum
 
 

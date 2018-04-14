@@ -2,8 +2,9 @@
 
 import tensorflow as tf
 
-from src.domains.domain01.counterfactual_values import assign_new_cf_values_infoset_actions, get_cf_values_infoset
-from src.domains.domain01.domain01 import levels, positive_cumulative_regrets
+from src.domains.matching_pennies.counterfactual_values import assign_new_cf_values_infoset_actions, \
+	get_cf_values_infoset
+from src.domains.matching_pennies.domain_definitions import levels, positive_cumulative_regrets
 from src.utils.tensor_utils import print_tensors
 
 

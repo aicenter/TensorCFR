@@ -1,9 +1,8 @@
 import tensorflow as tf
 
-from src.domains.domain01.domain01 import node_to_infoset, current_infoset_strategies, infoset_acting_players, \
-	acting_depth, \
-	current_updating_player
-from src.domains.domain01.swap_players import swap_players
+from src.domains.matching_pennies.domain_definitions import node_to_infoset, current_infoset_strategies, \
+	infoset_acting_players, acting_depth, current_updating_player
+from src.domains.matching_pennies.swap_players import swap_players
 from src.utils.tensor_utils import print_tensors
 
 

@@ -1,12 +1,12 @@
 import tensorflow as tf
 
 from src.constants import DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
-from src.domains.domain01.cfr_step import do_cfr_step
-from src.domains.domain01.domain01 import cfr_step, current_infoset_strategies, cumulative_infoset_strategies, \
-	positive_cumulative_regrets
-from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
-from src.domains.domain01.uniform_strategies import assign_uniform_strategies_to_players
-from src.domains.domain01.update_strategies import get_average_infoset_strategies
+from src.domains.matching_pennies.cfr_step import do_cfr_step
+from src.domains.matching_pennies.domain_definitions import cfr_step, current_infoset_strategies, \
+	cumulative_infoset_strategies, positive_cumulative_regrets
+from src.domains.matching_pennies.strategy_matched_to_regrets import get_strategy_matched_to_regrets
+from src.domains.matching_pennies.uniform_strategies import assign_uniform_strategies_to_players
+from src.domains.matching_pennies.update_strategies import get_average_infoset_strategies
 from src.utils.tensor_utils import print_tensors
 
 

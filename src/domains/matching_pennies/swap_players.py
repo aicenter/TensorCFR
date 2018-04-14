@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.constants import PLAYER1, PLAYER2
-from src.domains.domain01.domain01 import cfr_step, \
+from src.domains.matching_pennies.domain_definitions import cfr_step, \
 	current_updating_player, current_opponent, print_player_variables
 
 

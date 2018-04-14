@@ -1,8 +1,8 @@
 import re
+import numpy as np
+import tensorflow as tf
 
-NODE_TYPE_TERMINAL = 't'
-NODE_TYPE_CHANCE = 'c'
-NODE_TYPE_PLAYER = 'p'
+from src import constants
 
 
 class GambitEFGLoader:
@@ -19,11 +19,11 @@ class GambitEFGLoader:
 
 		node_type = input_line[0]
 
-		if node_type == NODE_TYPE_CHANCE:
+		if node_type == constants.GAMBIT_NODE_TYPE_CHANCE:
 			return self.parse_chance_node(input_line)
-		elif node_type == NODE_TYPE_PLAYER:
+		elif node_type == constants.GAMBIT_NODE_TYPE_PLAYER:
 			return self.parse_player_node(input_line)
-		elif node_type == NODE_TYPE_TERMINAL:
+		elif node_type == constants.GAMBIT_NODE_TYPE_TERMINAL:
 			return self.parse_terminal_node(input_line)
 		else:
 			return False
@@ -38,7 +38,7 @@ class GambitEFGLoader:
 
 	def parse_chance_node(self, input_line):
 		parse_line = re.search(
-			r'^(?P<type>' + NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
+			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
 			input_line
 		)
 
@@ -58,7 +58,7 @@ class GambitEFGLoader:
 
 	def parse_player_node(self, input_line):
 		parse_line = re.search(
-			r'^(?P<type>' + NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
+			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
 			input_line
 		)
 
@@ -79,7 +79,7 @@ class GambitEFGLoader:
 
 	def parse_terminal_node(self, input_line):
 		parse_line = re.search(
-			r'^(?P<type>' + NODE_TYPE_TERMINAL + ') "(?P<name>[^"]*)" (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
+			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_TERMINAL + ') "(?P<name>[^"]*)" (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
 			input_line
 		)
 

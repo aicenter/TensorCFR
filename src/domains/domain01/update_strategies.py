@@ -110,7 +110,7 @@ if __name__ == '__main__':
 				infoset_reach_probabilities_[i],
 				current_infoset_strategies[i],
 			])
-			for _ in range(3):      # TODO extract `3` to `constants.py`
+			for _ in range(3):
 				print_tensors(sess, [
 					cfr_step,
 					cumulative_infoset_strategies[i],
@@ -118,3 +118,5 @@ if __name__ == '__main__':
 					cumulative_infoset_strategies[i],
 				])
 				sess.run(tf.assign_add(ref=cfr_step, value=1, name="increment_cfr_step_op"))  # simulate increasing `crf_step`
+		print("########## Average strategy ##########")
+		print_tensors(sess, get_average_infoset_strategies())

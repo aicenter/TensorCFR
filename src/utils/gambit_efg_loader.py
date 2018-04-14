@@ -161,12 +161,15 @@ class GambitEFGLoader:
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
 		#create positive cumulative regrets
+		self.utilities = [None] * len(self.max_actions_per_level)
+		self.node_type = [None] * len(self.max_actions_per_level)
 		self.node_to_infoset = [None] * len(self.max_actions_per_level)
 		self.cumulative_regrets = [None] * len(self.max_actions_per_level)
 		self.positive_cumulative_regrets = [None] * len(self.max_actions_per_level)
-		
 
 		for idx in range(len(self.max_actions_per_level)):
+			self.utilities[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * constants.NON_TERMINAL_UTILITY
+			self.node_type[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * constants.IMAGINARY_NODE
 			self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * TMP_NODE_TO_INFOSET_IMAGINERY
 			self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
 			self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
@@ -182,6 +185,8 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
+				self.node_type[level - 1][tuple(coordinates)] = constants.INNER_NODE
+
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					for index, action in enumerate(reversed(node['actions'])):
 						new_level = level + 1
@@ -189,10 +194,17 @@ class GambitEFGLoader:
 						new_coordinates.append(index)
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 				else:
-					self.node_to_infoset[level-1][tuple(coordinates)] = TMP_NODE_TO_INFOSET_TERMINAL
+					self.utilities[level - 1][tuple(coordinates)] = node['payoffs'][0] #node['payoffs'][0] corresponds to first players utility
+					self.node_to_infoset[level - 1][tuple(coordinates)] = TMP_NODE_TO_INFOSET_TERMINAL
+					self.node_type[level - 1][tuple(coordinates)] = constants.TERMINAL_NODE
 			cnt += 1
+		print("lvl 0")
+		print(self.node_type[0])
+		print("lvl 1")
+		print(self.node_type[1])
+		print("lvl 2")
+		print(self.node_type[2])
 
-		return True
 
 
 if __name__ == '__main__':

@@ -223,6 +223,7 @@ auto/*
 
 # standalone packages
 *.sta
+
 .idea/*
 src/out/
 src/utils/__pycache__/
@@ -231,3 +232,4 @@ src/domains/domain01/__pycache__/
 .cache/
 src/__pycache__/
 src/domains/__pycache__/
+*.out.*

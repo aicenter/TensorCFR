@@ -10,7 +10,7 @@ from src.domains.matching_pennies.update_strategies import get_average_infoset_s
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 	cfr_step_op = do_cfr_step()

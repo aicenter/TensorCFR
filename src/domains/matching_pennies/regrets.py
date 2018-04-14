@@ -8,7 +8,7 @@ from src.domains.matching_pennies.domain_definitions import levels, positive_cum
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def get_regrets():  # TODO verify and write a unittest
 		cf_values_infoset_actions = assign_new_cf_values_infoset_actions()

@@ -6,7 +6,7 @@ from src.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGI
 	PLAYER2, NO_ACTING_PLAYER
 from src.utils.tensor_utils import print_tensors, masked_assign
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1, 2)
 levels = len(actions_per_levels) + 1  # accounting for 0th level

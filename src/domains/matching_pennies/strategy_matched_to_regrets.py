@@ -6,7 +6,7 @@ from src.domains.matching_pennies.uniform_strategies import get_infoset_uniform_
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def get_strategy_matched_to_regrets():  # TODO unittest
 	infoset_uniform_strategies = get_infoset_uniform_strategies()

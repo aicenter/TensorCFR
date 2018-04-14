@@ -7,7 +7,7 @@ from src.domains.matching_pennies.swap_players import swap_players
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def get_nodal_reach_probabilities():
 	# TODO take into account swapping players

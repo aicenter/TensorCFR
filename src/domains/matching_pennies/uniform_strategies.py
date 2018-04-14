@@ -6,7 +6,7 @@ from src.domains.matching_pennies.domain_definitions import levels, node_types, 
 from src.utils.tensor_utils import print_tensors, masked_assign
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def get_infoset_children_types():  # TODO unittest
 	infoset_children_types = [None] * (levels - 1)

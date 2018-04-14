@@ -11,7 +11,7 @@ from src.domains.matching_pennies.update_strategies import update_strategy_of_ac
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def process_strategies(acting_player=PLAYER1, opponent=PLAYER2):
 	update_regrets_ops = update_positive_cumulative_regrets()

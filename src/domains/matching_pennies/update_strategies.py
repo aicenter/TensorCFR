@@ -8,7 +8,7 @@ from src.domains.matching_pennies.topdown_reach_probabilities import get_infoset
 from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multiply, normalize
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	infoset_strategies_matched_to_regrets = get_strategy_matched_to_regrets()

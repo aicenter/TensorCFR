@@ -11,7 +11,7 @@ from src.domains.matching_pennies.swap_players import swap_players
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def get_node_strategies():
 	node_strategies = [None] * (levels - 1)

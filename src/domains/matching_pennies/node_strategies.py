@@ -6,7 +6,7 @@ from src.domains.matching_pennies.swap_players import swap_players
 from src.utils.tensor_utils import print_tensors
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 # noinspection PyShadowingNames
 def assign_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updating_player=None, acting_players=None):

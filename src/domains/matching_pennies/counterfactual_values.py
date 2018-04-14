@@ -9,7 +9,7 @@ from src.domains.matching_pennies.topdown_reach_probabilities import get_nodal_r
 from src.utils.tensor_utils import print_tensors, scatter_nd_sum
 
 
-# custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+# game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def get_cf_values_nodes():  # TODO verify and write a unittest
 	expected_values = get_expected_values()

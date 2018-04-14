@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+from src.constants import DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
 from src.domains.domain01.domain01 import get_infoset_acting_players, cfr_step, \
 	current_updating_player, current_opponent, cumulative_infoset_strategies, current_infoset_strategies
 from src.domains.domain01.swap_players import swap_players
@@ -26,7 +27,7 @@ def do_cfr_step():
 
 
 if __name__ == '__main__':
-	total_steps = 2000
+	total_steps = DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
 	infoset_acting_players_ = get_infoset_acting_players()
 	process_strategies_ops = process_strategies()
 	cfr_step_op = do_cfr_step()

@@ -1,8 +1,16 @@
+import os
 import re
+import copy
 import numpy as np
 import tensorflow as tf
 
 from src import constants
+
+
+class TreeNode:
+	def __init__(self, level=None, coordinates=[]):
+		self.level = level
+		self.coordinates = coordinates
 
 
 class GambitEFGLoader:
@@ -11,6 +19,10 @@ class GambitEFGLoader:
 		self.gambit_filename = efg_file
 		self.nodes = list()
 		self.number_of_players = 2
+
+		self.domain = {
+			'actions_per_level': []
+		}
 
 		with open(efg_file) as self.gambit_file:
 			self.load()
@@ -105,9 +117,7 @@ class GambitEFGLoader:
 		# max actions per level
 		struct_actions_per_level = []
 
-		stack_nodes_lvl = [0]
-
-		last_node_type = None
+		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
 		cnt = 1
 		for line in self.gambit_file:
@@ -115,7 +125,10 @@ class GambitEFGLoader:
 			if cnt >= 4:
 				node = self.parse_node(line)
 
-				level = stack_nodes_lvl.pop()
+				tree_node = stack_nodes_lvl.pop()
+
+				level = tree_node.level
+				coordinates = tree_node.coordinates
 
 				print(node['type'], 'level {}'.format(level), struct_actions_per_level)
 
@@ -124,17 +137,23 @@ class GambitEFGLoader:
 					if len(struct_actions_per_level) < (level + 1):
 						struct_actions_per_level.append(0)
 
-					print(node['actions'])
+					print(node['actions'], coordinates)
 
-					for action in reversed(node['actions']):
-						print(" - add {}".format(level + 1))
-						stack_nodes_lvl.append(level + 1)
+					for index, action in enumerate(reversed(node['actions'])):
+						print(" - add {} {}".format(action['name'], level + 1))
+						new_level = level + 1
+						new_coordinates = copy.deepcopy(coordinates)
+						new_coordinates.append(index)
+						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 
 					struct_actions_per_level[level] = max(len(node['actions']), struct_actions_per_level[level])
 
-				if cnt == 9:
-					break
+				#if cnt == 9:
+				#	break
 			cnt += 1
+
+		print("Po for cyklu:")
+		print(stack_nodes_lvl)
 
 
 if __name__ == '__main__':
@@ -163,7 +182,10 @@ if __name__ == '__main__':
 	#del a['dva']
 	#print(a)
 
-	gambit_efg_loader = GambitEFGLoader('doc/domain01_via_gambit.efg')
+	print("Muj print:")
+	print(os.getcwd())
+
+	gambit_efg_loader = GambitEFGLoader('/home/ruda/Documents/Projects/tensorcfr/TensorCFR/src/utils/domain01_via_gambit.efg')
 
 
 

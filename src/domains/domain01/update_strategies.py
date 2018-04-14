@@ -60,6 +60,7 @@ def cumulate_strategy_of_opponent(opponent):  # TODO unittest
 
 
 def get_average_infoset_strategies():
+	# TODO Do not normalize over imaginary nodes. <- Do we need to solve this? Or is it already ok (cf. `bottomup-*.py`)
 	average_infoset_strategies = [
 		tf.where(
 				condition=infosets_of_non_chance_player[level],

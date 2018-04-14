@@ -15,6 +15,7 @@ from src.utils.tensor_utils import print_tensors
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 	cfr_step_op = do_cfr_step()
 	ops_assign_uniform_strategies = assign_uniform_strategies_to_players()
+	strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	average_infoset_strategies = get_average_infoset_strategies()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
@@ -25,8 +26,14 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 		for _ in range(total_steps):
 			print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
 			sess.run(cfr_step_op)
+			print_tensors(sess, positive_cumulative_regrets)
+			print("___________________________________\n")
+			print_tensors(sess, strategies_matched_to_regrets)
+			print("___________________________________\n")
 			print_tensors(sess, current_infoset_strategies)
+			print("___________________________________\n")
 			print_tensors(sess, cumulative_infoset_strategies)
+		print("___________________________________\n")
 		print_tensors(sess, average_infoset_strategies)
 
 

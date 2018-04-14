@@ -2,10 +2,10 @@ import tensorflow as tf
 
 from src.constants import DEFAULT_TOTAL_STEPS
 from src.domains.domain01.cfr_step import do_cfr_step
-from src.domains.domain01.domain01 import cfr_step, current_infoset_strategies, acting_depth, \
-	cumulative_infoset_strategies, infosets_of_non_chance_player
+from src.domains.domain01.domain01 import cfr_step, current_infoset_strategies, cumulative_infoset_strategies
 from src.domains.domain01.uniform_strategies import assign_uniform_strategies_to_players
-from src.utils.tensor_utils import print_tensors, normalize
+from src.domains.domain01.update_strategies import get_average_infoset_strategies
+from src.utils.tensor_utils import print_tensors
 
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
@@ -13,15 +13,7 @@ from src.utils.tensor_utils import print_tensors, normalize
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 	cfr_step_op = do_cfr_step()
 	ops_assign_uniform_strategies = assign_uniform_strategies_to_players()
-	average_infoset_strategies = [
-		tf.where(
-				condition=infosets_of_non_chance_player[level],
-				x=normalize(cumulative_infoset_strategies[level]),
-				y=current_infoset_strategies[level],
-				name="average_infoset_strategies_lvl{}".format(level)
-		)
-		for level in range(acting_depth)
-	]
+	average_infoset_strategies = get_average_infoset_strategies()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print("Initializing strategies to uniform ones...\n")

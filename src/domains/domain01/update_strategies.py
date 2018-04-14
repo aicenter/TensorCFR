@@ -2,10 +2,10 @@ import tensorflow as tf
 
 from src.constants import PLAYER1, PLAYER2
 from src.domains.domain01.domain01 import levels, get_infoset_acting_players, acting_depth, \
-	cumulative_infoset_strategies, averaging_delay, cfr_step, current_infoset_strategies
+	cumulative_infoset_strategies, averaging_delay, cfr_step, current_infoset_strategies, infosets_of_non_chance_player
 from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
 from src.domains.domain01.topdown_reach_probabilities import get_infoset_reach_probabilities
-from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multiply
+from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multiply, normalize
 
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
@@ -68,6 +68,19 @@ def process_strategies(acting_player=PLAYER1, opponent=PLAYER2):
 		for op in sublist
 	]
 	return ops
+
+
+def get_average_infoset_strategies():
+	average_infoset_strategies = [
+		tf.where(
+				condition=infosets_of_non_chance_player[level],
+				x=normalize(cumulative_infoset_strategies[level]),
+				y=current_infoset_strategies[level],
+				name="average_infoset_strategies_lvl{}".format(level)
+		)
+		for level in range(acting_depth)
+	]
+	return average_infoset_strategies
 
 
 if __name__ == '__main__':

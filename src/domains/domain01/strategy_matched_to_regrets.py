@@ -10,7 +10,7 @@ from src.utils.tensor_utils import print_tensors
 
 def get_strategy_matched_to_regrets():  # TODO unittest
 	infoset_uniform_strategies = get_infoset_uniform_strategies()
-	infoset_strategies = [None] * (levels - 1)
+	strategies_matched_to_regrets = [None] * (levels - 1)
 	for level in range(levels - 1):
 		sums_of_regrets = tf.reduce_sum(
 			positive_cumulative_regrets[level],
@@ -26,28 +26,28 @@ def get_strategy_matched_to_regrets():  # TODO unittest
 		zero_sums = tf.squeeze(tf.equal(sums_of_regrets, 0), name="zero_sums_lvl{}".format(level))
 		# Note: An all-0's row cannot be normalized. Thus, when PCRegrets sum to 0, a uniform strategy is used instead.
 		# TODO verify uniform strategy is created (mix of both tf.where branches)
-		infoset_strategies[level] = tf.where(
+		strategies_matched_to_regrets[level] = tf.where(
 			condition=zero_sums,
 			x=infoset_uniform_strategies[level],
 			y=normalized_regrets,
 			name="strategies_matched_to_regrets_lvl{}".format(level)
 		)
-	return infoset_strategies
+	return strategies_matched_to_regrets
 
 
 if __name__ == '__main__':
-	infoset_strategies_matched_to_regrets_ = get_strategy_matched_to_regrets()
+	strategies_matched_to_regrets_ = get_strategy_matched_to_regrets()
 	update_regrets = update_positive_cumulative_regrets()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
-			print_tensors(sess, [infoset_strategies_matched_to_regrets_[i],
-			                     infoset_strategies_matched_to_regrets_[i],
+			print_tensors(sess, [strategies_matched_to_regrets_[i],
+			                     strategies_matched_to_regrets_[i],
 			                     update_regrets[i],
-			                     infoset_strategies_matched_to_regrets_[i],
-			                     infoset_strategies_matched_to_regrets_[i],
+			                     strategies_matched_to_regrets_[i],
+			                     strategies_matched_to_regrets_[i],
 			                     update_regrets[i],
-			                     infoset_strategies_matched_to_regrets_[i],
-			                     infoset_strategies_matched_to_regrets_[i],
+			                     strategies_matched_to_regrets_[i],
+			                     strategies_matched_to_regrets_[i],
 			                     ])

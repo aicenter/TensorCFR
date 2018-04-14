@@ -3,6 +3,7 @@ import tensorflow as tf
 from src.constants import PLAYER1, PLAYER2
 from src.domains.domain01.domain01 import levels, get_infoset_acting_players, acting_depth, \
 	cumulative_infoset_strategies, averaging_delay, cfr_step, current_infoset_strategies, infosets_of_non_chance_player
+from src.domains.domain01.regrets import update_positive_cumulative_regrets
 from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
 from src.domains.domain01.topdown_reach_probabilities import get_infoset_reach_probabilities
 from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multiply, normalize
@@ -60,11 +61,12 @@ def cumulate_strategy_of_opponent(opponent):  # TODO unittest
 
 
 def process_strategies(acting_player=PLAYER1, opponent=PLAYER2):
+	update_regrets_ops = update_positive_cumulative_regrets()
 	update_ops = update_strategy_of_acting_player(acting_player=acting_player)
 	cumulate_ops = cumulate_strategy_of_opponent(opponent=opponent)
 	ops = [
 		op
-		for sublist in map(list, zip(update_ops, cumulate_ops))
+		for sublist in map(list, zip(update_regrets_ops, update_ops, cumulate_ops))
 		for op in sublist
 	]
 	return ops

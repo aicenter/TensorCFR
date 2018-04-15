@@ -11,7 +11,6 @@ TMP_NODE_TO_INFOSET_IMAGINERY = 8
 
 
 class TreeNode:
-	# delam node_to_infoset
 	def __init__(self, level=None, coordinates=[]):
 		self.level = level
 		self.coordinates = coordinates
@@ -55,32 +54,20 @@ class InformationSetManager:
 		return False
 
 	def make_infoset_acting_player(self, next_level_max_no_actions):
-		"""
-		infoset_acting_player = [None] * self.infoset_cnt
-
-		for idx, infoset_id in enumerate(reversed(self.infoset_list)):
-			infoset_acting_player[idx] = self.infoset_dict[infoset_id][0] - self.infoset_cnt
-
-		return np.array(infoset_acting_player)
-		"""
-
 		infoset_acting_player = []
 		current_infoset_strategies = []
 
-		for idx, infoset_id in enumerate(self.infoset_acting_player_list):
+		for idx, infoset_id in enumerate(reversed(self.infoset_acting_player_list)):
 			infoset_acting_player.append(self.infoset_dict[infoset_id][2])
 
 			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
 				current_infoset_strategies.append([float(1/self.cnt_player_nodes)] * next_level_max_no_actions)
 			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
-				current_infoset_strategies.append([action['probability'] for action in self.infoset_dict[infoset_id][3]['actions']])
+				current_infoset_strategies.append([action['probability'] for action in reversed(self.infoset_dict[infoset_id][3]['actions'])])
 			else:
 				current_infoset_strategies.append([0] * next_level_max_no_actions)
 
 		return [infoset_acting_player, np.array(current_infoset_strategies)]
-
-	def make_infoset_strategies(self):
-		return True
 
 class GambitEFGLoader:
 
@@ -274,19 +261,10 @@ class GambitEFGLoader:
 						new_coordinates.append(index)
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 				else:
-					#self.utilities[level - 1][tuple(coordinates)] = node['payoffs'][0] #node['payoffs'][0] corresponds to first players utility
-					#self.node_to_infoset[level - 1][tuple(coordinates)] = TMP_NODE_TO_INFOSET_TERMINAL
 					if level > 0:
 						self.node_type[level][tuple(coordinates)] = constants.TERMINAL_NODE
 					else:
 						self.node_type[level] = constants.TERMINAL_NODE
-
-				if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
-					pass
-				elif node['type'] == constants.GAMBIT_NODE_TYPE_CHANCE:
-					pass
-				else:
-					pass
 
 				if level > 0:
 					self.node_type[level][tuple(coordinates)] = constants.INNER_NODE
@@ -294,16 +272,6 @@ class GambitEFGLoader:
 					self.node_type[level] = constants.INNER_NODE
 					self.infoset_acting_player[level] = constants.NO_ACTING_PLAYER
 			cnt += 1
-		"""
-		print("lvl 0")
-		print(self.node_type[0])
-		print("lvl 1")
-		print(self.node_type[1])
-		print("lvl 2")
-		print(self.node_type[2])
-		print("lvl 3")
-		print(self.node_type[3])
-		"""
 
 		[infoset_acting_player_lvl0, infoset_strategies_lvl0] = infoset_managers[0].make_infoset_acting_player(5)
 		[infoset_acting_player_lvl1, infoset_strategies_lvl1] = infoset_managers[1].make_infoset_acting_player(3)

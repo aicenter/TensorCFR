@@ -52,7 +52,11 @@ def show_expected_values(session):
 		if level_ < len(node_strategies_):
 			print_tensors(session, [node_strategies_[level_]])
 		print_tensors(session, [
-			signum_of_current_player * utilities[level_],
+			tf.multiply(
+					signum_of_current_player,
+					utilities[level_],
+					name="signum_utilities_lvl{}".format(level_)
+			),
 			expected_values_[level_]
 		])
 

@@ -2,11 +2,11 @@
 
 import tensorflow as tf
 
+from src.algorithms.tensorcfr.node_strategies import assign_strategies_to_nodes
 from src.commons.constants import TERMINAL_NODE
 from src.domains.matching_pennies.domain_definitions import node_to_infoset, current_infoset_strategies, utilities, \
 	node_types, levels, \
 	signum_of_current_player, print_player_variables
-from src.domains.matching_pennies.node_strategies import assign_strategies_to_nodes
 from src.domains.matching_pennies.swap_players import swap_players
 from src.utils.tensor_utils import print_tensors
 

@@ -21,11 +21,10 @@ def setup_feed_dictionary(method="by-domain"):
 		with tf.Session() as sess:
 			sess.run(tf.global_variables_initializer())
 			uniform_strategy_arrays = sess.run(uniform_strategies_tensors)
-		feed_dictionary = {
-			initial_infoset_strategies[0]: uniform_strategy_arrays[0],
-			initial_infoset_strategies[1]: uniform_strategy_arrays[1],
+		return "Initializing strategies to uniform ones...\n", {
+			initial_infoset_strategies[level]: uniform_strategy_arrays[level]
+			for level in range(acting_depth)
 		}
-		return "Initializing strategies to uniform ones...\n", feed_dictionary
 	# elif method == "custom":
 	# 	return "Initializing strategies to custom values defined by user...\n", get_infoset_uniform_strategies()
 	else:

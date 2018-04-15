@@ -18,7 +18,7 @@ shape = [None] * levels  # TODO replace with: shape = [actions_per_levels[:i] fo
 node_types = [None] * levels
 utilities = [None] * levels
 infoset_acting_players = [None] * acting_depth
-current_infoset_strategies = [None] * acting_depth
+initial_infoset_strategies = [None] * acting_depth
 
 ########## Level 0 ##########
 node_to_infoset[0] = tf.Variable(0, name="node_to_infoset_lvl0")
@@ -27,7 +27,11 @@ shape[0] = actions_per_levels[:0]
 node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
 utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
 infoset_acting_players[0] = tf.Variable([PLAYER1], name="infoset_acting_players_lvl0")
-current_infoset_strategies[0] = tf.Variable([[0.1, 0.9]], name="current_infoset_strategies_lvl0")
+initial_infoset_strategies[0] = tf.placeholder_with_default(
+		input=[[0.1, 0.9]],
+		shape=[infoset_acting_players[0].shape[0], actions_per_levels[0]],
+		name="initial_infoset_strategies_lvl{}".format(0)
+)
 
 ########## Level 1 ##########
 node_to_infoset[1] = tf.Variable([0, 0], name="node_to_infoset_lvl1")
@@ -35,7 +39,11 @@ shape[1] = actions_per_levels[:1]
 node_types[1] = tf.Variable([INNER_NODE] * 2, name="node_types_lvl1")
 utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
 infoset_acting_players[1] = tf.Variable([PLAYER2], name="infoset_acting_players_lvl1")
-current_infoset_strategies[1] = tf.Variable([[0.2, 0.8]], name="current_infoset_strategies_lvl1")
+initial_infoset_strategies[1] = tf.placeholder_with_default(
+		input=[[0.2, 0.8]],
+		shape=[infoset_acting_players[1].shape[0], actions_per_levels[1]],
+		name="initial_infoset_strategies_lvl{}".format(1)
+)
 
 ########## Level 2 ##########
 # There are never any infosets in the final layer, only terminal / imaginary nodes.
@@ -50,6 +58,10 @@ utilities[2] = tf.Variable(
 )
 
 ########## miscellaneous tensors ##########
+current_infoset_strategies = [
+	tf.Variable(initial_value=initial_infoset_strategies[level], name="current_infoset_strategies_lvl{}".format(level))
+	for level in range(acting_depth)
+]
 cf_values_infoset_actions = [
 	# TODO remove and compute again for every iteration
 	tf.Variable(tf.zeros_like(current_infoset_strategies[level]), name="cf_values_infoset_actions_lvl{}".format(level))
@@ -57,7 +69,6 @@ cf_values_infoset_actions = [
 ]
 positive_cumulative_regrets = [
 	tf.Variable(tf.zeros_like(current_infoset_strategies[level]), name="positive_cumulative_regrets_lvl{}".format(level))
-	# tf.placeholder(dtype=tf.float32, tf.zeros_like(current_infoset_strategies[level]), name="positive_cumulative_regrets_lvl{}".format(level))
 	for level in range(acting_depth)
 ]
 cumulative_infoset_strategies = [tf.Variable(tf.zeros_like(current_infoset_strategies[level]),
@@ -123,6 +134,7 @@ if __name__ == '__main__':
 				print_tensors(sess, [
 					node_to_infoset[level],
 					infoset_acting_players[level],
+					initial_infoset_strategies[level],
 					current_infoset_strategies[level],
 					cf_values_infoset_actions[level],
 					positive_cumulative_regrets[level],

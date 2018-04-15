@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from src.algorithms.tensorcfr.swap_players import swap_players
+from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 from src.commons.constants import DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, PLAYER1, PLAYER2
 from src.domains.matching_pennies.domain_definitions import get_infoset_acting_players, cfr_step, \
 	current_updating_player, current_opponent, cumulative_infoset_strategies, current_infoset_strategies, \

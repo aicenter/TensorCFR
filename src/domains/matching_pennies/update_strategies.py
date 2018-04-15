@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from src.algorithms.tensorcfr.topdown_reach_probabilities import get_infoset_reach_probabilities
+from src.algorithms.tensorcfr_matching_pennies.topdown_reach_probabilities import get_infoset_reach_probabilities
 from src.commons.constants import PLAYER1, PLAYER2
 from src.domains.matching_pennies.domain_definitions import levels, get_infoset_acting_players, acting_depth, \
 	cumulative_infoset_strategies, averaging_delay, cfr_step, current_infoset_strategies, infosets_of_non_chance_player

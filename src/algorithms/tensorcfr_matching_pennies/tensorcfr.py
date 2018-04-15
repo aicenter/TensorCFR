@@ -43,24 +43,24 @@ def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
 
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 	# TODO extract these lines to a UnitTest
-	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary()
-	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="by-domain")
-	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="uniform")
-	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="custom")  # should raise ValueError
-	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(
+	# setup_messages, feed_dictionary = setup_feed_dictionary()
+	# setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
+	# setup_messages, feed_dictionary = setup_feed_dictionary(method="uniform")
+	# setup_messages, feed_dictionary = setup_feed_dictionary(method="custom")  # should raise ValueError
+	# setup_messages, feed_dictionary = setup_feed_dictionary(
 	# 		method="custom",
 	# 		initial_strategy_values=[
 	# 			[[1.0, 0.0]],
 	# 		],
 	# )  # should raise ValueError
-	strategy_initializer_message, feed_dictionary = setup_feed_dictionary(
+	setup_messages, feed_dictionary = setup_feed_dictionary(
 			method="custom",
 			initial_strategy_values=[
 				[[1.0, 0.0]],
 				[[1.0, 0.0]],
 			]
 	)
-	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="invalid")  # should raise ValueError
+	# setup_messages, feed_dictionary = setup_feed_dictionary(method="invalid")  # should raise ValueError
 
 	cfr_step_op = do_cfr_step()
 	strategies_matched_to_regrets = get_strategy_matched_to_regrets()
@@ -68,7 +68,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 	with tf.Session() as sess:
 		print("TensorCFR\n")
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-		print(strategy_initializer_message)
+		print(setup_messages)
 		print_tensors(sess, current_infoset_strategies)
 
 		print("Running {} CFR+ iterations...\n".format(total_steps))

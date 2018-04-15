@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from src.constants import DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
+from src.constants import DEFAULT_TOTAL_STEPS
 from src.domains.matching_pennies.cfr_step import do_cfr_step
 from src.domains.matching_pennies.domain_definitions import cfr_step, current_infoset_strategies, \
 	cumulative_infoset_strategies
@@ -36,4 +36,5 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 
 
 if __name__ == '__main__':
-	run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
+	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
+	run_cfr()

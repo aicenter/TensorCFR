@@ -1,9 +1,9 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr.node_strategies import get_node_cf_strategies
+from src.algorithms.tensorcfr.swap_players import swap_players
 from src.domains.matching_pennies.domain_definitions import reach_probability_of_root_node, node_to_infoset, \
 	current_infoset_strategies, levels, infoset_acting_players
-from src.domains.matching_pennies.swap_players import swap_players
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum
 
 

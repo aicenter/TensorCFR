@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from src.constants import PLAYER1, PLAYER2
+from src.commons.constants import PLAYER1, PLAYER2
 from src.domains.domain01.domain01 import levels, get_infoset_acting_players, acting_depth, \
 	cumulative_infoset_strategies, averaging_delay, cfr_step, current_infoset_strategies, infosets_of_non_chance_player
 from src.domains.domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets

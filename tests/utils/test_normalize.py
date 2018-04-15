@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from src.constants import SMALL_ERROR_TOLERANCE
+from src.commons.constants import SMALL_ERROR_TOLERANCE
 from src.utils.tensor_utils import normalize
 
 

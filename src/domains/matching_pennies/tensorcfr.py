@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from src.constants import DEFAULT_TOTAL_STEPS
+from src.commons.constants import DEFAULT_TOTAL_STEPS
 from src.domains.matching_pennies.cfr_step import do_cfr_step
 from src.domains.matching_pennies.domain_definitions import cfr_step, current_infoset_strategies, \
 	cumulative_infoset_strategies

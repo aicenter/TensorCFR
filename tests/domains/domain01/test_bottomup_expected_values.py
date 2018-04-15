@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from src.constants import SMALL_ERROR_TOLERANCE, LARGE_ERROR_TOLERANCE
+from src.commons.constants import SMALL_ERROR_TOLERANCE, LARGE_ERROR_TOLERANCE
 from src.domains.domain01.bottomup_expected_values import get_expected_values
 
 

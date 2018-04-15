@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from src.constants import PLAYER1, PLAYER2
+from src.commons.constants import PLAYER1, PLAYER2
 from src.domains.domain01.domain01 import cfr_step, \
 	current_updating_player, current_opponent, print_player_variables
 

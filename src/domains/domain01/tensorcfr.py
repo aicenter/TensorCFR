@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from src.constants import DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
 from src.domains.domain01.cfr_step import do_cfr_step
 from src.domains.domain01.domain01 import cfr_step, current_infoset_strategies, cumulative_infoset_strategies, \
 	positive_cumulative_regrets

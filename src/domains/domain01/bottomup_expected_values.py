@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.constants import TERMINAL_NODE
+from src.commons.constants import TERMINAL_NODE
 from src.domains.domain01.domain01 import node_to_infoset, current_infoset_strategies, utilities, node_types, levels, \
 	signum_of_current_player, print_player_variables
 from src.domains.domain01.node_strategies import assign_strategies_to_nodes

@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from src.constants import IMAGINARY_NODE
+from src.commons.constants import IMAGINARY_NODE
 from src.domains.matching_pennies.domain_definitions import levels, node_types, node_to_infoset, \
 	current_infoset_strategies, infosets_of_non_chance_player, acting_depth
 from src.utils.tensor_utils import print_tensors, masked_assign

@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from src.constants import SMALL_ERROR_TOLERANCE
+from src.commons.constants import SMALL_ERROR_TOLERANCE
 from src.domains.domain01.topdown_reach_probabilities import get_nodal_reach_probabilities
 
 

@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.commons.constants import DEFAULT_TOTAL_STEPS
-from src.domains.matching_pennies.cfr_step import do_cfr_step
+from src.algorithms.tensorcfr_matching_pennies.cfr_step import do_cfr_step
 from src.domains.matching_pennies.domain_definitions import cfr_step, current_infoset_strategies, \
 	cumulative_infoset_strategies
 from src.algorithms.tensorcfr_matching_pennies.strategy_matched_to_regrets import get_strategy_matched_to_regrets

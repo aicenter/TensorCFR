@@ -11,10 +11,46 @@ TMP_NODE_TO_INFOSET_IMAGINERY = 8
 
 
 class TreeNode:
+	# delam node_to_infoset
 	def __init__(self, level=None, coordinates=[]):
 		self.level = level
 		self.coordinates = coordinates
 
+class InformationSetManager:
+	def __init__(self):
+		self.infoset_cnt = 0
+		self.infoset_dict = {}
+		self.infoset_node_to_infoset = []
+		self.infoset_acting_player_list = []
+
+	def add(self, node):
+		self.infoset_node_to_infoset.append(node['infoset_id'])
+
+		if node['infoset_id'] not in self.infoset_dict:
+			self.infoset_dict[node['infoset_id']] = [self.infoset_cnt, node['type'], node['tensorcfr_id']]
+			self.infoset_acting_player_list.append(node['infoset_id'])
+			self.infoset_cnt += 1
+			return True
+		return False
+
+	def make_infoset_acting_player(self):
+		"""
+		infoset_acting_player = [None] * self.infoset_cnt
+
+		for idx, infoset_id in enumerate(reversed(self.infoset_list)):
+			infoset_acting_player[idx] = self.infoset_dict[infoset_id][0] - self.infoset_cnt
+
+		return np.array(infoset_acting_player)
+		"""
+		infoset_acting_player = []
+
+		for idx, infoset_id in enumerate(reversed(self.infoset_acting_player_list)):
+			infoset_acting_player.append(self.infoset_dict[infoset_id][2])
+
+		return infoset_acting_player
+
+	#def make_node_to_infoset(self):
+	#	return reversed(self.infoset_node_to_infoset)
 
 class GambitEFGLoader:
 
@@ -24,6 +60,8 @@ class GambitEFGLoader:
 		self.number_of_players = 2
 
 		self.max_actions_per_level = []
+
+		self.terminal_nodes_cnt = 0
 
 		with open(efg_file) as self.gambit_file:
 			self.load()
@@ -66,6 +104,7 @@ class GambitEFGLoader:
 
 		actions = self.parse_actions_chance(parse_line.group('actions_str'))
 		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
+		infoset_id = 'c-' + str(parse_line.group('information_set_number'))
 
 		return {
 			'type': parse_line.group('type'),
@@ -75,7 +114,9 @@ class GambitEFGLoader:
 			'actions': actions,
 			'outcome': parse_line.group('outcome'),
 			'outcome_name': parse_line.group('outcome_name'),
-			'payoffs': payoffs
+			'payoffs': payoffs,
+			'tensorcfr_id': constants.CHANCE_PLAYER,
+			'infoset_id': infoset_id
 		}
 
 	def parse_player_node(self, input_line):
@@ -86,6 +127,7 @@ class GambitEFGLoader:
 
 		actions = self.parse_actions_player(parse_line.group('actions_str'))
 		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
+		infoset_id = 'p-' + str(parse_line.group('player_number')) + '-' + str(parse_line.group('information_set_number'))
 
 		return {
 			'type': parse_line.group('type'),
@@ -96,7 +138,9 @@ class GambitEFGLoader:
 			'actions': actions,
 			'outcome': parse_line.group('outcome'),
 			'outcome_name': parse_line.group('outcome_name'),
-			'payoffs': payoffs
+			'payoffs': payoffs,
+			'tensorcfr_id': parse_line.group('player_number'),
+			'infoset_id': infoset_id
 		}
 
 	def parse_terminal_node(self, input_line):
@@ -106,13 +150,18 @@ class GambitEFGLoader:
 		)
 
 		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
+		infoset_id = 't-' + str(self.terminal_nodes_cnt)
+
+		self.terminal_nodes_cnt += 1
 
 		return {
 			'type': parse_line.group('type'),
 			'name': parse_line.group('name'),
 			'outcome': parse_line.group('outcome'),
 			'outcome_name': parse_line.group('outcome_name'),
-			'payoffs': payoffs
+			'payoffs': payoffs,
+			'tensorcfr_id': constants.NO_ACTING_PLAYER,
+			'infoset_id': infoset_id
 		}
 
 	def load(self):
@@ -147,9 +196,6 @@ class GambitEFGLoader:
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 
 					self.max_actions_per_level[level] = max(len(node['actions']), self.max_actions_per_level[level])
-
-				#if cnt == 9:
-				#	break
 			cnt += 1
 
 		#print("Po for cyklu:")
@@ -161,15 +207,19 @@ class GambitEFGLoader:
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
 		self.node_type = [None] * (len(self.max_actions_per_level) + 1)
+		self.infoset_acting_player = [None] * (len(self.max_actions_per_level) + 1)
 		#create positive cumulative regrets
 		#self.utilities = [None] * len(self.max_actions_per_level)
 		#self.node_to_infoset = [None] * len(self.max_actions_per_level)
 		#self.cumulative_regrets = [None] * len(self.max_actions_per_level)
 		#self.positive_cumulative_regrets = [None] * len(self.max_actions_per_level)
 
+		infoset_managers = [ InformationSetManager() for dummy in range(len(self.max_actions_per_level) + 1)]
+
 		for idx in range(len(self.max_actions_per_level) + 1):
 			#self.utilities[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * constants.NON_TERMINAL_UTILITY
 			self.node_type[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.IMAGINARY_NODE
+			self.infoset_acting_player[idx] = np.zeros(self.max_actions_per_level[:idx]) * constants.NO_ACTING_PLAYER
 			#self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * TMP_NODE_TO_INFOSET_IMAGINERY
 			#self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
 			#self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
@@ -185,10 +235,7 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-				if level > 0:
-					self.node_type[level][tuple(coordinates)] = constants.INNER_NODE
-				else:
-					self.node_type[level] = constants.INNER_NODE
+				infoset_managers[level].add(node)
 
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					for index, action in enumerate(reversed(node['actions'])):
@@ -203,7 +250,21 @@ class GambitEFGLoader:
 						self.node_type[level][tuple(coordinates)] = constants.TERMINAL_NODE
 					else:
 						self.node_type[level] = constants.TERMINAL_NODE
+
+				if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
+					pass
+				elif node['type'] == constants.GAMBIT_NODE_TYPE_CHANCE:
+					pass
+				else:
+					pass
+
+				if level > 0:
+					self.node_type[level][tuple(coordinates)] = constants.INNER_NODE
+				else:
+					self.node_type[level] = constants.INNER_NODE
+					self.infoset_acting_player[level] = constants.NO_ACTING_PLAYER
 			cnt += 1
+
 		print("lvl 0")
 		print(self.node_type[0])
 		print("lvl 1")
@@ -212,6 +273,15 @@ class GambitEFGLoader:
 		print(self.node_type[2])
 		print("lvl 3")
 		print(self.node_type[3])
+
+		print("lvl 0")
+		print(infoset_managers[0].make_infoset_acting_player())
+		print("lvl 1")
+		print(infoset_managers[1].make_infoset_acting_player())
+		print("lvl 2")
+		print(infoset_managers[2].make_infoset_acting_player())
+		print("lvl 3")
+		print(infoset_managers[3].make_infoset_acting_player())
 
 
 

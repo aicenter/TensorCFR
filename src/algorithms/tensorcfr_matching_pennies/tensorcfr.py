@@ -1,19 +1,18 @@
 import tensorflow as tf
 
-from src.algorithms.tensorcfr_matching_pennies.uniform_strategies import assign_uniform_strategies_to_players, \
-	get_infoset_uniform_strategies
-from src.commons.constants import DEFAULT_TOTAL_STEPS
 from src.algorithms.tensorcfr_matching_pennies.cfr_step import do_cfr_step
+from src.algorithms.tensorcfr_matching_pennies.strategy_matched_to_regrets import get_strategy_matched_to_regrets
+from src.algorithms.tensorcfr_matching_pennies.uniform_strategies import get_infoset_uniform_strategies
+from src.algorithms.tensorcfr_matching_pennies.update_strategies import get_average_infoset_strategies
+from src.commons.constants import DEFAULT_TOTAL_STEPS
 from src.domains.matching_pennies.domain_definitions import cfr_step, current_infoset_strategies, \
 	cumulative_infoset_strategies, positive_cumulative_regrets, initial_infoset_strategies, acting_depth
-from src.algorithms.tensorcfr_matching_pennies.strategy_matched_to_regrets import get_strategy_matched_to_regrets
-from src.algorithms.tensorcfr_matching_pennies.update_strategies import get_average_infoset_strategies
 from src.utils.tensor_utils import print_tensors
 
 
 # game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
-def setup_feed_dictionary(method="by-domain"):
+def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
 	if method == "by-domain":
 		return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
 	elif method == "uniform":
@@ -25,24 +24,49 @@ def setup_feed_dictionary(method="by-domain"):
 			initial_infoset_strategies[level]: uniform_strategy_arrays[level]
 			for level in range(acting_depth)
 		}
-	# elif method == "custom":
-	# 	return "Initializing strategies to custom values defined by user...\n", get_infoset_uniform_strategies()
+	elif method == "custom":
+		if initial_strategy_values is None:
+			raise ValueError('No "initial_strategy_values" given.')
+		if len(initial_strategy_values) != len(initial_infoset_strategies):
+			raise ValueError(
+					'Mismatched "len(initial_strategy_values) == {}" and "len(initial_infoset_strategies) == {}".'.format(
+							len(initial_strategy_values), len(initial_infoset_strategies)
+					)
+			)
+		return "Initializing strategies to custom values defined by user...\n", {
+			initial_infoset_strategies[level]: initial_strategy_values[level]
+			for level in range(acting_depth)
+		}
 	else:
 		raise ValueError('Undefined method "{}" for setup_feed_dictionary().'.format(method))
 
 
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
+	# TODO extract these lines to a UnitTest
 	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary()
 	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="by-domain")
-	strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="uniform")
-	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="invalid name")
+	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="uniform")
+	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="custom")  # should raise ValueError
+	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(
+	# 		method="custom",
+	# 		initial_strategy_values=[
+	# 			[[1.0, 0.0]],
+	# 		],
+	# )  # should raise ValueError
+	strategy_initializer_message, feed_dictionary = setup_feed_dictionary(
+			method="custom",
+			initial_strategy_values=[
+				[[1.0, 0.0]],
+				[[1.0, 0.0]],
+			]
+	)
+	# strategy_initializer_message, feed_dictionary = setup_feed_dictionary(method="invalid")  # should raise ValueError
 
 	cfr_step_op = do_cfr_step()
 	strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	average_infoset_strategies = get_average_infoset_strategies()
 	with tf.Session() as sess:
 		print("TensorCFR\n")
-
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 		print(strategy_initializer_message)
 		print_tensors(sess, current_infoset_strategies)

@@ -1,12 +1,17 @@
 import tensorflow as tf
 
+from src.algorithms.tensorcfr_matching_pennies.bottomup_expected_values import get_expected_values
 from src.algorithms.tensorcfr_matching_pennies.cfr_step import do_cfr_step
+from src.algorithms.tensorcfr_matching_pennies.counterfactual_values import get_cf_values_nodes, get_cf_values_infoset
+from src.algorithms.tensorcfr_matching_pennies.regrets import get_regrets
 from src.algorithms.tensorcfr_matching_pennies.strategy_matched_to_regrets import get_strategy_matched_to_regrets
+from src.algorithms.tensorcfr_matching_pennies.topdown_reach_probabilities import get_nodal_reach_probabilities
 from src.algorithms.tensorcfr_matching_pennies.uniform_strategies import get_infoset_uniform_strategies
 from src.algorithms.tensorcfr_matching_pennies.update_strategies import get_average_infoset_strategies
-from src.commons.constants import DEFAULT_TOTAL_STEPS
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
 from src.domains.matching_pennies.domain_definitions import cfr_step, current_infoset_strategies, \
-	cumulative_infoset_strategies, positive_cumulative_regrets, initial_infoset_strategies, acting_depth
+	cumulative_infoset_strategies, positive_cumulative_regrets, initial_infoset_strategies, acting_depth, \
+	cf_values_infoset_actions
 from src.utils.tensor_utils import print_tensors
 
 
@@ -63,6 +68,11 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 	# setup_messages, feed_dictionary = setup_feed_dictionary(method="invalid")  # should raise ValueError
 
 	cfr_step_op = do_cfr_step()
+	reach_probabilities = get_nodal_reach_probabilities()
+	expected_values = get_expected_values()
+	cf_values_nodes = get_cf_values_nodes()
+	cf_values_infoset = get_cf_values_infoset()
+	regrets = get_regrets()
 	strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	average_infoset_strategies = get_average_infoset_strategies()
 	with tf.Session() as sess:
@@ -74,6 +84,20 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 		print("Running {} CFR+ iterations...\n".format(total_steps))
 		for _ in range(total_steps):
 			print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
+			print_tensors(sess, reach_probabilities)
+			print("___________________________________\n")
+			print_tensors(sess, expected_values)
+			print("___________________________________\n")
+			print_tensors(sess, cf_values_nodes)
+			print("___________________________________\n")
+			print_tensors(sess, cf_values_infoset)
+			print("___________________________________\n")
+			print_tensors(sess, cf_values_infoset_actions)
+			print("___________________________________\n")
+			print_tensors(sess, regrets)
+			print("___________________________________\n")
+			print_tensors(sess, positive_cumulative_regrets)
+			print("___________________________________\n")
 			sess.run(cfr_step_op)
 			print_tensors(sess, positive_cumulative_regrets)
 			print("___________________________________\n")
@@ -88,4 +112,5 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 
 if __name__ == '__main__':
 	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
-	run_cfr()
+	# run_cfr()
+	run_cfr(total_steps=10)

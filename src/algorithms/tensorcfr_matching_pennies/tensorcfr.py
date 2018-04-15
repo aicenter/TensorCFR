@@ -12,13 +12,20 @@ from src.utils.tensor_utils import print_tensors
 
 # game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
-def get_strategy_initializer():
-	return "Using user-defined strategies...\n", current_infoset_strategies
-	# return "Initializing strategies to uniform ones...\n", assign_uniform_strategies_to_players()
+def get_strategy_initializer(method="by-domain"):
+	if method == "by-domain":
+		return "Initializing strategies via domain definitions...\n", current_infoset_strategies
+	elif method == "uniform":
+		return "Initializing strategies to uniform ones...\n", assign_uniform_strategies_to_players()
+	else:
+		raise ValueError('Undefined method "{}" for get_strategy_initializer().'.format(method))
 
 
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
-	strategy_initializer_message, strategy_initializer = get_strategy_initializer()
+	# strategy_initializer_message, strategy_initializer = get_strategy_initializer()
+	strategy_initializer_message, strategy_initializer = get_strategy_initializer(method="by-domain")
+	# strategy_initializer_message, strategy_initializer = get_strategy_initializer(method="uniform")
+	# strategy_initializer_message, strategy_initializer = get_strategy_initializer(method="invalid name")
 	cfr_step_op = do_cfr_step()
 	strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	average_infoset_strategies = get_average_infoset_strategies()

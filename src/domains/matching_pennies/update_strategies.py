@@ -81,6 +81,7 @@ if __name__ == '__main__':
 	ops_cumulate_infoset_strategies = cumulate_strategy_of_opponent(opponent=PLAYER2)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
+		# TODO decrease `averaging_delay`
 		print("########## Update strategy ##########")
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))

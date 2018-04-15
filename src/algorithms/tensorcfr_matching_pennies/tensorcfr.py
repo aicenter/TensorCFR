@@ -13,7 +13,8 @@ from src.utils.tensor_utils import print_tensors
 # game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
 def get_strategy_initializer():
-	return "Initializing strategies to uniform ones...\n", assign_uniform_strategies_to_players()
+	return "Using user-defined strategies...\n", current_infoset_strategies
+	# return "Initializing strategies to uniform ones...\n", assign_uniform_strategies_to_players()
 
 
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
@@ -22,12 +23,13 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 	strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	average_infoset_strategies = get_average_infoset_strategies()
 	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
 		print("TensorCFR\n")
-		# print("Using user-defined strategies...\n")
-		# print_tensors(sess, current_infoset_strategies)
+
+		sess.run(tf.global_variables_initializer())
 		print(strategy_initializer_message)
 		sess.run(strategy_initializer)
+		print_tensors(sess, current_infoset_strategies)
+
 		print("Running {} CFR+ iterations...\n".format(total_steps))
 		for _ in range(total_steps):
 			print("########## CFR+ step #{} ##########".format(cfr_step.eval()))

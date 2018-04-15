@@ -130,17 +130,17 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-				print(node['type'], 'level {}'.format(level), self.max_actions_per_level)
+				#print(node['type'], 'level {}'.format(level), self.max_actions_per_level)
 
 				# actions per level
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					if len(self.max_actions_per_level) < (level + 1):
 						self.max_actions_per_level.append(0)
 
-					print(node['actions'], coordinates)
+					#print(node['actions'], coordinates)
 
 					for index, action in enumerate(reversed(node['actions'])):
-						print(" - add {} {}".format(action['name'], level + 1))
+						#print(" - add {} {}".format(action['name'], level + 1))
 						new_level = level + 1
 						new_coordinates = copy.deepcopy(coordinates)
 						new_coordinates.append(index)
@@ -152,27 +152,27 @@ class GambitEFGLoader:
 				#	break
 			cnt += 1
 
-		print("Po for cyklu:")
-		print(stack_nodes_lvl)
+		#print("Po for cyklu:")
+		#print(stack_nodes_lvl)
 
-		print(self.max_actions_per_level)
+		#print(self.max_actions_per_level)
 
 	def load_post(self):
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
+		self.node_type = [None] * (len(self.max_actions_per_level) + 1)
 		#create positive cumulative regrets
-		self.utilities = [None] * len(self.max_actions_per_level)
-		self.node_type = [None] * len(self.max_actions_per_level)
-		self.node_to_infoset = [None] * len(self.max_actions_per_level)
-		self.cumulative_regrets = [None] * len(self.max_actions_per_level)
-		self.positive_cumulative_regrets = [None] * len(self.max_actions_per_level)
+		#self.utilities = [None] * len(self.max_actions_per_level)
+		#self.node_to_infoset = [None] * len(self.max_actions_per_level)
+		#self.cumulative_regrets = [None] * len(self.max_actions_per_level)
+		#self.positive_cumulative_regrets = [None] * len(self.max_actions_per_level)
 
-		for idx in range(len(self.max_actions_per_level)):
-			self.utilities[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * constants.NON_TERMINAL_UTILITY
-			self.node_type[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * constants.IMAGINARY_NODE
-			self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * TMP_NODE_TO_INFOSET_IMAGINERY
-			self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
-			self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
+		for idx in range(len(self.max_actions_per_level) + 1):
+			#self.utilities[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * constants.NON_TERMINAL_UTILITY
+			self.node_type[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.IMAGINARY_NODE
+			#self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * TMP_NODE_TO_INFOSET_IMAGINERY
+			#self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
+			#self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
 
 		# walk the tree
 		cnt = 1
@@ -185,7 +185,10 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-				self.node_type[level - 1][tuple(coordinates)] = constants.INNER_NODE
+				if level > 0:
+					self.node_type[level][tuple(coordinates)] = constants.INNER_NODE
+				else:
+					self.node_type[level] = constants.INNER_NODE
 
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					for index, action in enumerate(reversed(node['actions'])):
@@ -194,9 +197,12 @@ class GambitEFGLoader:
 						new_coordinates.append(index)
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 				else:
-					self.utilities[level - 1][tuple(coordinates)] = node['payoffs'][0] #node['payoffs'][0] corresponds to first players utility
-					self.node_to_infoset[level - 1][tuple(coordinates)] = TMP_NODE_TO_INFOSET_TERMINAL
-					self.node_type[level - 1][tuple(coordinates)] = constants.TERMINAL_NODE
+					#self.utilities[level - 1][tuple(coordinates)] = node['payoffs'][0] #node['payoffs'][0] corresponds to first players utility
+					#self.node_to_infoset[level - 1][tuple(coordinates)] = TMP_NODE_TO_INFOSET_TERMINAL
+					if level > 0:
+						self.node_type[level][tuple(coordinates)] = constants.TERMINAL_NODE
+					else:
+						self.node_type[level] = constants.TERMINAL_NODE
 			cnt += 1
 		print("lvl 0")
 		print(self.node_type[0])
@@ -204,6 +210,8 @@ class GambitEFGLoader:
 		print(self.node_type[1])
 		print("lvl 2")
 		print(self.node_type[2])
+		print("lvl 3")
+		print(self.node_type[3])
 
 
 

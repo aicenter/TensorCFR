@@ -14,7 +14,7 @@ def get_regrets():  # TODO verify and write a unittest
 		cf_values_infoset_actions = assign_new_cf_values_infoset_actions()
 		cf_values_infoset = get_cf_values_infoset()
 		return [tf.subtract(cf_values_infoset_actions[level], cf_values_infoset[level], name="regrets_lvl{}".format(level))
-						for level in range(levels - 1)]
+		        for level in range(levels - 1)]
 
 
 def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify and write a unittest

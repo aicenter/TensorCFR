@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from src.domains.matching_pennies.domain_definitions import levels, positive_cumulative_regrets
 from src.domains.matching_pennies.regrets import update_positive_cumulative_regrets
-from src.domains.matching_pennies.uniform_strategies import get_infoset_uniform_strategies
+from src.algorithms.tensorcfr_matching_pennies.uniform_strategies import get_infoset_uniform_strategies
 from src.utils.tensor_utils import print_tensors
 
 

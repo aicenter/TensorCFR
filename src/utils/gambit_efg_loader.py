@@ -23,17 +23,38 @@ class InformationSetManager:
 		self.infoset_node_to_infoset = []
 		self.infoset_acting_player_list = []
 
-	def add(self, node):
+		self.cnt_player_nodes = 0
+
+	def _set_node_to_infoset(self, coordinates, level, node_to_infoset, value):
+		if level:
+			node_to_infoset[level][tuple(coordinates)] = value
+		else:
+			node_to_infoset[level] = value
+		return True
+
+	def add(self, node, coordinates, level, node_to_infoset):
 		self.infoset_node_to_infoset.append(node['infoset_id'])
 
+		if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
+			self.cnt_player_nodes += 1
+
+		# set node to infoset value
+		if node['infoset_id'] not in self.infoset_dict and node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
+			self._set_node_to_infoset(coordinates, level, node_to_infoset, self.infoset_cnt)
+		elif node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
+			self._set_node_to_infoset(coordinates, level, node_to_infoset, self.infoset_dict[node['infoset_id']][0])
+		else:
+			self._set_node_to_infoset(coordinates, level, node_to_infoset, TMP_NODE_TO_INFOSET_TERMINAL)
+
 		if node['infoset_id'] not in self.infoset_dict:
-			self.infoset_dict[node['infoset_id']] = [self.infoset_cnt, node['type'], node['tensorcfr_id']]
+			self.infoset_dict[node['infoset_id']] = [self.infoset_cnt, node['type'], node['tensorcfr_id'], node]
 			self.infoset_acting_player_list.append(node['infoset_id'])
 			self.infoset_cnt += 1
 			return True
+
 		return False
 
-	def make_infoset_acting_player(self):
+	def make_infoset_acting_player(self, next_level_max_no_actions):
 		"""
 		infoset_acting_player = [None] * self.infoset_cnt
 
@@ -42,15 +63,24 @@ class InformationSetManager:
 
 		return np.array(infoset_acting_player)
 		"""
-		infoset_acting_player = []
 
-		for idx, infoset_id in enumerate(reversed(self.infoset_acting_player_list)):
+		infoset_acting_player = []
+		current_infoset_strategies = []
+
+		for idx, infoset_id in enumerate(self.infoset_acting_player_list):
 			infoset_acting_player.append(self.infoset_dict[infoset_id][2])
 
-		return infoset_acting_player
+			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
+				current_infoset_strategies.append([float(1/self.cnt_player_nodes)] * next_level_max_no_actions)
+			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
+				current_infoset_strategies.append([action['probability'] for action in self.infoset_dict[infoset_id][3]['actions']])
+			else:
+				current_infoset_strategies.append([0] * next_level_max_no_actions)
 
-	#def make_node_to_infoset(self):
-	#	return reversed(self.infoset_node_to_infoset)
+		return [infoset_acting_player, np.array(current_infoset_strategies)]
+
+	def make_infoset_strategies(self):
+		return True
 
 class GambitEFGLoader:
 
@@ -210,7 +240,7 @@ class GambitEFGLoader:
 		self.infoset_acting_player = [None] * (len(self.max_actions_per_level) + 1)
 		#create positive cumulative regrets
 		#self.utilities = [None] * len(self.max_actions_per_level)
-		#self.node_to_infoset = [None] * len(self.max_actions_per_level)
+		self.node_to_infoset = [None] * (len(self.max_actions_per_level) + 1)
 		#self.cumulative_regrets = [None] * len(self.max_actions_per_level)
 		#self.positive_cumulative_regrets = [None] * len(self.max_actions_per_level)
 
@@ -220,7 +250,7 @@ class GambitEFGLoader:
 			#self.utilities[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * constants.NON_TERMINAL_UTILITY
 			self.node_type[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.IMAGINARY_NODE
 			self.infoset_acting_player[idx] = np.zeros(self.max_actions_per_level[:idx]) * constants.NO_ACTING_PLAYER
-			#self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx + 1]) * TMP_NODE_TO_INFOSET_IMAGINERY
+			self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx]) * TMP_NODE_TO_INFOSET_IMAGINERY
 			#self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
 			#self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx + 1])
 
@@ -235,7 +265,7 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-				infoset_managers[level].add(node)
+				infoset_managers[level].add(node, coordinates, level, self.node_to_infoset)
 
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					for index, action in enumerate(reversed(node['actions'])):
@@ -264,7 +294,7 @@ class GambitEFGLoader:
 					self.node_type[level] = constants.INNER_NODE
 					self.infoset_acting_player[level] = constants.NO_ACTING_PLAYER
 			cnt += 1
-
+		"""
 		print("lvl 0")
 		print(self.node_type[0])
 		print("lvl 1")
@@ -273,15 +303,36 @@ class GambitEFGLoader:
 		print(self.node_type[2])
 		print("lvl 3")
 		print(self.node_type[3])
+		"""
 
-		print("lvl 0")
-		print(infoset_managers[0].make_infoset_acting_player())
+		[infoset_acting_player_lvl0, infoset_strategies_lvl0] = infoset_managers[0].make_infoset_acting_player(5)
+		[infoset_acting_player_lvl1, infoset_strategies_lvl1] = infoset_managers[1].make_infoset_acting_player(3)
+		[infoset_acting_player_lvl2, infoset_strategies_lvl2] = infoset_managers[2].make_infoset_acting_player(2)
+
+		print("infoset_acting_player lvl 0")
+		print(infoset_acting_player_lvl0)
 		print("lvl 1")
-		print(infoset_managers[1].make_infoset_acting_player())
+		print(infoset_acting_player_lvl1)
 		print("lvl 2")
-		print(infoset_managers[2].make_infoset_acting_player())
-		print("lvl 3")
-		print(infoset_managers[3].make_infoset_acting_player())
+		print(infoset_acting_player_lvl2)
+
+		print("infoset_strategies lvl 0")
+		print(infoset_strategies_lvl0)
+		print("lvl 1")
+		print(infoset_strategies_lvl1)
+		print("lvl 2")
+		print(infoset_strategies_lvl2)
+
+		"""
+		print("lvl 0")
+		print(self.node_to_infoset[0])
+		print("lvl 1")
+		print(self.node_to_infoset[1])
+		print("lvl 2")
+		print(self.node_to_infoset[2])
+		"""
+		#print("lvl 3")
+		#print(self.node_type[3])
 
 
 

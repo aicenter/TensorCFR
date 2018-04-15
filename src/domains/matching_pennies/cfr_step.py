@@ -5,7 +5,7 @@ from src.commons.constants import DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, PLAYER1,
 from src.domains.matching_pennies.domain_definitions import get_infoset_acting_players, cfr_step, \
 	current_updating_player, current_opponent, cumulative_infoset_strategies, current_infoset_strategies, \
 	positive_cumulative_regrets
-from src.domains.matching_pennies.regrets import update_positive_cumulative_regrets
+from src.algorithms.tensorcfr_matching_pennies.regrets import update_positive_cumulative_regrets
 from src.domains.matching_pennies.update_strategies import update_strategy_of_acting_player, \
 	cumulate_strategy_of_opponent
 from src.utils.tensor_utils import print_tensors

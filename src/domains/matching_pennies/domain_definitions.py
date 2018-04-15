@@ -52,11 +52,12 @@ utilities[2] = tf.Variable(
 ########## miscellaneous tensors ##########
 cf_values_infoset_actions = [
 	# TODO remove and compute again for every iteration
-	tf.Variable(tf.zeros_like(current_infoset_strategies[0]), name="cf_values_infoset_actions_lvl0"),
-	tf.Variable(tf.zeros_like(current_infoset_strategies[1]), name="cf_values_infoset_actions_lvl1"),
+	tf.Variable(tf.zeros_like(current_infoset_strategies[level]), name="cf_values_infoset_actions_lvl{}".format(level))
+	for level in range(acting_depth)
 ]
 positive_cumulative_regrets = [
 	tf.Variable(tf.zeros_like(current_infoset_strategies[level]), name="positive_cumulative_regrets_lvl{}".format(level))
+	# tf.placeholder(dtype=tf.float32, tf.zeros_like(current_infoset_strategies[level]), name="positive_cumulative_regrets_lvl{}".format(level))
 	for level in range(acting_depth)
 ]
 cumulative_infoset_strategies = [tf.Variable(tf.zeros_like(current_infoset_strategies[level]),

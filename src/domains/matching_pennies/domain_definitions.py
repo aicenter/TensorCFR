@@ -56,9 +56,8 @@ cf_values_infoset_actions = [
 	tf.Variable(tf.zeros_like(current_infoset_strategies[1]), name="cf_values_infoset_actions_lvl1"),
 ]
 positive_cumulative_regrets = [
-	# TODO rewrite to list comprehension
-	tf.Variable(tf.zeros_like(current_infoset_strategies[0]), name="positive_cumulative_regrets_lvl0"),
-	tf.Variable(tf.zeros_like(current_infoset_strategies[1]), name="positive_cumulative_regrets_lvl1"),
+	tf.Variable(tf.zeros_like(current_infoset_strategies[level]), name="positive_cumulative_regrets_lvl{}".format(level))
+	for level in range(acting_depth)
 ]
 cumulative_infoset_strategies = [tf.Variable(tf.zeros_like(current_infoset_strategies[level]),
                                              name="cumulative_infoset_strategies_lvl{}".format(level))

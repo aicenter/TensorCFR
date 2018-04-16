@@ -124,6 +124,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False):
 
 
 if __name__ == '__main__':
+	# run_cfr(total_steps=10)
 	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
 	run_cfr(quiet=True)
-	# run_cfr(total_steps=10)
+	# run_cfr(quiet=True, total_steps=10000)

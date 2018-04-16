@@ -38,4 +38,5 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 
 
 if __name__ == '__main__':
-	run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
+	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
+	run_cfr()

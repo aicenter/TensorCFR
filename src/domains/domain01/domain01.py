@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, \
 	PLAYER1, \
-	PLAYER2, NO_ACTING_PLAYER
+	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY
 from src.utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
@@ -193,7 +193,8 @@ infosets_of_non_chance_player = [
 ]
 cfr_step = tf.Variable(initial_value=0, dtype=tf.int64, name="cfr_step")   # counter of CFR+ iterations
 averaging_delay = tf.constant(         # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
-		0,  # averaging delay of 0 means that there is no delay, or use DEFAULT_AVERAGING_DELAY,
+		# 0,  # averaging delay of 0 means that there is no delay, or use DEFAULT_AVERAGING_DELAY,
+		DEFAULT_AVERAGING_DELAY,
 		dtype=cfr_step.dtype,
 		name="averaging_delay"
 )

@@ -119,6 +119,7 @@ def print_misc_variables(session):
 	print("########## Misc ##########")
 	print_tensors(session, [
 		cfr_step,
+		averaging_delay,
 		current_updating_player,
 		current_opponent,
 		signum_of_current_player,

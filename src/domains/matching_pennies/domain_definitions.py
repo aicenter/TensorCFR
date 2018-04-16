@@ -28,7 +28,8 @@ node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
 utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
 infoset_acting_players[0] = tf.Variable([PLAYER1], name="infoset_acting_players_lvl0")
 initial_infoset_strategies[0] = tf.placeholder_with_default(
-		input=[[0.1, 0.9]],
+		# input=[[0.1, 0.9]],
+		input=[[1.0, 0.0]],
 		shape=[infoset_acting_players[0].shape[0], actions_per_levels[0]],
 		name="initial_infoset_strategies_lvl{}".format(0)
 )
@@ -40,7 +41,8 @@ node_types[1] = tf.Variable([INNER_NODE] * 2, name="node_types_lvl1")
 utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
 infoset_acting_players[1] = tf.Variable([PLAYER2], name="infoset_acting_players_lvl1")
 initial_infoset_strategies[1] = tf.placeholder_with_default(
-		input=[[0.2, 0.8]],
+		# input=[[0.2, 0.8]],
+		input=[[1.0, 0.0]],
 		shape=[infoset_acting_players[1].shape[0], actions_per_levels[1]],
 		name="initial_infoset_strategies_lvl{}".format(1)
 )
@@ -49,13 +51,20 @@ initial_infoset_strategies[1] = tf.placeholder_with_default(
 # There are never any infosets in the final layer, only terminal / imaginary nodes.
 shape[2] = actions_per_levels[:2]
 node_types[2] = tf.Variable(tf.fill(value=TERMINAL_NODE, dims=shape[2]), name="node_types_lvl2")
-utilities[2] = tf.Variable(
+utilities[2] = tf.Variable(   # utilities for matching pennies:
 		[
 			[-1.0, 1.0],
 			[1.0, -1.0]
 		],
 		name="utilities_lvl2"
 )
+# utilities[2] = tf.Variable(   # modified utilities for matching pennies:
+# 		[
+# 			[1.0, 2.0],
+# 			[0.0, 0.0]
+# 		],
+# 		name="modified_utilities_lvl2"
+# )
 
 ########## miscellaneous tensors ##########
 current_infoset_strategies = [
@@ -82,6 +91,7 @@ infosets_of_non_chance_player = [
 ]
 cfr_step = tf.Variable(initial_value=0, dtype=tf.int64, name="cfr_step")  # counter of CFR+ iterations
 averaging_delay = tf.constant(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
+		# 0,
 		DEFAULT_AVERAGING_DELAY,
 		dtype=cfr_step.dtype,
 		name="averaging_delay"

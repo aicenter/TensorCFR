@@ -49,7 +49,7 @@ def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 	# TODO extract these lines to a UnitTest
 	# setup_messages, feed_dictionary = setup_feed_dictionary()
-	# setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
+	setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
 	# setup_messages, feed_dictionary = setup_feed_dictionary(method="uniform")
 	# setup_messages, feed_dictionary = setup_feed_dictionary(method="custom")  # should raise ValueError
 	# setup_messages, feed_dictionary = setup_feed_dictionary(
@@ -58,13 +58,13 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 	# 			[[1.0, 0.0]],
 	# 		],
 	# )  # should raise ValueError
-	setup_messages, feed_dictionary = setup_feed_dictionary(
-			method="custom",
-			initial_strategy_values=[
-				[[1.0, 0.0]],
-				[[1.0, 0.0]],
-			]
-	)
+	# setup_messages, feed_dictionary = setup_feed_dictionary(
+	# 		method="custom",
+	# 		initial_strategy_values=[
+	# 			[[1.0, 0.0]],
+	# 			[[1.0, 0.0]],
+	# 		]
+	# )
 	# setup_messages, feed_dictionary = setup_feed_dictionary(method="invalid")  # should raise ValueError
 
 	cfr_step_op = do_cfr_step()
@@ -112,5 +112,5 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 
 if __name__ == '__main__':
 	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
-	# run_cfr()
-	run_cfr(total_steps=10)
+	run_cfr()
+	# run_cfr(total_steps=10)

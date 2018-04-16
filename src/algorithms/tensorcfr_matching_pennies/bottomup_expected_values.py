@@ -2,27 +2,15 @@
 
 import tensorflow as tf
 
-from src.algorithms.tensorcfr_matching_pennies.node_strategies import assign_strategies_to_nodes
+from src.algorithms.tensorcfr_matching_pennies.node_strategies import get_node_strategies
 from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 from src.commons.constants import TERMINAL_NODE
-from src.domains.matching_pennies.domain_definitions import node_to_infoset, current_infoset_strategies, utilities, \
-	node_types, levels, \
-	signum_of_current_player, print_misc_variables
+from src.domains.matching_pennies.domain_definitions import utilities, node_types, levels, signum_of_current_player,\
+	print_misc_variables
 from src.utils.tensor_utils import print_tensors
 
 
 # game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
-
-def get_node_strategies():
-	node_strategies = [None] * (levels - 1)
-	for level in range(levels - 1):
-		node_strategies[level] = assign_strategies_to_nodes(
-				current_infoset_strategies[level],
-				node_to_infoset[level],
-				name="node_strategies_lvl{}".format(level)
-		)
-	return node_strategies
-
 
 def get_expected_values():
 	node_strategies = get_node_strategies()

@@ -84,11 +84,10 @@ infosets_of_non_chance_player = [
 	           name="infosets_of_acting_player_lvl{}".format(level))
 	for level in range(acting_depth)
 ]
-cfr_step = tf.Variable(initial_value=0, dtype=tf.int64, name="cfr_step")  # counter of CFR+ iterations
-averaging_delay = tf.constant(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
-		0,
-		# DEFAULT_AVERAGING_DELAY,
-		dtype=cfr_step.dtype,
+cfr_step = tf.Variable(initial_value=0, dtype=tf.int32, name="cfr_step")  # counter of CFR+ iterations
+averaging_delay = tf.Variable(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
+		DEFAULT_AVERAGING_DELAY,
+		dtype=tf.int32,
 		name="averaging_delay"
 )
 player_owning_the_utilities = tf.constant(PLAYER1, name="player_owning_the_utilities")  # utilities defined from this...

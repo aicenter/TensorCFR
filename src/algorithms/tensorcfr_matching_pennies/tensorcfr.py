@@ -9,9 +9,9 @@ from src.algorithms.tensorcfr_matching_pennies.strategy_matched_to_regrets impor
 from src.algorithms.tensorcfr_matching_pennies.topdown_reach_probabilities import get_nodal_reach_probabilities
 from src.algorithms.tensorcfr_matching_pennies.uniform_strategies import get_infoset_uniform_strategies
 from src.algorithms.tensorcfr_matching_pennies.update_strategies import get_average_infoset_strategies
-from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, DEFAULT_AVERAGING_DELAY
 from src.domains.matching_pennies.domain_definitions import cfr_step, current_infoset_strategies, \
-	cumulative_infoset_strategies, positive_cumulative_regrets, initial_infoset_strategies, acting_depth
+	cumulative_infoset_strategies, positive_cumulative_regrets, initial_infoset_strategies, acting_depth, averaging_delay
 from src.utils.tensor_utils import print_tensors
 
 
@@ -46,7 +46,7 @@ def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
 		raise ValueError('Undefined method "{}" for setup_feed_dictionary().'.format(method))
 
 
-def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False):
+def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
 	# TODO extract these lines to a UnitTest
 	# setup_messages, feed_dictionary = setup_feed_dictionary()
 	setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
@@ -67,6 +67,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False):
 	# )
 	# setup_messages, feed_dictionary = setup_feed_dictionary(method="invalid")  # should raise ValueError
 
+	assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay)
 	cfr_step_op = do_cfr_step()
 	reach_probabilities = get_nodal_reach_probabilities()
 	expected_values = get_expected_values()
@@ -80,9 +81,10 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False):
 		print("TensorCFR\n")
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 		print(setup_messages)
+		sess.run(assign_averaging_delay_op)
 		print_tensors(sess, current_infoset_strategies)
 
-		print("Running {} CFR+ iterations...\n".format(total_steps))
+		print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay.eval()))
 		for _ in range(total_steps):
 			if quiet is False:
 				print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
@@ -124,7 +126,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False):
 
 
 if __name__ == '__main__':
-	# run_cfr(total_steps=10)
-	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
-	run_cfr(quiet=True)
+	run_cfr(total_steps=10, delay=0)
+	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
+	# run_cfr(quiet=True)
 	# run_cfr(quiet=True, total_steps=10000)

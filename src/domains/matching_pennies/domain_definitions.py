@@ -71,11 +71,6 @@ current_infoset_strategies = [
 	tf.Variable(initial_value=initial_infoset_strategies[level], name="current_infoset_strategies_lvl{}".format(level))
 	for level in range(acting_depth)
 ]
-cf_values_infoset_actions = [
-	# TODO remove and compute again for every iteration
-	tf.Variable(tf.zeros_like(current_infoset_strategies[level]), name="cf_values_infoset_actions_lvl{}".format(level))
-	for level in range(acting_depth)
-]
 positive_cumulative_regrets = [
 	tf.Variable(tf.zeros_like(current_infoset_strategies[level]), name="positive_cumulative_regrets_lvl{}".format(level))
 	for level in range(acting_depth)
@@ -146,7 +141,6 @@ if __name__ == '__main__':
 					infoset_acting_players[level],
 					initial_infoset_strategies[level],
 					current_infoset_strategies[level],
-					cf_values_infoset_actions[level],
 					positive_cumulative_regrets[level],
 					cumulative_infoset_strategies[level],
 				])

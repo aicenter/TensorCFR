@@ -36,9 +36,18 @@ def get_cf_values_infoset_actions():  # TODO verify and write a unittest
 
 
 def get_cf_values_infoset():  # TODO verify and write a unittest
-	return [tf.expand_dims(tf.reduce_sum(current_infoset_strategies[level] * cf_values_infoset_actions_[level], axis=-1),
-	                       axis=-1, name="cf_values_infoset_lvl{}".format(level))
-	        for level in range(levels - 1)]
+	cf_values_infoset_actions = get_cf_values_infoset_actions()
+	return [
+		tf.expand_dims(
+				tf.reduce_sum(
+						current_infoset_strategies[level] * cf_values_infoset_actions[level],
+						axis=-1
+				),
+				axis=-1,
+				name="cf_values_infoset_lvl{}".format(level)
+		)
+		for level in range(levels - 1)
+	]
 
 
 if __name__ == '__main__':

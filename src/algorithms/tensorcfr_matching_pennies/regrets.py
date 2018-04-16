@@ -4,8 +4,9 @@ import tensorflow as tf
 
 from src.algorithms.tensorcfr_matching_pennies.counterfactual_values import assign_new_cf_values_infoset_actions, \
 	get_cf_values_infoset
-from src.domains.matching_pennies.domain_definitions import levels, positive_cumulative_regrets
-from src.utils.tensor_utils import print_tensors
+from src.domains.matching_pennies.domain_definitions import levels, positive_cumulative_regrets,\
+	infoset_acting_players, current_updating_player, acting_depth
+from src.utils.tensor_utils import print_tensors, masked_assign
 
 
 # game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
@@ -25,9 +26,17 @@ def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify an
 			- positive_cumulative_regrets[level],
 			regrets[level]
 		)
-		updated_regrets[level] = tf.assign_add(
+		# TODO optimize by: pre-define `infosets_of_player1` and `infosets_of_player2` (in domain definitions) and switch
+		infosets_of_updating_player = tf.reshape(
+				tf.equal(infoset_acting_players[level], current_updating_player),
+				shape=[positive_cumulative_regrets[level].shape[0]],
+				name="infosets_of_updating_player_lvl{}".format(level)
+		)
+		# TODO implement and use `masked_assign_add` here
+		updated_regrets[level] = masked_assign(
 			ref=positive_cumulative_regrets[level],
-			value=maximum_addition,
+			mask=infosets_of_updating_player,
+			value=positive_cumulative_regrets[level] + maximum_addition,
 			name="update_regrets_lvl{}".format(level)
 		)
 	return updated_regrets
@@ -41,15 +50,20 @@ if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 
-		for i in range(levels - 1):
-			print("########## Level {} ##########".format(i))
-			print_tensors(sess, [cf_values_infoset_actions_[i], cf_values_infoset_[i], regrets_[i]])
+		for level_ in range(acting_depth):
+			print("########## Level {} ##########".format(level_))
+			print_tensors(sess, [cf_values_infoset_actions_[level_], cf_values_infoset_[level_], regrets_[level_]])
+			print("___________________________________\n")
 			# TODO create a unit out of the following `print_tensors()`
-			print_tensors(sess, [positive_cumulative_regrets[i],
-			                     positive_cumulative_regrets[i],
-			                     update_regrets_ops[i],
-			                     positive_cumulative_regrets[i],
-			                     positive_cumulative_regrets[i],
-			                     update_regrets_ops[i],
-			                     positive_cumulative_regrets[i],
-			                     positive_cumulative_regrets[i]])
+			print_tensors(sess, [
+				infoset_acting_players[level_],
+				current_updating_player,
+				positive_cumulative_regrets[level_],
+				positive_cumulative_regrets[level_],
+				update_regrets_ops[level_],
+				positive_cumulative_regrets[level_],
+				positive_cumulative_regrets[level_],
+				update_regrets_ops[level_],
+				positive_cumulative_regrets[level_],
+				positive_cumulative_regrets[level_]
+			])

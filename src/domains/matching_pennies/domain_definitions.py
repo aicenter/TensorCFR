@@ -51,7 +51,7 @@ initial_infoset_strategies[1] = tf.placeholder_with_default(
 # There are never any infosets in the final layer, only terminal / imaginary nodes.
 shape[2] = actions_per_levels[:2]
 node_types[2] = tf.Variable(tf.fill(value=TERMINAL_NODE, dims=shape[2]), name="node_types_lvl2")
-utilities[2] = tf.Variable(   # utilities for matching pennies:
+utilities[2] = tf.Variable(  # utilities for matching pennies:
 		[
 			[-1.0, 1.0],
 			[1.0, -1.0]
@@ -68,21 +68,34 @@ utilities[2] = tf.Variable(   # utilities for matching pennies:
 
 ########## miscellaneous tensors ##########
 current_infoset_strategies = [
-	tf.Variable(initial_value=initial_infoset_strategies[level], name="current_infoset_strategies_lvl{}".format(level))
-	for level in range(acting_depth)
+	tf.Variable(
+			initial_value=initial_infoset_strategies[level],
+			name="current_infoset_strategies_lvl{}".format(level)
+	) for level in range(acting_depth)
 ]
 positive_cumulative_regrets = [
-	tf.Variable(tf.zeros_like(current_infoset_strategies[level]), name="positive_cumulative_regrets_lvl{}".format(level))
-	for level in range(acting_depth)
+	tf.Variable(
+			tf.zeros_like(
+					current_infoset_strategies[level]
+			),
+			name="positive_cumulative_regrets_lvl{}".format(level)
+	) for level in range(acting_depth)
 ]
-cumulative_infoset_strategies = [tf.Variable(tf.zeros_like(current_infoset_strategies[level]),
-                                             name="cumulative_infoset_strategies_lvl{}".format(level))
-                                 for level in range(acting_depth)]  # used for the final average strategy
-infosets_of_non_chance_player = [
-	tf.reshape(tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
-	           shape=[current_infoset_strategies[level].shape[0]],
-	           name="infosets_of_acting_player_lvl{}".format(level))
+cumulative_infoset_strategies = [
+	tf.Variable(
+			tf.zeros_like(
+					current_infoset_strategies[level]
+			),
+			name="cumulative_infoset_strategies_lvl{}".format(level)
+	)
 	for level in range(acting_depth)
+]  # used for the final average strategy
+infosets_of_non_chance_player = [
+	tf.reshape(
+			tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
+			shape=[current_infoset_strategies[level].shape[0]],
+			name="infosets_of_acting_player_lvl{}".format(level)
+	) for level in range(acting_depth)
 ]
 cfr_step = tf.Variable(initial_value=0, dtype=tf.int32, name="cfr_step")  # counter of CFR+ iterations
 averaging_delay = tf.Variable(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
@@ -90,8 +103,10 @@ averaging_delay = tf.Variable(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
 		dtype=tf.int32,
 		name="averaging_delay"
 )
-player_owning_the_utilities = tf.constant(PLAYER1, name="player_owning_the_utilities")  # utilities defined from this...
-#  ...player's point of view
+player_owning_the_utilities = tf.constant(  # utilities defined...
+		PLAYER1,  # ...from this player's point of view
+		name="player_owning_the_utilities"
+)
 current_updating_player = tf.Variable(initial_value=PLAYER1, name="current_updating_player")
 current_opponent = tf.Variable(initial_value=PLAYER2, name="current_opponent")
 signum_of_current_player = tf.where(

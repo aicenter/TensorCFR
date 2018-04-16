@@ -46,7 +46,7 @@ def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
 		raise ValueError('Undefined method "{}" for setup_feed_dictionary().'.format(method))
 
 
-def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
+def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False):
 	# TODO extract these lines to a UnitTest
 	# setup_messages, feed_dictionary = setup_feed_dictionary()
 	setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
@@ -84,35 +84,39 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 
 		print("Running {} CFR+ iterations...\n".format(total_steps))
 		for _ in range(total_steps):
-			print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
-			print_tensors(sess, reach_probabilities)
-			print("___________________________________\n")
-			print_tensors(sess, expected_values)
-			print("___________________________________\n")
-			print_tensors(sess, cf_values_nodes)
-			print("___________________________________\n")
-			print_tensors(sess, cf_values_infoset_actions)
-			print("___________________________________\n")
-			print_tensors(sess, cf_values_infoset)
-			print("___________________________________\n")
-			print_tensors(sess, regrets)
-			print("___________________________________\n")
-			print_tensors(sess, cf_values_infoset_actions)
-			print("___________________________________\n")
-			print_tensors(sess, cf_values_infoset)
-			print("___________________________________\n")
-			print_tensors(sess, regrets)
-			print("___________________________________\n")
-			print_tensors(sess, positive_cumulative_regrets)
-			print("___________________________________\n")
-			print_tensors(sess, regrets)
-			print("___________________________________\n")
+			if quiet is False:
+				print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
+				print_tensors(sess, reach_probabilities)
+				print("___________________________________\n")
+				print_tensors(sess, expected_values)
+				print("___________________________________\n")
+				print_tensors(sess, cf_values_nodes)
+				print("___________________________________\n")
+				print_tensors(sess, cf_values_infoset_actions)
+				print("___________________________________\n")
+				print_tensors(sess, cf_values_infoset)
+				print("___________________________________\n")
+				print_tensors(sess, regrets)
+				print("___________________________________\n")
+				print_tensors(sess, cf_values_infoset_actions)
+				print("___________________________________\n")
+				print_tensors(sess, cf_values_infoset)
+				print("___________________________________\n")
+				print_tensors(sess, regrets)
+				print("___________________________________\n")
+				print_tensors(sess, positive_cumulative_regrets)
+				print("___________________________________\n")
+				print_tensors(sess, regrets)
+				print("___________________________________\n")
+
 			sess.run(cfr_step_op)
-			print_tensors(sess, positive_cumulative_regrets)
-			print("___________________________________\n")
-			print_tensors(sess, strategies_matched_to_regrets)
-			print("___________________________________\n")
-			print_tensors(sess, current_infoset_strategies)
+
+			if quiet is False:
+				print_tensors(sess, positive_cumulative_regrets)
+				print("___________________________________\n")
+				print_tensors(sess, strategies_matched_to_regrets)
+				print("___________________________________\n")
+				print_tensors(sess, current_infoset_strategies)
 		print("###################################\n")
 		print_tensors(sess, cumulative_infoset_strategies)
 		print("___________________________________\n")
@@ -120,6 +124,6 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS):
 
 
 if __name__ == '__main__':
-	run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
-	# run_cfr()
+	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS)
+	run_cfr(quiet=True)
 	# run_cfr(total_steps=10)

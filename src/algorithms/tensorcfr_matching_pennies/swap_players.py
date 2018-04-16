@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2
 from src.domains.matching_pennies.domain_definitions import cfr_step, \
-	current_updating_player, current_opponent, print_player_variables
+	current_updating_player, current_opponent, print_misc_variables
 
 
 # game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
@@ -29,5 +29,5 @@ if __name__ == '__main__':
 		print("PLAYER1 is {}, PLAYER2 is {}".format(PLAYER1, PLAYER2))
 		for _ in range(5):
 			print("########## CFR step {} ##########\n".format(cfr_step.eval()))
-			print_player_variables(session=sess)
+			print_misc_variables(session=sess)
 			sess.run([swap_players(), increment_cfr_step_op])

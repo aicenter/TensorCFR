@@ -115,7 +115,7 @@ def get_infoset_acting_players():
 	return infoset_acting_players
 
 
-def print_player_variables(session):
+def print_misc_variables(session):
 	print("########## Misc ##########")
 	print_tensors(session, [
 		cfr_step,
@@ -144,4 +144,4 @@ if __name__ == '__main__':
 					positive_cumulative_regrets[level],
 					cumulative_infoset_strategies[level],
 				])
-		print_player_variables(session=sess)
+		print_misc_variables(session=sess)

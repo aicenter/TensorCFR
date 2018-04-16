@@ -7,7 +7,7 @@ from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 from src.commons.constants import TERMINAL_NODE
 from src.domains.matching_pennies.domain_definitions import node_to_infoset, current_infoset_strategies, utilities, \
 	node_types, levels, \
-	signum_of_current_player, print_player_variables
+	signum_of_current_player, print_misc_variables
 from src.utils.tensor_utils import print_tensors
 
 
@@ -46,7 +46,7 @@ def get_expected_values():
 
 
 def show_expected_values(session):
-	print_player_variables(session=session)
+	print_misc_variables(session=session)
 	for level_ in reversed(range(levels)):
 		print("########## Level {} ##########".format(level_))
 		if level_ < len(node_strategies_):

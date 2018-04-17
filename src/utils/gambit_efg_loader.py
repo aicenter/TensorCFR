@@ -37,9 +37,7 @@ class InformationSetManager:
 		return True
 
 
-	def add(self, node, coordinates, node_to_infoset):
-		level = len(coordinates)
-
+	def add(self, node):
 		# node type kvuli _is_imaginery_node_present
 		self.infoset_node_to_infoset.append(node['infoset_id'])
 
@@ -287,7 +285,7 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-				node_to_infoset_value = self.infoset_managers[level].add(node, coordinates, self.node_to_infoset)
+				node_to_infoset_value = self.infoset_managers[level].add(node)
 
 				self.update_node_to_infoset(level, coordinates, node_to_infoset_value)
 

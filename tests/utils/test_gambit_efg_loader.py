@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import unittest
 import tensorflow as tf
@@ -37,6 +38,7 @@ class TestGambbitEFGLoaderParse(unittest.TestCase):
 
 class TestGambitEFGLoaderDomain01(unittest.TestCase):
 	def setUp(self):
+		domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
 		self.number_of_levels = 3
 		self.domain = GambitEFGLoader('/home/ruda/Documents/Projects/tensorcfr/TensorCFR/src/utils/domain01_via_gambit.efg')
 
@@ -164,7 +166,7 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 
 	def test_infoset_acting_players(self):
 		expected_output = [None] * 3
-		expected_output[0] = np.array([0]) # TODO zmenit na jen 0
+		expected_output[0] = 0
 		expected_output[1] = np.array([1, 2, 2, 0])
 		expected_output[2] = np.array([1, 2, -1, 1, 2, 0, -1, 1, 2, -1])
 

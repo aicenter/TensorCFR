@@ -310,6 +310,8 @@ class GambitEFGLoader:
 			self.infoset_acting_players[lvl] = infoset_acting_players
 			self.current_infoset_strategies[lvl] = infoset_strategies
 
+		self.infoset_acting_players[0] = self.infoset_acting_players[0][0]
+
 	def get_tensorflow_tensors(self):
 		current_infoset_strategies = [None] * len(self.current_infoset_strategies)
 		positive_cumulative_regrets = [None] * len(self.positive_cumulative_regrets)
@@ -357,32 +359,9 @@ class GambitEFGLoader:
 
 
 if __name__ == '__main__':
-	#input_line_chance = 'c "" 1 "" { "Ea (0.05)" 0.05 "Da (0.1)" 0.1 "Ca (0.1)" 0.1 "Ba (0.25)" 0.25 "Aa (0.5)" 0.5 } 1 "" { 0, 0 }'
-	#input_line_player = 'p "" 2 4 "" { "Ja (0.9)" "Ia (0.1)" } 24 "" { 0, 0 }'
-	#input_line_terminal = 't "" 38 "" { 10, -10 }'
+	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
 
-	#gambit_efg_loader = GambitEFGLoader('doc/domain01_via_gambit.efg')
-	#print("Chance:")
-	#print(gambit_efg_loader.parse_node(input_line_chance))
-	#print("Player:")
-	#print(gambit_efg_loader.parse_node(input_line_player))
-	#print("Terminal:")
-	#print(gambit_efg_loader.parse_node(input_line_terminal))
-
-	# exampel del
-	#print('Del list')
-	#a = [0, 1, 2, 3]
-	#print(a)
-	#del a[1]
-	#print(a)
-
-	#print('Del dict')
-	#a = {'jedna': 1, 'dva': 2, 'tri': 3}
-	#print(a)
-	#del a['dva']
-	#print(a)
-
-	domain01 = GambitEFGLoader('/home/ruda/Documents/Projects/tensorcfr/TensorCFR/src/utils/domain01_via_gambit.efg')
+	domain01 = GambitEFGLoader(domain01_efg)
 	[current_infoset_strategies, positive_cumulative_regrets, node_to_infoset, node_types, utilities, infoset_acting_players] = domain01.get_tensorflow_tensors()
 
 	with tf.Session() as sess:

@@ -4,7 +4,7 @@ from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 from src.commons.constants import DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, PLAYER1, PLAYER2
 from src.domains.matching_pennies.domain_definitions import get_infoset_acting_players, cfr_step, \
 	current_updating_player, current_opponent, cumulative_infoset_strategies, current_infoset_strategies, \
-	positive_cumulative_regrets
+	positive_cumulative_regrets, averaging_delay
 from src.algorithms.tensorcfr_matching_pennies.regrets import update_positive_cumulative_regrets
 from src.algorithms.tensorcfr_matching_pennies.update_strategies import update_strategy_of_acting_player, \
 	cumulate_strategy_of_opponent
@@ -34,20 +34,30 @@ def increment_cfr_step():
 
 
 def do_cfr_step():
+	ops_process_strategies = process_strategies(acting_player=current_updating_player, opponent=current_opponent)
+
+	# op_swap_players = swap_players()
+	# op_inc_step = increment_cfr_step()
+
+	with tf.control_dependencies(ops_process_strategies):
+		op_swap_players = swap_players()
+		op_inc_step = increment_cfr_step()
+
 	return tf.group(
-			process_strategies(acting_player=current_updating_player, opponent=current_opponent)
-			+ [swap_players(), increment_cfr_step()],
+			[ops_process_strategies, op_swap_players, op_inc_step],
 			name="cfr_step"
 	)
 
 
 if __name__ == '__main__':
-	total_steps = DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
+	# total_steps = DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
+	total_steps = 4
 	infoset_acting_players_ = get_infoset_acting_players()
 	process_strategies_ops = process_strategies()
 	cfr_step_op = do_cfr_step()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
+		sess.run(tf.assign(ref=averaging_delay, value=0))
 		print("Running {} CFR+ iterations...\n".format(total_steps))
 		for _ in range(total_steps):
 			print("########## Start of CFR+ step {} ##########".format(cfr_step.eval()))

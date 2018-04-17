@@ -24,7 +24,8 @@ def get_cf_values_infoset_actions():  # TODO verify and write a unittest
 	cf_values_infoset_actions[0] = tf.expand_dims(
 			node_cf_values[1],
 			axis=0,
-			name="cf_values_infoset_actions_lvl0")
+			name="cf_values_infoset_actions_lvl0"
+	)
 	for level in range(1, levels - 1):  # TODO replace for-loop with parallel_map on TensorArray?
 		cf_values_infoset_actions[level] = scatter_nd_sum(
 				indices=tf.expand_dims(node_to_infoset[level], axis=-1),
@@ -32,7 +33,7 @@ def get_cf_values_infoset_actions():  # TODO verify and write a unittest
 				shape=current_infoset_strategies[level].shape,
 				name="cf_values_infoset_actions_lvl{}".format(level),
 		)
-	return cf_values_infoset_actions    # TODO remove the same tensor from `domain_definitions.py`
+	return cf_values_infoset_actions
 
 
 def get_cf_values_infoset():  # TODO verify and write a unittest

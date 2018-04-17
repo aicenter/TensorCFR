@@ -44,12 +44,15 @@ if __name__ == '__main__':
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
 			print_tensors(sess, [
+				positive_cumulative_regrets[i],
 				strategies_matched_to_regrets_[i],
 				strategies_matched_to_regrets_[i],
 				update_regrets[i],
+				positive_cumulative_regrets[i],
 				strategies_matched_to_regrets_[i],
 				strategies_matched_to_regrets_[i],
 				update_regrets[i],
+				positive_cumulative_regrets[i],
 				strategies_matched_to_regrets_[i],
 				strategies_matched_to_regrets_[i],
 			])

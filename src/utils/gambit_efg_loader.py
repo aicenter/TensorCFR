@@ -39,9 +39,6 @@ class InformationSetManager:
 		tensor = node_types[level]
 		result = tensor[np.where(tensor == constants.IMAGINARY_NODE)]
 
-		print("_is_imag v lvl " + str(level))
-		print(result)
-
 		if result.shape == (0,):
 			return False
 		return True
@@ -151,12 +148,12 @@ class GambitEFGLoader:
 
 		actions = self.parse_actions_chance(parse_line.group('actions_str'))
 		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
-		infoset_id = 'c-' + str(parse_line.group('information_set_number'))
+		infoset_id = 'c-' + parse_line.group('information_set_number')
 
 		return {
 			'type': parse_line.group('type'),
 			'name': parse_line.group('name'),
-			'information_set_number': parse_line.group('information_set_number'),
+			'information_set_number': int(parse_line.group('information_set_number')),
 			'information_set_name': parse_line.group('information_set_name'),
 			'actions': actions,
 			'outcome': parse_line.group('outcome'),
@@ -174,19 +171,19 @@ class GambitEFGLoader:
 
 		actions = self.parse_actions_player(parse_line.group('actions_str'))
 		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
-		infoset_id = 'p-' + str(parse_line.group('player_number')) + '-' + str(parse_line.group('information_set_number'))
+		infoset_id = 'p-' + parse_line.group('player_number') + '-' + parse_line.group('information_set_number')
 
 		return {
 			'type': parse_line.group('type'),
 			'name': parse_line.group('name'),
-			'player_number': parse_line.group('player_number'),
-			'information_set_number': parse_line.group('information_set_number'),
+			'player_number': int(parse_line.group('player_number')),
+			'information_set_number': int(parse_line.group('information_set_number')),
 			'information_set_name': parse_line.group('information_set_name'),
 			'actions': actions,
 			'outcome': parse_line.group('outcome'),
 			'outcome_name': parse_line.group('outcome_name'),
 			'payoffs': payoffs,
-			'tensorcfr_id': parse_line.group('player_number'),
+			'tensorcfr_id': int(parse_line.group('player_number')),
 			'infoset_id': infoset_id
 		}
 
@@ -316,6 +313,9 @@ class GambitEFGLoader:
 		[infoset_acting_player_lvl1, infoset_strategies_lvl1] = infoset_managers[1].make_infoset_acting_player(3, self.node_type)
 		[infoset_acting_player_lvl2, infoset_strategies_lvl2] = infoset_managers[2].make_infoset_acting_player(2, self.node_type)
 
+		self.infoset_acting_player = [infoset_acting_player_lvl0, infoset_acting_player_lvl1, infoset_acting_player_lvl2]
+		self.infoset_strategies = [infoset_strategies_lvl0, infoset_acting_player_lvl1, infoset_acting_player_lvl2]
+
 		print("current_infoset_strategies")
 		print('lvl 0')
 		print(infoset_strategies_lvl0)
@@ -331,6 +331,7 @@ class GambitEFGLoader:
 		print(infoset_acting_player_lvl1)
 		print("lvl 2")
 		print(infoset_acting_player_lvl2)
+
 
 
 		print("node_to_infoset")

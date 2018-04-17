@@ -44,6 +44,27 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 		expected_output = np.array([5, 3, 2])
 		np.testing.assert_array_equal(self.domain.max_actions_per_level, expected_output)
 
+	def test_current_infoset_strategies(self):
+		expected_output = [None] * 3
+		expected_output[0] = np.array([[0.5, 0.25, 0.1, 0.1, 0.05]])
+		expected_output[1] = np.array([[0.25, 0.25, 0.25], # TODO zkontrolovat spravne pst
+									   [0.25, 0.25, 0.25],
+									   [0.25, 0.25, 0.25],
+									   [1., 1., 1.]]) # TODO ma byt 1 -> 1/3 - opravit parser actions
+		expected_output[2] = np.array([[0.125, 0.125], # TODO zkontrolovat pst
+									   [0.125, 0.125],
+									   [0., 0.],
+									   [0.125, 0.125],
+									   [0.125, 0.125],
+									   [0.1, 0.9],
+									   [0., 0.],
+									   [0.125, 0.125],
+									   [0.125, 0.125],
+									   [0., 0.]])
+
+		for lvl in range(self.number_of_levels):
+			np.testing.assert_array_equal(expected_output[lvl], self.domain.current_infoset_strategies[lvl])
+
 	def test_utilities(self):
 		expected_output = [None] * 4
 		expected_output[0] = 0

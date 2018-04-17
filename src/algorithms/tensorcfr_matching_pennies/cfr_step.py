@@ -13,7 +13,7 @@ from src.utils.tensor_utils import print_tensors
 
 # game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
-def process_strategies(acting_player=PLAYER1, opponent=PLAYER2):
+def process_strategies(acting_player=current_updating_player, opponent=current_opponent):
 	update_regrets_ops = update_positive_cumulative_regrets()
 	update_ops = update_strategy_of_acting_player(acting_player=acting_player)
 	cumulate_ops = cumulate_strategy_of_opponent(opponent=opponent)
@@ -34,15 +34,10 @@ def increment_cfr_step():
 
 
 def do_cfr_step():
-	ops_process_strategies = process_strategies(acting_player=current_updating_player, opponent=current_opponent)
-
-	# op_swap_players = swap_players()
-	# op_inc_step = increment_cfr_step()
-
+	ops_process_strategies = process_strategies()
 	with tf.control_dependencies(ops_process_strategies):
 		op_swap_players = swap_players()
 		op_inc_step = increment_cfr_step()
-
 	return tf.group(
 			[ops_process_strategies, op_swap_players, op_inc_step],
 			name="cfr_step"

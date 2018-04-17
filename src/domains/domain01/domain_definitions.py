@@ -91,16 +91,20 @@ node_types[2] = tf.Variable(
 	 [TERMINAL_NODE, INNER_NODE, INNER_NODE]],  # s17, s18, s19
 	name="node_types_lvl2"
 )
-utilities_lvl2_tmp = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[2]))
-mask_terminals_lvl2_tmp = tf.equal(node_types[2], TERMINAL_NODE)
-terminal_values_lvl2_tmp = tf.reshape(tf.range(10, 160, delta=10.0), shape[2])
-utilities_lvl2_tmp = masked_assign(
-    ref=utilities_lvl2_tmp,
-    value=terminal_values_lvl2_tmp,
-    mask=mask_terminals_lvl2_tmp,
-    name="utilities_lvl2"
+utilities[2] = masked_assign(
+		ref=tf.Variable(
+				tf.fill(
+						value=NON_TERMINAL_UTILITY,
+						dims=shape[2]
+				)
+		),
+		value=tf.reshape(
+				tf.range(10, 160, delta=10.0),
+				shape[2]
+		),
+		mask=tf.equal(node_types[2], TERMINAL_NODE),
+		name="utilities_lvl2"
 )
-utilities[2] = utilities_lvl2_tmp
 infoset_acting_players[2] = tf.Variable(
 	[PLAYER1,            # of I2,0
 	 PLAYER2,            # of I2,1
@@ -114,61 +118,55 @@ infoset_acting_players[2] = tf.Variable(
 	name="infoset_acting_players_lvl2"
 )
 initial_infoset_strategies[2] = tf.placeholder_with_default(
-		input=[[0.15, 0.85],   # of I2,0
-		       [0.70, 0.30],   # of I2,1
-		       [0.25, 0.75],   # of I2,2
-		       [0.50, 0.50],   # of I2,3
-		       [0.10, 0.90],   # of I2,4
-		       [0.45, 0.55],   # of I2,5
-		       [0.40, 0.60],   # of I2,6
-		       [0.00, 0.00],   # of I2,7 ... terminal nodes <- mock-up zero strategy
-		       [0.00, 0.00]],  # of I2,8 ... imaginary nodes <- mock-up zero strategy
-		shape=[infoset_acting_players[2].shape[0], actions_per_levels[2]],
-		name="initial_infoset_strategies_lvl{}".format(2)
+	input=[[0.15, 0.85],   # of I2,0
+				 [0.70, 0.30],   # of I2,1
+				 [0.25, 0.75],   # of I2,2
+				 [0.50, 0.50],   # of I2,3
+				 [0.10, 0.90],   # of I2,4
+				 [0.45, 0.55],   # of I2,5
+				 [0.40, 0.60],   # of I2,6
+				 [0.00, 0.00],   # of I2,7 ... terminal nodes <- mock-up zero strategy
+				 [0.00, 0.00]],  # of I2,8 ... imaginary nodes <- mock-up zero strategy
+	shape=[infoset_acting_players[2].shape[0], actions_per_levels[2]],
+	name="initial_infoset_strategies_lvl{}".format(2)
 )
 
 ########## Level 3 ##########
 # There are never any infosets in the final layer, only terminal / imaginary nodes.
 shape[3] = actions_per_levels[:3]
-node_types_lvl3_tmp = tf.Variable(
-	tf.fill(
-		value=TERMINAL_NODE,
-		dims=shape[3]),
-	name="node_types_lvl3"
-)
-indices_imaginary_nodes_lvl3_tmp = tf.constant(
+indices_of_imaginary_nodes_lvl3 = tf.constant(
 	[[0, 2],   # children of s7
 	 [1, 2],   # children of s10
 	 [2, 2],   # children of s13
 	 [3, 2],   # children of s16
 	 [4, 0]],  # children of s17
-	name="indices_imaginary_nodes_lvl3"
+	name="indices_of_imaginary_nodes_lvl3"
 )
-node_types_lvl3_tmp = tf.scatter_nd_update(
-	ref=node_types_lvl3_tmp,
-	indices=indices_imaginary_nodes_lvl3_tmp,
+node_types[3] = tf.scatter_nd_update(
+	ref=tf.Variable(
+				tf.fill(
+					value=TERMINAL_NODE,
+					dims=shape[3]
+				),
+	),
+	indices=indices_of_imaginary_nodes_lvl3,
 	updates=tf.fill(
 		value=IMAGINARY_NODE,
-		dims=indices_imaginary_nodes_lvl3_tmp.shape
+		dims=indices_of_imaginary_nodes_lvl3.shape
 	),
 	name="node_types_lvl3"
 )
-node_types[3] = node_types_lvl3_tmp
-utilities_lvl3_tmp = tf.Variable(
-	tf.fill(
-		value=NON_TERMINAL_UTILITY,
-		dims=shape[3]
-	)
-)
-mask_terminals_lvl3_tmp = tf.equal(node_types[3], TERMINAL_NODE)
-terminal_values_lvl3_tmp = tf.reshape(tf.range(10, 310, delta=10.0), shape[3])
-utilities_lvl3_tmp = masked_assign(
-	ref=utilities_lvl3_tmp,
-	value=terminal_values_lvl3_tmp,
-	mask=mask_terminals_lvl3_tmp,
+utilities[3] = masked_assign(
+	ref=tf.Variable(
+				tf.fill(
+					value=NON_TERMINAL_UTILITY,
+					dims=shape[3]
+				)
+	),
+	value=tf.reshape(tf.range(10, 310, delta=10.0), shape[3]),
+	mask=tf.equal(node_types[3], TERMINAL_NODE),
 	name="utilities_lvl3"
 )
-utilities[3] = utilities_lvl3_tmp
 
 
 ########## miscellaneous tensors ##########

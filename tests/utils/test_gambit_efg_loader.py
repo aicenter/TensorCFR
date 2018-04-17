@@ -96,8 +96,38 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 		for lvl in range(self.number_of_levels + 1):
 			np.testing.assert_array_equal(expected_output[lvl], self.domain.cumulative_regrets[lvl])
 
+	def test_node_types(self):
+		expected_output = [None] * 4
+		expected_output = [None] * 4
+		expected_output[0] = 0
+		expected_output[1] = np.array([0, 0, 0, 0, 0])
+		expected_output[2] = np.array([[0, 0, 1],
+									   [0, 0, 2],
+									   [0, 0, 2],
+									   [0, 0, 2],
+									   [1, 0, 0]])
+		expected_output[3] = np.array([[[1, 1],
+										[1, 1],
+										[2, 2]],
 
+									   [[1, 1],
+										[1, 1],
+										[2, 2]],
 
+									   [[1, 1],
+										[1, 1],
+										[2, 2]],
+
+									   [[1, 1],
+										[1, 1],
+										[2, 2]],
+
+									   [[2, 2],
+										[1, 1],
+										[1, 1]]])
+
+		for lvl in range(self.number_of_levels + 1):
+			np.testing.assert_array_equal(expected_output[lvl], self.domain.node_type[lvl])
 
 if __name__ == '__main__':
 	unittest.main()

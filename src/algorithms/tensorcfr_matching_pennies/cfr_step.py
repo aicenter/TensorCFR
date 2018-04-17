@@ -1,13 +1,12 @@
 import tensorflow as tf
 
+from src.algorithms.tensorcfr_matching_pennies.regrets import update_positive_cumulative_regrets
 from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
-from src.commons.constants import DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, PLAYER1, PLAYER2
+from src.algorithms.tensorcfr_matching_pennies.update_strategies import update_strategy_of_acting_player, \
+	cumulate_strategy_of_opponent
 from src.domains.matching_pennies.domain_definitions import get_infoset_acting_players, cfr_step, \
 	current_updating_player, current_opponent, cumulative_infoset_strategies, current_infoset_strategies, \
 	positive_cumulative_regrets, averaging_delay
-from src.algorithms.tensorcfr_matching_pennies.regrets import update_positive_cumulative_regrets
-from src.algorithms.tensorcfr_matching_pennies.update_strategies import update_strategy_of_acting_player, \
-	cumulate_strategy_of_opponent
 from src.utils.tensor_utils import print_tensors
 
 
@@ -26,18 +25,19 @@ def process_strategies(acting_player=current_updating_player, opponent=current_o
 
 
 def increment_cfr_step():
-	return tf.assign_add(
-			ref=cfr_step,
-			value=1,
-			name="increment_cfr_step_op"
-	)
+	ops_process_strategies = process_strategies()
+	with tf.control_dependencies(ops_process_strategies):
+		return tf.assign_add(
+				ref=cfr_step,
+				value=1,
+				name="increment_cfr_step_op"
+		)
 
 
 def do_cfr_step():
 	ops_process_strategies = process_strategies()
-	with tf.control_dependencies(ops_process_strategies):
-		op_swap_players = swap_players()
-		op_inc_step = increment_cfr_step()
+	op_swap_players = swap_players()
+	op_inc_step = increment_cfr_step()
 	return tf.group(
 			[ops_process_strategies, op_swap_players, op_inc_step],
 			name="cfr_step"

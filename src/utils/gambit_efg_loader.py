@@ -95,6 +95,7 @@ class InformationSetManager:
 		tensor[np.where(tensor != 0)] *= -1
 		return tensor
 
+
 class GambitEFGLoader:
 
 	def __init__(self, efg_file):
@@ -263,6 +264,18 @@ class GambitEFGLoader:
 			cnt += 1
 			self.number_of_levels = len(self.max_actions_per_level)
 
+	def update_utilities(self, level, coordinates, value):
+		if level == 0:
+			self.utilities[level] = value
+		else:
+			self.utilities[level][tuple(coordinates)] = value
+
+	def update_node_type(self, level, coordinates, value):
+		if level == 0:
+			self.node_type[level] = value
+		else:
+			self.node_type[level][tuple(coordinates)] = value
+
 	def load_post(self):
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
@@ -278,25 +291,17 @@ class GambitEFGLoader:
 
 				self.infoset_managers[level].add(node, coordinates, level, self.node_to_infoset)
 
-				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
-					if level > 0:
-						self.node_type[level][tuple(coordinates)] = constants.INNER_NODE
-					else:
-						self.node_type[level] = constants.INNER_NODE
+				if node['type'] == constants.GAMBIT_NODE_TYPE_CHANCE or node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
+					self.update_node_type(level, coordinates, constants.INNER_NODE)
 
-
-					for index, action in enumerate(reversed(node['actions'])):
+					for idx, action in enumerate(reversed(node['actions'])):
 						new_level = level + 1
 						new_coordinates = copy.deepcopy(coordinates)
-						new_coordinates.append(index)
+						new_coordinates.append(idx)
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 				else:
-					if level > 0:
-						self.utilities[level][tuple(coordinates)] = node['payoffs'][0]
-						self.node_type[level][tuple(coordinates)] = constants.TERMINAL_NODE
-					else:
-						self.utilities[level] = node['payoffs'][0]
-						self.node_type[level] = constants.TERMINAL_NODE
+					self.update_utilities(level, coordinates, node['payoffs'][0])
+					self.update_node_type(level, coordinates, constants.TERMINAL_NODE)
 
 				if level == 0:
 					self.infoset_acting_player[level] = constants.NO_ACTING_PLAYER

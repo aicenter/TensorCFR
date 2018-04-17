@@ -28,13 +28,6 @@ class InformationSetManager:
 		self.flag_setted = False
 		self.flag_imaginery_node_present = False
 
-	def _set_node_to_infoset(self, coordinates, level, node_to_infoset, value):
-		if level:
-			node_to_infoset[level][tuple(coordinates)] = value
-		else:
-			node_to_infoset[level] = value
-		return True
-
 	def _is_imaginery_node_present(self, level, node_types):
 		tensor = node_types[level]
 		result = tensor[np.where(tensor == constants.IMAGINARY_NODE)]
@@ -44,26 +37,25 @@ class InformationSetManager:
 		return True
 
 
-	def add(self, node, coordinates, level, node_to_infoset):
+	def add(self, node, coordinates, node_to_infoset):
+		level = len(coordinates)
+
 		# node type kvuli _is_imaginery_node_present
 		self.infoset_node_to_infoset.append(node['infoset_id'])
 
 		if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
 			self.cnt_player_nodes += 1
 
-		# set node to infoset value
-		if node['infoset_id'] not in self.infoset_dict:
-			self._set_node_to_infoset(coordinates, level, node_to_infoset, self.infoset_cnt)
-		else:
-			self._set_node_to_infoset(coordinates, level, node_to_infoset, self.infoset_dict[node['infoset_id']][0])
 
 		if node['infoset_id'] not in self.infoset_dict:
-			self.infoset_dict[node['infoset_id']] = [self.infoset_cnt, node['type'], node['tensorcfr_id'], node]
+			return_node_to_infoset_value = self.infoset_cnt
+			self.infoset_dict[node['infoset_id']] = [return_node_to_infoset_value, node['type'], node['tensorcfr_id'], node]
 			self.infoset_acting_player_list.insert(0, node['infoset_id'])
 			self.infoset_cnt += 1
-			return True
-
-		return False
+			return return_node_to_infoset_value
+		else:
+			return_node_to_infoset_value = self.infoset_dict[node['infoset_id']][0]
+			return return_node_to_infoset_value
 
 	def make_infoset_acting_player(self, next_level_max_no_actions, node_types):
 		if self.flag_setted == False and self.level > 0:
@@ -276,6 +268,12 @@ class GambitEFGLoader:
 		else:
 			self.node_type[level][tuple(coordinates)] = value
 
+	def update_node_to_infoset(self, level, coordinates, value):
+		if level == 0:
+			self.node_to_infoset[level] = value
+		else:
+			self.node_to_infoset[level][tuple(coordinates)] = value
+
 	def load_post(self):
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
@@ -289,7 +287,9 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-				self.infoset_managers[level].add(node, coordinates, level, self.node_to_infoset)
+				node_to_infoset_value = self.infoset_managers[level].add(node, coordinates, self.node_to_infoset)
+
+				self.update_node_to_infoset(level, coordinates, node_to_infoset_value)
 
 				if node['type'] == constants.GAMBIT_NODE_TYPE_CHANCE or node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
 					self.update_node_type(level, coordinates, constants.INNER_NODE)
@@ -302,9 +302,6 @@ class GambitEFGLoader:
 				else:
 					self.update_utilities(level, coordinates, node['payoffs'][0])
 					self.update_node_type(level, coordinates, constants.TERMINAL_NODE)
-
-				if level == 0:
-					self.infoset_acting_player[level] = constants.NO_ACTING_PLAYER
 			cnt += 1
 
 		for lvl in range(1, self.number_of_levels):

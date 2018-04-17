@@ -128,5 +128,27 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 		for lvl in range(self.number_of_levels + 1):
 			np.testing.assert_array_equal(expected_output[lvl], self.domain.node_type[lvl])
 
+	def test_node_to_infoset(self):
+		expected_output = [None] * 3
+		expected_output[0] = 0
+		expected_output[1] = np.array([0, 1, 2, 2, 3])
+		expected_output[2] = np.array([[0., 1., 2.],
+									   [3., 3., 9.],
+									   [4., 5., 9.],
+									   [4., 5., 9.],
+									   [6., 7., 8.]])
+
+		for lvl in range(self.number_of_levels):
+			np.testing.assert_array_equal(expected_output[lvl], self.domain.node_to_infoset[lvl])
+
+	def test_infoset_acting_players(self):
+		expected_output = [None] * 3
+		expected_output[0] = np.array([0]) # TODO zmenit na jen 0
+		expected_output[1] = np.array([1, 2, 2, 0])
+		expected_output[2] = np.array([1, 2, -1, 1, 2, 0, -1, 1, 2, -1])
+
+		for lvl in range(self.number_of_levels):
+			np.testing.assert_array_equal(expected_output[lvl], self.domain.infoset_acting_player[lvl])
+
 if __name__ == '__main__':
 	unittest.main()

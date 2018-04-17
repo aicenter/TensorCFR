@@ -310,6 +310,51 @@ class GambitEFGLoader:
 			self.infoset_acting_players[lvl] = infoset_acting_players
 			self.current_infoset_strategies[lvl] = infoset_strategies
 
+	def get_tensorflow_tensors(self):
+		current_infoset_strategies = [None] * len(self.current_infoset_strategies)
+		positive_cumulative_regrets = [None] * len(self.positive_cumulative_regrets)
+		cumulative_regrets = [None] * len(self.cumulative_regrets)
+		node_to_infoset = [None] * len(self.node_to_infoset)
+		node_types = [None] * len(self.node_types)
+		utilities = [None] * len(self.utilities)
+		infoset_acting_players = [None] * len(self.infoset_acting_players)
+
+		for lvl in range(self.number_of_levels):
+			current_infoset_strategies[lvl] = tf.Variable(
+				self.current_infoset_strategies[lvl],
+				name='current_infoset_strategies_lvl{}'.format(lvl)
+			)
+			positive_cumulative_regrets[lvl] = tf.Variable(
+				self.positive_cumulative_regrets[lvl],
+				name='positive_cumulative_regrets_lvl{}'.format(lvl)
+			)
+			cumulative_regrets[lvl] = tf.Variable(
+				self.cumulative_regrets[lvl],
+				name='cumulative_regrets_lvl{}'.format(lvl)
+			)
+			node_to_infoset[lvl] = tf.Variable(
+				self.node_to_infoset[lvl],
+				name='node_to_infoset_lvl{}'.format(lvl)
+			)
+			infoset_acting_players[lvl] = tf.Variable(
+				self.infoset_acting_players[lvl],
+				name='infoset_acting_players_lvl{}'.format(lvl)
+			)
+
+		for lvl in range(self.number_of_levels + 1):
+			node_types[lvl] = tf.Variable(self.node_types[lvl], name='node_types_lvl{}'.format(lvl))
+			utilities[lvl] = tf.Variable(self.utilities[lvl], name='utilities_lvl{}'.format(lvl))
+
+		return [
+			current_infoset_strategies,
+			positive_cumulative_regrets,
+			node_to_infoset,
+			node_types,
+			utilities,
+			infoset_acting_players
+		]
+
+
 
 if __name__ == '__main__':
 	#input_line_chance = 'c "" 1 "" { "Ea (0.05)" 0.05 "Da (0.1)" 0.1 "Ca (0.1)" 0.1 "Ba (0.25)" 0.25 "Aa (0.5)" 0.5 } 1 "" { 0, 0 }'
@@ -337,7 +382,16 @@ if __name__ == '__main__':
 	#del a['dva']
 	#print(a)
 
-	gambit_efg_loader = GambitEFGLoader('/home/ruda/Documents/Projects/tensorcfr/TensorCFR/src/utils/domain01_via_gambit.efg')
+	domain01 = GambitEFGLoader('/home/ruda/Documents/Projects/tensorcfr/TensorCFR/src/utils/domain01_via_gambit.efg')
+	[current_infoset_strategies, positive_cumulative_regrets, node_to_infoset, node_types, utilities, infoset_acting_players] = domain01.get_tensorflow_tensors()
+
+	with tf.Session() as sess:
+		sess.run(tf.global_variables_initializer())
+
+		for lvl in range(domain01.number_of_levels + 1):
+			print("Level " + str(lvl))
+			print(sess.run(utilities[lvl]))
+
 
 
 

@@ -58,13 +58,6 @@ utilities[2] = tf.Variable(  # utilities for matching pennies:
 		],
 		name="utilities_lvl2"
 )
-# utilities[2] = tf.Variable(   # modified utilities for matching pennies:
-# 		[
-# 			[1.0, 2.0],
-# 			[0.0, 0.0]
-# 		],
-# 		name="modified_utilities_lvl2"
-# )
 
 ########## miscellaneous tensors ##########
 current_infoset_strategies = [

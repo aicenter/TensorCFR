@@ -110,6 +110,11 @@ class GambitEFGLoader:
 		with open(efg_file) as self.gambit_file:
 			self.load()
 
+		self.node_to_infoset = [None] * self.number_of_levels
+		self.current_infoset_strategies = [None] * self.number_of_levels
+		self.infoset_acting_player = [None] * self.number_of_levels
+
+
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
 
@@ -248,18 +253,13 @@ class GambitEFGLoader:
 
 					self.max_actions_per_level[level] = max(len(node['actions']), self.max_actions_per_level[level])
 			cnt += 1
-
-		#print("Po for cyklu:")
-		#print(stack_nodes_lvl)
-
-		#print(self.max_actions_per_level)
+			self.number_of_levels = len(self.max_actions_per_level)
 
 	def load_post(self):
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
 		self.node_type = [None] * (len(self.max_actions_per_level) + 1)
 		self.infoset_acting_player = [None] * (len(self.max_actions_per_level) + 1)
-		#create positive cumulative regrets
 		self.utilities = [None] * (len(self.max_actions_per_level) + 1)
 		self.node_to_infoset = [None] * (len(self.max_actions_per_level) + 1)
 		self.cumulative_regrets = [None] * (len(self.max_actions_per_level) + 1)
@@ -312,44 +312,13 @@ class GambitEFGLoader:
 					self.infoset_acting_player[level] = constants.NO_ACTING_PLAYER
 			cnt += 1
 
-		for lvl in range(1,3):
+		for lvl in range(1, self.number_of_levels):
 			self.node_to_infoset[lvl] = infoset_managers[lvl].make_node_to_infoset(self.node_to_infoset[lvl])
 
-		[infoset_acting_player_lvl0, infoset_strategies_lvl0] = infoset_managers[0].make_infoset_acting_player(5, self.node_type)
-		[infoset_acting_player_lvl1, infoset_strategies_lvl1] = infoset_managers[1].make_infoset_acting_player(3, self.node_type)
-		[infoset_acting_player_lvl2, infoset_strategies_lvl2] = infoset_managers[2].make_infoset_acting_player(2, self.node_type)
-
-		self.infoset_acting_player = [infoset_acting_player_lvl0, infoset_acting_player_lvl1, infoset_acting_player_lvl2]
-		self.current_infoset_strategies = [infoset_strategies_lvl0, infoset_strategies_lvl1, infoset_strategies_lvl2]
-
-		print("current_infoset_strategies")
-		print('lvl 0')
-		print(infoset_strategies_lvl0)
-		print("lvl 1")
-		print(infoset_strategies_lvl1)
-		print("lvl 2")
-		print(infoset_strategies_lvl2)
-
-		print("infoset_acting_players")
-		print("lvl 0")
-		print(infoset_acting_player_lvl0)
-		print("lvl 1")
-		print(infoset_acting_player_lvl1)
-		print("lvl 2")
-		print(infoset_acting_player_lvl2)
-
-
-
-		print("node_to_infoset")
-		print("lvl 0")
-		print(self.node_to_infoset[0])
-		print("lvl 1")
-		print(self.node_to_infoset[1])
-		print("lvl 2")
-		print(self.node_to_infoset[2])
-
-
-
+		for lvl in range(self.number_of_levels):
+			[infoset_acting_player, infoset_strategies] = infoset_managers[lvl].make_infoset_acting_player(self.max_actions_per_level[lvl], self.node_type)
+			self.infoset_acting_player[lvl] = infoset_acting_player
+			self.current_infoset_strategies[lvl] = infoset_strategies
 
 
 if __name__ == '__main__':
@@ -377,9 +346,6 @@ if __name__ == '__main__':
 	#print(a)
 	#del a['dva']
 	#print(a)
-
-	print("Muj print:")
-	print(os.getcwd())
 
 	gambit_efg_loader = GambitEFGLoader('/home/ruda/Documents/Projects/tensorcfr/TensorCFR/src/utils/domain01_via_gambit.efg')
 

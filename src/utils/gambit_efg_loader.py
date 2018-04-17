@@ -127,10 +127,16 @@ class GambitEFGLoader:
 			return self.parse_terminal_node(input_line)
 		else:
 			return False
+	def parse_probability(self, probability_str):
+		if '/' in probability_str:
+			probability_list = probability_str.split('/')
+			return float(int(probability_list[0])/int(probability_list[1]))
+		else:
+			return float(probability_str)
 
 	def parse_actions_chance(self, input_actions_str):
-		parse_actions = re.findall(r'"(?P<name>[^"]*)" (?P<probability>[\d\.]+)', input_actions_str)
-		return [{'name': action[0], 'probability': float(action[1])} for action in parse_actions]
+		parse_actions = re.findall(r'"(?P<name>[^"]*)" (?P<probability>[\d\./]+)', input_actions_str)
+		return [{'name': action[0], 'probability': self.parse_probability(action[1])} for action in parse_actions]
 
 	def parse_actions_player(self, input_actions_str):
 		parse_actions = re.findall(r'"(?P<name>[^"]*)"', input_actions_str)

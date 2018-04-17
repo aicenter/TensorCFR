@@ -18,7 +18,8 @@ def get_nodal_reach_probabilities():
 		nodal_reach_probabilities[level] = expanded_multiply(
 				expandable_tensor=nodal_reach_probabilities[level - 1],
 				expanded_tensor=node_cf_strategies[level - 1],
-				name="nodal_reach_probabilities_lvl{}".format(level))
+				name="nodal_reach_probabilities_lvl{}".format(level)
+		)
 	return nodal_reach_probabilities
 
 

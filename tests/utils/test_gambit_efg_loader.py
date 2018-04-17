@@ -147,7 +147,7 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 										[1, 1]]])
 
 		for lvl in range(self.number_of_levels + 1):
-			np.testing.assert_array_equal(expected_output[lvl], self.domain.node_type[lvl])
+			np.testing.assert_array_equal(expected_output[lvl], self.domain.node_types[lvl])
 
 	def test_node_to_infoset(self):
 		expected_output = [None] * 3

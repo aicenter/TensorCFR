@@ -106,7 +106,7 @@ class GambitEFGLoader:
 		self.current_infoset_strategies = [None] * self.number_of_levels
 		self.infoset_acting_player = [None] * self.number_of_levels
 
-		self.node_type = [None] * (self.number_of_levels + 1)
+		self.node_types = [None] * (self.number_of_levels + 1)
 		self.infoset_acting_player = [None] * (self.number_of_levels + 1)
 		self.utilities = [None] * (self.number_of_levels + 1)
 		self.node_to_infoset = [None] * (self.number_of_levels + 1)
@@ -115,7 +115,7 @@ class GambitEFGLoader:
 
 		for idx in range(len(self.max_actions_per_level) + 1):
 			self.utilities[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.NON_TERMINAL_UTILITY
-			self.node_type[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.IMAGINARY_NODE
+			self.node_types[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.IMAGINARY_NODE
 			self.infoset_acting_player[idx] = np.zeros(self.max_actions_per_level[:idx]) * constants.NO_ACTING_PLAYER
 			self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx]) * TMP_NODE_TO_INFOSET_IMAGINERY * (-1)
 			self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx])
@@ -260,11 +260,11 @@ class GambitEFGLoader:
 		else:
 			self.utilities[level][tuple(coordinates)] = value
 
-	def update_node_type(self, level, coordinates, value):
+	def update_node_types(self, level, coordinates, value):
 		if level == 0:
-			self.node_type[level] = value
+			self.node_types[level] = value
 		else:
-			self.node_type[level][tuple(coordinates)] = value
+			self.node_types[level][tuple(coordinates)] = value
 
 	def update_node_to_infoset(self, level, coordinates, value):
 		if level == 0:
@@ -286,11 +286,10 @@ class GambitEFGLoader:
 				coordinates = tree_node.coordinates
 
 				node_to_infoset_value = self.infoset_managers[level].add(node)
-
 				self.update_node_to_infoset(level, coordinates, node_to_infoset_value)
 
 				if node['type'] == constants.GAMBIT_NODE_TYPE_CHANCE or node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
-					self.update_node_type(level, coordinates, constants.INNER_NODE)
+					self.update_node_types(level, coordinates, constants.INNER_NODE)
 
 					for idx, action in enumerate(reversed(node['actions'])):
 						new_level = level + 1
@@ -299,14 +298,14 @@ class GambitEFGLoader:
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 				else:
 					self.update_utilities(level, coordinates, node['payoffs'][0])
-					self.update_node_type(level, coordinates, constants.TERMINAL_NODE)
+					self.update_node_types(level, coordinates, constants.TERMINAL_NODE)
 			cnt += 1
 
 		for lvl in range(1, self.number_of_levels):
 			self.node_to_infoset[lvl] = self.infoset_managers[lvl].make_node_to_infoset(self.node_to_infoset[lvl])
 
 		for lvl in range(self.number_of_levels):
-			[infoset_acting_player, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_player(self.max_actions_per_level[lvl], self.node_type)
+			[infoset_acting_player, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_player(self.max_actions_per_level[lvl], self.node_types)
 			self.infoset_acting_player[lvl] = infoset_acting_player
 			self.current_infoset_strategies[lvl] = infoset_strategies
 

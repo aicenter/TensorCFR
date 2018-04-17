@@ -21,7 +21,7 @@ class InformationSetManager:
 		self.infoset_cnt = 0
 		self.infoset_dict = {}
 		self.infoset_node_to_infoset = []
-		self.infoset_acting_player_list = []
+		self.infoset_acting_players_list = []
 
 		self.cnt_player_nodes = 0
 
@@ -48,27 +48,27 @@ class InformationSetManager:
 		if node['infoset_id'] not in self.infoset_dict:
 			return_node_to_infoset_value = self.infoset_cnt
 			self.infoset_dict[node['infoset_id']] = [return_node_to_infoset_value, node['type'], node['tensorcfr_id'], node]
-			self.infoset_acting_player_list.insert(0, node['infoset_id'])
+			self.infoset_acting_players_list.insert(0, node['infoset_id'])
 			self.infoset_cnt += 1
 			return return_node_to_infoset_value
 		else:
 			return_node_to_infoset_value = self.infoset_dict[node['infoset_id']][0]
 			return return_node_to_infoset_value
 
-	def make_infoset_acting_player(self, next_level_max_no_actions, node_types):
+	def make_infoset_acting_players(self, next_level_max_no_actions, node_types):
 		if self.flag_setted == False and self.level > 0:
 			self.flag_imaginery_node_present = self._is_imaginery_node_present(self.level, node_types)
 			self.flag_setted = True
 
-		infoset_acting_player = []
+		infoset_acting_players = []
 		current_infoset_strategies = []
 
 		if self.flag_imaginery_node_present:
 			self.infoset_dict['imaginary-node'] = [self.infoset_cnt, 'tnode', -1] #last element - imaginery
-			self.infoset_acting_player_list.append('imaginary-node')
+			self.infoset_acting_players_list.append('imaginary-node')
 
-		for idx, infoset_id in enumerate(self.infoset_acting_player_list):
-			infoset_acting_player.append(self.infoset_dict[infoset_id][2])
+		for idx, infoset_id in enumerate(self.infoset_acting_players_list):
+			infoset_acting_players.append(self.infoset_dict[infoset_id][2])
 
 			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
 				current_infoset_strategies.append([float(1/(next_level_max_no_actions*self.cnt_player_nodes))] * next_level_max_no_actions)
@@ -77,7 +77,7 @@ class InformationSetManager:
 			else:
 				current_infoset_strategies.append([0] * next_level_max_no_actions)
 
-		return [infoset_acting_player, np.array(current_infoset_strategies)]
+		return [infoset_acting_players, np.array(current_infoset_strategies)]
 
 	def make_node_to_infoset(self, tensor):
 		tensor[np.where(tensor == ((-1)*TMP_NODE_TO_INFOSET_IMAGINERY))] = -self.infoset_cnt
@@ -104,19 +104,20 @@ class GambitEFGLoader:
 
 		self.node_to_infoset = [None] * self.number_of_levels
 		self.current_infoset_strategies = [None] * self.number_of_levels
-		self.infoset_acting_player = [None] * self.number_of_levels
+		self.infoset_acting_players = [None] * self.number_of_levels
 
 		self.node_types = [None] * (self.number_of_levels + 1)
-		self.infoset_acting_player = [None] * (self.number_of_levels + 1)
 		self.utilities = [None] * (self.number_of_levels + 1)
 		self.node_to_infoset = [None] * (self.number_of_levels + 1)
 		self.cumulative_regrets = [None] * (self.number_of_levels + 1)
 		self.positive_cumulative_regrets = [None] * (self.number_of_levels + 1)
 
+		for idx in range(len(self.max_actions_per_level)):
+			self.infoset_acting_players[idx] = np.zeros(self.max_actions_per_level[:idx]) * constants.NO_ACTING_PLAYER
+
 		for idx in range(len(self.max_actions_per_level) + 1):
 			self.utilities[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.NON_TERMINAL_UTILITY
 			self.node_types[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.IMAGINARY_NODE
-			self.infoset_acting_player[idx] = np.zeros(self.max_actions_per_level[:idx]) * constants.NO_ACTING_PLAYER
 			self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx]) * TMP_NODE_TO_INFOSET_IMAGINERY * (-1)
 			self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx])
 			self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx])
@@ -305,8 +306,8 @@ class GambitEFGLoader:
 			self.node_to_infoset[lvl] = self.infoset_managers[lvl].make_node_to_infoset(self.node_to_infoset[lvl])
 
 		for lvl in range(self.number_of_levels):
-			[infoset_acting_player, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_player(self.max_actions_per_level[lvl], self.node_types)
-			self.infoset_acting_player[lvl] = infoset_acting_player
+			[infoset_acting_players, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_players(self.max_actions_per_level[lvl], self.node_types)
+			self.infoset_acting_players[lvl] = infoset_acting_players
 			self.current_infoset_strategies[lvl] = infoset_strategies
 
 

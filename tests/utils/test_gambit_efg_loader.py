@@ -169,7 +169,7 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 		expected_output[2] = np.array([1, 2, -1, 1, 2, 0, -1, 1, 2, -1])
 
 		for lvl in range(self.number_of_levels):
-			np.testing.assert_array_equal(expected_output[lvl], self.domain.infoset_acting_player[lvl])
+			np.testing.assert_array_equal(expected_output[lvl], self.domain.infoset_acting_players[lvl])
 
 if __name__ == '__main__':
 	unittest.main()

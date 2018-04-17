@@ -3,14 +3,15 @@ import tensorflow as tf
 from src.algorithms.tensorcfr_matching_pennies.topdown_reach_probabilities import get_infoset_reach_probabilities
 from src.commons.constants import PLAYER1, PLAYER2
 from src.domains.matching_pennies.domain_definitions import levels, get_infoset_acting_players, acting_depth, \
-	cumulative_infoset_strategies, averaging_delay, cfr_step, current_infoset_strategies, infosets_of_non_chance_player
+	cumulative_infoset_strategies, averaging_delay, cfr_step, current_infoset_strategies, infosets_of_non_chance_player, \
+	current_updating_player, current_opponent
 from src.algorithms.tensorcfr_matching_pennies.strategy_matched_to_regrets import get_strategy_matched_to_regrets
 from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multiply, normalize
 
 
 # game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
 
-def update_strategy_of_acting_player(acting_player):  # TODO unittest
+def update_strategy_of_acting_player(acting_player=current_updating_player):  # TODO unittest
 	infoset_strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	infoset_acting_players = get_infoset_acting_players()
 	ops_update_infoset_strategies = [None] * acting_depth
@@ -42,7 +43,7 @@ def get_weighted_averaging_factor(delay=averaging_delay):  # see https://arxiv.o
 		)
 
 
-def cumulate_strategy_of_opponent(opponent):  # TODO unittest
+def cumulate_strategy_of_opponent(opponent=current_opponent):  # TODO unittest
 	infoset_acting_players = get_infoset_acting_players()
 	infoset_reach_probabilities = get_infoset_reach_probabilities()
 	cumulate_infoset_strategies_ops = [None] * acting_depth
@@ -84,10 +85,11 @@ if __name__ == '__main__':
 	infoset_acting_players_ = get_infoset_acting_players()
 	infoset_strategies_matched_to_regrets_ = get_strategy_matched_to_regrets()
 	infoset_reach_probabilities_ = get_infoset_reach_probabilities()
-	update_infoset_strategies = update_strategy_of_acting_player(acting_player=PLAYER1)
-	ops_cumulate_infoset_strategies = cumulate_strategy_of_opponent(opponent=PLAYER2)
+	update_infoset_strategies = update_strategy_of_acting_player()
+	ops_cumulate_infoset_strategies = cumulate_strategy_of_opponent()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
+		sess.run(tf.assign(ref=averaging_delay, value=0))
 		# TODO decrease `averaging_delay`
 		print("########## Update strategy ##########")
 		for i in range(levels - 1):
@@ -95,6 +97,7 @@ if __name__ == '__main__':
 			print_tensors(sess, [
 				current_infoset_strategies[i],
 				infoset_acting_players_[i],
+				current_updating_player,
 				infoset_strategies_matched_to_regrets_[i],
 				update_infoset_strategies[i],
 				current_infoset_strategies[i]
@@ -105,6 +108,7 @@ if __name__ == '__main__':
 			# TODO add to the unittest of ops_cumulate_infoset_strategies()
 			print_tensors(sess, [
 				infoset_acting_players_[i],
+				current_opponent,
 				infoset_reach_probabilities_[i],
 				current_infoset_strategies[i],
 			])

@@ -13,13 +13,16 @@ def get_the_other_player_of(tensor_variable_of_player):
 
 
 def swap_players():
-	return tf.group(
-			[
-				current_updating_player.assign(get_the_other_player_of(current_updating_player)),
-				current_opponent.assign(get_the_other_player_of(current_opponent)),
-			],
-			name="swap_players",
-	)
+	from src.algorithms.tensorcfr_matching_pennies.update_strategies import process_strategies
+	ops_process_strategies = process_strategies()
+	with tf.control_dependencies(ops_process_strategies):
+		return tf.group(
+				[
+					current_updating_player.assign(get_the_other_player_of(current_updating_player)),
+					current_opponent.assign(get_the_other_player_of(current_opponent)),
+				],
+				name="swap_players",
+		)
 
 
 if __name__ == '__main__':

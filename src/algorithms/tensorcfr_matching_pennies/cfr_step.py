@@ -1,9 +1,7 @@
 import tensorflow as tf
 
-from src.algorithms.tensorcfr_matching_pennies.regrets import update_positive_cumulative_regrets
 from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
-from src.algorithms.tensorcfr_matching_pennies.update_strategies import update_strategy_of_acting_player, \
-	cumulate_strategy_of_opponent
+from src.algorithms.tensorcfr_matching_pennies.update_strategies import process_strategies
 from src.domains.matching_pennies.domain_definitions import get_infoset_acting_players, cfr_step, \
 	current_updating_player, current_opponent, cumulative_infoset_strategies, current_infoset_strategies, \
 	positive_cumulative_regrets, averaging_delay
@@ -11,17 +9,6 @@ from src.utils.tensor_utils import print_tensors
 
 
 # game of matching pennies: see doc/matching_pennies_efg_illustration.jpg
-
-def process_strategies(acting_player=current_updating_player, opponent=current_opponent):
-	update_regrets_ops = update_positive_cumulative_regrets()
-	update_ops = update_strategy_of_acting_player(acting_player=acting_player)
-	cumulate_ops = cumulate_strategy_of_opponent(opponent=opponent)
-	ops = [
-		op
-		for sublist in map(list, zip(update_regrets_ops, update_ops, cumulate_ops))
-		for op in sublist
-	]
-	return ops
 
 
 def increment_cfr_step():

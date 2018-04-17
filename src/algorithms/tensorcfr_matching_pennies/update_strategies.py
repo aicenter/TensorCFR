@@ -1,11 +1,11 @@
 import tensorflow as tf
 
+from src.algorithms.tensorcfr_matching_pennies.regrets import update_positive_cumulative_regrets
+from src.algorithms.tensorcfr_matching_pennies.strategy_matched_to_regrets import get_strategy_matched_to_regrets
 from src.algorithms.tensorcfr_matching_pennies.topdown_reach_probabilities import get_infoset_reach_probabilities
-from src.commons.constants import PLAYER1, PLAYER2
 from src.domains.matching_pennies.domain_definitions import levels, get_infoset_acting_players, acting_depth, \
 	cumulative_infoset_strategies, averaging_delay, cfr_step, current_infoset_strategies, infosets_of_non_chance_player, \
 	current_updating_player, current_opponent
-from src.algorithms.tensorcfr_matching_pennies.strategy_matched_to_regrets import get_strategy_matched_to_regrets
 from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multiply, normalize
 
 
@@ -65,6 +65,18 @@ def cumulate_strategy_of_opponent(opponent=current_opponent):  # TODO unittest
 				name="op_cumulate_infoset_strategies_lvl{}".format(level)
 		)
 	return cumulate_infoset_strategies_ops
+
+
+def process_strategies(acting_player=current_updating_player, opponent=current_opponent):
+	update_regrets_ops = update_positive_cumulative_regrets()
+	update_ops = update_strategy_of_acting_player(acting_player=acting_player)
+	cumulate_ops = cumulate_strategy_of_opponent(opponent=opponent)
+	ops_process_strategies = [
+		op
+		for sublist in map(list, zip(update_regrets_ops, update_ops, cumulate_ops))
+		for op in sublist
+	]
+	return ops_process_strategies
 
 
 def get_average_infoset_strategies():

@@ -227,13 +227,17 @@ class GambitEFGLoader:
 			'infoset_id': infoset_id
 		}
 
+	def is_gambit_node(self, line):
+		if line[0] == constants.GAMBIT_NODE_TYPE_CHANCE or line[0] == constants.GAMBIT_NODE_TYPE_PLAYER or line[0] == constants.GAMBIT_NODE_TYPE_TERMINAL:
+			return True
+		return False
+
 	def load(self):
 		# determines the maximum number of actions per level
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
-		cnt = 1
-		for line in self.gambit_file:
-			if cnt >= 4: # TODO update to load from line 1
+		for cnt, line in enumerate(self.gambit_file):
+			if self.is_gambit_node(line):
 				node = self.parse_node(line)
 
 				tree_node = stack_nodes_lvl.pop()
@@ -252,7 +256,6 @@ class GambitEFGLoader:
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 
 					self.max_actions_per_level[level] = max(len(node['actions']), self.max_actions_per_level[level])
-			cnt += 1
 			self.number_of_levels = len(self.max_actions_per_level)
 
 	def update_utilities(self, level, coordinates, value):
@@ -276,9 +279,8 @@ class GambitEFGLoader:
 	def load_post(self):
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
-		cnt = 1
-		for line in self.gambit_file:
-			if cnt >= 4:
+		for cnt, line in enumerate(self.gambit_file):
+			if self.is_gambit_node(line):
 				node = self.parse_node(line)
 
 				tree_node = stack_nodes_lvl.pop()
@@ -300,7 +302,6 @@ class GambitEFGLoader:
 				else:
 					self.update_utilities(level, coordinates, node['payoffs'][0])
 					self.update_node_types(level, coordinates, constants.TERMINAL_NODE)
-			cnt += 1
 
 		for lvl in range(1, self.number_of_levels):
 			self.node_to_infoset[lvl] = self.infoset_managers[lvl].make_node_to_infoset(self.node_to_infoset[lvl])

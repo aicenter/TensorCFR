@@ -4,7 +4,7 @@ import copy
 import numpy as np
 import tensorflow as tf
 
-from src import constants
+from src.commons import constants
 
 TMP_NODE_TO_INFOSET_TERMINAL = 7
 TMP_NODE_TO_INFOSET_IMAGINERY = 8
@@ -280,6 +280,12 @@ class GambitEFGLoader:
 				infoset_managers[level].add(node, coordinates, level, self.node_to_infoset)
 
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
+					if level > 0:
+						self.node_type[level][tuple(coordinates)] = constants.INNER_NODE
+					else:
+						self.node_type[level] = constants.INNER_NODE
+
+
 					for index, action in enumerate(reversed(node['actions'])):
 						new_level = level + 1
 						new_coordinates = copy.deepcopy(coordinates)
@@ -293,10 +299,7 @@ class GambitEFGLoader:
 						self.utilities[level] = node['payoffs'][0]
 						self.node_type[level] = constants.TERMINAL_NODE
 
-				if level > 0:
-					self.node_type[level][tuple(coordinates)] = constants.INNER_NODE
-				else:
-					self.node_type[level] = constants.INNER_NODE
+				if level == 0:
 					self.infoset_acting_player[level] = constants.NO_ACTING_PLAYER
 			cnt += 1
 
@@ -307,20 +310,74 @@ class GambitEFGLoader:
 		[infoset_acting_player_lvl1, infoset_strategies_lvl1] = infoset_managers[1].make_infoset_acting_player(3)
 		[infoset_acting_player_lvl2, infoset_strategies_lvl2] = infoset_managers[2].make_infoset_acting_player(2)
 
-		print("infoset_acting_player lvl 0")
-		print(infoset_acting_player_lvl0)
-		print("lvl 1")
-		print(infoset_acting_player_lvl1)
-		print("lvl 2")
-		print(infoset_acting_player_lvl2)
+		print("actions_per_levels")
+		print(self.max_actions_per_level)
 
-		print("infoset_strategies lvl 0")
+		print("current_infoset_strategies")
+		print('lvl 0')
 		print(infoset_strategies_lvl0)
 		print("lvl 1")
 		print(infoset_strategies_lvl1)
 		print("lvl 2")
 		print(infoset_strategies_lvl2)
 
+		print('positive_cumulative_regrets')
+		print('lvl 0')
+		print(self.positive_cumulative_regrets[0])
+		print('lvl 1')
+		print(self.positive_cumulative_regrets[1])
+		print('lvl 2')
+		print(self.positive_cumulative_regrets[2])
+		print('lvl 3')
+		print(self.positive_cumulative_regrets[3])
+
+		print('cumulative_regrets')
+		print('lvl 0')
+		print(self.cumulative_regrets[0])
+		print('lvl 1')
+		print(self.cumulative_regrets[1])
+		print('lvl 2')
+		print(self.cumulative_regrets[2])
+		print('lvl 3')
+		print(self.cumulative_regrets[3])
+
+		print("infoset_acting_players")
+		print("lvl 0")
+		print(infoset_acting_player_lvl0)
+		print("lvl 1")
+		print(infoset_acting_player_lvl1)
+		print("lvl 2")
+		print(infoset_acting_player_lvl2)
+
+		print('node_to_infoset')
+		print('lvl 0')
+		print(self.node_to_infoset[0])
+		print('lvl 1')
+		print(self.node_to_infoset[1])
+		print('lvl 2')
+		print(self.node_to_infoset[2])
+		print('lvl 3 - not showing')
+		#print(self.node_to_infoset[3])
+
+		print('node_types')
+		print('lvl 0')
+		print(self.node_type[0])
+		print('lvl 1')
+		print(self.node_type[1])
+		print('lvl 2')
+		print(self.node_type[2])
+		print('lvl 3')
+		print(self.node_type[3])
+
+		print('utilities')
+		print('lvl 0')
+		print(self.utilities[0])
+		print('lvl 1')
+		print(self.utilities[1])
+		print('lvl 2')
+		print(self.utilities[2])
+		print('lvl 3')
+		print(self.utilities[3])
 
 		print("node_to_infoset lvl 0")
 		print(self.node_to_infoset[0])

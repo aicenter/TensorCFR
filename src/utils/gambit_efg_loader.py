@@ -74,7 +74,6 @@ class InformationSetManager:
 		current_infoset_strategies = []
 
 		if self.flag_imaginery_node_present:
-			print("Pridavam imag v levelu " + str(self.level))
 			self.infoset_dict['imaginary-node'] = [self.infoset_cnt, 'tnode', -1] #last element - imaginery
 			self.infoset_acting_player_list.append('imaginary-node')
 
@@ -110,10 +109,26 @@ class GambitEFGLoader:
 		with open(efg_file) as self.gambit_file:
 			self.load()
 
+		self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.max_actions_per_level) + 1)]
+
 		self.node_to_infoset = [None] * self.number_of_levels
 		self.current_infoset_strategies = [None] * self.number_of_levels
 		self.infoset_acting_player = [None] * self.number_of_levels
 
+		self.node_type = [None] * (self.number_of_levels + 1)
+		self.infoset_acting_player = [None] * (self.number_of_levels + 1)
+		self.utilities = [None] * (self.number_of_levels + 1)
+		self.node_to_infoset = [None] * (self.number_of_levels + 1)
+		self.cumulative_regrets = [None] * (self.number_of_levels + 1)
+		self.positive_cumulative_regrets = [None] * (self.number_of_levels + 1)
+
+		for idx in range(len(self.max_actions_per_level) + 1):
+			self.utilities[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.NON_TERMINAL_UTILITY
+			self.node_type[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.IMAGINARY_NODE
+			self.infoset_acting_player[idx] = np.zeros(self.max_actions_per_level[:idx]) * constants.NO_ACTING_PLAYER
+			self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx]) * TMP_NODE_TO_INFOSET_IMAGINERY * (-1)
+			self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx])
+			self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx])
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
@@ -221,13 +236,12 @@ class GambitEFGLoader:
 		}
 
 	def load(self):
-		# max actions per level
+		# determines the maximum number of actions per level
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
 		cnt = 1
 		for line in self.gambit_file:
-			# in domain01 nodes starts at line 4
-			if cnt >= 4:
+			if cnt >= 4: # TODO update to load from line 1
 				node = self.parse_node(line)
 
 				tree_node = stack_nodes_lvl.pop()
@@ -235,20 +249,14 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-				#print(node['type'], 'level {}'.format(level), self.max_actions_per_level)
-
-				# actions per level
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					if len(self.max_actions_per_level) < (level + 1):
 						self.max_actions_per_level.append(0)
 
-					#print(node['actions'], coordinates)
-
-					for index, action in enumerate(reversed(node['actions'])):
-						#print(" - add {} {}".format(action['name'], level + 1))
+					for idx, action in enumerate(reversed(node['actions'])):
 						new_level = level + 1
 						new_coordinates = copy.deepcopy(coordinates)
-						new_coordinates.append(index)
+						new_coordinates.append(idx)
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 
 					self.max_actions_per_level[level] = max(len(node['actions']), self.max_actions_per_level[level])
@@ -258,24 +266,6 @@ class GambitEFGLoader:
 	def load_post(self):
 		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
 
-		self.node_type = [None] * (len(self.max_actions_per_level) + 1)
-		self.infoset_acting_player = [None] * (len(self.max_actions_per_level) + 1)
-		self.utilities = [None] * (len(self.max_actions_per_level) + 1)
-		self.node_to_infoset = [None] * (len(self.max_actions_per_level) + 1)
-		self.cumulative_regrets = [None] * (len(self.max_actions_per_level) + 1)
-		self.positive_cumulative_regrets = [None] * (len(self.max_actions_per_level) + 1)
-
-		infoset_managers = [ InformationSetManager(lvl) for lvl in range(len(self.max_actions_per_level) + 1)]
-
-		for idx in range(len(self.max_actions_per_level) + 1):
-			self.utilities[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.NON_TERMINAL_UTILITY
-			self.node_type[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.IMAGINARY_NODE
-			self.infoset_acting_player[idx] = np.zeros(self.max_actions_per_level[:idx]) * constants.NO_ACTING_PLAYER
-			self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx]) * TMP_NODE_TO_INFOSET_IMAGINERY * (-1)
-			self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx])
-			self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx])
-
-		# walk the tree
 		cnt = 1
 		for line in self.gambit_file:
 			if cnt >= 4:
@@ -286,7 +276,7 @@ class GambitEFGLoader:
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
-				infoset_managers[level].add(node, coordinates, level, self.node_to_infoset)
+				self.infoset_managers[level].add(node, coordinates, level, self.node_to_infoset)
 
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					if level > 0:
@@ -313,10 +303,10 @@ class GambitEFGLoader:
 			cnt += 1
 
 		for lvl in range(1, self.number_of_levels):
-			self.node_to_infoset[lvl] = infoset_managers[lvl].make_node_to_infoset(self.node_to_infoset[lvl])
+			self.node_to_infoset[lvl] = self.infoset_managers[lvl].make_node_to_infoset(self.node_to_infoset[lvl])
 
 		for lvl in range(self.number_of_levels):
-			[infoset_acting_player, infoset_strategies] = infoset_managers[lvl].make_infoset_acting_player(self.max_actions_per_level[lvl], self.node_type)
+			[infoset_acting_player, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_player(self.max_actions_per_level[lvl], self.node_type)
 			self.infoset_acting_player[lvl] = infoset_acting_player
 			self.current_infoset_strategies[lvl] = infoset_strategies
 

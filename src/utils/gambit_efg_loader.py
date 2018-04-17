@@ -72,7 +72,7 @@ class InformationSetManager:
 		current_infoset_strategies = []
 
 		if self.flag_imaginery_node_present:
-			self.infoset_dict['imaginary-node'] = [self.infoset_cnt, 't', -1] #last element - imaginery
+			self.infoset_dict['imaginary-node'] = [self.infoset_cnt, 'tnode', -1] #last element - imaginery
 			self.infoset_acting_player_list.append('imaginary-node')
 
 		for idx, infoset_id in enumerate(self.infoset_acting_player_list):

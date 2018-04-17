@@ -14,12 +14,17 @@ from src.utils.tensor_utils import print_tensors, masked_assign
 def get_regrets():  # TODO verify and write a unittest
 		cf_values_infoset_actions = get_cf_values_infoset_actions()
 		cf_values_infoset = get_cf_values_infoset()
-		return [tf.subtract(cf_values_infoset_actions[level], cf_values_infoset[level], name="regrets_lvl{}".format(level))
-		        for level in range(levels - 1)]
+		return [
+			tf.subtract(
+					cf_values_infoset_actions[level],
+					cf_values_infoset[level],
+					name="regrets_lvl{}".format(level),
+			) for level in range(levels - 1)
+		]
 
 
 def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify and write a unittest
-	updated_regrets = [None] * (levels - 1)
+	update_regrets_ops = [None] * (levels - 1)
 	for level in range(levels - 1):
 		# to keep cumulative regret still positive:
 		maximum_addition = tf.maximum(
@@ -30,23 +35,23 @@ def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify an
 		infosets_of_updating_player = tf.reshape(
 				tf.equal(infoset_acting_players[level], current_updating_player),
 				shape=[positive_cumulative_regrets[level].shape[0]],
-				name="infosets_of_updating_player_lvl{}".format(level)
+				name="infosets_of_updating_player_lvl{}".format(level),
 		)
 		# TODO implement and use `masked_assign_add` here
-		updated_regrets[level] = masked_assign(
+		update_regrets_ops[level] = masked_assign(
 			ref=positive_cumulative_regrets[level],
 			mask=infosets_of_updating_player,
 			value=positive_cumulative_regrets[level] + maximum_addition,
 			name="update_regrets_lvl{}".format(level)
 		)
-	return updated_regrets
+	return update_regrets_ops
 
 
 if __name__ == '__main__':
 	cf_values_infoset_actions_ = get_cf_values_infoset_actions()
 	cf_values_infoset_ = get_cf_values_infoset()
 	regrets_ = get_regrets()
-	update_regrets_ops = update_positive_cumulative_regrets()
+	update_regrets_ops_ = update_positive_cumulative_regrets()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 
@@ -60,10 +65,10 @@ if __name__ == '__main__':
 				current_updating_player,
 				positive_cumulative_regrets[level_],
 				positive_cumulative_regrets[level_],
-				update_regrets_ops[level_],
+				update_regrets_ops_[level_],
 				positive_cumulative_regrets[level_],
 				positive_cumulative_regrets[level_],
-				update_regrets_ops[level_],
+				update_regrets_ops_[level_],
 				positive_cumulative_regrets[level_],
 				positive_cumulative_regrets[level_]
 			])

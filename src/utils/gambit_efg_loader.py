@@ -82,7 +82,7 @@ class InformationSetManager:
 			infoset_acting_player.append(self.infoset_dict[infoset_id][2])
 
 			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
-				current_infoset_strategies.append([float(1/self.cnt_player_nodes)] * next_level_max_no_actions)
+				current_infoset_strategies.append([float(1/(next_level_max_no_actions*self.cnt_player_nodes))] * next_level_max_no_actions)
 			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
 				current_infoset_strategies.append([action['probability'] for action in reversed(self.infoset_dict[infoset_id][3]['actions'])])
 			else:
@@ -314,7 +314,7 @@ class GambitEFGLoader:
 		[infoset_acting_player_lvl2, infoset_strategies_lvl2] = infoset_managers[2].make_infoset_acting_player(2, self.node_type)
 
 		self.infoset_acting_player = [infoset_acting_player_lvl0, infoset_acting_player_lvl1, infoset_acting_player_lvl2]
-		self.infoset_strategies = [infoset_strategies_lvl0, infoset_acting_player_lvl1, infoset_acting_player_lvl2]
+		self.current_infoset_strategies = [infoset_strategies_lvl0, infoset_strategies_lvl1, infoset_strategies_lvl2]
 
 		print("current_infoset_strategies")
 		print('lvl 0')

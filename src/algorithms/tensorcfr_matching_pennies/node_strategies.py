@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 from src.domains.matching_pennies.domain_definitions import node_to_infoset, current_infoset_strategies, \
 	infoset_acting_players, acting_depth, current_updating_player
 from src.utils.tensor_utils import print_tensors
@@ -77,6 +76,7 @@ def show_strategies(session):
 
 
 if __name__ == '__main__':
+	from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 	node_strategies = get_node_strategies()
 	node_cf_strategies = get_node_cf_strategies()
 	with tf.Session() as sess:

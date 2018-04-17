@@ -3,7 +3,6 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_matching_pennies.node_strategies import get_node_strategies
-from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 from src.commons.constants import TERMINAL_NODE
 from src.domains.matching_pennies.domain_definitions import utilities, node_types, levels, signum_of_current_player,\
 	print_misc_variables
@@ -50,6 +49,7 @@ def show_expected_values(session):
 
 
 if __name__ == '__main__':
+	from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 	node_strategies_ = get_node_strategies()
 	expected_values_ = get_expected_values()
 	with tf.Session() as sess:

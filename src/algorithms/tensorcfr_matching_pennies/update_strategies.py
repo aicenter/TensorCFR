@@ -13,21 +13,28 @@ from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multip
 def update_strategy_of_acting_player(acting_player):  # TODO unittest
 	infoset_strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	infoset_acting_players = get_infoset_acting_players()
-	update_infoset_strategies_ops = [None] * acting_depth
+	ops_update_infoset_strategies = [None] * acting_depth
 	for level in range(acting_depth):
-		infosets_of_acting_player = tf.reshape(tf.equal(infoset_acting_players[level], acting_player),
-		                                       shape=[current_infoset_strategies[level].shape[0]],
-		                                       name="infosets_of_acting_player_lvl{}".format(level))
-		update_infoset_strategies_ops[level] = masked_assign(ref=current_infoset_strategies[level],
-		                                                     mask=infosets_of_acting_player,
-		                                                     value=infoset_strategies_matched_to_regrets[level],
-		                                                     name="op_update_infoset_strategies_lvl{}".format(level))
-	return update_infoset_strategies_ops
+		infosets_of_acting_player = tf.reshape(   # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+				tf.equal(infoset_acting_players[level], acting_player),
+				shape=[current_infoset_strategies[level].shape[0]],
+				name="infosets_of_acting_player_lvl{}".format(level)
+		)
+		ops_update_infoset_strategies[level] = masked_assign(
+				ref=current_infoset_strategies[level],
+				mask=infosets_of_acting_player,
+				value=infoset_strategies_matched_to_regrets[level],
+				name="op_update_infoset_strategies_lvl{}".format(level)
+		)
+	return ops_update_infoset_strategies
 
 
 def get_weighted_averaging_factor(delay=averaging_delay):  # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
 	if delay is None:   # when `delay` is None, no weighted averaging is used
-		return tf.constant(1.0, name="weighted_averaging_factor")
+		return tf.constant(
+				1.0,
+				name="weighted_averaging_factor"
+		)
 	else:
 		return tf.to_float(
 				tf.maximum(cfr_step - delay, 0),
@@ -40,7 +47,7 @@ def cumulate_strategy_of_opponent(opponent):  # TODO unittest
 	infoset_reach_probabilities = get_infoset_reach_probabilities()
 	cumulate_infoset_strategies_ops = [None] * acting_depth
 	for level in range(acting_depth):
-		infosets_of_opponent = tf.reshape(
+		infosets_of_opponent = tf.reshape(   # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
 				tf.equal(infoset_acting_players[level], opponent),
 				shape=[current_infoset_strategies[level].shape[0]],
 				name="infosets_of_opponent_lvl{}".format(level)

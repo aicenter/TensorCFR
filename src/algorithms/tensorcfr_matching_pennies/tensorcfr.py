@@ -128,5 +128,5 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 if __name__ == '__main__':
 	# run_cfr(total_steps=10, delay=0)
 	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
-	run_cfr(quiet=True)
-	# run_cfr(quiet=True, total_steps=10000)
+	# run_cfr(quiet=True)
+	run_cfr(quiet=True, total_steps=10000)

@@ -98,7 +98,6 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 
 	def test_node_types(self):
 		expected_output = [None] * 4
-		expected_output = [None] * 4
 		expected_output[0] = 0
 		expected_output[1] = np.array([0, 0, 0, 0, 0])
 		expected_output[2] = np.array([[0, 0, 1],

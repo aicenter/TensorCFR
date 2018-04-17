@@ -9,6 +9,7 @@ class TestGambbitEFGLoaderParse(unittest.TestCase):
 	def setUp(self):
 		pass
 
+	"""
 	def test_parse_chance_node(self):
 		input_str = 'c "" 1 "" { "Ea (0.05)" 0.05 "Da (0.1)" 0.1 "Ca (0.1)" 0.1 "Ba (0.25)" 0.25 "Aa (0.5)" 0.5 } 1 "" { 0, 0 }'
 
@@ -32,12 +33,48 @@ class TestGambbitEFGLoaderParse(unittest.TestCase):
 		}
 
 		self.assertEqual(gambit_loader.parse_chance_node(input_str), expected_output)
+	"""
 
-class TestGambitEFGLoaderDomain01(unittest.TestCase)
+class TestGambitEFGLoaderDomain01(unittest.TestCase):
 	def setUp(self):
-		pass
+		self.number_of_levels = 3
+		self.domain = GambitEFGLoader('/home/ruda/Documents/Projects/tensorcfr/TensorCFR/src/utils/domain01_via_gambit.efg')
 
+	def test_actions_per_level(self):
+		expected_output = np.array([5, 3, 2])
+		np.testing.assert_array_equal(self.domain.max_actions_per_level, expected_output)
 
+	def test_utilities(self):
+		expected_output = [None] * 4
+		expected_output[0] = 0
+		expected_output[1] = np.array([0, 0, 0, 0, 0])
+		expected_output[2] = np.array([[0, 0, 30],
+									   [0, 0, 0],
+									   [0, 0, 0],
+									   [0, 0, 0],
+									   [130, 0, 0]])
+		expected_output[3] = np.array([[[10., 20.],
+										[30.,40.],
+										[0., 0.]],
+
+									   [[ 70.,  80.],
+										[90., 100.],
+										[0., 0.]],
+
+									   [[130., 140.],
+										[150., 160.],
+										[0., 0.]],
+
+									   [[190., 200.],
+										[210., 220.],
+										[0., 0.]],
+
+									   [[0., 0.],
+										[270., 280.],
+										[290., 300.]]])
+
+		for lvl in range(self.number_of_levels + 1):
+			np.testing.assert_array_equal(expected_output[lvl], self.domain.utilities[lvl])
 
 
 if __name__ == '__main__':

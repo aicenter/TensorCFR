@@ -149,7 +149,7 @@ class GambitEFGLoader:
 			self.load_post()
 
 	def parse_gambit_header(self, input_line):
-		results = re.search(r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" \{ (?P<players_dirty>.*) \}', input_line)
+		results = re.search(r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" \{(?P<players_dirty>.*)\}', input_line)
 		if results:
 			results_players = re.findall(r'"([^"]+)"', results.group('players_dirty'))
 			if results_players is None:
@@ -200,36 +200,40 @@ class GambitEFGLoader:
 		return [int(payoff) for payoff in parse_payoffs]
 
 	def parse_chance_node(self, input_line):
+		print(input_line)
+		# r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{(?P<actions_str>.*)\} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{(?P<payoffs_str>.*)\}',
 		parse_line = re.search(
-			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
+			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+)\ ?"?(?P<information_set_name_optional>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{?(?P<payoffs_optional>.*)\}?',
 			input_line
 		)
 
-		actions = self.parse_actions_chance(parse_line.group('actions_str'))
-		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
+		actions = self.parse_actions_chance(parse_line.group('actions_optional'))
+		payoffs = self.parse_payoffs(parse_line.group('payoffs_optional'))
 		infoset_id = 'c-' + parse_line.group('information_set_number')
 
 		return {
 			'type': parse_line.group('type'),
 			'name': parse_line.group('name'),
 			'information_set_number': int(parse_line.group('information_set_number')),
-			'information_set_name': parse_line.group('information_set_name'),
+			'information_set_name': parse_line.group('information_set_name_optional'),
 			'actions': actions,
 			'outcome': parse_line.group('outcome'),
-			'outcome_name': parse_line.group('outcome_name'),
+			'outcome_name': parse_line.group('outcome_name_optional'),
 			'payoffs': payoffs,
 			'tensorcfr_id': constants.CHANCE_PLAYER,
 			'infoset_id': infoset_id
 		}
 
 	def parse_player_node(self, input_line):
+		print(input_line)
+		# r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{(?P<actions_str>.*)\} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{(?P<payoffs_str>.*)\}',
 		parse_line = re.search(
-			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{ (?P<actions_str>.*) \} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
+			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+)\ ?"?(?P<information_set_name>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name>[^"]*)"?\ ?\{?(?P<payoffs_optional>[^\}]*)\}?',
 			input_line
 		)
 
-		actions = self.parse_actions_player(parse_line.group('actions_str'))
-		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
+		actions = self.parse_actions_player(parse_line.group('actions_optional'))
+		payoffs = self.parse_payoffs(parse_line.group('payoffs_optional'))
 		infoset_id = 'p-' + parse_line.group('player_number') + '-' + parse_line.group('information_set_number')
 
 		return {
@@ -247,12 +251,13 @@ class GambitEFGLoader:
 		}
 
 	def parse_terminal_node(self, input_line):
+		print(input_line)
 		parse_line = re.search(
-			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_TERMINAL + ') "(?P<name>[^"]*)" (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{ (?P<payoffs_str>.*) \}',
+			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_TERMINAL + ') "(?P<name>[^"]*)" (?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{(?P<payoffs>.*)\}',
 			input_line
 		)
 
-		payoffs = self.parse_payoffs(parse_line.group('payoffs_str'))
+		payoffs = self.parse_payoffs(parse_line.group('payoffs'))
 		infoset_id = 't-' + str(self.terminal_nodes_cnt)
 		#infoset_id = 't'
 
@@ -262,7 +267,7 @@ class GambitEFGLoader:
 			'type': parse_line.group('type'),
 			'name': parse_line.group('name'),
 			'outcome': parse_line.group('outcome'),
-			'outcome_name': parse_line.group('outcome_name'),
+			'outcome_name': parse_line.group('outcome_name_optional'),
 			'payoffs': payoffs,
 			'tensorcfr_id': constants.NO_ACTING_PLAYER,
 			'infoset_id': infoset_id
@@ -402,14 +407,15 @@ class GambitEFGLoader:
 
 if __name__ == '__main__':
 	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
+	mini_goofspiel_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'mini_goofspiel', 'mini_goofspiel_via_gtlibrary.gbt')
 
-	domain01 = GambitEFGLoader(domain01_efg)
-	[current_infoset_strategies, positive_cumulative_regrets, node_to_infoset, node_types, utilities, infoset_acting_players] = domain01.get_tensorflow_tensors()
+	domain = GambitEFGLoader(mini_goofspiel_efg)
+	[current_infoset_strategies, positive_cumulative_regrets, node_to_infoset, node_types, utilities, infoset_acting_players] = domain.get_tensorflow_tensors()
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 
-		for lvl in range(domain01.number_of_levels + 1):
+		for lvl in range(domain.number_of_levels + 1):
 			print("Level " + str(lvl))
 			print(sess.run(utilities[lvl]))
 

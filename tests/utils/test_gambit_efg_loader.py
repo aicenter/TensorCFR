@@ -44,7 +44,7 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 
 	def test_actions_per_level(self):
 		expected_output = np.array([5, 3, 2])
-		np.testing.assert_array_equal(self.domain.max_actions_per_level, expected_output)
+		np.testing.assert_array_equal(self.domain.actions_per_levels, expected_output)
 
 	def test_current_infoset_strategies(self):
 		expected_output = [None] * 3

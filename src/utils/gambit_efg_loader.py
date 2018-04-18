@@ -93,14 +93,14 @@ class GambitEFGLoader:
 		self.nodes = list()
 		self.number_of_players = 2
 
-		self.max_actions_per_level = []
+		self.actions_per_levels = []
 
 		self.terminal_nodes_cnt = 0
 
 		with open(efg_file) as self.gambit_file:
 			self.load()
 
-		self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.max_actions_per_level) + 1)]
+		self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.actions_per_levels) + 1)]
 
 		self.node_to_infoset = [None] * self.number_of_levels
 		self.current_infoset_strategies = [None] * self.number_of_levels
@@ -112,18 +112,22 @@ class GambitEFGLoader:
 		self.cumulative_regrets = [None] * (self.number_of_levels + 1)
 		self.positive_cumulative_regrets = [None] * (self.number_of_levels + 1)
 
-		for idx in range(len(self.max_actions_per_level)):
-			self.infoset_acting_players[idx] = np.zeros(self.max_actions_per_level[:idx]) * constants.NO_ACTING_PLAYER
+		for idx in range(len(self.actions_per_levels)):
+			self.infoset_acting_players[idx] = np.zeros(self.actions_per_levels[:idx]) * constants.NO_ACTING_PLAYER
 
-		for idx in range(len(self.max_actions_per_level) + 1):
-			self.utilities[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.NON_TERMINAL_UTILITY
-			self.node_types[idx] = np.ones(self.max_actions_per_level[:idx]) * constants.IMAGINARY_NODE
-			self.node_to_infoset[idx] = np.ones(self.max_actions_per_level[:idx]) * TMP_NODE_TO_INFOSET_IMAGINERY * (-1)
-			self.cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx])
-			self.positive_cumulative_regrets[idx] = np.zeros(self.max_actions_per_level[:idx])
+		for idx in range(len(self.actions_per_levels) + 1):
+			self.utilities[idx] = np.ones(self.actions_per_levels[:idx]) * constants.NON_TERMINAL_UTILITY
+			self.node_types[idx] = np.ones(self.actions_per_levels[:idx]) * constants.IMAGINARY_NODE
+			self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx]) * TMP_NODE_TO_INFOSET_IMAGINERY * (-1)
+			self.cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
+			self.positive_cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
+
+	def parse_gambit_header(self, input_line):
+		reg_result = re.search(r'^(?P<format>EFG) (?P<version>\d) R "(?P<name>[^"]+)" \{ (?P<players>.*) \}', input_line)
+		return True
 
 	def parse_node(self, input_line):
 		if len(input_line) == 0:
@@ -139,6 +143,7 @@ class GambitEFGLoader:
 			return self.parse_terminal_node(input_line)
 		else:
 			return False
+
 	def parse_probability(self, probability_str):
 		if '/' in probability_str:
 			probability_list = probability_str.split('/')
@@ -246,8 +251,8 @@ class GambitEFGLoader:
 				coordinates = tree_node.coordinates
 
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
-					if len(self.max_actions_per_level) < (level + 1):
-						self.max_actions_per_level.append(0)
+					if len(self.actions_per_levels) < (level + 1):
+						self.actions_per_levels.append(0)
 
 					for idx, action in enumerate(reversed(node['actions'])):
 						new_level = level + 1
@@ -255,8 +260,8 @@ class GambitEFGLoader:
 						new_coordinates.append(idx)
 						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
 
-					self.max_actions_per_level[level] = max(len(node['actions']), self.max_actions_per_level[level])
-			self.number_of_levels = len(self.max_actions_per_level)
+					self.actions_per_levels[level] = max(len(node['actions']), self.actions_per_levels[level])
+			self.number_of_levels = len(self.actions_per_levels)
 
 	def update_utilities(self, level, coordinates, value):
 		if level == 0:
@@ -307,7 +312,7 @@ class GambitEFGLoader:
 			self.node_to_infoset[lvl] = self.infoset_managers[lvl].make_node_to_infoset(self.node_to_infoset[lvl])
 
 		for lvl in range(self.number_of_levels):
-			[infoset_acting_players, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_players(self.max_actions_per_level[lvl], self.node_types)
+			[infoset_acting_players, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_players(self.actions_per_levels[lvl], self.node_types)
 			self.infoset_acting_players[lvl] = infoset_acting_players
 			self.current_infoset_strategies[lvl] = infoset_strategies
 

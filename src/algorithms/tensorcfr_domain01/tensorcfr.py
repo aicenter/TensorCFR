@@ -1,4 +1,8 @@
+import re
+
 import tensorflow as tf
+import os
+import datetime
 
 from src.algorithms.tensorcfr_domain01.bottomup_expected_values import get_expected_values
 from src.algorithms.tensorcfr_domain01.cfr_step import do_cfr_step
@@ -80,6 +84,23 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 	with tf.Session() as sess:
 		print("TensorCFR\n")
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+		hyperparameters = {
+			"total_steps": total_steps,
+			"averaging_delay": delay,
+		}
+
+		log_dir = "logs/{}-{}-{}".format(
+				"domain01",
+				datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
+				",".join(
+						("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
+						 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
+		)
+		if not os.path.exists("logs"):
+			os.mkdir("logs")
+		summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
+		with summary_writer.as_default():
+			tf.contrib.summary.initialize(session=sess, graph=sess.graph)
 		print(setup_messages)
 		sess.run(assign_averaging_delay_op)
 		print_tensors(sess, current_infoset_strategies)

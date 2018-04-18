@@ -10,10 +10,27 @@ TMP_NODE_TO_INFOSET_TERMINAL = 7
 TMP_NODE_TO_INFOSET_IMAGINERY = 8
 
 
+class NotAcceptableFormatException:
+	pass
+
+
+class NotRecognizedPlayersException:
+	pass
+
+
+class NotRecognizedTreeNodeException:
+	pass
+
+
+class NotImplementedFormatException:
+	pass
+
+
 class TreeNode:
 	def __init__(self, level=None, coordinates=[]):
 		self.level = level
 		self.coordinates = coordinates
+
 
 class InformationSetManager:
 	def __init__(self, level):
@@ -98,6 +115,12 @@ class GambitEFGLoader:
 		self.terminal_nodes_cnt = 0
 
 		with open(efg_file) as self.gambit_file:
+			game_header_line = self.gambit_file.readline()
+			game_header = self.parse_gambit_header(game_header_line)
+
+			if game_header['format'] == 'NFG':
+				raise NotImplementedFormatException
+
 			self.load()
 
 		self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.actions_per_levels) + 1)]
@@ -126,8 +149,21 @@ class GambitEFGLoader:
 			self.load_post()
 
 	def parse_gambit_header(self, input_line):
-		reg_result = re.search(r'^(?P<format>EFG) (?P<version>\d) R "(?P<name>[^"]+)" \{ (?P<players>.*) \}', input_line)
-		return True
+		results = re.search(r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" \{ (?P<players_dirty>.*) \}', input_line)
+		if results:
+			results_players = re.findall(r'"([^"]+)"', results.group('players_dirty'))
+			if results_players is None:
+				raise NotRecognizedPlayersException
+			return_dict = {
+				'format': results.group('format'),
+				'version': int(results.group('version')),
+				'name': results.group('name'),
+				'players': results_players
+			}
+			return return_dict
+		else:
+			raise NotAcceptableFormatException
+
 
 	def parse_node(self, input_line):
 		if len(input_line) == 0:

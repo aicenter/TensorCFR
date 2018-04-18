@@ -44,10 +44,19 @@ class InformationSetManager:
 
 		self.flag_setted = False
 		self.flag_imaginery_node_present = False
+		self.flag_terminal_node_present = False
 
 	def _is_imaginery_node_present(self, level, node_types):
 		tensor = node_types[level]
 		result = tensor[np.where(tensor == constants.IMAGINARY_NODE)]
+
+		if result.shape == (0,):
+			return False
+		return True
+
+	def _is_terminal_node_present(self, level, node_types):
+		tensor = node_types[level]
+		result = tensor[np.where(tensor == constants.TERMINAL_NODE)]
 
 		if result.shape == (0,):
 			return False
@@ -60,7 +69,6 @@ class InformationSetManager:
 
 		if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
 			self.cnt_player_nodes += 1
-
 
 		if node['infoset_id'] not in self.infoset_dict:
 			return_node_to_infoset_value = self.infoset_cnt
@@ -259,8 +267,8 @@ class GambitEFGLoader:
 		)
 
 		payoffs = self.parse_payoffs(parse_line.group('payoffs'))
-		infoset_id = 't-' + str(self.terminal_nodes_cnt)
-		#infoset_id = 't'
+		#infoset_id = 't-' + str(self.terminal_nodes_cnt)
+		infoset_id = 't'
 
 		self.terminal_nodes_cnt += 1
 
@@ -359,6 +367,35 @@ class GambitEFGLoader:
 			self.current_infoset_strategies[lvl] = infoset_strategies
 
 		self.infoset_acting_players[0] = self.infoset_acting_players[0][0]
+		"""
+		print('node_to_infoset lvl 0')
+		print(self.node_to_infoset[0])
+		print('infoset_acting_players lvl 1')
+		print(self.node_to_infoset[1])
+		print('infoset_acting_players lvl 2')
+		print(self.node_to_infoset[2])
+
+		print('node_to_infoset lvl 0')
+		print(self.node_to_infoset[0])
+		print('infoset_acting_players lvl 1')
+		print(self.node_to_infoset[1])
+		print('infoset_acting_players lvl 2')
+		print(self.node_to_infoset[2])
+
+		print('current_infoset_strategies lvl 0')
+		print(self.current_infoset_strategies[0])
+		print('current_infoset_strategies lvl 1')
+		print(self.current_infoset_strategies[1])
+		print('current_infoset_strategies lvl 2')
+		print(self.current_infoset_strategies[2])
+
+		print('infoset_acting_players lvl 0')
+		print(self.infoset_acting_players[0])
+		print('infoset_acting_players lvl 1')
+		print(self.infoset_acting_players[1])
+		print('infoset_acting_players lvl 2')
+		print(self.infoset_acting_players[2])
+		"""
 
 	def get_tensorflow_tensors(self):
 		current_infoset_strategies = [None] * len(self.current_infoset_strategies)
@@ -372,28 +409,33 @@ class GambitEFGLoader:
 		for lvl in range(self.number_of_levels):
 			current_infoset_strategies[lvl] = tf.Variable(
 				self.current_infoset_strategies[lvl],
-				name='current_infoset_strategies_lvl{}'.format(lvl)
+				name='current_infoset_strategies_lvl{}'.format(lvl),
+				dtype=tf.float32
 			)
 			positive_cumulative_regrets[lvl] = tf.Variable(
 				self.positive_cumulative_regrets[lvl],
-				name='positive_cumulative_regrets_lvl{}'.format(lvl)
+				name='positive_cumulative_regrets_lvl{}'.format(lvl),
+				dtype=tf.float32
 			)
 			cumulative_regrets[lvl] = tf.Variable(
 				self.cumulative_regrets[lvl],
-				name='cumulative_regrets_lvl{}'.format(lvl)
+				name='cumulative_regrets_lvl{}'.format(lvl),
+				dtype=tf.float32
 			)
 			node_to_infoset[lvl] = tf.Variable(
 				self.node_to_infoset[lvl],
-				name='node_to_infoset_lvl{}'.format(lvl)
+				name='node_to_infoset_lvl{}'.format(lvl),
+				dtype=tf.int32
 			)
 			infoset_acting_players[lvl] = tf.Variable(
 				self.infoset_acting_players[lvl],
-				name='infoset_acting_players_lvl{}'.format(lvl)
+				name='infoset_acting_players_lvl{}'.format(lvl),
+				dtype=tf.int32
 			)
 
 		for lvl in range(self.number_of_levels + 1):
-			node_types[lvl] = tf.Variable(self.node_types[lvl], name='node_types_lvl{}'.format(lvl))
-			utilities[lvl] = tf.Variable(self.utilities[lvl], name='utilities_lvl{}'.format(lvl))
+			node_types[lvl] = tf.Variable(self.node_types[lvl], name='node_types_lvl{}'.format(lvl), dtype=tf.int32)
+			utilities[lvl] = tf.Variable(self.utilities[lvl], name='utilities_lvl{}'.format(lvl), dtype=tf.float32)
 
 		return [
 			current_infoset_strategies,
@@ -410,9 +452,10 @@ if __name__ == '__main__':
 	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
 	mini_goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'mini_goofspiel', 'mini_goofspiel_via_gtlibrary.gbt')
 	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'goofspiel', 'IIGS5_s1_bf_ft.gbt')
-	phantomTTT = '/home/ruda/Downloads/PTTT.gbt'
+	phantomTTT = 'domain01_efg'
 
-	domain = GambitEFGLoader(mini_goofspiel_efg)
+	domain = GambitEFGLoader(domain01_efg)
+
 	[current_infoset_strategies, positive_cumulative_regrets, node_to_infoset, node_types, utilities, infoset_acting_players] = domain.get_tensorflow_tensors()
 
 	with tf.Session() as sess:

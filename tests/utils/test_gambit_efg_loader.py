@@ -40,7 +40,7 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 	def setUp(self):
 		domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
 		self.number_of_levels = 3
-		self.domain = GambitEFGLoader('/home/ruda/Documents/Projects/tensorcfr/TensorCFR/src/utils/domain01_via_gambit.efg')
+		self.domain = GambitEFGLoader(domain01_efg)
 
 	def test_actions_per_level(self):
 		expected_output = np.array([5, 3, 2])
@@ -55,7 +55,6 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 									   [0.3333333333333333, 0.3333333333333333, 0.3333333333333333]])
 		expected_output[2] = np.array([[0.0625, 0.0625],
 									   [0.0625, 0.0625],
-									   [0., 0.],
 									   [0.0625, 0.0625],
 									   [0.0625, 0.0625],
 									   [0.1, 0.9],
@@ -155,11 +154,11 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 		expected_output = [None] * 3
 		expected_output[0] = 0
 		expected_output[1] = np.array([0, 1, 2, 2, 3])
-		expected_output[2] = np.array([[0., 1., 2.],
-									   [3., 3., 9.],
-									   [4., 5., 9.],
-									   [4., 5., 9.],
-									   [6., 7., 8.]])
+		expected_output[2] = np.array([[0, 1, 5],
+									   [2, 2, 8],
+									   [3, 4, 8],
+									   [3, 4, 8],
+									   [5, 6, 7]])
 
 		for lvl in range(self.number_of_levels):
 			np.testing.assert_array_equal(expected_output[lvl], self.domain.node_to_infoset[lvl])
@@ -168,7 +167,7 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 		expected_output = [None] * 3
 		expected_output[0] = 0
 		expected_output[1] = np.array([1, 2, 2, 0])
-		expected_output[2] = np.array([1, 2, -1, 1, 2, 0, -1, 1, 2, -1])
+		expected_output[2] = np.array([1, 2, 1, 2, 0, -1, 1, 2, -1])
 
 		for lvl in range(self.number_of_levels):
 			np.testing.assert_array_equal(expected_output[lvl], self.domain.infoset_acting_players[lvl])

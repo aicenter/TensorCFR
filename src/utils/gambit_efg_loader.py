@@ -166,6 +166,7 @@ class GambitEFGLoader:
 
 
 	def parse_node(self, input_line):
+		#http://www.gambit-project.org/gambit13/formats.html
 		if len(input_line) == 0:
 			return False
 

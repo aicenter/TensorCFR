@@ -11,15 +11,16 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 def get_nodal_reach_probabilities():
 	# TODO take into account swapping players
 	node_cf_strategies = get_node_cf_strategies()
-	nodal_reach_probabilities = [None] * levels
-	nodal_reach_probabilities[0] = reach_probability_of_root_node
-	for level in range(1, levels):
-		nodal_reach_probabilities[level] = expanded_multiply(
-				expandable_tensor=nodal_reach_probabilities[level - 1],
-				expanded_tensor=node_cf_strategies[level - 1],
-				name="nodal_reach_probabilities_lvl{}".format(level)
-		)
-	return nodal_reach_probabilities
+	with tf.name_scope("nodal_reach_probabilities"):
+		nodal_reach_probabilities = [None] * levels
+		nodal_reach_probabilities[0] = reach_probability_of_root_node
+		for level in range(1, levels):
+			nodal_reach_probabilities[level] = expanded_multiply(
+					expandable_tensor=nodal_reach_probabilities[level - 1],
+					expanded_tensor=node_cf_strategies[level - 1],
+					name="nodal_reach_probabilities_lvl{}".format(level)
+			)
+		return nodal_reach_probabilities
 
 
 def get_infoset_reach_probabilities():

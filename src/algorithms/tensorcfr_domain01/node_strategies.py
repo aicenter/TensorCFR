@@ -41,26 +41,28 @@ def assign_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updati
 
 
 def get_node_strategies():
-	return [
-		assign_strategies_to_nodes(
-				current_infoset_strategies[level],
-				node_to_infoset[level],
-				name="node_strategies_lvl{}".format(level)
-		) for level in range(acting_depth)
-	]
+	with tf.name_scope('node_strategies'):
+		return [
+			assign_strategies_to_nodes(
+					current_infoset_strategies[level],
+					node_to_infoset[level],
+					name="node_strategies_lvl{}".format(level)
+			) for level in range(acting_depth)
+		]
 
 
 def get_node_cf_strategies(updating_player=current_updating_player):
-	# TODO generate node_cf_strategies_* with tf.where on node_strategies
-	return [
-		assign_strategies_to_nodes(
-				current_infoset_strategies[level],
-				node_to_infoset[level],
-				updating_player=updating_player,
-				acting_players=infoset_acting_players[level],
-				name="node_cf_strategies_lvl{}".format(level)
-		) for level in range(acting_depth)
-	]
+	with tf.name_scope('node_cf_strategies'):
+		# TODO generate node_cf_strategies_* with tf.where on node_strategies
+		return [
+			assign_strategies_to_nodes(
+					current_infoset_strategies[level],
+					node_to_infoset[level],
+					updating_player=updating_player,
+					acting_players=infoset_acting_players[level],
+					name="node_cf_strategies_lvl{}".format(level)
+			) for level in range(acting_depth)
+		]
 
 
 def show_strategies(session):

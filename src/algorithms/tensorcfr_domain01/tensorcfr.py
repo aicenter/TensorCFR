@@ -65,7 +65,7 @@ def set_up_tensorboard(session, hyperparameters):
 		tf.contrib.summary.initialize(session=session, graph=session.graph)
 
 
-def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
+def set_up_cfr():
 	# TODO extract these lines to a UnitTest
 	# setup_messages, feed_dictionary = setup_feed_dictionary()
 	# setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
@@ -85,6 +85,11 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 	# 		]
 	# )
 	# setup_messages, feed_dictionary = setup_feed_dictionary(method="invalid")  # should raise ValueError
+	return feed_dictionary, setup_messages
+
+
+def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
+	feed_dictionary, setup_messages = set_up_cfr()
 
 	assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay)
 	cfr_step_op = do_cfr_step()

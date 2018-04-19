@@ -12,8 +12,9 @@ from src.utils.tensor_utils import print_tensors, masked_assign
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_regrets():  # TODO verify and write a unittest
-		cf_values_infoset_actions = get_cf_values_infoset_actions()
-		cf_values_infoset = get_cf_values_infoset()
+	cf_values_infoset_actions = get_cf_values_infoset_actions()
+	cf_values_infoset = get_cf_values_infoset()
+	with tf.name_scope("regrets"):
 		return [
 			tf.subtract(
 					cf_values_infoset_actions[level],

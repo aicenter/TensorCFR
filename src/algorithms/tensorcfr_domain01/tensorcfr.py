@@ -68,8 +68,8 @@ def set_up_tensorboard(session, hyperparameters):
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
 	# TODO extract these lines to a UnitTest
 	# setup_messages, feed_dictionary = setup_feed_dictionary()
-	setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
-	# setup_messages, feed_dictionary = setup_feed_dictionary(method="uniform")
+	# setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
+	setup_messages, feed_dictionary = setup_feed_dictionary(method="uniform")
 	# setup_messages, feed_dictionary = setup_feed_dictionary(method="custom")  # should raise ValueError
 	# setup_messages, feed_dictionary = setup_feed_dictionary(
 	# 		method="custom",
@@ -151,7 +151,8 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 
 
 if __name__ == '__main__':
-	run_cfr(total_steps=10, delay=0)
+	# run_cfr(total_steps=10, delay=0)
+	run_cfr(total_steps=10, delay=0, quiet=True)
 	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
 	# run_cfr(quiet=True)
 	# run_cfr(quiet=True, total_steps=10000)

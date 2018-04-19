@@ -35,17 +35,18 @@ def get_infoset_children_types():  # TODO unittest
 
 def get_infoset_uniform_strategies():  # TODO unittest
 	infoset_children_types = get_infoset_children_types()
-	infoset_uniform_strategies = [None] * (levels - 1)
-	for level in range(levels - 1):
-		infoset_uniform_strategies[level] = tf.to_float(tf.not_equal(infoset_children_types[level], IMAGINARY_NODE))
-		# Note: An all-0's row cannot be normalized. This is caused when IS has only imaginary children. As of now,
-		#  `tf.divide` produces `nan` in the entire row.
-		infoset_uniform_strategies[level] = tf.divide(
-				infoset_uniform_strategies[level],
-				tf.reduce_sum(infoset_uniform_strategies[level], axis=-1, keepdims=True),
-				name="infoset_uniform_strategies_lvl{}".format(level)
-		)
-	return infoset_uniform_strategies
+	with tf.name_scope("infoset_uniform_strategies"):
+		infoset_uniform_strategies = [None] * (levels - 1)
+		for level in range(levels - 1):
+			infoset_uniform_strategies[level] = tf.to_float(tf.not_equal(infoset_children_types[level], IMAGINARY_NODE))
+			# Note: An all-0's row cannot be normalized. This is caused when IS has only imaginary children. As of now,
+			#  `tf.divide` produces `nan` in the entire row.
+			infoset_uniform_strategies[level] = tf.divide(
+					infoset_uniform_strategies[level],
+					tf.reduce_sum(infoset_uniform_strategies[level], axis=-1, keepdims=True),
+					name="infoset_uniform_strategies_lvl{}".format(level)
+			)
+		return infoset_uniform_strategies
 
 
 def assign_uniform_strategies_to_players():

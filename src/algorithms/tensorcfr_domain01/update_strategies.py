@@ -11,23 +11,24 @@ from src.utils.tensor_utils import print_tensors, masked_assign, expanded_multip
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
-def update_strategy_of_acting_player(acting_player=current_updating_player):  # TODO unittest
+def update_strategy_of_updating_player(acting_player=current_updating_player):  # TODO unittest
 	infoset_strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	infoset_acting_players = get_infoset_acting_players()
 	ops_update_infoset_strategies = [None] * acting_depth
-	for level in range(acting_depth):
-		infosets_of_acting_player = tf.reshape(   # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
-				tf.equal(infoset_acting_players[level], acting_player),
-				shape=[current_infoset_strategies[level].shape[0]],
-				name="infosets_of_acting_player_lvl{}".format(level)
-		)
-		ops_update_infoset_strategies[level] = masked_assign(
-				ref=current_infoset_strategies[level],
-				mask=infosets_of_acting_player,
-				value=infoset_strategies_matched_to_regrets[level],
-				name="op_update_infoset_strategies_lvl{}".format(level)
-		)
-	return ops_update_infoset_strategies
+	with tf.name_scope("update_strategy_of_updating_player"):
+		for level in range(acting_depth):
+			infosets_of_acting_player = tf.reshape(   # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+					tf.equal(infoset_acting_players[level], acting_player),
+					shape=[current_infoset_strategies[level].shape[0]],
+					name="infosets_of_updating_player_lvl{}".format(level)
+			)
+			ops_update_infoset_strategies[level] = masked_assign(
+					ref=current_infoset_strategies[level],
+					mask=infosets_of_acting_player,
+					value=infoset_strategies_matched_to_regrets[level],
+					name="op_update_infoset_strategies_lvl{}".format(level)
+			)
+		return ops_update_infoset_strategies
 
 
 def get_weighted_averaging_factor(delay=averaging_delay):  # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
@@ -69,7 +70,7 @@ def cumulate_strategy_of_opponent(opponent=current_opponent):  # TODO unittest
 
 def process_strategies(acting_player=current_updating_player, opponent=current_opponent):
 	update_regrets_ops = update_positive_cumulative_regrets()
-	update_ops = update_strategy_of_acting_player(acting_player=acting_player)
+	update_ops = update_strategy_of_updating_player(acting_player=acting_player)
 	cumulate_ops = cumulate_strategy_of_opponent(opponent=opponent)
 	ops_process_strategies = [
 		op
@@ -97,7 +98,7 @@ if __name__ == '__main__':
 	infoset_acting_players_ = get_infoset_acting_players()
 	infoset_strategies_matched_to_regrets_ = get_strategy_matched_to_regrets()
 	infoset_reach_probabilities_ = get_infoset_reach_probabilities()
-	update_infoset_strategies = update_strategy_of_acting_player()
+	update_infoset_strategies = update_strategy_of_updating_player()
 	ops_cumulate_infoset_strategies = cumulate_strategy_of_opponent()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

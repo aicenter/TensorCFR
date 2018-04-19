@@ -80,7 +80,7 @@ def process_strategies(acting_player=current_updating_player, opponent=current_o
 			for sublist in map(list, zip(update_regrets_ops, update_ops, cumulate_ops))
 			for op in sublist
 		]
-		return ops_process_strategies
+		return tf.group(ops_process_strategies, name="process_strategies")
 
 
 def get_average_infoset_strategies():

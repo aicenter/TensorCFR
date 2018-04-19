@@ -139,17 +139,18 @@ def log_after_all_steps(average_infoset_strategies, sess):
 
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
 	feed_dictionary, setup_messages = set_up_cfr()
-
 	assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay)
 	cfr_step_op = do_cfr_step()
-	reach_probabilities = get_nodal_reach_probabilities()
-	expected_values = get_expected_values()
-	cf_values_nodes = get_cf_values_nodes()
-	cf_values_infoset = get_cf_values_infoset()
-	cf_values_infoset_actions = get_cf_values_infoset_actions()
-	regrets = get_regrets()
-	strategies_matched_to_regrets = get_strategy_matched_to_regrets()
-	average_infoset_strategies = get_average_infoset_strategies()
+
+	# tensors to log if quiet is False
+	reach_probabilities = get_nodal_reach_probabilities() if not quiet else None
+	expected_values = get_expected_values() if not quiet else None
+	cf_values_nodes = get_cf_values_nodes() if not quiet else None
+	cf_values_infoset = get_cf_values_infoset() if not quiet else None
+	cf_values_infoset_actions = get_cf_values_infoset_actions() if not quiet else None
+	regrets = get_regrets() if not quiet else None
+	strategies_matched_to_regrets = get_strategy_matched_to_regrets() if not quiet else None
+	average_infoset_strategies = get_average_infoset_strategies() if not quiet else None
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)

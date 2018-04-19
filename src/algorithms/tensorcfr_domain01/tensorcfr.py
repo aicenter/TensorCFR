@@ -25,7 +25,7 @@ def set_up_feed_dictionary(method="by-domain", initial_strategy_values=None):
 	if method == "by-domain":
 		return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
 	elif method == "uniform":
-		with tf.name_scope("initialize_strategies"):
+		with tf.variable_scope("initialize_strategies"):
 			uniform_strategies_tensors = get_infoset_uniform_strategies()
 			with tf.Session() as temp_sess:
 				temp_sess.run(tf.global_variables_initializer())
@@ -61,7 +61,7 @@ def set_up_tensorboard(session, hyperparameters):
 	)
 	if not os.path.exists("logs"):
 		os.mkdir("logs")
-	with tf.name_scope("tensorboard_operations"):
+	with tf.variable_scope("tensorboard_operations"):
 		summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
 		with summary_writer.as_default():
 			tf.contrib.summary.initialize(session=session, graph=session.graph)
@@ -140,7 +140,7 @@ def log_after_all_steps(average_infoset_strategies, sess):
 
 
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
-	with tf.name_scope("initialization"):
+	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr()
 		assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay, name="assign_averaging_delay")
 	cfr_step_op = do_cfr_step()

@@ -13,7 +13,7 @@ from src.utils.tensor_utils import print_tensors
 
 def get_expected_values():
 	node_strategies = get_node_strategies()
-	with tf.name_scope("expected_values"):
+	with tf.variable_scope("expected_values"):
 		expected_values = [None] * levels
 		expected_values[levels - 1] = tf.multiply(
 				signum_of_current_player,

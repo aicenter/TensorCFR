@@ -9,7 +9,7 @@ from src.utils.tensor_utils import print_tensors, masked_assign
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_infoset_children_types():  # TODO unittest
-	with tf.name_scope("infoset_children_types"):
+	with tf.variable_scope("infoset_children_types"):
 		infoset_children_types = [None] * (levels - 1)
 		for level in range(levels - 1):
 			if level == 0:
@@ -35,7 +35,7 @@ def get_infoset_children_types():  # TODO unittest
 
 def get_infoset_uniform_strategies():  # TODO unittest
 	infoset_children_types = get_infoset_children_types()
-	with tf.name_scope("infoset_uniform_strategies"):
+	with tf.variable_scope("infoset_uniform_strategies"):
 		infoset_uniform_strategies = [None] * (levels - 1)
 		for level in range(levels - 1):
 			infoset_uniform_strategies[level] = tf.to_float(tf.not_equal(infoset_children_types[level], IMAGINARY_NODE))

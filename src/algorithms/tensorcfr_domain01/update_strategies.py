@@ -15,7 +15,7 @@ def update_strategy_of_updating_player(acting_player=current_updating_player):  
 	infoset_strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	infoset_acting_players = get_infoset_acting_players()
 	ops_update_infoset_strategies = [None] * acting_depth
-	with tf.name_scope("update_strategy_of_updating_player"):
+	with tf.variable_scope("update_strategy_of_updating_player"):
 		for level in range(acting_depth):
 			infosets_of_acting_player = tf.reshape(   # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
 					tf.equal(infoset_acting_players[level], acting_player),
@@ -32,7 +32,7 @@ def update_strategy_of_updating_player(acting_player=current_updating_player):  
 
 
 def get_weighted_averaging_factor(delay=averaging_delay):  # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
-	with tf.name_scope("weighted_averaging_factor"):
+	with tf.variable_scope("weighted_averaging_factor"):
 		if delay is None:   # when `delay` is None, no weighted averaging is used
 			return tf.constant(
 					1.0,
@@ -48,7 +48,7 @@ def get_weighted_averaging_factor(delay=averaging_delay):  # see https://arxiv.o
 def cumulate_strategy_of_opponent(opponent=current_opponent):  # TODO unittest
 	infoset_acting_players = get_infoset_acting_players()
 	infoset_reach_probabilities = get_infoset_reach_probabilities()
-	with tf.name_scope("cumulate_strategy_of_opponent"):
+	with tf.variable_scope("cumulate_strategy_of_opponent"):
 		cumulate_infoset_strategies_ops = [None] * acting_depth
 		for level in range(acting_depth):
 			infosets_of_opponent = tf.reshape(   # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
@@ -74,7 +74,7 @@ def process_strategies(acting_player=current_updating_player, opponent=current_o
 	update_regrets_ops = update_positive_cumulative_regrets()
 	update_ops = update_strategy_of_updating_player(acting_player=acting_player)
 	cumulate_ops = cumulate_strategy_of_opponent(opponent=opponent)
-	with tf.name_scope("process_strategies"):
+	with tf.variable_scope("process_strategies"):
 		ops_process_strategies = [
 			op
 			for sublist in map(list, zip(update_regrets_ops, update_ops, cumulate_ops))
@@ -85,7 +85,7 @@ def process_strategies(acting_player=current_updating_player, opponent=current_o
 
 def get_average_infoset_strategies():
 	# TODO Do not normalize over imaginary nodes. <- Do we need to solve this? Or is it already ok (cf. `bottomup-*.py`)
-	with tf.name_scope("average_strategies"):
+	with tf.variable_scope("average_strategies"):
 		average_infoset_strategies = [
 			tf.where(
 					condition=infosets_of_non_chance_player[level],

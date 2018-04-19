@@ -9,7 +9,7 @@ from src.utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
-with tf.name_scope('domain_definitions'):
+with tf.variable_scope("domain_definitions"):
 	actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1, 2)
 	levels = len(actions_per_levels) + 1  # accounting for 0th level
 	acting_depth = len(actions_per_levels)

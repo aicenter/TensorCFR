@@ -41,7 +41,7 @@ def assign_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updati
 
 
 def get_node_strategies():
-	with tf.name_scope('node_strategies'):
+	with tf.variable_scope("node_strategies"):
 		return [
 			assign_strategies_to_nodes(
 					current_infoset_strategies[level],
@@ -52,7 +52,7 @@ def get_node_strategies():
 
 
 def get_node_cf_strategies(updating_player=current_updating_player):
-	with tf.name_scope('node_cf_strategies'):
+	with tf.variable_scope("node_cf_strategies"):
 		# TODO generate node_cf_strategies_* with tf.where on node_strategies
 		return [
 			assign_strategies_to_nodes(

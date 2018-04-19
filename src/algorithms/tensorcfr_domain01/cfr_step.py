@@ -12,18 +12,19 @@ from src.utils.tensor_utils import print_tensors
 
 
 def increment_cfr_step():
-	return tf.assign_add(
-			ref=cfr_step,
-			value=1,
-			name="increment_cfr_step_op"
-	)
+	with tf.variable_scope("increment_step"):
+		return tf.assign_add(
+				ref=cfr_step,
+				value=1,
+				name="increment_cfr_step_op"
+		)
 
 
 def do_cfr_step():
 	ops_process_strategies = process_strategies()
 	op_swap_players = swap_players()
 	op_inc_step = increment_cfr_step()
-	with tf.name_scope("cfr_step"):
+	with tf.variable_scope("cfr_step"):
 		return tf.group(
 				[ops_process_strategies, op_swap_players, op_inc_step],
 				name="cfr_step"

@@ -14,7 +14,7 @@ from src.utils.tensor_utils import print_tensors, masked_assign
 def get_regrets():  # TODO verify and write a unittest
 	cf_values_infoset_actions = get_cf_values_infoset_actions()
 	cf_values_infoset = get_cf_values_infoset()
-	with tf.name_scope("regrets"):
+	with tf.variable_scope("regrets"):
 		return [
 			tf.subtract(
 					cf_values_infoset_actions[level],
@@ -25,7 +25,7 @@ def get_regrets():  # TODO verify and write a unittest
 
 
 def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify and write a unittest
-	with tf.name_scope("update_cumulative_regrets"):
+	with tf.variable_scope("update_cumulative_regrets"):
 		update_regrets_ops = [None] * (levels - 1)
 		for level in range(levels - 1):
 			# to keep cumulative regret still positive:

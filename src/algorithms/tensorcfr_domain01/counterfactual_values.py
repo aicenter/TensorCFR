@@ -13,8 +13,8 @@ from src.utils.tensor_utils import print_tensors, scatter_nd_sum
 def get_cf_values_nodes():  # TODO verify and write a unittest
 	expected_values = get_expected_values()
 	reach_probabilities = get_nodal_reach_probabilities()
-	with tf.name_scope("counterfactual_values"):
-		with tf.name_scope("nodal_counterfactual_values"):
+	with tf.variable_scope("counterfactual_values"):
+		with tf.variable_scope("nodal_counterfactual_values"):
 			cf_values_of_nodes = [tf.multiply(reach_probabilities[level], expected_values[level],
 																				name="node_cf_val_lvl{}".format(level)) for level in range(levels)]
 			return cf_values_of_nodes
@@ -22,9 +22,9 @@ def get_cf_values_nodes():  # TODO verify and write a unittest
 
 def get_cf_values_infoset_actions():  # TODO verify and write a unittest
 	node_cf_values = get_cf_values_nodes()
-	with tf.name_scope("counterfactual_values"):
-		with tf.name_scope("infoset_counterfactual_values"):
-			with tf.name_scope("infoset_action_values"):
+	with tf.variable_scope("counterfactual_values"):
+		with tf.variable_scope("infoset_counterfactual_values"):
+			with tf.variable_scope("infoset_action_values"):
 				cf_values_infoset_actions = [None] * (levels - 1)
 				cf_values_infoset_actions[0] = tf.expand_dims(
 						node_cf_values[1],
@@ -43,9 +43,9 @@ def get_cf_values_infoset_actions():  # TODO verify and write a unittest
 
 def get_cf_values_infoset():  # TODO verify and write a unittest
 	cf_values_infoset_actions = get_cf_values_infoset_actions()
-	with tf.name_scope("counterfactual_values"):
-		with tf.name_scope("infoset_counterfactual_values"):
-			with tf.name_scope("infoset_values"):
+	with tf.variable_scope("counterfactual_values"):
+		with tf.variable_scope("infoset_counterfactual_values"):
+			with tf.variable_scope("infoset_values"):
 				return [
 					tf.reduce_sum(
 							current_infoset_strategies[level] * cf_values_infoset_actions[level],

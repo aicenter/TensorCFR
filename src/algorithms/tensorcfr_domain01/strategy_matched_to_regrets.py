@@ -10,7 +10,7 @@ from src.utils.tensor_utils import print_tensors
 
 def get_strategy_matched_to_regrets():  # TODO unittest
 	infoset_uniform_strategies = get_infoset_uniform_strategies()
-	with tf.name_scope("strategies_matched_to_regrets"):
+	with tf.variable_scope("strategies_matched_to_regrets"):
 		strategies_matched_to_regrets = [None] * (levels - 1)
 		for level in range(levels - 1):
 			sums_of_regrets = tf.reduce_sum(

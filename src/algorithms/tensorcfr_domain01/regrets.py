@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_domain01.counterfactual_values import get_cf_values_infoset_actions, \
-	get_cf_values_infoset
+	get_infoset_cf_values
 from src.domains.domain01.domain_definitions import levels, positive_cumulative_regrets,\
 	infoset_acting_players, current_updating_player, acting_depth
 from src.utils.tensor_utils import print_tensors, masked_assign
@@ -13,7 +13,7 @@ from src.utils.tensor_utils import print_tensors, masked_assign
 
 def get_regrets():  # TODO verify and write a unittest
 	cf_values_infoset_actions = get_cf_values_infoset_actions()
-	cf_values_infoset = get_cf_values_infoset()
+	cf_values_infoset = get_infoset_cf_values()
 	with tf.variable_scope("regrets"):
 		return [
 			tf.subtract(
@@ -50,7 +50,7 @@ def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify an
 
 if __name__ == '__main__':
 	cf_values_infoset_actions_ = get_cf_values_infoset_actions()
-	cf_values_infoset_ = get_cf_values_infoset()
+	cf_values_infoset_ = get_infoset_cf_values()
 	regrets_ = get_regrets()
 	update_regrets_ops_ = update_positive_cumulative_regrets()
 	with tf.Session() as sess:

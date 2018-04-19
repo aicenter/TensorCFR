@@ -6,7 +6,7 @@ import datetime
 
 from src.algorithms.tensorcfr_domain01.bottomup_expected_values import get_expected_values
 from src.algorithms.tensorcfr_domain01.cfr_step import do_cfr_step
-from src.algorithms.tensorcfr_domain01.counterfactual_values import get_nodal_cf_values, get_cf_values_infoset, \
+from src.algorithms.tensorcfr_domain01.counterfactual_values import get_nodal_cf_values, get_infoset_cf_values, \
 	get_cf_values_infoset_actions
 from src.algorithms.tensorcfr_domain01.regrets import get_regrets
 from src.algorithms.tensorcfr_domain01.strategy_matched_to_regrets import get_strategy_matched_to_regrets
@@ -149,7 +149,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 	reach_probabilities = get_nodal_reach_probabilities() if not quiet else None
 	expected_values = get_expected_values() if not quiet else None
 	cf_values_nodes = get_nodal_cf_values() if not quiet else None
-	cf_values_infoset = get_cf_values_infoset() if not quiet else None
+	cf_values_infoset = get_infoset_cf_values() if not quiet else None
 	cf_values_infoset_actions = get_cf_values_infoset_actions() if not quiet else None
 	regrets = get_regrets() if not quiet else None
 	strategies_matched_to_regrets = get_strategy_matched_to_regrets() if not quiet else None

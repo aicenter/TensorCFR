@@ -38,7 +38,7 @@ def get_cf_values_infoset_actions():  # TODO verify and write a unittest
 		return cf_values_infoset_actions
 
 
-def get_cf_values_infoset():  # TODO verify and write a unittest
+def get_infoset_cf_values():  # TODO verify and write a unittest
 	cf_values_infoset_actions = get_cf_values_infoset_actions()
 	with tf.variable_scope("infoset_counterfactual_values"):
 		return [
@@ -57,7 +57,7 @@ if __name__ == '__main__':
 	expected_values_ = get_expected_values()
 	cf_values_nodes_ = get_nodal_cf_values()
 	cf_values_infoset_actions_ = get_cf_values_infoset_actions()
-	cf_values_infoset_ = get_cf_values_infoset()
+	cf_values_infoset_ = get_infoset_cf_values()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		for i in range(levels):

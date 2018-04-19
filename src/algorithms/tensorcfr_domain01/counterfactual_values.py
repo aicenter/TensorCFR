@@ -40,13 +40,13 @@ def get_infoset_cf_values_per_actions():  # TODO verify and write a unittest
 
 def get_infoset_cf_values():  # TODO verify and write a unittest
 	cf_values_infoset_actions = get_infoset_cf_values_per_actions()
-	with tf.variable_scope("infoset_counterfactual_values"):
+	with tf.variable_scope("infoset_cf_values"):
 		return [
 			tf.reduce_sum(
 					current_infoset_strategies[level] * cf_values_infoset_actions[level],
 					axis=-1,
 					keepdims=True,
-					name="cf_values_infoset_lvl{}".format(level),
+					name="infoset_cf_values_lvl{}".format(level),
 			)
 			for level in range(levels - 1)
 		]

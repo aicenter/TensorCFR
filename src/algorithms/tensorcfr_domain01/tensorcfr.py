@@ -21,7 +21,7 @@ from src.utils.tensor_utils import print_tensors
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
-def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
+def set_up_feed_dictionary(method="by-domain", initial_strategy_values=None):
 	if method == "by-domain":
 		return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
 	elif method == "uniform":
@@ -47,7 +47,7 @@ def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
 			for level in range(acting_depth)
 		}
 	else:
-		raise ValueError('Undefined method "{}" for setup_feed_dictionary().'.format(method))
+		raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
 
 def set_up_tensorboard(session, hyperparameters):
@@ -67,24 +67,24 @@ def set_up_tensorboard(session, hyperparameters):
 
 def set_up_cfr():
 	# TODO extract these lines to a UnitTest
-	# setup_messages, feed_dictionary = setup_feed_dictionary()
-	# setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
-	setup_messages, feed_dictionary = setup_feed_dictionary(method="uniform")
-	# setup_messages, feed_dictionary = setup_feed_dictionary(method="custom")  # should raise ValueError
-	# setup_messages, feed_dictionary = setup_feed_dictionary(
+	# setup_messages, feed_dictionary = set_up_feed_dictionary()
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(method="by-domain")
+	setup_messages, feed_dictionary = set_up_feed_dictionary(method="uniform")
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(method="custom")  # should raise ValueError
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(
 	# 		method="custom",
 	# 		initial_strategy_values=[
 	# 			[[1.0, 0.0]],
 	# 		],
 	# )  # should raise ValueError
-	# setup_messages, feed_dictionary = setup_feed_dictionary(
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(
 	# 		method="custom",
 	# 		initial_strategy_values=[
 	# 			[[1.0, 0.0]],
 	# 			[[1.0, 0.0]],
 	# 		]
 	# )
-	# setup_messages, feed_dictionary = setup_feed_dictionary(method="invalid")  # should raise ValueError
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(method="invalid")  # should raise ValueError
 	return feed_dictionary, setup_messages
 
 

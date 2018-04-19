@@ -43,29 +43,29 @@ def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
 			for level in range(acting_depth)
 		}
 	else:
-		raise ValueError('Undefined method "{}" for setup_feed_dictionary().'.format(method))
+		raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
 
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
 	# TODO extract these lines to a UnitTest
-	# setup_messages, feed_dictionary = setup_feed_dictionary()
+	# setup_messages, feed_dictionary = set_up_feed_dictionary()
 	setup_messages, feed_dictionary = setup_feed_dictionary(method="by-domain")
-	# setup_messages, feed_dictionary = setup_feed_dictionary(method="uniform")
-	# setup_messages, feed_dictionary = setup_feed_dictionary(method="custom")  # should raise ValueError
-	# setup_messages, feed_dictionary = setup_feed_dictionary(
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(method="uniform")
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(method="custom")  # should raise ValueError
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(
 	# 		method="custom",
 	# 		initial_strategy_values=[
 	# 			[[1.0, 0.0]],
 	# 		],
 	# )  # should raise ValueError
-	# setup_messages, feed_dictionary = setup_feed_dictionary(
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(
 	# 		method="custom",
 	# 		initial_strategy_values=[
 	# 			[[1.0, 0.0]],
 	# 			[[1.0, 0.0]],
 	# 		]
 	# )
-	# setup_messages, feed_dictionary = setup_feed_dictionary(method="invalid")  # should raise ValueError
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(method="invalid")  # should raise ValueError
 
 	assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay)
 	cfr_step_op = do_cfr_step()

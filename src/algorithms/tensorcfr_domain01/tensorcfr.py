@@ -88,7 +88,7 @@ def set_up_cfr():
 	return feed_dictionary, setup_messages
 
 
-def post_log(sess, strategies_matched_to_regrets):
+def log_after_every_step(sess, strategies_matched_to_regrets):
 	print_tensors(sess, positive_cumulative_regrets)
 	print("___________________________________\n")
 	print_tensors(sess, strategies_matched_to_regrets)
@@ -96,8 +96,8 @@ def post_log(sess, strategies_matched_to_regrets):
 	print_tensors(sess, current_infoset_strategies)
 
 
-def pre_log(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values, reach_probabilities,
-            regrets):
+def log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values, reach_probabilities,
+                          regrets):
 	print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
 	print_tensors(sess, reach_probabilities)
 	print("___________________________________\n")
@@ -153,13 +153,13 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 		print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay.eval()))
 		for _ in range(total_steps):
 			if quiet is False:
-				pre_log(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values,
-				        reach_probabilities, regrets)
+				log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values,
+				                      reach_probabilities, regrets)
 
 			sess.run(cfr_step_op)
 
 			if quiet is False:
-				post_log(sess, strategies_matched_to_regrets)
+				log_after_every_step(sess, strategies_matched_to_regrets)
 		print("###################################\n")
 		print_tensors(sess, cumulative_infoset_strategies)
 		print("___________________________________\n")

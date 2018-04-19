@@ -25,14 +25,15 @@ def set_up_feed_dictionary(method="by-domain", initial_strategy_values=None):
 	if method == "by-domain":
 		return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
 	elif method == "uniform":
-		uniform_strategies_tensors = get_infoset_uniform_strategies()
-		with tf.Session() as temp_sess:
-			temp_sess.run(tf.global_variables_initializer())
-			uniform_strategy_arrays = temp_sess.run(uniform_strategies_tensors)
-		return "Initializing to uniform strategies...\n", {
-			initial_infoset_strategies[level]: uniform_strategy_arrays[level]
-			for level in range(acting_depth)
-		}
+		with tf.name_scope("initialize_strategies"):
+			uniform_strategies_tensors = get_infoset_uniform_strategies()
+			with tf.Session() as temp_sess:
+				temp_sess.run(tf.global_variables_initializer())
+				uniform_strategy_arrays = temp_sess.run(uniform_strategies_tensors)
+			return "Initializing to uniform strategies...\n", {
+				initial_infoset_strategies[level]: uniform_strategy_arrays[level]
+				for level in range(acting_depth)
+			}
 	elif method == "custom":
 		if initial_strategy_values is None:
 			raise ValueError('No "initial_strategy_values" given.')

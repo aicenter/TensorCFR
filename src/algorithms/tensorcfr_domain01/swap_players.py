@@ -11,13 +11,14 @@ def get_the_other_player_of(tensor_variable_of_player):
 
 
 def swap_players():
-	return tf.group(
-		[
-			current_updating_player.assign(get_the_other_player_of(current_updating_player)),
-			current_opponent.assign(get_the_other_player_of(current_opponent)),
-		],
-		name="swap_players",
-	)
+	with tf.name_scope("swap_players"):
+		return tf.group(
+			[
+				current_updating_player.assign(get_the_other_player_of(current_updating_player)),
+				current_opponent.assign(get_the_other_player_of(current_opponent)),
+			],
+			name="swap_players",
+		)
 
 
 if __name__ == '__main__':

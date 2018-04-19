@@ -26,9 +26,9 @@ def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
 		return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
 	elif method == "uniform":
 		uniform_strategies_tensors = get_infoset_uniform_strategies()
-		with tf.Session() as sess:
-			sess.run(tf.global_variables_initializer())
-			uniform_strategy_arrays = sess.run(uniform_strategies_tensors)
+		with tf.Session() as temp_sess:
+			temp_sess.run(tf.global_variables_initializer())
+			uniform_strategy_arrays = temp_sess.run(uniform_strategies_tensors)
 		return "Initializing to uniform strategies...\n", {
 			initial_infoset_strategies[level]: uniform_strategy_arrays[level]
 			for level in range(acting_depth)

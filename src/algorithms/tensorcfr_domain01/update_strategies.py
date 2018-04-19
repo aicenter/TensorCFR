@@ -48,25 +48,26 @@ def get_weighted_averaging_factor(delay=averaging_delay):  # see https://arxiv.o
 def cumulate_strategy_of_opponent(opponent=current_opponent):  # TODO unittest
 	infoset_acting_players = get_infoset_acting_players()
 	infoset_reach_probabilities = get_infoset_reach_probabilities()
-	cumulate_infoset_strategies_ops = [None] * acting_depth
-	for level in range(acting_depth):
-		infosets_of_opponent = tf.reshape(   # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
-				tf.equal(infoset_acting_players[level], opponent),
-				shape=[current_infoset_strategies[level].shape[0]],
-				name="infosets_of_opponent_lvl{}".format(level)
-		)
-		averaging_factor = get_weighted_averaging_factor()
-		cumulate_infoset_strategies_ops[level] = masked_assign(
-				# TODO implement and use `masked_assign_add` here
-				ref=cumulative_infoset_strategies[level],
-				mask=infosets_of_opponent,
-				value=cumulative_infoset_strategies[level] + averaging_factor * expanded_multiply(
-						expandable_tensor=infoset_reach_probabilities[level],
-						expanded_tensor=current_infoset_strategies[level],
-				),
-				name="op_cumulate_infoset_strategies_lvl{}".format(level)
-		)
-	return cumulate_infoset_strategies_ops
+	with tf.name_scope("cumulate_strategy_of_opponent"):
+		cumulate_infoset_strategies_ops = [None] * acting_depth
+		for level in range(acting_depth):
+			infosets_of_opponent = tf.reshape(   # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+					tf.equal(infoset_acting_players[level], opponent),
+					shape=[current_infoset_strategies[level].shape[0]],
+					name="infosets_of_opponent_lvl{}".format(level)
+			)
+			averaging_factor = get_weighted_averaging_factor()
+			cumulate_infoset_strategies_ops[level] = masked_assign(
+					# TODO implement and use `masked_assign_add` here
+					ref=cumulative_infoset_strategies[level],
+					mask=infosets_of_opponent,
+					value=cumulative_infoset_strategies[level] + averaging_factor * expanded_multiply(
+							expandable_tensor=infoset_reach_probabilities[level],
+							expanded_tensor=current_infoset_strategies[level],
+					),
+					name="op_cumulate_infoset_strategies_lvl{}".format(level)
+			)
+		return cumulate_infoset_strategies_ops
 
 
 def process_strategies(acting_player=current_updating_player, opponent=current_opponent):

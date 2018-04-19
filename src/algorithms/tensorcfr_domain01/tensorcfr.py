@@ -140,8 +140,9 @@ def log_after_all_steps(average_infoset_strategies, sess):
 
 
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
-	feed_dictionary, setup_messages = set_up_cfr()
-	assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay, name="assign_averaging_delay")
+	with tf.name_scope("initialization"):
+		feed_dictionary, setup_messages = set_up_cfr()
+		assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay, name="assign_averaging_delay")
 	cfr_step_op = do_cfr_step()
 
 	# tensors to log if quiet is False

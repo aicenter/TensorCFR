@@ -61,9 +61,10 @@ def set_up_tensorboard(session, hyperparameters):
 	)
 	if not os.path.exists("logs"):
 		os.mkdir("logs")
-	summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
-	with summary_writer.as_default():
-		tf.contrib.summary.initialize(session=session, graph=session.graph)
+	with tf.name_scope("tensorboard_operations"):
+		summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
+		with summary_writer.as_default():
+			tf.contrib.summary.initialize(session=session, graph=session.graph)
 
 
 def set_up_cfr():

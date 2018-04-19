@@ -88,12 +88,11 @@ def set_up_cfr():
 	return feed_dictionary, setup_messages
 
 
-def log_after_every_step(sess, strategies_matched_to_regrets):
-	print_tensors(sess, positive_cumulative_regrets)
-	print("___________________________________\n")
-	print_tensors(sess, strategies_matched_to_regrets)
-	print("___________________________________\n")
+def log_before_all_steps(sess, setup_messages, total_steps, averaging_delay):
+	print("TensorCFR\n")
+	print(setup_messages)
 	print_tensors(sess, current_infoset_strategies)
+	print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay))
 
 
 def log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values, reach_probabilities,
@@ -123,6 +122,21 @@ def log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf
 	print("___________________________________\n")
 
 
+def log_after_every_step(sess, strategies_matched_to_regrets):
+	print_tensors(sess, positive_cumulative_regrets)
+	print("___________________________________\n")
+	print_tensors(sess, strategies_matched_to_regrets)
+	print("___________________________________\n")
+	print_tensors(sess, current_infoset_strategies)
+
+
+def log_after_all_steps(average_infoset_strategies, sess):
+	print("###################################\n")
+	print_tensors(sess, cumulative_infoset_strategies)
+	print("___________________________________\n")
+	print_tensors(sess, average_infoset_strategies)
+
+
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
 	feed_dictionary, setup_messages = set_up_cfr()
 
@@ -138,32 +152,24 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 	average_infoset_strategies = get_average_infoset_strategies()
 
 	with tf.Session() as sess:
-		print("TensorCFR\n")
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 		hyperparameters = {
 			"total_steps": total_steps,
 			"averaging_delay": delay,
 		}
-
 		set_up_tensorboard(session=sess, hyperparameters=hyperparameters)
-		print(setup_messages)
-		sess.run(assign_averaging_delay_op)
-		print_tensors(sess, current_infoset_strategies)
-
-		print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay.eval()))
+		assigned_averaging_delay = sess.run(assign_averaging_delay_op)
+		if quiet is False:
+			log_before_all_steps(sess, setup_messages, total_steps, assigned_averaging_delay)
 		for _ in range(total_steps):
 			if quiet is False:
 				log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values,
 				                      reach_probabilities, regrets)
-
 			sess.run(cfr_step_op)
-
 			if quiet is False:
 				log_after_every_step(sess, strategies_matched_to_regrets)
-		print("###################################\n")
-		print_tensors(sess, cumulative_infoset_strategies)
-		print("___________________________________\n")
-		print_tensors(sess, average_infoset_strategies)
+		if quiet is False:
+			log_after_all_steps(average_infoset_strategies, sess)
 
 
 if __name__ == '__main__':

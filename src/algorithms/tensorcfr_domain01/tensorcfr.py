@@ -50,6 +50,21 @@ def setup_feed_dictionary(method="by-domain", initial_strategy_values=None):
 		raise ValueError('Undefined method "{}" for setup_feed_dictionary().'.format(method))
 
 
+def set_up_tensorboard(session, hyperparameters):
+	log_dir = "logs/{}-{}-{}".format(
+			"domain01",
+			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
+			",".join(
+					("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
+					 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
+	)
+	if not os.path.exists("logs"):
+		os.mkdir("logs")
+	summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
+	with summary_writer.as_default():
+		tf.contrib.summary.initialize(session=session, graph=session.graph)
+
+
 def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
 	# TODO extract these lines to a UnitTest
 	# setup_messages, feed_dictionary = setup_feed_dictionary()
@@ -89,18 +104,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 			"averaging_delay": delay,
 		}
 
-		log_dir = "logs/{}-{}-{}".format(
-				"domain01",
-				datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
-				",".join(
-						("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
-						 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
-		)
-		if not os.path.exists("logs"):
-			os.mkdir("logs")
-		summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
-		with summary_writer.as_default():
-			tf.contrib.summary.initialize(session=sess, graph=sess.graph)
+		set_up_tensorboard(session=sess, hyperparameters=hyperparameters)
 		print(setup_messages)
 		sess.run(assign_averaging_delay_op)
 		print_tensors(sess, current_infoset_strategies)

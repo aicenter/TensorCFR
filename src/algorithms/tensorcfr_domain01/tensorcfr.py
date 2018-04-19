@@ -101,6 +101,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 	regrets = get_regrets()
 	strategies_matched_to_regrets = get_strategy_matched_to_regrets()
 	average_infoset_strategies = get_average_infoset_strategies()
+
 	with tf.Session() as sess:
 		print("TensorCFR\n")
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
@@ -117,29 +118,8 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 		print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay.eval()))
 		for _ in range(total_steps):
 			if quiet is False:
-				print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
-				print_tensors(sess, reach_probabilities)
-				print("___________________________________\n")
-				print_tensors(sess, expected_values)
-				print("___________________________________\n")
-				print_tensors(sess, cf_values_nodes)
-				print("___________________________________\n")
-				print_tensors(sess, cf_values_infoset_actions)
-				print("___________________________________\n")
-				print_tensors(sess, cf_values_infoset)
-				print("___________________________________\n")
-				print_tensors(sess, regrets)
-				print("___________________________________\n")
-				print_tensors(sess, cf_values_infoset_actions)
-				print("___________________________________\n")
-				print_tensors(sess, cf_values_infoset)
-				print("___________________________________\n")
-				print_tensors(sess, regrets)
-				print("___________________________________\n")
-				print_tensors(sess, positive_cumulative_regrets)
-				print("___________________________________\n")
-				print_tensors(sess, regrets)
-				print("___________________________________\n")
+				pre_log(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values,
+				        reach_probabilities, regrets)
 
 			sess.run(cfr_step_op)
 
@@ -153,6 +133,33 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 		print_tensors(sess, cumulative_infoset_strategies)
 		print("___________________________________\n")
 		print_tensors(sess, average_infoset_strategies)
+
+
+def pre_log(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values, reach_probabilities,
+            regrets):
+	print("########## CFR+ step #{} ##########".format(cfr_step.eval()))
+	print_tensors(sess, reach_probabilities)
+	print("___________________________________\n")
+	print_tensors(sess, expected_values)
+	print("___________________________________\n")
+	print_tensors(sess, cf_values_nodes)
+	print("___________________________________\n")
+	print_tensors(sess, cf_values_infoset_actions)
+	print("___________________________________\n")
+	print_tensors(sess, cf_values_infoset)
+	print("___________________________________\n")
+	print_tensors(sess, regrets)
+	print("___________________________________\n")
+	print_tensors(sess, cf_values_infoset_actions)
+	print("___________________________________\n")
+	print_tensors(sess, cf_values_infoset)
+	print("___________________________________\n")
+	print_tensors(sess, regrets)
+	print("___________________________________\n")
+	print_tensors(sess, positive_cumulative_regrets)
+	print("___________________________________\n")
+	print_tensors(sess, regrets)
+	print("___________________________________\n")
 
 
 if __name__ == '__main__':

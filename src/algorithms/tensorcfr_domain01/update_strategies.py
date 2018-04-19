@@ -32,16 +32,17 @@ def update_strategy_of_updating_player(acting_player=current_updating_player):  
 
 
 def get_weighted_averaging_factor(delay=averaging_delay):  # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
-	if delay is None:   # when `delay` is None, no weighted averaging is used
-		return tf.constant(
-				1.0,
-				name="weighted_averaging_factor"
-		)
-	else:
-		return tf.to_float(
-				tf.maximum(cfr_step - delay, 0),
-				name="weighted_averaging_factor",
-		)
+	with tf.name_scope("weighted_averaging_factor"):
+		if delay is None:   # when `delay` is None, no weighted averaging is used
+			return tf.constant(
+					1.0,
+					name="weighted_averaging_factor"
+			)
+		else:
+			return tf.to_float(
+					tf.maximum(cfr_step - delay, 0),
+					name="weighted_averaging_factor",
+			)
 
 
 def cumulate_strategy_of_opponent(opponent=current_opponent):  # TODO unittest

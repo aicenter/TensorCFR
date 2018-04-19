@@ -25,26 +25,27 @@ def get_regrets():  # TODO verify and write a unittest
 
 
 def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify and write a unittest
-	update_regrets_ops = [None] * (levels - 1)
-	for level in range(levels - 1):
-		# to keep cumulative regret still positive:
-		# TODO optimize by: pre-define `infosets_of_player1` and `infosets_of_player2` (in domain definitions) and switch
-		infosets_of_updating_player = tf.reshape(
-				tf.equal(infoset_acting_players[level], current_updating_player),
-				shape=[positive_cumulative_regrets[level].shape[0]],
-				name="infosets_of_updating_player_lvl{}".format(level),
-		)
-		# TODO implement and use `masked_assign_add` here
-		update_regrets_ops[level] = masked_assign(
-			ref=positive_cumulative_regrets[level],
-			mask=infosets_of_updating_player,
-			value=tf.maximum(
-					0.0,
-					positive_cumulative_regrets[level] + regrets[level]
-			),
-			name="update_regrets_lvl{}".format(level)
-		)
-	return update_regrets_ops
+	with tf.name_scope("update_cumulative_regrets"):
+		update_regrets_ops = [None] * (levels - 1)
+		for level in range(levels - 1):
+			# to keep cumulative regret still positive:
+			# TODO optimize by: pre-define `infosets_of_player1` and `infosets_of_player2` (in domain definitions) and switch
+			infosets_of_updating_player = tf.reshape(
+					tf.equal(infoset_acting_players[level], current_updating_player),
+					shape=[positive_cumulative_regrets[level].shape[0]],
+					name="infosets_of_updating_player_lvl{}".format(level),
+			)
+			# TODO implement and use `masked_assign_add` here
+			update_regrets_ops[level] = masked_assign(
+				ref=positive_cumulative_regrets[level],
+				mask=infosets_of_updating_player,
+				value=tf.maximum(
+						0.0,
+						positive_cumulative_regrets[level] + regrets[level]
+				),
+				name="update_regrets_lvl{}".format(level)
+			)
+		return update_regrets_ops
 
 
 if __name__ == '__main__':

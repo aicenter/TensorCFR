@@ -15,7 +15,7 @@ def get_nodal_cf_values():  # TODO verify and write a unittest
 	reach_probabilities = get_nodal_reach_probabilities()
 	with tf.variable_scope("nodal_counterfactual_values"):
 		cf_values_of_nodes = [tf.multiply(reach_probabilities[level], expected_values[level],
-		                                  name="node_cf_val_lvl{}".format(level)) for level in range(levels)]
+		                                  name="nodal_cf_value_lvl{}".format(level)) for level in range(levels)]
 		return cf_values_of_nodes
 
 

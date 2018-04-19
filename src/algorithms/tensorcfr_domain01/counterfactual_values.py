@@ -19,7 +19,7 @@ def get_nodal_cf_values():  # TODO verify and write a unittest
 		return cf_values_of_nodes
 
 
-def get_cf_values_infoset_actions():  # TODO verify and write a unittest
+def get_infoset_cf_values_per_actions():  # TODO verify and write a unittest
 	node_cf_values = get_nodal_cf_values()
 	with tf.variable_scope("infoset_action_counterfactual_values"):
 		cf_values_infoset_actions = [None] * (levels - 1)
@@ -39,7 +39,7 @@ def get_cf_values_infoset_actions():  # TODO verify and write a unittest
 
 
 def get_infoset_cf_values():  # TODO verify and write a unittest
-	cf_values_infoset_actions = get_cf_values_infoset_actions()
+	cf_values_infoset_actions = get_infoset_cf_values_per_actions()
 	with tf.variable_scope("infoset_counterfactual_values"):
 		return [
 			tf.reduce_sum(
@@ -56,7 +56,7 @@ if __name__ == '__main__':
 	nodal_reach_probabilities_ = get_nodal_reach_probabilities()
 	expected_values_ = get_expected_values()
 	cf_values_nodes_ = get_nodal_cf_values()
-	cf_values_infoset_actions_ = get_cf_values_infoset_actions()
+	cf_values_infoset_actions_ = get_infoset_cf_values_per_actions()
 	cf_values_infoset_ = get_infoset_cf_values()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

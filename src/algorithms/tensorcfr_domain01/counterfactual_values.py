@@ -10,7 +10,7 @@ from src.utils.tensor_utils import print_tensors, scatter_nd_sum
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
-def get_cf_values_nodes():  # TODO verify and write a unittest
+def get_nodal_cf_values():  # TODO verify and write a unittest
 	expected_values = get_expected_values()
 	reach_probabilities = get_nodal_reach_probabilities()
 	with tf.variable_scope("nodal_counterfactual_values"):
@@ -20,7 +20,7 @@ def get_cf_values_nodes():  # TODO verify and write a unittest
 
 
 def get_cf_values_infoset_actions():  # TODO verify and write a unittest
-	node_cf_values = get_cf_values_nodes()
+	node_cf_values = get_nodal_cf_values()
 	with tf.variable_scope("infoset_action_counterfactual_values"):
 		cf_values_infoset_actions = [None] * (levels - 1)
 		cf_values_infoset_actions[0] = tf.expand_dims(
@@ -55,7 +55,7 @@ def get_cf_values_infoset():  # TODO verify and write a unittest
 if __name__ == '__main__':
 	nodal_reach_probabilities_ = get_nodal_reach_probabilities()
 	expected_values_ = get_expected_values()
-	cf_values_nodes_ = get_cf_values_nodes()
+	cf_values_nodes_ = get_nodal_cf_values()
 	cf_values_infoset_actions_ = get_cf_values_infoset_actions()
 	cf_values_infoset_ = get_cf_values_infoset()
 	with tf.Session() as sess:

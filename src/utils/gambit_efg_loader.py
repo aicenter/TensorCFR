@@ -135,13 +135,14 @@ class GambitEFGLoader:
 
 		self.node_to_infoset = [None] * self.number_of_levels
 		self.current_infoset_strategies = [None] * self.number_of_levels
+		self.initial_infoset_strategies = [None] * self.number_of_levels # TODO temporary because of tensorcfr.py
 		self.infoset_acting_players = [None] * self.number_of_levels
+		self.cumulative_regrets = [None] * (self.number_of_levels)
+		self.positive_cumulative_regrets = [None] * (self.number_of_levels)
 
 		self.node_types = [None] * (self.number_of_levels + 1)
 		self.utilities = [None] * (self.number_of_levels + 1)
 		self.node_to_infoset = [None] * (self.number_of_levels + 1)
-		self.cumulative_regrets = [None] * (self.number_of_levels + 1)
-		self.positive_cumulative_regrets = [None] * (self.number_of_levels + 1)
 
 		for idx in range(len(self.actions_per_levels)):
 			self.infoset_acting_players[idx] = np.zeros(self.actions_per_levels[:idx]) * constants.NO_ACTING_PLAYER
@@ -150,8 +151,8 @@ class GambitEFGLoader:
 			self.utilities[idx] = np.ones(self.actions_per_levels[:idx]) * constants.NON_TERMINAL_UTILITY
 			self.node_types[idx] = np.ones(self.actions_per_levels[:idx]) * constants.IMAGINARY_NODE
 			self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx]) * TMP_NODE_TO_INFOSET_IMAGINERY * (-1)
-			self.cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
-			self.positive_cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
+			#self.cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
+			#self.positive_cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
@@ -365,8 +366,11 @@ class GambitEFGLoader:
 			[infoset_acting_players, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_players(self.actions_per_levels[lvl], self.node_types)
 			self.infoset_acting_players[lvl] = infoset_acting_players
 			self.current_infoset_strategies[lvl] = infoset_strategies
+			self.initial_infoset_strategies[lvl] = copy.deepcopy(self.current_infoset_strategies[lvl])
+			self.cumulative_regrets[lvl] = np.zeros(infoset_strategies.shape)
+			self.positive_cumulative_regrets[lvl] = np.zeros(infoset_strategies.shape)
 
-		self.infoset_acting_players[0] = self.infoset_acting_players[0][0]
+		#self.infoset_acting_players[0] = self.infoset_acting_players[0][0]
 		"""
 		print('node_to_infoset lvl 0')
 		print(self.node_to_infoset[0])
@@ -395,10 +399,18 @@ class GambitEFGLoader:
 		print(self.infoset_acting_players[1])
 		print('infoset_acting_players lvl 2')
 		print(self.infoset_acting_players[2])
+
+		print('positive cumulative regrets lvl 0')
+		print(self.positive_cumulative_regrets[0])
+		print('positive cumulative regrets lvl 1')
+		print(self.positive_cumulative_regrets[1])
+		print('positive cumulative regrets lvl 2')
+		print(self.positive_cumulative_regrets[2])
 		"""
 
 	def get_tensorflow_tensors(self):
 		current_infoset_strategies = [None] * len(self.current_infoset_strategies)
+		initial_infoset_strategies = [None] * len(self.initial_infoset_strategies)
 		positive_cumulative_regrets = [None] * len(self.positive_cumulative_regrets)
 		cumulative_regrets = [None] * len(self.cumulative_regrets)
 		node_to_infoset = [None] * len(self.node_to_infoset)
@@ -411,6 +423,11 @@ class GambitEFGLoader:
 				self.current_infoset_strategies[lvl],
 				name='current_infoset_strategies_lvl{}'.format(lvl),
 				dtype=tf.float32
+			)
+			initial_infoset_strategies[lvl] = tf.placeholder_with_default(
+				self.initial_infoset_strategies[lvl],
+				shape=self.initial_infoset_strategies[lvl].shape,
+				name='initial_infoset_strategies_lvl{}'.format(lvl)
 			)
 			positive_cumulative_regrets[lvl] = tf.Variable(
 				self.positive_cumulative_regrets[lvl],
@@ -437,14 +454,17 @@ class GambitEFGLoader:
 			node_types[lvl] = tf.Variable(self.node_types[lvl], name='node_types_lvl{}'.format(lvl), dtype=tf.int32)
 			utilities[lvl] = tf.Variable(self.utilities[lvl], name='utilities_lvl{}'.format(lvl), dtype=tf.float32)
 
-		return [
-			current_infoset_strategies,
-			positive_cumulative_regrets,
-			node_to_infoset,
-			node_types,
-			utilities,
-			infoset_acting_players
-		]
+		return_dict = {
+			'current_infoset_strategies': current_infoset_strategies,
+			'initial_infoset_strategies': initial_infoset_strategies,
+			'positive_cumulative_regrets': positive_cumulative_regrets,
+			'node_to_infoset': node_to_infoset,
+			'node_types': node_types,
+			'utilities': utilities,
+			'infoset_acting_players': infoset_acting_players
+		}
+
+		return return_dict
 
 
 
@@ -456,15 +476,24 @@ if __name__ == '__main__':
 
 	domain = GambitEFGLoader(domain01_efg)
 
-	[current_infoset_strategies, positive_cumulative_regrets, node_to_infoset, node_types, utilities, infoset_acting_players] = domain.get_tensorflow_tensors()
+	domain_tensors = domain.get_tensorflow_tensors()
 
+	current_infoset_strategies = domain_tensors['current_infoset_strategies']
+	initial_infoset_strategies = domain_tensors['initial_infoset_strategies']
+	positive_cumulative_regrets = domain_tensors['positive_cumulative_regrets']
+	node_to_infoset = domain_tensors['node_to_infoset']
+	node_types = domain_tensors['node_types']
+	utilities = domain_tensors['utilities']
+	infoset_acting_players = domain_tensors['infoset_acting_players']
+
+	"""
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 
-		for lvl in range(domain.number_of_levels + 1):
+		for lvl in range(domain.number_of_levels):
 			print("Level " + str(lvl))
-			print(sess.run(utilities[lvl]))
-
+			print(sess.run(positive_cumulative_regrets[lvl]))
+	"""
 
 
 

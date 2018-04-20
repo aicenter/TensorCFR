@@ -71,16 +71,10 @@ def cumulate_strategy_of_opponent(opponent=current_opponent):  # TODO unittest
 
 
 def process_strategies(acting_player=current_updating_player, opponent=current_opponent):
-	update_regrets_ops = update_positive_cumulative_regrets()
 	update_ops = update_strategy_of_updating_player(acting_player=acting_player)
 	cumulate_ops = cumulate_strategy_of_opponent(opponent=opponent)
 	with tf.variable_scope("process_strategies"):
-		ops_process_strategies = [
-			op
-			for sublist in map(list, zip(update_regrets_ops, update_ops, cumulate_ops))
-			for op in sublist
-		]
-		return tf.group(ops_process_strategies, name="process_strategies")
+		return tf.group(update_ops + cumulate_ops, name="process_strategies")
 
 
 def get_average_infoset_strategies():

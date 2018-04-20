@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+from src.algorithms.tensorcfr_domain01.regrets import update_positive_cumulative_regrets
 from src.algorithms.tensorcfr_domain01.swap_players import swap_players
 from src.algorithms.tensorcfr_domain01.update_strategies import process_strategies
 from src.domains.domain01.domain_definitions import get_infoset_acting_players, cfr_step, \
@@ -21,12 +22,18 @@ def increment_cfr_step():
 
 
 def do_cfr_step():
+	with tf.variable_scope("group_update_regrets"):
+		ops_update_regrets = tf.group(
+			update_positive_cumulative_regrets(),
+			name="group_update_regrets",
+		)
 	ops_process_strategies = process_strategies()
-	op_swap_players = swap_players()
-	op_inc_step = increment_cfr_step()
+	with tf.control_dependencies([ops_update_regrets, ops_process_strategies]):
+		op_swap_players = swap_players()
+		op_inc_step = increment_cfr_step()
 	with tf.variable_scope("cfr_step"):
 		return tf.group(
-				[ops_process_strategies, op_swap_players, op_inc_step],
+				[ops_update_regrets, ops_process_strategies, op_swap_players, op_inc_step],
 				name="cfr_step"
 		)
 

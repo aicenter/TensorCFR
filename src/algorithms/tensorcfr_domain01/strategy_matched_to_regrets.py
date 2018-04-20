@@ -1,7 +1,8 @@
 import tensorflow as tf
 
-from src.domains.domain01.domain_definitions import levels, positive_cumulative_regrets
-from src.algorithms.tensorcfr_domain01.regrets import update_positive_cumulative_regrets
+from src.domains.domain01.domain_definitions import levels, positive_cumulative_regrets, acting_depth
+from src.algorithms.tensorcfr_domain01.regrets import update_positive_cumulative_regrets, \
+	get_updated_values_of_cumulative_regrets
 from src.algorithms.tensorcfr_domain01.uniform_strategies import get_infoset_uniform_strategies
 from src.utils.tensor_utils import print_tensors
 
@@ -10,18 +11,19 @@ from src.utils.tensor_utils import print_tensors
 
 def get_strategy_matched_to_regrets():  # TODO unittest
 	infoset_uniform_strategies = get_infoset_uniform_strategies()
+	updated_values_of_cumulative_regrets = get_updated_values_of_cumulative_regrets()
 	with tf.variable_scope("strategies_matched_to_regrets"):
-		strategies_matched_to_regrets = [None] * (levels - 1)
+		strategies_matched_to_regrets = [None] * acting_depth
 		for level in range(levels - 1):
 			sums_of_regrets = tf.reduce_sum(
-				positive_cumulative_regrets[level],
+				updated_values_of_cumulative_regrets[level],
 				axis=-1,
 				keepdims=True,
 				name="sums_of_regrets_lvl{}".format(level)
 			)
 			# TODO use `normalize()` here
 			normalized_regrets = tf.divide(
-				positive_cumulative_regrets[level],
+				updated_values_of_cumulative_regrets[level],
 				sums_of_regrets,
 				name="normalized_regrets_lvl{}".format(level)
 			)
@@ -39,21 +41,28 @@ def get_strategy_matched_to_regrets():  # TODO unittest
 
 if __name__ == '__main__':
 	strategies_matched_to_regrets_ = get_strategy_matched_to_regrets()
-	update_regrets = update_positive_cumulative_regrets()
+	updated_values_of_cumulative_regrets_ = get_updated_values_of_cumulative_regrets()
+	ops_update_regrets_ = update_positive_cumulative_regrets()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
 			print_tensors(sess, [
-				positive_cumulative_regrets[i],
-				strategies_matched_to_regrets_[i],
-				strategies_matched_to_regrets_[i],
-				update_regrets[i],
-				positive_cumulative_regrets[i],
-				strategies_matched_to_regrets_[i],
-				strategies_matched_to_regrets_[i],
-				update_regrets[i],
-				positive_cumulative_regrets[i],
-				strategies_matched_to_regrets_[i],
-				strategies_matched_to_regrets_[i],
+				positive_cumulative_regrets[i], updated_values_of_cumulative_regrets_[i], strategies_matched_to_regrets_[i],
+			])
+
+			print("___________________________________\n")
+			print_tensors(sess, [ops_update_regrets_[i]])
+			print("___________________________________\n")
+
+			print_tensors(sess, [
+				positive_cumulative_regrets[i], updated_values_of_cumulative_regrets_[i], strategies_matched_to_regrets_[i],
+			])
+
+			print("___________________________________\n")
+			print_tensors(sess, [ops_update_regrets_[i]])
+			print("___________________________________\n")
+
+			print_tensors(sess, [
+				positive_cumulative_regrets[i], updated_values_of_cumulative_regrets_[i], strategies_matched_to_regrets_[i],
 			])

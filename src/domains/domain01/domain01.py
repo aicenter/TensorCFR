@@ -20,7 +20,16 @@ acting_depth = len(actions_per_levels)
 import os
 domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'domain01_via_gambit.efg')
 domain = GambitEFGLoader(domain01_efg)
-[current_infoset_strategies, positive_cumulative_regrets, node_to_infoset, node_types, utilities, infoset_acting_players] = domain.get_tensorflow_tensors()
+domain_tensors = domain.get_tensorflow_tensors()
+
+current_infoset_strategies = domain_tensors['current_infoset_strategies']
+initial_infoset_strategies = domain_tensors['initial_infoset_strategies']
+positive_cumulative_regrets = domain_tensors['positive_cumulative_regrets']
+node_to_infoset = domain_tensors['node_to_infoset']
+node_types = domain_tensors['node_types']
+utilities = domain_tensors['utilities']
+infoset_acting_players = domain_tensors['infoset_acting_players']
+
 """
 node_to_infoset = [None] * 3
 """

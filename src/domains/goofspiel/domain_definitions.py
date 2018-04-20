@@ -6,36 +6,67 @@ from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NOD
 	PLAYER1, \
 	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY
 from src.utils.tensor_utils import print_tensors, masked_assign
+from src.utils.gambit_efg_loader import GambitEFGLoader
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 with tf.variable_scope("domain_definitions"):
-	actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1, 2)
+
+	import os
+
+	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc',
+								'domain01_via_gambit.efg')
+
+	#goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'mini_goofspiel',
+	#							 'mini_goofspiel_via_gtlibrary.gbt')
+	domain = GambitEFGLoader(domain01_efg)
+	domain_tensors = domain.get_tensorflow_tensors()
+
+	current_infoset_strategies = domain_tensors['current_infoset_strategies']
+	initial_infoset_strategies = domain_tensors['initial_infoset_strategies']
+	positive_cumulative_regrets = domain_tensors['positive_cumulative_regrets']
+	node_to_infoset = domain_tensors['node_to_infoset']
+	node_types = domain_tensors['node_types']
+	utilities = domain_tensors['utilities']
+	infoset_acting_players = domain_tensors['infoset_acting_players']
+
+	print("Moje domena ", domain.actions_per_levels)
+
+	actions_per_levels = domain.actions_per_levels  # maximum number of actions per each level (0, 1, 2)
+
 	levels = len(actions_per_levels) + 1  # accounting for 0th level
 	acting_depth = len(actions_per_levels)
 
 	# Init
-	node_to_infoset = [None] * acting_depth
-	shape = [None] * levels  # TODO replace with: shape = [actions_per_levels[:i] for i in range(levels)]
-	node_types = [None] * levels
-	utilities = [None] * levels
-	infoset_acting_players = [None] * acting_depth
-	initial_infoset_strategies = [None] * acting_depth
+	#node_to_infoset = [None] * acting_depth
+	#shape = [None] * levels  # TODO replace with: shape = [actions_per_levels[:i] for i in range(levels)]
+	#node_types = [None] * levels
+	#utilities = [None] * levels
+	#infoset_acting_players = [None] * acting_depth
+	#initial_infoset_strategies = [None] * acting_depth
 
 	########## Level 0 ##########
 	# I0,0 = { s } ... root node, the chance player acts here
 	# there are 5 actions in node s
-	node_to_infoset[0] = tf.Variable(0, name="node_to_infoset_lvl0")
+
+	#node_to_infoset[0] = tf.Variable(0, name="node_to_infoset_lvl0")
+
 	reach_probability_of_root_node = tf.Variable(1.0, name="reach_probability_of_root_node")
-	shape[0] = actions_per_levels[:0]
-	node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
-	utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
-	infoset_acting_players[0] = tf.Variable([CHANCE_PLAYER], name="infoset_acting_players_lvl0")
+	#shape[0] = actions_per_levels[:0]
+
+	#node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
+	#utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
+
+	#infoset_acting_players[0] = tf.Variable([CHANCE_PLAYER], name="infoset_acting_players_lvl0")
+	"""
 	initial_infoset_strategies[0] = tf.placeholder_with_default(
 			input=[[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
 			shape=[infoset_acting_players[0].shape[0], actions_per_levels[0]],
 			name="initial_infoset_strategies_lvl{}".format(0)
 	)
+	"""
+
+
 
 	########## Level 1 ##########
 	# I1,0 = { s' }
@@ -43,10 +74,14 @@ with tf.variable_scope("domain_definitions"):
 	# I1,2 = { s2, s3 }
 	# I1,3 = { s4 } ... chance node
 	# each node has 3 actions
-	node_to_infoset[1] = tf.Variable([0, 1, 2, 2, 3], name="node_to_infoset_lvl1")
-	shape[1] = actions_per_levels[:1]
-	node_types[1] = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
-	utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
+
+	#node_to_infoset[1] = tf.Variable([0, 1, 2, 2, 3], name="node_to_infoset_lvl1")
+
+	#shape[1] = actions_per_levels[:1]
+
+	#node_types[1] = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
+	#utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
+	"""
 	infoset_acting_players[1] = tf.Variable(
 		[PLAYER1,         # I1,0
 		 PLAYER2,         # I1,1
@@ -54,6 +89,8 @@ with tf.variable_scope("domain_definitions"):
 		 CHANCE_PLAYER],  # I1,3
 		name="infoset_acting_players_lvl1"
 	)
+	"""
+	"""
 	initial_infoset_strategies[1] = tf.placeholder_with_default(
 			input=[[0.5, 0.4, 0.1],   # of I1,0
 						 [0.1, 0.9, 0.0],   # of I1,1
@@ -62,6 +99,10 @@ with tf.variable_scope("domain_definitions"):
 			shape=[infoset_acting_players[1].shape[0], actions_per_levels[1]],
 			name="initial_infoset_strategies_lvl{}".format(1)
 	)
+	"""
+
+
+
 
 	########## Level 2 ##########
 	# I2,0 = { s5 }
@@ -74,6 +115,7 @@ with tf.variable_scope("domain_definitions"):
 	# I2,7 = { s7, s17 } ... terminal nodes
 	# I2,8 = { s10, s13, s16 } ... imaginary nodes
 	# each node has 2 actions
+	"""
 	node_to_infoset[2] = tf.Variable(
 		[[0, 1, 7],   # s5, s6, s7
 		 [2, 2, 8],   # s8, s9, s10
@@ -82,7 +124,12 @@ with tf.variable_scope("domain_definitions"):
 		 [7, 5, 6]],  # s17, s18, s19
 		name="node_to_infoset_lvl2"
 	)
-	shape[2] = actions_per_levels[:2]
+	"""
+
+
+	#shape[2] = actions_per_levels[:2]
+
+	"""
 	node_types[2] = tf.Variable(
 		[[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, s6, s7
 		 [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s8, s9, s10
@@ -91,6 +138,8 @@ with tf.variable_scope("domain_definitions"):
 		 [TERMINAL_NODE, INNER_NODE, INNER_NODE]],  # s17, s18, s19
 		name="node_types_lvl2"
 	)
+	"""
+	"""
 	utilities[2] = masked_assign(
 			ref=tf.Variable(
 					tf.fill(
@@ -105,6 +154,8 @@ with tf.variable_scope("domain_definitions"):
 			mask=tf.equal(node_types[2], TERMINAL_NODE),
 			name="utilities_lvl2"
 	)
+	"""
+	"""
 	infoset_acting_players[2] = tf.Variable(
 		[PLAYER1,            # of I2,0
 		 PLAYER2,            # of I2,1
@@ -117,6 +168,8 @@ with tf.variable_scope("domain_definitions"):
 		 NO_ACTING_PLAYER],  # of I2,8 ... pseudo-infoset of imaginary nodes
 		name="infoset_acting_players_lvl2"
 	)
+	"""
+	"""
 	initial_infoset_strategies[2] = tf.placeholder_with_default(
 		input=[[0.15, 0.85],   # of I2,0
 					 [0.70, 0.30],   # of I2,1
@@ -130,10 +183,13 @@ with tf.variable_scope("domain_definitions"):
 		shape=[infoset_acting_players[2].shape[0], actions_per_levels[2]],
 		name="initial_infoset_strategies_lvl{}".format(2)
 	)
+	"""
 
 	########## Level 3 ##########
 	# There are never any infosets in the final layer, only terminal / imaginary nodes.
-	shape[3] = actions_per_levels[:3]
+
+	#shape[3] = actions_per_levels[:3]
+	"""
 	indices_of_imaginary_nodes_lvl3 = tf.constant(
 		[[0, 2],   # children of s7
 		 [1, 2],   # children of s10
@@ -142,6 +198,8 @@ with tf.variable_scope("domain_definitions"):
 		 [4, 0]],  # children of s17
 		name="indices_of_imaginary_nodes_lvl3"
 	)
+	"""
+	"""
 	node_types[3] = tf.scatter_nd_update(
 		ref=tf.Variable(
 					tf.fill(
@@ -156,6 +214,8 @@ with tf.variable_scope("domain_definitions"):
 		),
 		name="node_types_lvl3"
 	)
+	"""
+	"""
 	utilities[3] = masked_assign(
 		ref=tf.Variable(
 					tf.fill(
@@ -167,14 +227,20 @@ with tf.variable_scope("domain_definitions"):
 		mask=tf.equal(node_types[3], TERMINAL_NODE),
 		name="utilities_lvl3"
 	)
+	"""
+
+
 
 	########## miscellaneous tensors ##########
+	"""
 	current_infoset_strategies = [
 		tf.Variable(
 				initial_value=initial_infoset_strategies[level],
 				name="current_infoset_strategies_lvl{}".format(level)
 		) for level in range(acting_depth)
 	]
+
+
 	positive_cumulative_regrets = [
 		tf.Variable(
 				tf.zeros_like(
@@ -183,6 +249,8 @@ with tf.variable_scope("domain_definitions"):
 				name="positive_cumulative_regrets_lvl{}".format(level)
 		) for level in range(acting_depth)
 	]
+	"""
+
 	cumulative_infoset_strategies = [
 		tf.Variable(
 				tf.zeros_like(
@@ -192,6 +260,8 @@ with tf.variable_scope("domain_definitions"):
 		)
 		for level in range(acting_depth)
 	]  # used for the final average strategy
+
+
 	infosets_of_non_chance_player = [
 		tf.reshape(
 				tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
@@ -245,6 +315,7 @@ if __name__ == '__main__':
 				print_tensors(sess, [reach_probability_of_root_node])
 			print_tensors(sess, [node_types[level], utilities[level]])
 			if level != levels_range[-1]:
+
 				print_tensors(sess, [
 					node_to_infoset[level],
 					infoset_acting_players[level],
@@ -253,4 +324,5 @@ if __name__ == '__main__':
 					positive_cumulative_regrets[level],
 					cumulative_infoset_strategies[level],
 				])
+
 		print_misc_variables(session=sess)

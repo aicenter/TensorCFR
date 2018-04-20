@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.algorithms.tensorcfr_domain01.node_strategies import get_node_strategies
+from src.algorithms.tensorcfr_goofspiel.node_strategies import get_node_strategies
 from src.commons.constants import TERMINAL_NODE
 from src.domains.goofspiel.domain_definitions import utilities, node_types, levels, signum_of_current_player,\
 	print_misc_variables

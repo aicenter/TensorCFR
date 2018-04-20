@@ -1,8 +1,8 @@
 import tensorflow as tf
 
 from src.domains.goofspiel.domain_definitions import levels, positive_cumulative_regrets
-from src.algorithms.tensorcfr_domain01.regrets import update_positive_cumulative_regrets
-from src.algorithms.tensorcfr_domain01.uniform_strategies import get_infoset_uniform_strategies
+from src.algorithms.tensorcfr_goofspiel.regrets import update_positive_cumulative_regrets
+from src.algorithms.tensorcfr_goofspiel.uniform_strategies import get_infoset_uniform_strategies
 from src.utils.tensor_utils import print_tensors
 
 

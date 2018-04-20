@@ -14,12 +14,15 @@ with tf.variable_scope("domain_definitions"):
 
 	import os
 
-	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc',
-								'domain01_via_gambit.efg')
+	#domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc',
+	#							'domain01_via_gambit.efg')
 
-	#goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'mini_goofspiel',
+	#mini_goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'mini_goofspiel',
 	#							 'mini_goofspiel_via_gtlibrary.gbt')
-	domain = GambitEFGLoader(domain01_efg)
+	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc',
+									  'goofspiel',
+									  'IIGS5_s1_bf_ft.gbt')
+	domain = GambitEFGLoader(goofspiel_gbt)
 	domain_tensors = domain.get_tensorflow_tensors()
 
 	current_infoset_strategies = domain_tensors['current_infoset_strategies']
@@ -29,8 +32,6 @@ with tf.variable_scope("domain_definitions"):
 	node_types = domain_tensors['node_types']
 	utilities = domain_tensors['utilities']
 	infoset_acting_players = domain_tensors['infoset_acting_players']
-
-	print("Moje domena ", domain.actions_per_levels)
 
 	actions_per_levels = domain.actions_per_levels  # maximum number of actions per each level (0, 1, 2)
 

@@ -6,9 +6,10 @@ import re
 import tensorflow as tf
 
 
-def set_up_tensorboard(session, hyperparameters):
-	log_dir = "logs/{}-{}-{}".format(
-			"domain01",
+def set_up_tensorboard(session, hyperparameters, basename="tensorcfr", domain_name="domain01"):
+	log_dir = "logs/{}-{}-{}-{}".format(
+			basename,
+			domain_name,
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
 			",".join(
 					("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)

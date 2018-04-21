@@ -42,9 +42,12 @@ if __name__ == '__main__':
 	total_steps = 4
 	infoset_acting_players_ = get_infoset_acting_players()
 	cfr_step_op = do_cfr_step()
+	delay = 0
+	with tf.variable_scope("initialization"):
+		assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay, name="assign_averaging_delay")
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		sess.run(tf.assign(ref=averaging_delay, value=0))
+		sess.run(assign_averaging_delay_op)
 		print("Running {} CFR+ iterations...\n".format(total_steps))
 		for _ in range(total_steps):
 			print("########## Start of CFR+ step {} ##########".format(cfr_step.eval()))

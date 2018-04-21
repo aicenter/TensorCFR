@@ -163,16 +163,16 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 		}
 		set_up_tensorboard(session=sess, hyperparameters=hyperparameters)
 		assigned_averaging_delay = sess.run(assign_averaging_delay_op)
-		if quiet is False:
+		if not quiet:
 			log_before_all_steps(sess, setup_messages, total_steps, assigned_averaging_delay)
 		for _ in range(total_steps):
-			if quiet is False:
+			if not quiet:
 				log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values,
 				                      reach_probabilities, regrets)
 			sess.run(cfr_step_op)
-			if quiet is False:
+			if not quiet:
 				log_after_every_step(sess, strategies_matched_to_regrets)
-		if quiet is False:
+		if not quiet:
 			log_after_all_steps(average_infoset_strategies, sess)
 
 

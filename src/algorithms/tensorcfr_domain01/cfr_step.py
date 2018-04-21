@@ -48,7 +48,15 @@ if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		sess.run(assign_averaging_delay_op)
-
+		# set_up_tensorboard(
+		# 		session=sess,
+		# 		hyperparameters={
+		# 			"total_steps": total_steps,
+		# 			"averaging_delay": delay,
+		# 		},
+		# 		basename="cfr_step",
+		# 		domain_name="domain01",
+		# )
 		print("Running {} CFR+ iterations...\n".format(total_steps))
 		for _ in range(total_steps):
 			print("########## Start of CFR+ step {} ##########".format(cfr_step.eval()))

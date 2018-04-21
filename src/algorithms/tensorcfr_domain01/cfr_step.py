@@ -48,10 +48,13 @@ if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		sess.run(assign_averaging_delay_op)
+
 		print("Running {} CFR+ iterations...\n".format(total_steps))
 		for _ in range(total_steps):
 			print("########## Start of CFR+ step {} ##########".format(cfr_step.eval()))
 			print_tensors(sess, [current_updating_player, current_opponent])
+			print("___________________________________\n")
+			print_tensors(sess, infoset_acting_players_)
 			print("___________________________________\n")
 			print_tensors(sess, positive_cumulative_regrets)
 			print("___________________________________\n")

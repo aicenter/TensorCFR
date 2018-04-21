@@ -1,8 +1,4 @@
-import re
-
 import tensorflow as tf
-import os
-import datetime
 
 from src.algorithms.tensorcfr_domain01.bottomup_expected_values import get_expected_values
 from src.algorithms.tensorcfr_domain01.cfr_step import do_cfr_step
@@ -13,13 +9,15 @@ from src.algorithms.tensorcfr_domain01.strategy_matched_to_regrets import get_st
 from src.algorithms.tensorcfr_domain01.topdown_reach_probabilities import get_nodal_reach_probabilities
 from src.algorithms.tensorcfr_domain01.uniform_strategies import get_infoset_uniform_strategies
 from src.algorithms.tensorcfr_domain01.update_strategies import get_average_infoset_strategies
-from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, DEFAULT_AVERAGING_DELAY
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.domain01.domain_definitions import cfr_step, current_infoset_strategies, \
 	cumulative_infoset_strategies, positive_cumulative_regrets, initial_infoset_strategies, acting_depth, averaging_delay
 from src.utils.tensor_utils import print_tensors
+from src.utils.tensorboard_utils import set_up_tensorboard
 
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
+
 
 def set_up_feed_dictionary(method="by-domain", initial_strategy_values=None):
 	if method == "by-domain":
@@ -49,22 +47,6 @@ def set_up_feed_dictionary(method="by-domain", initial_strategy_values=None):
 		}
 	else:
 		raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
-
-
-def set_up_tensorboard(session, hyperparameters):
-	log_dir = "logs/{}-{}-{}".format(
-			"domain01",
-			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
-			",".join(
-					("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
-					 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
-	)
-	if not os.path.exists("logs"):
-		os.mkdir("logs")
-	with tf.variable_scope("tensorboard_operations"):
-		summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
-		with summary_writer.as_default():
-			tf.contrib.summary.initialize(session=session, graph=session.graph)
 
 
 def set_up_cfr():

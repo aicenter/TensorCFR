@@ -139,10 +139,19 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-		set_up_tensorboard(session=sess, hyperparameters={
-			"total_steps": total_steps,
-			"averaging_delay": delay,
-		})
+		with tf.variable_scope("tensorboard_operations"):
+			summary_writer = set_up_tensorboard(session=sess, hyperparameters={
+				"total_steps": total_steps,
+				"averaging_delay": delay,
+			})
+			# with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
+			# 	summaries = [
+			# 		tf.contrib.summary.scalar(
+			# 				"expected values/current strategies",
+			# 				tf.get_variable("expected_values/expected_values_lvl0"),
+			# 		)
+			# 	]
+
 		assigned_averaging_delay = sess.run(assign_averaging_delay_op)
 		if not quiet:
 			log_before_all_steps(sess, setup_messages, total_steps, assigned_averaging_delay)
@@ -151,6 +160,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 				log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values,
 				                      reach_probabilities, regrets)
 			sess.run(cfr_step_op)
+			# sess.run([cfr_step_op, summaries])
 			if not quiet:
 				log_after_every_step(sess, strategies_matched_to_regrets)
 		log_after_all_steps(sess, average_infoset_strategies)

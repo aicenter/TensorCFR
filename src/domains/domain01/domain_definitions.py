@@ -4,8 +4,8 @@ import tensorflow as tf
 
 from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, \
 	PLAYER1, \
-	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY
-from src.utils.tensor_utils import print_tensors, masked_assign
+	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY, INT_DTYPE
+from src.utils.tensor_utils import print_tensors
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
@@ -197,12 +197,12 @@ with tf.variable_scope("domain_definitions"):
 	cfr_step = tf.get_variable(  # counter of CFR+ iterations
 			"cfr_step",
 			initializer=1,
-			dtype=tf.int32
+			dtype=INT_DTYPE,
 	)
 	averaging_delay = tf.get_variable(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
 			"averaging_delay",
 			initializer=DEFAULT_AVERAGING_DELAY,
-			dtype=tf.int32,
+			dtype=INT_DTYPE,
 	)
 	player_owning_the_utilities = tf.constant(  # utilities defined...
 			PLAYER1,  # ...from this player's point of view
@@ -211,10 +211,12 @@ with tf.variable_scope("domain_definitions"):
 	current_updating_player = tf.get_variable(
 			"current_updating_player",
 			initializer=PLAYER1,
+			dtype=INT_DTYPE,
 	)
 	current_opponent = tf.get_variable(
 			"current_opponent",
 			initializer=PLAYER2,
+			dtype=INT_DTYPE,
 	)
 	signum_of_current_player = tf.where(
 			condition=tf.equal(current_updating_player, player_owning_the_utilities),

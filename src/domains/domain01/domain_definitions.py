@@ -194,7 +194,11 @@ with tf.variable_scope("domain_definitions"):
 				name="infosets_of_acting_player_lvl{}".format(level)
 		) for level in range(acting_depth)
 	]
-	cfr_step = tf.get_variable("cfr_step", initializer=1, dtype=tf.int32)  # counter of CFR+ iterations
+	cfr_step = tf.get_variable(  # counter of CFR+ iterations
+			"cfr_step",
+			initializer=1,
+			dtype=tf.int32
+	)
 	averaging_delay = tf.get_variable(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
 			"averaging_delay",
 			initializer=DEFAULT_AVERAGING_DELAY,

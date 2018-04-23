@@ -1,11 +1,18 @@
 import tensorflow as tf
 
+from src.commons.constants import PLAYER1, PLAYER2
+
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_the_other_player_of(tensor_variable_of_player):
-	# for 2-player games with players of indices 1 and 2, the other players are 3-1=2 and 3-2=1
-	return 3 - tensor_variable_of_player
+	with tf.variable_scope("get_the_other_player"):
+		return tf.where(
+				condition=tf.equal(tensor_variable_of_player, PLAYER1),
+				x=PLAYER2,
+				y=PLAYER1,
+				name="get_the_other_player"
+		)
 
 
 def swap_players():
@@ -32,7 +39,6 @@ def swap_players():
 
 
 if __name__ == '__main__':
-	from src.commons.constants import PLAYER1, PLAYER2
 	from src.domains.domain01.domain_definitions import cfr_step, print_misc_variables
 
 	increment_cfr_step_op = tf.assign_add(ref=cfr_step, value=1, name="increment_cfr_step_op")

@@ -16,8 +16,16 @@ def swap_players():
 	with tf.variable_scope("swap_players"):
 		return tf.group(
 			[
-				updating_player.assign(get_the_other_player_of(updating_player)),
-				opponent.assign(get_the_other_player_of(opponent)),
+				tf.assign(
+						ref=updating_player,
+						value=get_the_other_player_of(updating_player),
+						name="assign_new_updating_player",
+				),
+				tf.assign(
+						ref=opponent,
+						value=get_the_other_player_of(opponent),
+						name="assign_new_opponent",
+				),
 			],
 			name="swap_players",
 		)

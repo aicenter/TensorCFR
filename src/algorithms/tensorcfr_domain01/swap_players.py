@@ -1,7 +1,5 @@
 import tensorflow as tf
 
-from src.domains.domain01.domain_definitions import current_updating_player, current_opponent
-
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
@@ -11,11 +9,15 @@ def get_the_other_player_of(tensor_variable_of_player):
 
 
 def swap_players():
+	from src.commons.constants import INT_DTYPE
+	with tf.variable_scope("domain_definitions", reuse=True):
+		updating_player = tf.get_variable("current_updating_player", dtype=INT_DTYPE)
+		opponent = tf.get_variable("current_opponent", dtype=INT_DTYPE)
 	with tf.variable_scope("swap_players"):
 		return tf.group(
 			[
-				current_updating_player.assign(get_the_other_player_of(current_updating_player)),
-				current_opponent.assign(get_the_other_player_of(current_opponent)),
+				updating_player.assign(get_the_other_player_of(updating_player)),
+				opponent.assign(get_the_other_player_of(opponent)),
 			],
 			name="swap_players",
 		)

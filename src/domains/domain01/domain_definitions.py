@@ -9,7 +9,7 @@ from src.utils.tensor_utils import print_tensors
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
-with tf.variable_scope("domain_definitions"):
+with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scope:
 	actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1, 2)
 	levels = len(actions_per_levels) + 1  # accounting for 0th level
 	acting_depth = len(actions_per_levels)
@@ -227,7 +227,7 @@ with tf.variable_scope("domain_definitions"):
 
 
 def get_node_types():
-	with tf.variable_scope("domain_definitions", reuse=True):
+	with tf.variable_scope(domain_scope, reuse=True):
 		return [
 			tf.get_variable("node_types_lvl{}".format(level), dtype=INT_DTYPE)
 			for level in range(levels)

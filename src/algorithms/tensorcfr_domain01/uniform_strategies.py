@@ -8,38 +8,52 @@ from src.utils.tensor_utils import print_tensors
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
-def get_infoset_children_types():  # TODO unittest
-	nodal_types = get_node_types()
+def get_infoset_children_types():
 	with tf.variable_scope("infoset_children_types", reuse=tf.AUTO_REUSE):
-		infoset_children_types = [None] * (levels - 1)
+		return [
+			tf.get_variable(
+					name="infoset_children_types_lvl{}".format(level),
+					shape=current_infoset_strategies[level].shape,
+					dtype=INT_DTYPE,
+			) for level in range(acting_depth)
+		]
+
+
+def set_infoset_children_types():  # TODO unittest
+	nodal_types = get_node_types()
+	infoset_children_types = get_infoset_children_types()
+	with tf.variable_scope("set_infoset_children_types", reuse=tf.AUTO_REUSE):
+		ops_set_infoset_children_types = [None] * acting_depth
 		for level in range(levels - 1):
 			if level == 0:
-				infoset_children_types[0] = tf.get_variable(
-						name="infoset_children_types_lvl0",
-						initializer=tf.expand_dims(nodal_types[1], axis=0),
-						dtype=INT_DTYPE,
+				ops_set_infoset_children_types[0] = tf.assign(
+						ref=infoset_children_types[0],
+						value=tf.expand_dims(nodal_types[1], axis=0),
+						name="ops_set_infoset_children_types_lvl{}".format(level)
 				)
 			else:
-				infoset_children_types[level] = tf.scatter_nd_update(
-						ref=tf.Variable(
-								tf.zeros_like(
-										current_infoset_strategies[level],
-										dtype=nodal_types[level + 1].dtype
-								)
-						),
+				ops_set_infoset_children_types[level] = tf.scatter_nd_update(
+						ref=infoset_children_types[level],
 						indices=tf.expand_dims(node_to_infoset[level], axis=-1),
 						updates=nodal_types[level + 1],
-						name="infoset_children_types_lvl{}".format(level)
+						name="ops_set_infoset_children_types_lvl{}".format(level)
 				)
-		return infoset_children_types
+		return ops_set_infoset_children_types
 
 
 def get_infoset_uniform_strategies():  # TODO unittest
+	ops_set_infoset_children_types = set_infoset_children_types()
 	infoset_children_types = get_infoset_children_types()
 	with tf.variable_scope("infoset_uniform_strategies"):
 		infoset_uniform_strategies = [None] * (levels - 1)
 		for level in range(levels - 1):
-			infoset_uniform_strategies[level] = tf.to_float(tf.not_equal(infoset_children_types[level], IMAGINARY_NODE))
+			with tf.control_dependencies(ops_set_infoset_children_types):
+				infoset_uniform_strategies[level] = tf.to_float(
+						tf.not_equal(
+								infoset_children_types[level],
+								IMAGINARY_NODE
+						)
+				)
 			# Note: An all-0's row cannot be normalized. This is caused when IS has only imaginary children. As of now,
 			#  `tf.divide` produces `nan` in the entire row.
 			infoset_uniform_strategies[level] = tf.divide(

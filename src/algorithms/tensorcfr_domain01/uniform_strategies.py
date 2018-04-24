@@ -24,7 +24,7 @@ def set_infoset_children_types():  # TODO unittest
 	infoset_children_types = get_infoset_children_types()
 	with tf.variable_scope("set_infoset_children_types", reuse=tf.AUTO_REUSE):
 		ops_set_infoset_children_types = [None] * acting_depth
-		for level in range(levels - 1):
+		for level in range(acting_depth):
 			if level == 0:
 				ops_set_infoset_children_types[0] = tf.assign(
 						ref=infoset_children_types[0],

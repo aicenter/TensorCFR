@@ -1,21 +1,22 @@
 import tensorflow as tf
 
 from src.commons.constants import IMAGINARY_NODE, INT_DTYPE
-from src.domains.domain01.domain_definitions import levels, node_types, node_to_infoset, \
-	current_infoset_strategies, infosets_of_non_chance_player, acting_depth
+from src.domains.domain01.domain_definitions import levels, node_to_infoset, current_infoset_strategies, \
+	infosets_of_non_chance_player, acting_depth, get_node_types
 from src.utils.tensor_utils import print_tensors
 
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_infoset_children_types():  # TODO unittest
+	nodal_types = get_node_types()
 	with tf.variable_scope("infoset_children_types", reuse=tf.AUTO_REUSE):
 		infoset_children_types = [None] * (levels - 1)
 		for level in range(levels - 1):
 			if level == 0:
 				infoset_children_types[0] = tf.get_variable(
 						name="infoset_children_types_lvl0",
-						initializer=tf.expand_dims(node_types[1], axis=0),
+						initializer=tf.expand_dims(nodal_types[1], axis=0),
 						dtype=INT_DTYPE,
 				)
 			else:
@@ -23,11 +24,11 @@ def get_infoset_children_types():  # TODO unittest
 						ref=tf.Variable(
 								tf.zeros_like(
 										current_infoset_strategies[level],
-										dtype=node_types[level + 1].dtype
+										dtype=nodal_types[level + 1].dtype
 								)
 						),
 						indices=tf.expand_dims(node_to_infoset[level], axis=-1),
-						updates=node_types[level + 1],
+						updates=nodal_types[level + 1],
 						name="infoset_children_types_lvl{}".format(level)
 				)
 		return infoset_children_types
@@ -56,8 +57,9 @@ def get_infoset_uniform_strategies():  # TODO unittest
 if __name__ == '__main__':
 	infoset_uniform_strategies_ = get_infoset_uniform_strategies()
 	infoset_children_types_ = get_infoset_children_types()
+	nodal_types_ = get_node_types()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
-			print_tensors(sess, [node_types[i], infoset_children_types_[i], infoset_uniform_strategies_[i]])
+			print_tensors(sess, [nodal_types_[i], infoset_children_types_[i], infoset_uniform_strategies_[i]])

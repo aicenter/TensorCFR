@@ -226,6 +226,14 @@ with tf.variable_scope("domain_definitions"):
 	)
 
 
+def get_node_types():
+	with tf.variable_scope("domain_definitions", reuse=True):
+		return [
+			tf.get_variable("node_types_lvl{}".format(level), dtype=INT_DTYPE)
+			for level in range(levels)
+		]
+
+
 def get_infoset_acting_players():
 	return infoset_acting_players
 
@@ -250,7 +258,7 @@ if __name__ == '__main__':
 			print("########## Level {} ##########".format(level))
 			if level == 0:
 				print_tensors(sess, [reach_probability_of_root_node])
-			print_tensors(sess, [node_types[level], utilities[level]])
+			print_tensors(sess, [get_node_types()[level], utilities[level]])
 			if level != levels_range[-1]:
 				print_tensors(sess, [
 					node_to_infoset[level],

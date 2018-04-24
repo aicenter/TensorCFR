@@ -29,14 +29,14 @@ def set_infoset_children_types():  # TODO unittest
 				ops_set_infoset_children_types[0] = tf.assign(
 						ref=infoset_children_types[0],
 						value=tf.expand_dims(nodal_types[1], axis=0),
-						name="ops_set_infoset_children_types_lvl{}".format(level)
+						name="set_infoset_children_types_lvl0"
 				)
 			else:
 				ops_set_infoset_children_types[level] = tf.scatter_nd_update(
 						ref=infoset_children_types[level],
 						indices=tf.expand_dims(node_to_infoset[level], axis=-1),
 						updates=nodal_types[level + 1],
-						name="ops_set_infoset_children_types_lvl{}".format(level)
+						name="set_infoset_children_types_lvl{}".format(level)
 				)
 		return ops_set_infoset_children_types
 

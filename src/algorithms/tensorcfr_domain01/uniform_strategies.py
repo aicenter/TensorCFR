@@ -77,4 +77,8 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		for i in range(levels - 1):
 			print("########## Level {} ##########".format(i))
-			print_tensors(sess, [nodal_types_[i], infoset_children_types_[i], infoset_uniform_strategies_[i]])
+			print_tensors(sess, [
+				nodal_types_[i],
+				infoset_children_types_[i],
+				infoset_uniform_strategies_[i],
+			])

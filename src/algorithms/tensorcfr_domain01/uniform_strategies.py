@@ -48,6 +48,7 @@ def get_infoset_uniform_strategies():  # TODO unittest
 		infoset_uniform_strategies = [None] * (levels - 1)
 		for level in range(levels - 1):
 			with tf.variable_scope("uniform_strategies_lvl{}".format(level)):
+				# TODO The next line could even be `[ops_set_infoset_children_types[level]]`, but doesn't work! Why?
 				with tf.control_dependencies(ops_set_infoset_children_types):
 					non_imaginary_children = tf.to_float(
 							tf.not_equal(

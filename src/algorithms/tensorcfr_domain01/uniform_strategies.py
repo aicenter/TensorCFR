@@ -51,15 +51,22 @@ def get_infoset_uniform_strategies():  # TODO unittest
 				non_imaginary_children = tf.to_float(
 						tf.not_equal(
 								infoset_children_types[level],
-								IMAGINARY_NODE
+								IMAGINARY_NODE,
+								name="non_imaginary_children_lvl{}".format(level),
 						),
-						name="non_imaginary_children_lvl{}".format(level)
+						name="ones_at_non_imaginary_children_lvl{}".format(level),
 				)
 			# Note: An all-0's row cannot be normalized. This is caused when IS has only imaginary children. As of now,
 			#  `tf.divide` produces `nan` in the entire row.
 			infoset_uniform_strategies[level] = tf.divide(
 					non_imaginary_children,
-					tf.reduce_sum(non_imaginary_children, axis=-1, keepdims=True),
+					tf.reduce_sum(
+							non_imaginary_children,
+							axis=-1,
+							keepdims=True,
+							name="count_of_non_imaginary_children_lvl{}".format(level),
+					),
+					name="normalization_lvl{}".format(level),
 			)
 		return [tf.where(
 				condition=infosets_of_non_chance_player[level],

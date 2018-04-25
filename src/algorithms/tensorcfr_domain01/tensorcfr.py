@@ -1,8 +1,10 @@
 import re
 
 import tensorflow as tf
+from tensorflow.python import debug as tf_debug
 import os
 import datetime
+import argparse
 
 from src.algorithms.tensorcfr_domain01.bottomup_expected_values import get_expected_values
 from src.algorithms.tensorcfr_domain01.cfr_step import do_cfr_step
@@ -12,7 +14,7 @@ from src.algorithms.tensorcfr_domain01.strategy_matched_to_regrets import get_st
 from src.algorithms.tensorcfr_domain01.topdown_reach_probabilities import get_nodal_reach_probabilities
 from src.algorithms.tensorcfr_domain01.uniform_strategies import get_infoset_uniform_strategies
 from src.algorithms.tensorcfr_domain01.update_strategies import get_average_infoset_strategies
-from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, DEFAULT_AVERAGING_DELAY
+from src.commons.constants import TENSORBOARD_DEBUGGER_SOCKET, DEFAULT_TOTAL_STEPS, DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, DEFAULT_AVERAGING_DELAY
 from src.domains.domain01.domain_definitions import cfr_step, current_infoset_strategies, \
 	cumulative_infoset_strategies, positive_cumulative_regrets, initial_infoset_strategies, acting_depth, averaging_delay
 from src.utils.tensor_utils import print_tensors
@@ -142,7 +144,7 @@ def log_after_all_steps(sess, average_infoset_strategies):
 	print_tensors(sess, average_infoset_strategies)
 
 
-def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY, profiling=False):
+def run_cfr(args, total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr()
 		assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay, name="assign_averaging_delay")
@@ -168,8 +170,14 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 		assigned_averaging_delay = sess.run(assign_averaging_delay_op)
 		if quiet is False:
 			log_before_all_steps(sess, setup_messages, total_steps, assigned_averaging_delay)
-		writer = tf.summary.FileWriter("{},time_mem".format(log_dir_path), tf.get_default_graph())
-		for i in range(total_steps):
+
+		if args.debug_cli:
+			sess = tf_debug.LocalCLIDebugWrapperSession(sess)
+
+		if args.debug_gui:
+			sess = tf_debug.TensorBoardDebugWrapperSession(sess, TENSORBOARD_DEBUGGER_SOCKET)
+
+		for _ in range(total_steps):
 			if quiet is False:
 				log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values,
 				                      reach_probabilities, regrets)
@@ -199,9 +207,13 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 
 
 if __name__ == '__main__':
+	parser = argparse.ArgumentParser(description='Run TensorCFR with domain01.')
+	parser.add_argument('--debug_cli', action='store_true', help='Run the TensorCFR with the command line tfdbg')
+	parser.add_argument('--debug_gui', action='store_true', help='Run the TensorCFR with the tfdbg and TensorBoard')
+	args = parser.parse_args()
+
 	# run_cfr(total_steps=10, delay=0)
-	# run_cfr(total_steps=10, delay=0, quiet=True)
-	run_cfr(quiet=True, total_steps=1000)
+	run_cfr(args, total_steps=10, delay=0, quiet=True)
 	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
 	# run_cfr(quiet=True, total_steps=10000)
 	# run_cfr(quiet=True, profiling=True, total_steps=10)

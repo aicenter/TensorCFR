@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# TensorFlow debugger
+TENSORBOARD_DEBUGGER_SOCKET = 'localhost:7000'
+
 # utilities
 import tensorflow as tf
 import numpy as np

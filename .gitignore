@@ -332,3 +332,4 @@ venv.bak/
 src/out/
 .cache/
 *.out.*
+doc/goofspiel/

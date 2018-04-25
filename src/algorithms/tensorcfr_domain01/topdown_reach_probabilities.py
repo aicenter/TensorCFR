@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from src.algorithms.tensorcfr_domain01.node_strategies import get_node_cf_strategies
+from src.algorithms.tensorcfr_domain01.node_strategies import read_node_cf_strategies
 from src.domains.domain01.domain_definitions import reach_probability_of_root_node, node_to_infoset, \
 	current_infoset_strategies, levels, infoset_acting_players
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum
@@ -9,7 +9,7 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
 def get_nodal_reach_probabilities():
-	node_cf_strategies = get_node_cf_strategies()
+	node_cf_strategies = read_node_cf_strategies()
 	with tf.variable_scope("reach_probabilities"):
 		with tf.variable_scope("nodal_reach_probabilities"):
 			nodal_reach_probabilities = [None] * levels
@@ -60,7 +60,7 @@ def show_reach_probabilities(session):
 
 if __name__ == '__main__':
 	from src.algorithms.tensorcfr_domain01.swap_players import swap_players
-	node_cf_strategies_ = get_node_cf_strategies()
+	node_cf_strategies_ = read_node_cf_strategies()
 	nodal_reach_probabilities_ = get_nodal_reach_probabilities()
 	infoset_reach_probabilities_ = get_infoset_reach_probabilities()
 	with tf.Session() as sess:

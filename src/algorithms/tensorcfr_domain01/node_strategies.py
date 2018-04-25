@@ -59,7 +59,7 @@ def get_node_strategies():
 		]
 
 
-def get_node_cf_strategies(updating_player=current_updating_player):
+def read_node_cf_strategies(updating_player=current_updating_player):
 	"""
 	Here `cf` stands for counterfactual. Simply speaking, on each root->leaf path, the strategies of the updating player
 	are set to 1.
@@ -110,7 +110,7 @@ def show_strategies(session):
 if __name__ == '__main__':
 	from src.algorithms.tensorcfr_domain01.swap_players import swap_players
 	node_strategies = get_node_strategies()
-	node_cf_strategies_ = get_node_cf_strategies()
+	node_cf_strategies_ = read_node_cf_strategies()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		# TODO extract following lines to a UnitTest

@@ -28,7 +28,6 @@ def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify an
 	with tf.variable_scope("update_cumulative_regrets"):
 		update_regrets_ops = [None] * (levels - 1)
 		for level in range(levels - 1):
-			# to keep cumulative regret still positive:
 			# TODO optimize by: pre-define `infosets_of_player1` and `infosets_of_player2` (in domain definitions) and switch
 			infosets_of_updating_player = tf.reshape(
 					tf.equal(infoset_acting_players[level], current_updating_player),

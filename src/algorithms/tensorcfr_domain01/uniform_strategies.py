@@ -52,7 +52,7 @@ def get_infoset_uniform_strategies():  # TODO unittest
 				with tf.control_dependencies(ops_set_infoset_children_types):
 					ones_at_non_imaginary_children = tf.to_float(
 							tf.not_equal(
-									infoset_children_types[level],
+									infoset_children_types[level].read_value(),
 									tf.constant(IMAGINARY_NODE, name="IMAGINARY_NODE"),
 									name="non_imaginary_children_lvl{}".format(level),
 							),

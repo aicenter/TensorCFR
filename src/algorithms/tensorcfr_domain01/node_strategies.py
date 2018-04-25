@@ -42,12 +42,15 @@ def assign_strategies_to_nodes(infoset_strategies, node_to_infoset, name="assign
 
 
 def get_node_strategies():
-	with tf.variable_scope("node_strategies"):
+	with tf.variable_scope("node_strategies", reuse=tf.AUTO_REUSE):
 		return [
-			assign_strategies_to_nodes(
-					current_infoset_strategies[level],
-					node_to_infoset[level],
-					name="node_strategies_lvl{}".format(level)
+			tf.get_variable(
+					name="node_strategies_lvl{}".format(level),
+					initializer=assign_strategies_to_nodes(
+							current_infoset_strategies[level],
+							node_to_infoset[level],
+							name="assign_strategies_to_nodes_lvl{}".format(level),
+					)
 			) for level in range(acting_depth)
 		]
 

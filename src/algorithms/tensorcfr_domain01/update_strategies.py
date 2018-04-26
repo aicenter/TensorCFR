@@ -17,17 +17,18 @@ def update_strategy_of_updating_player(acting_player=current_updating_player):  
 	ops_update_infoset_strategies = [None] * acting_depth
 	with tf.variable_scope("update_strategy_of_updating_player"):
 		for level in range(acting_depth):
-			infosets_of_acting_player = tf.reshape(   # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
-					tf.equal(infoset_acting_players[level], acting_player),
-					shape=[current_infoset_strategies[level].shape[0]],
-					name="infosets_of_updating_player_lvl{}".format(level)
-			)
-			ops_update_infoset_strategies[level] = masked_assign(
-					ref=current_infoset_strategies[level],
-					mask=infosets_of_acting_player,
-					value=infoset_strategies_matched_to_regrets[level],
-					name="op_update_infoset_strategies_lvl{}".format(level)
-			)
+			with tf.variable_scope("level{}".format(level)):
+				infosets_of_acting_player = tf.reshape(  # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+						tf.equal(infoset_acting_players[level], acting_player),
+						shape=[current_infoset_strategies[level].shape[0]],
+						name="infosets_of_updating_player_lvl{}".format(level)
+				)
+				ops_update_infoset_strategies[level] = masked_assign(
+						ref=current_infoset_strategies[level],
+						mask=infosets_of_acting_player,
+						value=infoset_strategies_matched_to_regrets[level],
+						name="op_update_infoset_strategies_lvl{}".format(level)
+				)
 		return ops_update_infoset_strategies
 
 

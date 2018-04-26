@@ -40,7 +40,7 @@ def get_strategy_matched_to_regrets():  # TODO unittest
 
 if __name__ == '__main__':
 	strategies_matched_to_regrets_ = get_strategy_matched_to_regrets()
-	update_regrets = update_positive_cumulative_regrets()
+	update_regrets_ = update_positive_cumulative_regrets()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		for i in range(levels - 1):
@@ -49,11 +49,11 @@ if __name__ == '__main__':
 				positive_cumulative_regrets[i],
 				strategies_matched_to_regrets_[i],
 				strategies_matched_to_regrets_[i],
-				update_regrets[i],
+				update_regrets_[i],
 				positive_cumulative_regrets[i],
 				strategies_matched_to_regrets_[i],
 				strategies_matched_to_regrets_[i],
-				update_regrets[i],
+				update_regrets_[i],
 				positive_cumulative_regrets[i],
 				strategies_matched_to_regrets_[i],
 				strategies_matched_to_regrets_[i],

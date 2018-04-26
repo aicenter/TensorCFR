@@ -34,8 +34,8 @@ def get_infoset_children_types():  # TODO unittest
 
 
 def get_infoset_uniform_strategies():  # TODO unittest
-	infoset_children_types = get_infoset_children_types()
 	with tf.variable_scope("infoset_uniform_strategies"):
+		infoset_children_types = get_infoset_children_types()
 		infoset_uniform_strategies = [None] * (levels - 1)
 		for level in range(levels - 1):
 			infoset_uniform_strategies[level] = tf.to_float(tf.not_equal(infoset_children_types[level], IMAGINARY_NODE))

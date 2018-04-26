@@ -16,18 +16,29 @@ def get_the_other_player_of(tensor_variable_of_player):
 
 
 def swap_players():
+	from src.commons.constants import INT_DTYPE
+	with tf.variable_scope("domain_definitions", reuse=True):
+		updating_player = tf.get_variable("current_updating_player", dtype=INT_DTYPE)
+		opponent = tf.get_variable("current_opponent", dtype=INT_DTYPE)
 	with tf.variable_scope("swap_players"):
 		return tf.group(
 			[
-				current_updating_player.assign(get_the_other_player_of(current_updating_player)),
-				current_opponent.assign(get_the_other_player_of(current_opponent)),
+				tf.assign(
+						ref=updating_player,
+						value=get_the_other_player_of(updating_player),
+						name="assign_new_updating_player",
+				),
+				tf.assign(
+						ref=opponent,
+						value=get_the_other_player_of(opponent),
+						name="assign_new_opponent",
+				),
 			],
 			name="swap_players",
 		)
 
 
 if __name__ == '__main__':
-	from src.commons.constants import PLAYER1, PLAYER2
 	from src.domains.domain01.domain_definitions import cfr_step, print_misc_variables
 
 	increment_cfr_step_op = tf.assign_add(ref=cfr_step, value=1, name="increment_cfr_step_op")

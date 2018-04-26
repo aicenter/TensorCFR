@@ -22,13 +22,12 @@ def increment_cfr_step():
 
 def do_cfr_step():
 	ops_process_strategies = process_strategies()
-	op_swap_players = swap_players()
+	ops_swap_players = swap_players()
 	op_inc_step = increment_cfr_step()
-	with tf.variable_scope("cfr_step"):
-		return tf.group(
-				[ops_process_strategies, op_swap_players, op_inc_step],
-				name="cfr_step"
-		)
+	return tf.tuple(
+			ops_process_strategies + ops_swap_players + [op_inc_step],
+			name="cfr_step"
+	)
 
 
 if __name__ == '__main__':

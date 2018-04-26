@@ -4,12 +4,12 @@ import tensorflow as tf
 
 from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, \
 	PLAYER1, \
-	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY
+	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY, INT_DTYPE
 from src.utils.tensor_utils import print_tensors, masked_assign
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
-with tf.variable_scope("domain_definitions"):
+with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scope:
 	actions_per_levels = [5, 3, 2]  # maximum number of actions per each level (0, 1, 2)
 	levels = len(actions_per_levels) + 1  # accounting for 0th level
 	acting_depth = len(actions_per_levels)
@@ -209,8 +209,16 @@ with tf.variable_scope("domain_definitions"):
 			PLAYER1,  # ...from this player's point of view
 			name="player_owning_the_utilities"
 	)
-	current_updating_player = tf.Variable(initial_value=PLAYER1, name="current_updating_player")
-	current_opponent = tf.Variable(initial_value=PLAYER2, name="current_opponent")
+	current_updating_player = tf.get_variable(
+			"current_updating_player",
+			initializer=PLAYER1,
+			dtype=INT_DTYPE,
+	)
+	current_opponent = tf.get_variable(
+			"current_opponent",
+			initializer=PLAYER2,
+			dtype=INT_DTYPE,
+	)
 	signum_of_current_player = tf.where(
 			condition=tf.equal(current_updating_player, player_owning_the_utilities),
 			x=1.0,

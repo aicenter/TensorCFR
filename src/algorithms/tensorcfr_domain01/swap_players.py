@@ -20,18 +20,22 @@ def swap_players():
 	with tf.variable_scope("domain_definitions", reuse=True):
 		updating_player = tf.get_variable("current_updating_player", dtype=INT_DTYPE)
 		opponent = tf.get_variable("current_opponent", dtype=INT_DTYPE)
+	with tf.variable_scope("new_updating_player"):
+		assign_new_updating_player = tf.assign(
+				ref=updating_player,
+				value=get_the_other_player_of(updating_player),
+				name="assign_new_updating_player",
+		)
+	with tf.variable_scope("new_opponent"):
+		assign_opponent = tf.assign(
+				ref=opponent,
+				value=get_the_other_player_of(opponent),
+				name="assign_new_opponent",
+		)
 	return tf.tuple(
 			[
-				tf.assign(
-						ref=updating_player,
-						value=get_the_other_player_of(updating_player),
-						name="assign_new_updating_player",
-				),
-				tf.assign(
-						ref=opponent,
-						value=get_the_other_player_of(opponent),
-						name="assign_new_opponent",
-				),
+				assign_new_updating_player,
+				assign_opponent,
 			],
 			name="swap_players",
 	)

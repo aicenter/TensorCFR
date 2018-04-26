@@ -10,39 +10,37 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 
 def get_nodal_reach_probabilities():
 	node_cf_strategies = get_node_cf_strategies()
-	with tf.variable_scope("reach_probabilities"):
-		with tf.variable_scope("nodal_reach_probabilities"):
-			nodal_reach_probabilities = [None] * levels
-			nodal_reach_probabilities[0] = reach_probability_of_root_node
-			for level in range(1, levels):
-				nodal_reach_probabilities[level] = expanded_multiply(
-						expandable_tensor=nodal_reach_probabilities[level - 1],
-						expanded_tensor=node_cf_strategies[level - 1],
-						name="nodal_reach_probabilities_lvl{}".format(level)
-				)
-			return nodal_reach_probabilities
+	with tf.variable_scope("nodal_reach_probabilities"):
+		nodal_reach_probabilities = [None] * levels
+		nodal_reach_probabilities[0] = reach_probability_of_root_node
+		for level in range(1, levels):
+			nodal_reach_probabilities[level] = expanded_multiply(
+					expandable_tensor=nodal_reach_probabilities[level - 1],
+					expanded_tensor=node_cf_strategies[level - 1],
+					name="nodal_reach_probabilities_lvl{}".format(level)
+			)
+		return nodal_reach_probabilities
 
 
 def get_infoset_reach_probabilities():
 	nodal_reach_probabilities = get_nodal_reach_probabilities()
-	with tf.variable_scope("reach_probabilities"):
-		with tf.variable_scope("infoset_reach_probabilities"):
-			infoset_reach_probabilities = [None] * levels
-			infoset_reach_probabilities[0] = tf.identity(nodal_reach_probabilities[0], name="infoset_reach_probabilities_lvl0")
-			for level in range(1, levels - 1):
-				scatter_nd_sum_indices = tf.expand_dims(
-						node_to_infoset[level],
-						axis=-1,
-						name="expanded_node_to_infoset_lvl{}".format(level))
-				scatter_nd_sum_updates = nodal_reach_probabilities[level]
-				scatter_nd_sum_shape = infoset_acting_players[level].shape
-				infoset_reach_probabilities[level] = scatter_nd_sum(
-						indices=scatter_nd_sum_indices,
-						updates=scatter_nd_sum_updates,
-						shape=scatter_nd_sum_shape,
-						name="infoset_reach_probabilities_lvl{}".format(level)
-				)
-			return infoset_reach_probabilities
+	with tf.variable_scope("infoset_reach_probabilities"):
+		infoset_reach_probabilities = [None] * levels
+		infoset_reach_probabilities[0] = tf.identity(nodal_reach_probabilities[0], name="infoset_reach_probabilities_lvl0")
+		for level in range(1, levels - 1):
+			scatter_nd_sum_indices = tf.expand_dims(
+					node_to_infoset[level],
+					axis=-1,
+					name="expanded_node_to_infoset_lvl{}".format(level))
+			scatter_nd_sum_updates = nodal_reach_probabilities[level]
+			scatter_nd_sum_shape = infoset_acting_players[level].shape
+			infoset_reach_probabilities[level] = scatter_nd_sum(
+					indices=scatter_nd_sum_indices,
+					updates=scatter_nd_sum_updates,
+					shape=scatter_nd_sum_shape,
+					name="infoset_reach_probabilities_lvl{}".format(level)
+			)
+		return infoset_reach_probabilities
 
 
 def show_reach_probabilities(session):

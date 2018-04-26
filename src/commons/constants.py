@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 # utilities
+import tensorflow as tf
+
 NON_TERMINAL_UTILITY = 0.0
 
 # type of nodes
@@ -27,3 +29,5 @@ DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS = 50
 GAMBIT_NODE_TYPE_TERMINAL = 't'
 GAMBIT_NODE_TYPE_CHANCE = 'c'
 GAMBIT_NODE_TYPE_PLAYER = 'p'
+
+INT_DTYPE = tf.int32

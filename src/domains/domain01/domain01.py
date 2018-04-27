@@ -17,6 +17,7 @@ acting_depth = len(actions_per_levels)
 
 # Init
 # TODO refactorthis code:
+"""
 import os
 domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'domain01_via_gambit.efg')
 domain = GambitEFGLoader(domain01_efg)
@@ -29,28 +30,28 @@ node_to_infoset = domain_tensors['node_to_infoset']
 node_types = domain_tensors['node_types']
 utilities = domain_tensors['utilities']
 infoset_acting_players = domain_tensors['infoset_acting_players']
-
 """
+#"""
 node_to_infoset = [None] * 3
-"""
+#"""
 shape = [None] * 4
-"""
+#"""
 node_types = [None] * 4
 utilities = [None] * 4
 infoset_acting_players = [None] * 3
 current_infoset_strategies = [None] * 3
-"""
+#"""
 
 ########## Level 0 ##########
 # I0,0 = { s } ... root node, the chance player acts here
 # there are 5 actions in node s
-"""
+#"""
 node_to_infoset[0] = tf.Variable(0, name="node_to_infoset_lvl0")
-"""
+#"""
 reach_probability_of_root_node = tf.Variable(1.0, name="reach_probability_of_root_node")
 
 shape[0] = actions_per_levels[:0]
-"""
+#"""
 node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
 utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
 infoset_acting_players[0] = tf.Variable(CHANCE_PLAYER, name="infoset_acting_players_lvl0")
@@ -58,7 +59,7 @@ current_infoset_strategies[0] = tf.Variable(
 	[[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
 	name="current_infoset_strategies_lvl0"
 )
-"""
+#"""
 
 ########## Level 1 ##########
 # I1,0 = { s' }
@@ -66,7 +67,7 @@ current_infoset_strategies[0] = tf.Variable(
 # I1,2 = { s2, s3 }
 # I1,3 = { s4 } ... chance node
 # each node has 3 actions
-"""
+#"""
 node_to_infoset[1] = tf.Variable([0, 1, 2, 2, 3], name="node_to_infoset_lvl1")
 shape[1] = actions_per_levels[:1]
 node_types[1] = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
@@ -85,7 +86,7 @@ current_infoset_strategies[1] = tf.Variable(
 	 [0.3, 0.3, 0.3]],  # of I1,3
 	name="current_infoset_strategies_lvl1"
 )
-"""
+#"""
 ########## Level 2 ##########
 # I2,0 = { s5 }
 # I2,1 = { s6 }
@@ -97,7 +98,7 @@ current_infoset_strategies[1] = tf.Variable(
 # I2,7 = { s7, s17 } ... terminal nodes
 # I2,8 = { s10, s13, s16 } ... imaginary nodes
 # each node has 2 actions
-"""
+#"""
 node_to_infoset[2] = tf.Variable(
 	[[0, 1, 7],   # s5, s6, s7
 	 [2, 2, 8],   # s8, s9, s10
@@ -106,9 +107,9 @@ node_to_infoset[2] = tf.Variable(
 	 [7, 5, 6]],  # s17, s18, s19
 	name="node_to_infoset_lvl2"
 )
-"""
+#"""
 shape[2] = actions_per_levels[:2]
-"""
+#"""
 node_types[2] = tf.Variable(
 	[[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, s6, s7
 	 [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s8, s9, s10
@@ -118,10 +119,10 @@ node_types[2] = tf.Variable(
 	name="node_types_lvl2"
 )
 utilities_lvl2_tmp = tf.Variable(tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[2]))
-"""
+#"""
 mask_terminals_lvl2_tmp = tf.equal(node_types[2], TERMINAL_NODE)
 terminal_values_lvl2_tmp = tf.reshape(tf.range(10, 160, delta=10.0), shape[2])
-"""
+#"""
 utilities_lvl2_tmp = masked_assign(
     ref=utilities_lvl2_tmp,
     value=terminal_values_lvl2_tmp,
@@ -153,11 +154,11 @@ current_infoset_strategies[2] = tf.Variable(
 	 [0.00, 0.00]],  # of I2,8 ... imaginary nodes <- mock-up zero strategy
 	name="current_infoset_strategies_lvl2"
 )
-"""
+#"""
 ########## Level 3 ##########
 # There are never any infosets in the final layer, only terminal / imaginary nodes.
 shape[3] = actions_per_levels[:3]
-"""
+#"""
 node_types_lvl3_tmp = tf.Variable(
 	tf.fill(
 		value=TERMINAL_NODE,
@@ -188,10 +189,10 @@ utilities_lvl3_tmp = tf.Variable(
 		dims=shape[3]
 	)
 )
-"""
+#"""
 mask_terminals_lvl3_tmp = tf.equal(node_types[3], TERMINAL_NODE)
 terminal_values_lvl3_tmp = tf.reshape(tf.range(10, 310, delta=10.0), shape[3])
-"""
+#"""
 utilities_lvl3_tmp = masked_assign(
 	ref=utilities_lvl3_tmp,
 	value=terminal_values_lvl3_tmp,
@@ -199,7 +200,7 @@ utilities_lvl3_tmp = masked_assign(
 	name="utilities_lvl3"
 )
 utilities[3] = utilities_lvl3_tmp
-"""
+#"""
 
 
 ########## miscellaneous tensors ##########

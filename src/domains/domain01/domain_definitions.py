@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import tensorflow as tf
+import numpy as np
 
 from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, \
 	PLAYER1, \
@@ -55,10 +56,10 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 		name="infoset_acting_players_lvl1"
 	)
 	initial_infoset_strategies[1] = tf.placeholder_with_default(
-			input=[[0.5, 0.4, 0.1],   # of I1,0
-						 [0.1, 0.9, 0.0],   # of I1,1
-						 [0.2, 0.8, 0.0],   # of I1,2
-						 [0.3, 0.3, 0.3]],  # of I1,3
+			input=[[0.5, 0.4, 0.1],     # of I1,0
+			       [0.1, 0.9, np.nan],  # of I1,1, `nan` for probabilities of imaginary nodes
+			       [0.2, 0.8, np.nan],  # of I1,2, `nan` for probabilities of imaginary nodes
+			       [0.3, 0.3, 0.3]],    # of I1,3
 			shape=[infoset_acting_players[1].shape[0], actions_per_levels[1]],
 			name="initial_infoset_strategies_lvl{}".format(1)
 	)
@@ -118,17 +119,17 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 		name="infoset_acting_players_lvl2"
 	)
 	initial_infoset_strategies[2] = tf.placeholder_with_default(
-		input=[[0.15, 0.85],   # of I2,0
-					 [0.70, 0.30],   # of I2,1
-					 [0.25, 0.75],   # of I2,2
-					 [0.50, 0.50],   # of I2,3
-					 [0.10, 0.90],   # of I2,4
-					 [0.45, 0.55],   # of I2,5
-					 [0.40, 0.60],   # of I2,6
-					 [0.00, 0.00],   # of I2,7 ... terminal nodes <- mock-up zero strategy
-					 [0.00, 0.00]],  # of I2,8 ... imaginary nodes <- mock-up zero strategy
-		shape=[infoset_acting_players[2].shape[0], actions_per_levels[2]],
-		name="initial_infoset_strategies_lvl{}".format(2)
+			input=[[0.15, 0.85],  # of I2,0
+			       [0.70, 0.30],  # of I2,1
+			       [0.25, 0.75],  # of I2,2
+			       [0.50, 0.50],  # of I2,3
+			       [0.10, 0.90],  # of I2,4
+			       [0.45, 0.55],  # of I2,5
+			       [0.40, 0.60],  # of I2,6
+			       [np.nan, np.nan],  # of I2,7 ... terminal nodes <- strategy filled with `nan`s
+			       [np.nan, np.nan]],  # of I2,8 ... imaginary nodes <- strategy filled with `nan`s
+			shape=[infoset_acting_players[2].shape[0], actions_per_levels[2]],
+			name="initial_infoset_strategies_lvl{}".format(2)
 	)
 
 	########## Level 3 ##########

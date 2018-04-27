@@ -33,8 +33,11 @@ def assign_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updati
     A corresponding TensorFlow operation (from the computation graph).
   """
 	if (updating_player is not None) and (acting_players is not None):  # counterfactual reach probabilities
-		strategies = tf.where(condition=tf.equal(acting_players, updating_player), x=tf.ones_like(infoset_strategies),
-		                      y=infoset_strategies)
+		strategies = tf.where(
+				condition=tf.equal(acting_players, updating_player),
+				x=tf.ones_like(infoset_strategies),
+				y=infoset_strategies
+		)
 	else:
 		strategies = infoset_strategies
 	return tf.gather(params=strategies, indices=node_to_infoset, name=name)

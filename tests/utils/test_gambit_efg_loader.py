@@ -101,21 +101,19 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 	def test_positive_cumulative_regrets(self):
 		expected_output = [None] * 4
 		expected_output[0] = 0
-		expected_output[1] = np.zeros((5,))
-		expected_output[2] = np.zeros((5, 3))
-		expected_output[3] = np.zeros((5, 3, 2))
+		expected_output[1] = np.zeros((4, 3))
+		expected_output[2] = np.zeros((9, 2))
 
-		for lvl in range(self.number_of_levels + 1):
+		for lvl in range(self.number_of_levels):
 			np.testing.assert_array_equal(expected_output[lvl], self.domain.positive_cumulative_regrets[lvl])
 
 	def test_cumulative_regrets(self):
 		expected_output = [None] * 4
 		expected_output[0] = 0
-		expected_output[1] = np.zeros((5,))
-		expected_output[2] = np.zeros((5, 3))
-		expected_output[3] = np.zeros((5, 3, 2))
+		expected_output[1] = np.zeros((4, 3))
+		expected_output[2] = np.zeros((9, 2))
 
-		for lvl in range(self.number_of_levels + 1):
+		for lvl in range(self.number_of_levels):
 			np.testing.assert_array_equal(expected_output[lvl], self.domain.cumulative_regrets[lvl])
 
 	def test_node_types(self):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # utilities
+import numpy as np
 import tensorflow as tf
 
 NON_TERMINAL_UTILITY = 0.0
@@ -31,3 +32,4 @@ GAMBIT_NODE_TYPE_CHANCE = 'c'
 GAMBIT_NODE_TYPE_PLAYER = 'p'
 
 INT_DTYPE = tf.int32
+IMAGINARY_PROBABILITIES = np.nan

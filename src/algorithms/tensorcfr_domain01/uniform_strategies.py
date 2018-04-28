@@ -43,14 +43,14 @@ def get_infoset_uniform_strategies():  # TODO unittest
 				infoset_uniform_strategies[level] = tf.to_float(tf.not_equal(infoset_children_types[level], IMAGINARY_NODE))
 				# Note: An all-0's row cannot be normalized. This is caused when an infoset has only imaginary children. As of
 				#       now, an all-0's row is kept without normalizing.
-				sum_of_action_probabilities = tf.reduce_sum(
+				count_of_actions = tf.reduce_sum(
 						infoset_uniform_strategies[level],
 						axis=-1,
 						keepdims=True,
-						name="sum_of_action_probabilities_lvl{}".format(level),
+						name="count_of_actions_lvl{}".format(level),
 				)
 				rows_summing_to_0 = tf.squeeze(
-						tf.equal(sum_of_action_probabilities, 0.0),
+						tf.equal(count_of_actions, 0.0),
 						name="rows_summing_to_zero_lvl{}".format(level)
 				)
 				infoset_uniform_strategies[level] = tf.where(
@@ -58,7 +58,7 @@ def get_infoset_uniform_strategies():  # TODO unittest
 						x=infoset_uniform_strategies[level],
 						y=tf.divide(
 								infoset_uniform_strategies[level],
-								sum_of_action_probabilities,
+								count_of_actions,
 						),
 						name="normalize_where_nonzero_sum_lvl{}".format(level),
 				)

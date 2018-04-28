@@ -18,12 +18,13 @@ def get_regrets():  # TODO verify and write a unittest
 	with tf.variable_scope("regrets"):
 		regrets = [None] * acting_depth
 		for level in range(acting_depth):
-			regrets[level] = tf.where(
-					condition=tf.equal(infoset_children_types[level], IMAGINARY_NODE),
-					x=tf.zeros_like(cf_values_infoset_actions[level]),
-					y=cf_values_infoset_actions[level] - cf_values_infoset[level],
-					name="regrets_lvl{}".format(level),
-			)
+			with tf.variable_scope("level{}".format(level)):
+				regrets[level] = tf.where(
+						condition=tf.equal(infoset_children_types[level], IMAGINARY_NODE),
+						x=tf.zeros_like(cf_values_infoset_actions[level]),
+						y=cf_values_infoset_actions[level] - cf_values_infoset[level],
+						name="regrets_lvl{}".format(level),
+				)
 	return regrets
 
 

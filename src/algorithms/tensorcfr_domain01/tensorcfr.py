@@ -151,7 +151,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 	cf_values_infoset, cf_values_infoset_actions = get_infoset_cf_values() if not quiet else (None, None)
 	regrets = get_regrets() if not quiet else None
 	strategies_matched_to_regrets = get_strategy_matched_to_regrets() if not quiet else None
-	average_infoset_strategies = get_average_infoset_strategies() if not quiet else None
+	average_infoset_strategies = get_average_infoset_strategies()
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
@@ -170,8 +170,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 			sess.run(cfr_step_op)
 			if quiet is False:
 				log_after_every_step(sess, strategies_matched_to_regrets)
-		if quiet is False:
-			log_after_all_steps(sess, average_infoset_strategies)
+		log_after_all_steps(sess, average_infoset_strategies)
 
 
 if __name__ == '__main__':

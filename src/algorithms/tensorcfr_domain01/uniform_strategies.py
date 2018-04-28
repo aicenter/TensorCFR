@@ -49,12 +49,12 @@ def get_infoset_uniform_strategies():  # TODO unittest
 						keepdims=True,
 						name="count_of_actions_lvl{}".format(level),
 				)
-				rows_summing_to_0 = tf.squeeze(
+				infosets_with_no_actions = tf.squeeze(
 						tf.equal(count_of_actions, 0.0),
 						name="rows_summing_to_zero_lvl{}".format(level)
 				)
 				infoset_uniform_strategies[level] = tf.where(
-						condition=rows_summing_to_0,
+						condition=infosets_with_no_actions,
 						x=infoset_uniform_strategies[level],
 						y=tf.divide(
 								infoset_uniform_strategies[level],

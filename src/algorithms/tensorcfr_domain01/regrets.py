@@ -16,14 +16,15 @@ def get_regrets():  # TODO verify and write a unittest
 	cf_values_infoset, cf_values_infoset_actions = get_infoset_cf_values()
 	infoset_children_types = get_infoset_children_types()
 	with tf.variable_scope("regrets"):
-		return [
-			tf.where(
+		regrets = [None] * acting_depth
+		for level in range(acting_depth):
+			regrets[level] = tf.where(
 					condition=tf.equal(infoset_children_types[level], IMAGINARY_NODE),
 					x=tf.zeros_like(cf_values_infoset_actions[level]),
 					y=cf_values_infoset_actions[level] - cf_values_infoset[level],
 					name="regrets_lvl{}".format(level),
-			) for level in range(levels - 1)
-		]
+			)
+	return regrets
 
 
 def update_positive_cumulative_regrets(regrets=get_regrets()):  # TODO verify and write a unittest

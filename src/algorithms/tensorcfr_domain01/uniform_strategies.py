@@ -3,7 +3,7 @@ import tensorflow as tf
 from src.commons.constants import IMAGINARY_NODE
 from src.domains.domain01.domain_definitions import levels, node_types, node_to_infoset, \
 	current_infoset_strategies, infosets_of_non_chance_player, acting_depth
-from src.utils.tensor_utils import print_tensors, masked_assign
+from src.utils.tensor_utils import print_tensors
 
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png

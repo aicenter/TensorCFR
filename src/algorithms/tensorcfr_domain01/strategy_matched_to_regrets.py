@@ -22,17 +22,19 @@ def get_strategy_matched_to_regrets():  # TODO unittest
 							keepdims=True,
 							name="sums_of_regrets_lvl{}".format(level)
 					)
-					# TODO use `normalize()` here
 					normalized_regrets = tf.divide(
 							positive_cumulative_regrets[level].read_value(),
 							sums_of_regrets,
 							name="normalized_regrets_lvl{}".format(level)
 					)
-					rows_summing_to_0 = tf.squeeze(tf.equal(sums_of_regrets, 0), name="zero_sums_lvl{}".format(level))
+					zero_sum_rows = tf.squeeze(
+							tf.equal(sums_of_regrets, 0),
+							name="zero_sum_rows_lvl{}".format(level)
+					)
 					# Note: An all-0's row cannot be normalized. Thus, when PCRegrets sum to 0, a uniform strategy is used instead.
 					# TODO verify uniform strategy is created (mix of both tf.where branches)
 					strategies_matched_to_regrets[level] = tf.where(
-							condition=rows_summing_to_0,
+							condition=zero_sum_rows,
 							x=infoset_uniform_strategies[level],
 							y=normalized_regrets,
 							name="strategies_matched_to_regrets_lvl{}".format(level)

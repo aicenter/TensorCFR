@@ -86,27 +86,28 @@ def get_average_infoset_strategies():
 		infosets_with_nonzero_norm = [None] * acting_depth
 		for level in range(acting_depth):
 			# TODO add variable scope `level{}`
-			norm_of_strategies[level] = tf.reduce_sum(
-					cumulative_infoset_strategies[level],
-					axis=-1,
-					keepdims=True,
-					name="norm_of_strategies_lvl{}".format(level),
-			)
-			infosets_with_nonzero_norm[level] = tf.squeeze(
-					tf.not_equal(norm_of_strategies[level], 0.0),
-					name="infosets_with_nonzero_norm_lvl{}".format(level)
-			)
-			average_infoset_strategies[level] = tf.where(
-					condition=tf.logical_and(
-							infosets_of_non_chance_player[level],
-							infosets_with_nonzero_norm[level],
-							name="non_chance_infosets_with_nonzero_norm_lvl{}".format(level)
-					),
-					x=normalize(cumulative_infoset_strategies[level]),
-					y=current_infoset_strategies[level],
-					name="average_infoset_strategies_lvl{}".format(level)
-			)
-		return average_infoset_strategies
+			with tf.variable_scope("level{}".format(level)):
+				norm_of_strategies[level] = tf.reduce_sum(
+						cumulative_infoset_strategies[level],
+						axis=-1,
+						keepdims=True,
+						name="norm_of_strategies_lvl{}".format(level),
+				)
+				infosets_with_nonzero_norm[level] = tf.squeeze(
+						tf.not_equal(norm_of_strategies[level], 0.0),
+						name="infosets_with_nonzero_norm_lvl{}".format(level)
+				)
+				average_infoset_strategies[level] = tf.where(
+						condition=tf.logical_and(
+								infosets_of_non_chance_player[level],
+								infosets_with_nonzero_norm[level],
+								name="non_chance_infosets_with_nonzero_norm_lvl{}".format(level)
+						),
+						x=normalize(cumulative_infoset_strategies[level]),
+						y=current_infoset_strategies[level],
+						name="average_infoset_strategies_lvl{}".format(level)
+				)
+	return average_infoset_strategies
 
 
 if __name__ == '__main__':

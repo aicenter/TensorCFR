@@ -41,12 +41,26 @@ def get_infoset_uniform_strategies():  # TODO unittest
 		for level in range(acting_depth):
 			with tf.variable_scope("level{}".format(level)):
 				infoset_uniform_strategies[level] = tf.to_float(tf.not_equal(infoset_children_types[level], IMAGINARY_NODE))
-				# Note: An all-0's row cannot be normalized. This is caused when IS has only imaginary children. As of now,
-				#  `tf.divide` produces `nan` in the entire row.
-				sum_of_action_probabilities = tf.reduce_sum(infoset_uniform_strategies[level], axis=-1, keepdims=True)
-				infoset_uniform_strategies[level] = tf.divide(
+				# Note: An all-0's row cannot be normalized. This is caused when an infoset has only imaginary children. As of
+				#       now, an all-0's row is kept without normalizing.
+				sum_of_action_probabilities = tf.reduce_sum(
 						infoset_uniform_strategies[level],
-						sum_of_action_probabilities,
+						axis=-1,
+						keepdims=True,
+						name="sum_of_action_probabilities_lvl{}".format(level),
+				)
+				rows_summing_to_0 = tf.squeeze(
+						tf.equal(sum_of_action_probabilities, 0.0),
+						name="rows_summing_to_zero_lvl{}".format(level)
+				)
+				infoset_uniform_strategies[level] = tf.where(
+						condition=rows_summing_to_0,
+						x=infoset_uniform_strategies[level],
+						y=tf.divide(
+								infoset_uniform_strategies[level],
+								sum_of_action_probabilities,
+						),
+						name="normalize_where_nonzero_sum_lvl{}".format(level),
 				)
 				infoset_uniform_strategies[level] = tf.where(
 						condition=infosets_of_non_chance_player[level],

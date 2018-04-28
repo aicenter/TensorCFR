@@ -3,6 +3,8 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_domain01.counterfactual_values import get_infoset_cf_values
+from src.algorithms.tensorcfr_domain01.uniform_strategies import get_infoset_children_types
+from src.commons.constants import IMAGINARY_NODE
 from src.domains.domain01.domain_definitions import levels, positive_cumulative_regrets, infoset_acting_players, \
 	current_updating_player, acting_depth
 from src.utils.tensor_utils import print_tensors, masked_assign
@@ -12,11 +14,13 @@ from src.utils.tensor_utils import print_tensors, masked_assign
 
 def get_regrets():  # TODO verify and write a unittest
 	cf_values_infoset, cf_values_infoset_actions = get_infoset_cf_values()
+	infoset_children_types = get_infoset_children_types()
 	with tf.variable_scope("regrets"):
 		return [
-			tf.subtract(
-					cf_values_infoset_actions[level],
-					cf_values_infoset[level],
+			tf.where(
+					condition=tf.equal(infoset_children_types[level], IMAGINARY_NODE),
+					x=tf.zeros_like(cf_values_infoset_actions[level]),
+					y=cf_values_infoset_actions[level] - cf_values_infoset[level],
 					name="regrets_lvl{}".format(level),
 			) for level in range(levels - 1)
 		]

@@ -81,15 +81,31 @@ def process_strategies(acting_player=current_updating_player, opponent=current_o
 def get_average_infoset_strategies():
 	# TODO Do not normalize over imaginary nodes. <- Do we need to solve this? Or is it already ok (cf. `bottomup-*.py`)
 	with tf.variable_scope("average_strategies"):
-		average_infoset_strategies = [
-			tf.where(
-					condition=infosets_of_non_chance_player[level],
+		average_infoset_strategies = [None] * acting_depth
+		norm_of_strategies = [None] * acting_depth
+		infosets_with_nonzero_norm = [None] * acting_depth
+		for level in range(acting_depth):
+			# TODO add variable scope `level{}`
+			norm_of_strategies[level] = tf.reduce_sum(
+					cumulative_infoset_strategies[level],
+					axis=-1,
+					keepdims=True,
+					name="norm_of_strategies_lvl{}".format(level),
+			)
+			infosets_with_nonzero_norm[level] = tf.squeeze(
+					tf.not_equal(norm_of_strategies[level], 0.0),
+					name="infosets_with_nonzero_norm_lvl{}".format(level)
+			)
+			average_infoset_strategies[level] = tf.where(
+					condition=tf.logical_and(
+							infosets_of_non_chance_player[level],
+							infosets_with_nonzero_norm[level],
+							name="non_chance_infosets_with_nonzero_norm_lvl{}".format(level)
+					),
 					x=normalize(cumulative_infoset_strategies[level]),
 					y=current_infoset_strategies[level],
 					name="average_infoset_strategies_lvl{}".format(level)
 			)
-			for level in range(acting_depth)
-		]
 		return average_infoset_strategies
 
 

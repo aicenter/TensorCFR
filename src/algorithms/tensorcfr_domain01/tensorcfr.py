@@ -131,7 +131,7 @@ def log_after_every_step(sess, strategies_matched_to_regrets):
 	print_tensors(sess, current_infoset_strategies)
 
 
-def log_after_all_steps(average_infoset_strategies, sess):
+def log_after_all_steps(sess, average_infoset_strategies):
 	print("###################################\n")
 	print_tensors(sess, cumulative_infoset_strategies)
 	print("___________________________________\n")
@@ -171,7 +171,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 			if quiet is False:
 				log_after_every_step(sess, strategies_matched_to_regrets)
 		if quiet is False:
-			log_after_all_steps(average_infoset_strategies, sess)
+			log_after_all_steps(sess, average_infoset_strategies)
 
 
 if __name__ == '__main__':

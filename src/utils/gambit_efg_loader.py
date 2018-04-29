@@ -27,7 +27,9 @@ class NotImplementedFormatException:
 
 
 class TreeNode:
-	def __init__(self, level=None, coordinates=[]):
+	def __init__(self, level=None, coordinates=None):
+		if coordinates is None:
+			coordinates = []
 		self.level = level
 		self.coordinates = coordinates
 
@@ -297,7 +299,7 @@ class GambitEFGLoader:
 
 	def load(self):
 		# determines the maximum number of actions per level
-		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
+		stack_nodes_lvl = [TreeNode(level=0)]
 
 		for cnt, line in enumerate(self.gambit_file):
 			if self.is_gambit_node(line):
@@ -340,7 +342,7 @@ class GambitEFGLoader:
 			self.node_to_infoset[level][tuple(coordinates)] = value
 
 	def load_post(self):
-		stack_nodes_lvl = [TreeNode(level=0, coordinates=[])]
+		stack_nodes_lvl = [TreeNode(level=0)]
 
 		for cnt, line in enumerate(self.gambit_file):
 			if self.is_gambit_node(line):

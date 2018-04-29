@@ -23,6 +23,11 @@ def get_nodal_reach_probabilities():
 
 
 def get_infoset_reach_probabilities(for_player=current_opponent):
+	"""
+	:param for_player: The player for which the reach probabilities are computed. These probabilities are usually computed
+	 for the opponent when his strategies are cumulated. Therefore, `for_player` is set to `current_opponent` by default.
+	:return: The reach probabilities of information sets based on `current_infoset_strategies`.
+	"""
 	nodal_reach_probabilities = get_nodal_reach_probabilities()
 	with tf.variable_scope("infoset_reach_probabilities"):
 		infoset_reach_probabilities = [None] * levels

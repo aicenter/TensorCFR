@@ -124,6 +124,7 @@ class GambitEFGLoader:
 		self.number_of_players = 2
 
 		self.actions_per_levels = []
+		self.number_of_levels = 0
 
 		self.terminal_nodes_cnt = 0
 

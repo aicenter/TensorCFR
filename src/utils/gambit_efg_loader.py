@@ -49,8 +49,8 @@ class InformationSetManager:
 		self.flag_terminal_node_present = False
 
 	@staticmethod
-	def _is_imaginary_node_present(level, node_types):
-		tensor = node_types[level]
+	def _is_imaginary_node_present(level, node_types_):
+		tensor = node_types_[level]
 		result = tensor[np.where(tensor == constants.IMAGINARY_NODE)]
 
 		if result.shape == (0,):
@@ -58,8 +58,8 @@ class InformationSetManager:
 		return True
 
 	@staticmethod
-	def _is_terminal_node_present(level, node_types):
-		tensor = node_types[level]
+	def _is_terminal_node_present(level, node_types_):
+		tensor = node_types_[level]
 		result = tensor[np.where(tensor == constants.TERMINAL_NODE)]
 
 		if result.shape == (0,):
@@ -83,31 +83,31 @@ class InformationSetManager:
 			return_node_to_infoset_value = self.infoset_dict[node['infoset_id']][0]
 			return return_node_to_infoset_value
 
-	def make_infoset_acting_players(self, next_level_max_no_actions, node_types):
+	def make_infoset_acting_players(self, next_level_max_no_actions, node_types_):
 		if self.flag_setted == False and self.level > 0:
-			self.flag_imaginary_node_present = self._is_imaginary_node_present(self.level, node_types)
+			self.flag_imaginary_node_present = self._is_imaginary_node_present(self.level, node_types_)
 			self.flag_setted = True
 
-		infoset_acting_players = []
-		current_infoset_strategies = []
+		infoset_acting_players_ = []
+		current_infoset_strategies_ = []
 
 		if self.flag_imaginary_node_present:
 			self.infoset_dict['imaginary-node'] = [self.infoset_cnt, 'tnode', -1]  # last element - imaginary
 			self.infoset_acting_players_list.append('imaginary-node')
 
 		for idx, infoset_id in enumerate(self.infoset_acting_players_list):
-			infoset_acting_players.append(self.infoset_dict[infoset_id][2])
+			infoset_acting_players_.append(self.infoset_dict[infoset_id][2])
 
 			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
-				current_infoset_strategies.append(
+				current_infoset_strategies_.append(
 					[float(1 / (next_level_max_no_actions * self.cnt_player_nodes))] * next_level_max_no_actions)
 			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
-				current_infoset_strategies.append(
+				current_infoset_strategies_.append(
 						[action['probability'] for action in reversed(self.infoset_dict[infoset_id][3]['actions'])])
 			else:
-				current_infoset_strategies.append([0] * next_level_max_no_actions)
+				current_infoset_strategies_.append([0] * next_level_max_no_actions)
 
-		return [infoset_acting_players, np.array(current_infoset_strategies)]
+		return [infoset_acting_players_, np.array(current_infoset_strategies_)]
 
 	def make_node_to_infoset(self, tensor):
 		tensor[np.where(tensor == ((-1) * TMP_NODE_TO_INFOSET_IMAGINARY))] = -self.infoset_cnt
@@ -372,28 +372,28 @@ class GambitEFGLoader:
 			self.node_to_infoset[lvl] = self.infoset_managers[lvl].make_node_to_infoset(self.node_to_infoset[lvl])
 
 		for lvl in range(self.number_of_levels):
-			[infoset_acting_players, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_players(
+			[infoset_acting_players_, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_players(
 					self.actions_per_levels[lvl], self.node_types)
-			self.infoset_acting_players[lvl] = infoset_acting_players
+			self.infoset_acting_players[lvl] = infoset_acting_players_
 			self.current_infoset_strategies[lvl] = infoset_strategies
 			self.initial_infoset_strategies[lvl] = copy.deepcopy(self.current_infoset_strategies[lvl])
 			self.cumulative_regrets[lvl] = np.zeros(infoset_strategies.shape)
 			self.positive_cumulative_regrets[lvl] = np.zeros(infoset_strategies.shape)
 
-		# self.infoset_acting_players[0] = self.infoset_acting_players[0][0]
+		# self.infoset_acting_players_[0] = self.infoset_acting_players_[0][0]
 		"""
 		print('node_to_infoset lvl 0')
 		print(self.node_to_infoset[0])
-		print('infoset_acting_players lvl 1')
+		print('infoset_acting_players_ lvl 1')
 		print(self.node_to_infoset[1])
-		print('infoset_acting_players lvl 2')
+		print('infoset_acting_players_ lvl 2')
 		print(self.node_to_infoset[2])
 
 		print('node_to_infoset lvl 0')
 		print(self.node_to_infoset[0])
-		print('infoset_acting_players lvl 1')
+		print('infoset_acting_players_ lvl 1')
 		print(self.node_to_infoset[1])
-		print('infoset_acting_players lvl 2')
+		print('infoset_acting_players_ lvl 2')
 		print(self.node_to_infoset[2])
 
 		print('current_infoset_strategies lvl 0')
@@ -403,12 +403,12 @@ class GambitEFGLoader:
 		print('current_infoset_strategies lvl 2')
 		print(self.current_infoset_strategies[2])
 
-		print('infoset_acting_players lvl 0')
-		print(self.infoset_acting_players[0])
-		print('infoset_acting_players lvl 1')
-		print(self.infoset_acting_players[1])
-		print('infoset_acting_players lvl 2')
-		print(self.infoset_acting_players[2])
+		print('infoset_acting_players_ lvl 0')
+		print(self.infoset_acting_players_[0])
+		print('infoset_acting_players_ lvl 1')
+		print(self.infoset_acting_players_[1])
+		print('infoset_acting_players_ lvl 2')
+		print(self.infoset_acting_players_[2])
 
 		print('positive cumulative regrets lvl 0')
 		print(self.positive_cumulative_regrets[0])
@@ -419,27 +419,27 @@ class GambitEFGLoader:
 		"""
 
 	def get_tensorflow_tensors(self):
-		current_infoset_strategies = [None] * len(self.current_infoset_strategies)
-		initial_infoset_strategies = [None] * len(self.initial_infoset_strategies)
-		positive_cumulative_regrets = [None] * len(self.positive_cumulative_regrets)
+		current_infoset_strategies_ = [None] * len(self.current_infoset_strategies)
+		initial_infoset_strategies_ = [None] * len(self.initial_infoset_strategies)
+		positive_cumulative_regrets_ = [None] * len(self.positive_cumulative_regrets)
 		cumulative_regrets = [None] * len(self.cumulative_regrets)
-		node_to_infoset = [None] * len(self.node_to_infoset)
-		node_types = [None] * len(self.node_types)
-		utilities = [None] * len(self.utilities)
-		infoset_acting_players = [None] * len(self.infoset_acting_players)
+		node_to_infoset_ = [None] * len(self.node_to_infoset)
+		node_types_ = [None] * len(self.node_types)
+		utilities_ = [None] * len(self.utilities)
+		infoset_acting_players_ = [None] * len(self.infoset_acting_players)
 
 		for lvl in range(self.number_of_levels):
-			current_infoset_strategies[lvl] = tf.Variable(
+			current_infoset_strategies_[lvl] = tf.Variable(
 					self.current_infoset_strategies[lvl],
 					name='current_infoset_strategies_lvl{}'.format(lvl),
 					dtype=tf.float32
 			)
-			initial_infoset_strategies[lvl] = tf.placeholder_with_default(
+			initial_infoset_strategies_[lvl] = tf.placeholder_with_default(
 					self.initial_infoset_strategies[lvl],
 					shape=self.initial_infoset_strategies[lvl].shape,
 					name='initial_infoset_strategies_lvl{}'.format(lvl)
 			)
-			positive_cumulative_regrets[lvl] = tf.Variable(
+			positive_cumulative_regrets_[lvl] = tf.Variable(
 					self.positive_cumulative_regrets[lvl],
 					name='positive_cumulative_regrets_lvl{}'.format(lvl),
 					dtype=tf.float32
@@ -449,29 +449,29 @@ class GambitEFGLoader:
 					name='cumulative_regrets_lvl{}'.format(lvl),
 					dtype=tf.float32
 			)
-			node_to_infoset[lvl] = tf.Variable(
+			node_to_infoset_[lvl] = tf.Variable(
 					self.node_to_infoset[lvl],
 					name='node_to_infoset_lvl{}'.format(lvl),
 					dtype=tf.int32
 			)
-			infoset_acting_players[lvl] = tf.Variable(
+			infoset_acting_players_[lvl] = tf.Variable(
 					self.infoset_acting_players[lvl],
 					name='infoset_acting_players_lvl{}'.format(lvl),
 					dtype=tf.int32
 			)
 
 		for lvl in range(self.number_of_levels + 1):
-			node_types[lvl] = tf.Variable(self.node_types[lvl], name='node_types_lvl{}'.format(lvl), dtype=tf.int32)
-			utilities[lvl] = tf.Variable(self.utilities[lvl], name='utilities_lvl{}'.format(lvl), dtype=tf.float32)
+			node_types_[lvl] = tf.Variable(self.node_types[lvl], name='node_types_lvl{}'.format(lvl), dtype=tf.int32)
+			utilities_[lvl] = tf.Variable(self.utilities[lvl], name='utilities_lvl{}'.format(lvl), dtype=tf.float32)
 
 		return_dict = {
-			'current_infoset_strategies' : current_infoset_strategies,
-			'initial_infoset_strategies' : initial_infoset_strategies,
-			'positive_cumulative_regrets': positive_cumulative_regrets,
-			'node_to_infoset'            : node_to_infoset,
-			'node_types'                 : node_types,
-			'utilities'                  : utilities,
-			'infoset_acting_players'     : infoset_acting_players
+			'current_infoset_strategies' : current_infoset_strategies_,
+			'initial_infoset_strategies' : initial_infoset_strategies_,
+			'positive_cumulative_regrets': positive_cumulative_regrets_,
+			'node_to_infoset'            : node_to_infoset_,
+			'node_types'                 : node_types_,
+			'utilities'                  : utilities_,
+			'infoset_acting_players'     : infoset_acting_players_
 		}
 
 		return return_dict

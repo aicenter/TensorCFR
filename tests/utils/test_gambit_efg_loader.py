@@ -1,7 +1,7 @@
 import os
-import numpy as np
 import unittest
-import tensorflow as tf
+
+import numpy as np
 
 from src.utils.gambit_efg_loader import GambitEFGLoader
 

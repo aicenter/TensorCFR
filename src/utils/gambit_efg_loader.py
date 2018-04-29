@@ -380,44 +380,6 @@ class GambitEFGLoader:
 			self.cumulative_regrets[lvl] = np.zeros(infoset_strategies.shape)
 			self.positive_cumulative_regrets[lvl] = np.zeros(infoset_strategies.shape)
 
-		# self.infoset_acting_players_[0] = self.infoset_acting_players_[0][0]
-		"""
-		print('node_to_infoset lvl 0')
-		print(self.node_to_infoset[0])
-		print('infoset_acting_players_ lvl 1')
-		print(self.node_to_infoset[1])
-		print('infoset_acting_players_ lvl 2')
-		print(self.node_to_infoset[2])
-
-		print('node_to_infoset lvl 0')
-		print(self.node_to_infoset[0])
-		print('infoset_acting_players_ lvl 1')
-		print(self.node_to_infoset[1])
-		print('infoset_acting_players_ lvl 2')
-		print(self.node_to_infoset[2])
-
-		print('current_infoset_strategies lvl 0')
-		print(self.current_infoset_strategies[0])
-		print('current_infoset_strategies lvl 1')
-		print(self.current_infoset_strategies[1])
-		print('current_infoset_strategies lvl 2')
-		print(self.current_infoset_strategies[2])
-
-		print('infoset_acting_players_ lvl 0')
-		print(self.infoset_acting_players_[0])
-		print('infoset_acting_players_ lvl 1')
-		print(self.infoset_acting_players_[1])
-		print('infoset_acting_players_ lvl 2')
-		print(self.infoset_acting_players_[2])
-
-		print('positive cumulative regrets lvl 0')
-		print(self.positive_cumulative_regrets[0])
-		print('positive cumulative regrets lvl 1')
-		print(self.positive_cumulative_regrets[1])
-		print('positive cumulative regrets lvl 2')
-		print(self.positive_cumulative_regrets[2])
-		"""
-
 	def get_tensorflow_tensors(self):
 		current_infoset_strategies_ = [None] * len(self.current_infoset_strategies)
 		initial_infoset_strategies_ = [None] * len(self.initial_infoset_strategies)

@@ -10,7 +10,6 @@ class TestGambbitEFGLoaderParse(unittest.TestCase):
 	def setUp(self):
 		pass
 
-	"""
 	def test_parse_chance_node(self):
 		input_str = 'c "" 1 "" { "Ea (0.05)" 0.05 "Da (0.1)" 0.1 "Ca (0.1)" 0.1 "Ba (0.25)" 0.25 "Aa (0.5)" 0.5 } 1 "" { 0, 0 }'
 
@@ -34,7 +33,6 @@ class TestGambbitEFGLoaderParse(unittest.TestCase):
 		}
 
 		self.assertEqual(gambit_loader.parse_chance_node(input_str), expected_output)
-	"""
 
 
 class TestGambitEFGLoaderDomain01(unittest.TestCase):

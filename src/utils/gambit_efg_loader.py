@@ -7,7 +7,7 @@ import tensorflow as tf
 from src.commons import constants
 
 TMP_NODE_TO_INFOSET_TERMINAL = 7
-TMP_NODE_TO_INFOSET_IMAGINERY = 8
+TMP_NODE_TO_INFOSET_IMAGINARY = 8
 
 
 class NotAcceptableFormatException:
@@ -46,7 +46,7 @@ class InformationSetManager:
 		self.flag_imaginery_node_present = False
 		self.flag_terminal_node_present = False
 
-	def _is_imaginery_node_present(self, level, node_types):
+	def _is_imaginary_node_present(self, level, node_types):
 		tensor = node_types[level]
 		result = tensor[np.where(tensor == constants.IMAGINARY_NODE)]
 
@@ -64,7 +64,7 @@ class InformationSetManager:
 
 
 	def add(self, node):
-		# node type due to _is_imaginery_node_present
+		# node type due to _is_imaginary_node_present
 		self.infoset_node_to_infoset.append(node['infoset_id'])
 
 		if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
@@ -82,7 +82,7 @@ class InformationSetManager:
 
 	def make_infoset_acting_players(self, next_level_max_no_actions, node_types):
 		if self.flag_setted == False and self.level > 0:
-			self.flag_imaginery_node_present = self._is_imaginery_node_present(self.level, node_types)
+			self.flag_imaginery_node_present = self._is_imaginary_node_present(self.level, node_types)
 			self.flag_setted = True
 
 		infoset_acting_players = []
@@ -105,7 +105,7 @@ class InformationSetManager:
 		return [infoset_acting_players, np.array(current_infoset_strategies)]
 
 	def make_node_to_infoset(self, tensor):
-		tensor[np.where(tensor == ((-1)*TMP_NODE_TO_INFOSET_IMAGINERY))] = -self.infoset_cnt
+		tensor[np.where(tensor == ((-1) * TMP_NODE_TO_INFOSET_IMAGINARY))] = -self.infoset_cnt
 		tensor[np.where(tensor >= 0)] += -(self.infoset_cnt - 1)
 		tensor[np.where(tensor != 0)] *= -1
 		return tensor
@@ -150,7 +150,7 @@ class GambitEFGLoader:
 		for idx in range(len(self.actions_per_levels) + 1):
 			self.utilities[idx] = np.ones(self.actions_per_levels[:idx]) * constants.NON_TERMINAL_UTILITY
 			self.node_types[idx] = np.ones(self.actions_per_levels[:idx]) * constants.IMAGINARY_NODE
-			self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx]) * TMP_NODE_TO_INFOSET_IMAGINERY * (-1)
+			self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx]) * TMP_NODE_TO_INFOSET_IMAGINARY * (-1)
 			#self.cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
 			#self.positive_cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
 

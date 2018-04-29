@@ -46,7 +46,8 @@ class InformationSetManager:
 		self.flag_imaginery_node_present = False
 		self.flag_terminal_node_present = False
 
-	def _is_imaginary_node_present(self, level, node_types):
+	@staticmethod
+	def _is_imaginary_node_present(level, node_types):
 		tensor = node_types[level]
 		result = tensor[np.where(tensor == constants.IMAGINARY_NODE)]
 
@@ -54,7 +55,8 @@ class InformationSetManager:
 			return False
 		return True
 
-	def _is_terminal_node_present(self, level, node_types):
+	@staticmethod
+	def _is_terminal_node_present(level, node_types):
 		tensor = node_types[level]
 		result = tensor[np.where(tensor == constants.TERMINAL_NODE)]
 
@@ -158,7 +160,8 @@ class GambitEFGLoader:
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
 
-	def parse_gambit_header(self, input_line):
+	@staticmethod
+	def parse_gambit_header(input_line):
 		results = re.search(r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" \{(?P<players_dirty>.*)\}',
 		                    input_line)
 		if results:
@@ -191,7 +194,8 @@ class GambitEFGLoader:
 		else:
 			return False
 
-	def parse_probability(self, probability_str):
+	@staticmethod
+	def parse_probability(probability_str):
 		if '/' in probability_str:
 			probability_list = probability_str.split('/')
 			return float(int(probability_list[0]) / int(probability_list[1]))
@@ -202,11 +206,13 @@ class GambitEFGLoader:
 		parse_actions = re.findall(r'"(?P<name>[^"]*)" (?P<probability>[\d\./]+)', input_actions_str)
 		return [{'name': action[0], 'probability': self.parse_probability(action[1])} for action in parse_actions]
 
-	def parse_actions_player(self, input_actions_str):
+	@staticmethod
+	def parse_actions_player(input_actions_str):
 		parse_actions = re.findall(r'"(?P<name>[^"]*)"', input_actions_str)
 		return [{'name': action[0]} for action in parse_actions]
 
-	def parse_payoffs(self, input_payoffs_str):
+	@staticmethod
+	def parse_payoffs(input_payoffs_str):
 		parse_payoffs = re.findall(r'[\-]?[\d]+', input_payoffs_str)
 		return [int(payoff) for payoff in parse_payoffs]
 
@@ -284,7 +290,8 @@ class GambitEFGLoader:
 			'infoset_id'  : infoset_id
 		}
 
-	def is_gambit_node(self, line):
+	@staticmethod
+	def is_gambit_node(line):
 		if line[0] == constants.GAMBIT_NODE_TYPE_CHANCE or line[0] == constants.GAMBIT_NODE_TYPE_PLAYER or line[
 			0] == constants.GAMBIT_NODE_TYPE_TERMINAL:
 			return True

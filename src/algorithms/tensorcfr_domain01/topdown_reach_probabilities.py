@@ -15,7 +15,7 @@ def get_nodal_reach_probabilities(for_player=current_updating_player):
 	  `current_updating_player` by default.
 	:return: The reach probabilities of nodes based on `current_infoset_strategies`.
 	"""
-	node_cf_strategies = get_node_cf_strategies()
+	node_cf_strategies = get_node_cf_strategies(updating_player=for_player)
 	with tf.variable_scope("nodal_reach_probabilities"):
 		nodal_reach_probabilities = [None] * levels
 		nodal_reach_probabilities[0] = reach_probability_of_root_node

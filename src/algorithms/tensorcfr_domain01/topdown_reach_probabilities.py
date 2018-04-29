@@ -26,21 +26,23 @@ def get_infoset_reach_probabilities():
 	nodal_reach_probabilities = get_nodal_reach_probabilities()
 	with tf.variable_scope("infoset_reach_probabilities"):
 		infoset_reach_probabilities = [None] * levels
-		infoset_reach_probabilities[0] = tf.identity(nodal_reach_probabilities[0], name="infoset_reach_probabilities_lvl0")
+		with tf.variable_scope("level0"):
+			infoset_reach_probabilities[0] = tf.identity(nodal_reach_probabilities[0], name="infoset_reach_probabilities_lvl0")
 		for level in range(1, levels - 1):
-			scatter_nd_sum_indices = tf.expand_dims(
-					node_to_infoset[level],
-					axis=-1,
-					name="expanded_node_to_infoset_lvl{}".format(level))
-			scatter_nd_sum_updates = nodal_reach_probabilities[level]
-			scatter_nd_sum_shape = infoset_acting_players[level].shape
-			infoset_reach_probabilities[level] = scatter_nd_sum(
-					indices=scatter_nd_sum_indices,
-					updates=scatter_nd_sum_updates,
-					shape=scatter_nd_sum_shape,
-					name="infoset_reach_probabilities_lvl{}".format(level)
-			)
-		return infoset_reach_probabilities
+			with tf.variable_scope("level{}".format(level)):
+				scatter_nd_sum_indices = tf.expand_dims(
+						node_to_infoset[level],
+						axis=-1,
+						name="expanded_node_to_infoset_lvl{}".format(level))
+				scatter_nd_sum_updates = nodal_reach_probabilities[level]
+				scatter_nd_sum_shape = infoset_acting_players[level].shape
+				infoset_reach_probabilities[level] = scatter_nd_sum(
+						indices=scatter_nd_sum_indices,
+						updates=scatter_nd_sum_updates,
+						shape=scatter_nd_sum_shape,
+						name="infoset_reach_probabilities_lvl{}".format(level)
+				)
+	return infoset_reach_probabilities
 
 
 def show_reach_probabilities(session):

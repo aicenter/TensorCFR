@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from src.algorithms.tensorcfr_domain01.node_strategies import get_node_cf_strategies
 from src.domains.domain01.domain_definitions import reach_probability_of_root_node, node_to_infoset, \
-	current_infoset_strategies, levels, infoset_acting_players
+	current_infoset_strategies, levels, infoset_acting_players, current_opponent
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum
 
 
@@ -22,12 +22,13 @@ def get_nodal_reach_probabilities():
 		return nodal_reach_probabilities
 
 
-def get_infoset_reach_probabilities():
+def get_infoset_reach_probabilities(for_player=current_opponent):
 	nodal_reach_probabilities = get_nodal_reach_probabilities()
 	with tf.variable_scope("infoset_reach_probabilities"):
 		infoset_reach_probabilities = [None] * levels
 		with tf.variable_scope("level0"):
-			infoset_reach_probabilities[0] = tf.identity(nodal_reach_probabilities[0], name="infoset_reach_probabilities_lvl0")
+			infoset_reach_probabilities[0] = tf.identity(nodal_reach_probabilities[0],
+			                                             name="infoset_reach_probabilities_lvl0")
 		for level in range(1, levels - 1):
 			with tf.variable_scope("level{}".format(level)):
 				scatter_nd_sum_indices = tf.expand_dims(
@@ -60,6 +61,7 @@ def show_reach_probabilities(session):
 
 if __name__ == '__main__':
 	from src.algorithms.tensorcfr_domain01.swap_players import swap_players
+
 	node_cf_strategies_ = get_node_cf_strategies()
 	nodal_reach_probabilities_ = get_nodal_reach_probabilities()
 	infoset_reach_probabilities_ = get_infoset_reach_probabilities()

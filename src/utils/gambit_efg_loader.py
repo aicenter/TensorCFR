@@ -498,11 +498,9 @@ if __name__ == '__main__':
 	utilities = domain_tensors['utilities']
 	infoset_acting_players = domain_tensors['infoset_acting_players']
 
-	"""
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 
 		for lvl in range(domain.number_of_levels):
 			print("Level " + str(lvl))
 			print(sess.run(positive_cumulative_regrets[lvl]))
-	"""

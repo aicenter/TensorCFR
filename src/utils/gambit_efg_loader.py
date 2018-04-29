@@ -84,7 +84,7 @@ class InformationSetManager:
 			return return_node_to_infoset_value
 
 	def make_infoset_acting_players(self, next_level_max_no_actions, node_types_):
-		if self.flag_set == False and self.level > 0:
+		if self.flag_set is False and self.level > 0:
 			self.flag_imaginary_node_present = self._is_imaginary_node_present(self.level, node_types_)
 			self.flag_set = True
 

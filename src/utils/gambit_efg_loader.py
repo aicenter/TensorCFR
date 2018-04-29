@@ -464,6 +464,7 @@ if __name__ == '__main__':
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 
+		# TODO print all other tensors from domain definition
 		for lvl in range(domain.number_of_levels):
 			print("Level " + str(lvl))
 			print(sess.run(positive_cumulative_regrets[lvl]))

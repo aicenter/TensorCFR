@@ -45,7 +45,7 @@ class InformationSetManager:
 		self.cnt_player_nodes = 0
 
 		self.flag_setted = False
-		self.flag_imaginery_node_present = False
+		self.flag_imaginary_node_present = False
 		self.flag_terminal_node_present = False
 
 	@staticmethod
@@ -85,14 +85,14 @@ class InformationSetManager:
 
 	def make_infoset_acting_players(self, next_level_max_no_actions, node_types):
 		if self.flag_setted == False and self.level > 0:
-			self.flag_imaginery_node_present = self._is_imaginary_node_present(self.level, node_types)
+			self.flag_imaginary_node_present = self._is_imaginary_node_present(self.level, node_types)
 			self.flag_setted = True
 
 		infoset_acting_players = []
 		current_infoset_strategies = []
 
-		if self.flag_imaginery_node_present:
-			self.infoset_dict['imaginary-node'] = [self.infoset_cnt, 'tnode', -1]  # last element - imaginery
+		if self.flag_imaginary_node_present:
+			self.infoset_dict['imaginary-node'] = [self.infoset_cnt, 'tnode', -1]  # last element - imaginary
 			self.infoset_acting_players_list.append('imaginary-node')
 
 		for idx, infoset_id in enumerate(self.infoset_acting_players_list):

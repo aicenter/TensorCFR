@@ -64,7 +64,7 @@ class InformationSetManager:
 
 
 	def add(self, node):
-		# node type kvuli _is_imaginery_node_present
+		# node type due to _is_imaginery_node_present
 		self.infoset_node_to_infoset.append(node['infoset_id'])
 
 		if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:

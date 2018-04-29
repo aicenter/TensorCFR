@@ -218,7 +218,6 @@ class GambitEFGLoader:
 
 	def parse_chance_node(self, input_line):
 		print(input_line)
-		# r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{(?P<actions_str>.*)\} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{(?P<payoffs_str>.*)\}',
 		parse_line = re.search(
 				r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+)\ ?"?(?P<information_set_name_optional>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{?(?P<payoffs_optional>.*)\}?',
 				input_line
@@ -243,7 +242,6 @@ class GambitEFGLoader:
 
 	def parse_player_node(self, input_line):
 		print(input_line)
-		# r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+) "(?P<information_set_name>[^"]*)" \{(?P<actions_str>.*)\} (?P<outcome>\d+) "(?P<outcome_name>[^"]*)" \{(?P<payoffs_str>.*)\}',
 		parse_line = re.search(
 				r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+)\ ?"?(?P<information_set_name>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name>[^"]*)"?\ ?\{?(?P<payoffs_optional>[^\}]*)\}?',
 				input_line

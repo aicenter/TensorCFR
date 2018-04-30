@@ -26,7 +26,10 @@ class Domain:
 				tf.get_variable("node_types_lvl{}".format(level), initializer=node_types[level])
 				for level in range(self.levels)
 			]
-			self.utilities = utilities
+			self.utilities = [
+				tf.get_variable("utilities_lvl{}".format(level), initializer=utilities[level])
+				for level in range(self.levels)
+			]
 			self.infoset_acting_players = infoset_acting_players
 
 			# tensors on strategies

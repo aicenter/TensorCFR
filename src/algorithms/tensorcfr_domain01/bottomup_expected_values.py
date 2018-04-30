@@ -44,7 +44,7 @@ def get_infoset_cbr_support(for_player=current_updating_player, strategies=curre
 	:return: The list of boolean tensors, each containing the support of infosets's CBR at each level.
 	"""
 	# TODO continue here
-	pass
+	raise NotImplementedError
 
 
 def get_infoset_cbr_values(for_player=current_updating_player, strategies=current_infoset_strategies):

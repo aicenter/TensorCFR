@@ -29,7 +29,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	reach_probability_of_root_node = tf.Variable(1.0, name="reach_probability_of_root_node")
 	shape[0] = actions_per_levels[:0]
 	node_types[0] = INNER_NODE
-	utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
+	utilities[0] = NON_TERMINAL_UTILITY
 	infoset_acting_players[0] = tf.Variable([CHANCE_PLAYER], name="infoset_acting_players_lvl0")
 	initial_infoset_strategies[0] = tf.placeholder_with_default(
 			input=[[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
@@ -46,7 +46,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	node_to_infoset[1] = [0, 1, 2, 2, 3]
 	shape[1] = actions_per_levels[:1]
 	node_types[1] = [INNER_NODE] * 5
-	utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
+	utilities[1] = [NON_TERMINAL_UTILITY] * 5
 	infoset_acting_players[1] = tf.Variable(
 		[PLAYER1,         # I1,0
 		 PLAYER2,         # I1,1
@@ -89,20 +89,13 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 		                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s14, s15, s16
 		                [TERMINAL_NODE, INNER_NODE, INNER_NODE]    # s17, s18, s19
 	                ]
-	utilities[2] = masked_assign(
-			ref=tf.Variable(
-					tf.fill(
-							value=NON_TERMINAL_UTILITY,
-							dims=shape[2]
-					)
-			),
-			value=tf.reshape(
-					tf.range(10, 160, delta=10.0),
-					shape[2]
-			),
-			mask=tf.equal(node_types[2], TERMINAL_NODE),
-			name="utilities_lvl2"
-	)
+	utilities[2] = [
+		[  0.,   0.,  30.],
+		[  0.,   0.,   0.],
+		[  0.,   0.,   0.],
+		[  0.,   0.,   0.],
+		[130.,   0.,   0.]
+	]
 	infoset_acting_players[2] = tf.Variable(
 		[PLAYER1,            # of I2,0
 		 PLAYER2,            # of I2,1
@@ -153,17 +146,37 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 		 [1, 1],
 		 [1, 1]]
 	]
-	utilities[3] = masked_assign(
-		ref=tf.Variable(
-					tf.fill(
-						value=NON_TERMINAL_UTILITY,
-						dims=shape[3]
-					)
-		),
-		value=tf.reshape(tf.range(10, 310, delta=10.0), shape[3]),
-		mask=tf.equal(node_types[3], TERMINAL_NODE),
-		name="utilities_lvl3"
-	)
+	utilities[3] = [
+		[
+			[ 10.,  20.],
+			[ 30.,  40.],
+			[  0.,   0.]
+		],
+
+		[
+			[ 70.,  80.],
+			[ 90., 100.],
+			[  0.,   0.]
+		],
+
+		[
+			[130., 140.],
+			[150., 160.],
+			[  0.,   0.]
+		],
+
+		[
+			[190., 200.],
+			[210., 220.],
+			[  0.,   0.]
+		],
+
+		[
+			[  0.,   0.],
+			[270., 280.],
+			[290., 300.]
+		]
+	]
 
 	########## miscellaneous tensors ##########
 	current_infoset_strategies = [

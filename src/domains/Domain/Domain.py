@@ -117,6 +117,7 @@ class Domain:
 		return self.infoset_acting_players
 
 	def print_domain(self, session):
+		print(">>>>>>>>>> {} <<<<<<<<<<".format(self.domain_name))
 		for level in range(self.levels):
 			print("########## Level {} ##########".format(level))
 			if level == 0:

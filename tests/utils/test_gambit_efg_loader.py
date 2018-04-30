@@ -6,8 +6,9 @@ import numpy as np
 from src.utils.gambit_efg_loader import GambitEFGLoader
 
 
-class TestGambbitEFGLoaderParse(unittest.TestCase):
+class TestGambitEFGLoaderParse(unittest.TestCase):
 	def setUp(self):
+		# TODO implement
 		pass
 
 

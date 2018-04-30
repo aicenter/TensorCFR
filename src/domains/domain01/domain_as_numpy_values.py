@@ -243,22 +243,22 @@ def print_misc_variables(session):
 	])
 
 
-if __name__ == '__main__':
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		levels_range = range(levels)
-		for level in levels_range:
-			print("########## Level {} ##########".format(level))
-			if level == 0:
-				print_tensors(sess, [reach_probability_of_root_node])
-			print_tensors(sess, [node_types[level], utilities[level]])
-			if level != levels_range[-1]:
-				print_tensors(sess, [
-					node_to_infoset[level],
-					infoset_acting_players[level],
-					initial_infoset_strategies[level],
-					current_infoset_strategies[level],
-					positive_cumulative_regrets[level],
-					cumulative_infoset_strategies[level],
-				])
-		print_misc_variables(session=sess)
+# if __name__ == '__main__':
+# 	with tf.Session() as sess:
+# 		sess.run(tf.global_variables_initializer())
+# 		levels_range = range(levels)
+# 		for level in levels_range:
+# 			print("########## Level {} ##########".format(level))
+# 			if level == 0:
+# 				print_tensors(sess, [reach_probability_of_root_node])
+# 			print_tensors(sess, [node_types[level], utilities[level]])
+# 			if level != levels_range[-1]:
+# 				print_tensors(sess, [
+# 					node_to_infoset[level],
+# 					infoset_acting_players[level],
+# 					initial_infoset_strategies[level],
+# 					current_infoset_strategies[level],
+# 					positive_cumulative_regrets[level],
+# 					cumulative_infoset_strategies[level],
+# 				])
+# 		print_misc_variables(session=sess)

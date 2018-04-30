@@ -18,7 +18,10 @@ class Domain:
 			self.shape = [self.actions_per_levels[:i] for i in range(self.levels)]
 
 			# tensors on tree definition
-			self.node_to_infoset = node_to_infoset
+			self.node_to_infoset = [
+				tf.get_variable("node_to_infoset_lvl{}".format(level), initializer=node_to_infoset[level])
+				for level in range(self.acting_depth)
+			]
 			self.node_types = node_types
 			self.utilities = utilities
 			self.infoset_acting_players = infoset_acting_players

@@ -146,7 +146,7 @@ if __name__ == '__main__':
 	import src.domains.domain01.domain01_as_numpy_values as d1
 	domain01 = Domain(
 			domain_name="domain01",
-			actions_per_levels=[5, 3, 2],
+			actions_per_levels=d1.actions_per_levels,
 			node_to_infoset=d1.node_to_infoset,
 			node_types=d1.node_types,
 			utilities=d1.utilities,

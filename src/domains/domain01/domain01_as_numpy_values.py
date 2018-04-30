@@ -3,9 +3,7 @@
 import tensorflow as tf
 
 from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, \
-	PLAYER1, \
-	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY, INT_DTYPE, IMAGINARY_PROBABILITIES
-from src.utils.tensor_utils import print_tensors, masked_assign
+	PLAYER1, PLAYER2, NO_ACTING_PLAYER, IMAGINARY_PROBABILITIES
 
 # custom-made game: see doc/domain01_via_drawing.png and doc/domain01_via_gambit.png
 
@@ -25,7 +23,6 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	# I0,0 = { s } ... root node, the chance player acts here
 	# there are 5 actions in node s
 	node_to_infoset[0] = 0
-	reach_probability_of_root_node = tf.Variable(1.0, name="reach_probability_of_root_node")
 	node_types[0] = INNER_NODE
 	utilities[0] = NON_TERMINAL_UTILITY
 	infoset_acting_players[0] = [CHANCE_PLAYER]
@@ -162,98 +159,3 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 			[290., 300.]
 		]
 	]
-
-	########## miscellaneous tensors ##########
-	current_infoset_strategies = [
-		tf.Variable(
-				initial_value=initial_infoset_strategies[level],
-				name="current_infoset_strategies_lvl{}".format(level)
-		) for level in range(acting_depth)
-	]
-	positive_cumulative_regrets = [
-		tf.Variable(
-				tf.zeros_like(
-						current_infoset_strategies[level]
-				),
-				name="positive_cumulative_regrets_lvl{}".format(level)
-		) for level in range(acting_depth)
-	]
-	cumulative_infoset_strategies = [
-		tf.Variable(
-				tf.zeros_like(
-						current_infoset_strategies[level]
-				),
-				name="cumulative_infoset_strategies_lvl{}".format(level)
-		)
-		for level in range(acting_depth)
-	]  # used for the final average strategy
-	infosets_of_non_chance_player = [
-		tf.reshape(
-				tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
-				shape=[current_infoset_strategies[level].shape[0]],
-				name="infosets_of_acting_player_lvl{}".format(level)
-		) for level in range(acting_depth)
-	]
-	cfr_step = tf.Variable(initial_value=1, dtype=tf.int32, name="cfr_step")  # counter of CFR+ iterations
-	averaging_delay = tf.Variable(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
-			DEFAULT_AVERAGING_DELAY,
-			dtype=tf.int32,
-			name="averaging_delay"
-	)
-	player_owning_the_utilities = tf.constant(  # utilities defined...
-			PLAYER1,  # ...from this player's point of view
-			name="player_owning_the_utilities"
-	)
-	current_updating_player = tf.get_variable(
-			"current_updating_player",
-			initializer=PLAYER1,
-			dtype=INT_DTYPE,
-	)
-	current_opponent = tf.get_variable(
-			"current_opponent",
-			initializer=PLAYER2,
-			dtype=INT_DTYPE,
-	)
-	signum_of_current_player = tf.where(
-			condition=tf.equal(current_updating_player, player_owning_the_utilities),
-			x=1.0,
-			y=-1.0,  # Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
-			name="signum_of_current_player",
-	)
-
-
-def get_infoset_acting_players():
-	return infoset_acting_players
-
-
-def print_misc_variables(session):
-	print("########## Misc ##########")
-	print_tensors(session, [
-		cfr_step,
-		averaging_delay,
-		current_updating_player,
-		current_opponent,
-		signum_of_current_player,
-		player_owning_the_utilities,
-	])
-
-
-# if __name__ == '__main__':
-# 	with tf.Session() as sess:
-# 		sess.run(tf.global_variables_initializer())
-# 		levels_range = range(levels)
-# 		for level in levels_range:
-# 			print("########## Level {} ##########".format(level))
-# 			if level == 0:
-# 				print_tensors(sess, [reach_probability_of_root_node])
-# 			print_tensors(sess, [node_types[level], utilities[level]])
-# 			if level != levels_range[-1]:
-# 				print_tensors(sess, [
-# 					node_to_infoset[level],
-# 					infoset_acting_players[level],
-# 					initial_infoset_strategies[level],
-# 					current_infoset_strategies[level],
-# 					positive_cumulative_regrets[level],
-# 					cumulative_infoset_strategies[level],
-# 				])
-# 		print_misc_variables(session=sess)

@@ -40,7 +40,14 @@ class Domain:
 				self.reach_probability_of_root_node = tf.get_variable("reach_probability_of_root_node", initializer=1.0)
 			else:
 				self.reach_probability_of_root_node = reach_probability_of_root_node
-			self.initial_infoset_strategies = initial_infoset_strategies
+			self.initial_infoset_strategies = [
+				tf.placeholder_with_default(
+						input=initial_infoset_strategies[level],
+						shape=[len(infoset_acting_players[level]), actions_per_levels[level]],
+						name="initial_infoset_strategies_lvl{}".format(level)
+				)
+				for level in range(self.acting_depth)
+			]
 			self.current_infoset_strategies = [
 				tf.get_variable(
 						"current_infoset_strategies_lvl{}".format(level),

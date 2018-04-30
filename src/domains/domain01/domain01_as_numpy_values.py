@@ -29,11 +29,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	node_types[0] = INNER_NODE
 	utilities[0] = NON_TERMINAL_UTILITY
 	infoset_acting_players[0] = [CHANCE_PLAYER]
-	initial_infoset_strategies[0] = tf.placeholder_with_default(
-			input=[[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
-			shape=[len(infoset_acting_players[0]), actions_per_levels[0]],
-			name="initial_infoset_strategies_lvl{}".format(0)
-	)
+	initial_infoset_strategies[0] = [[0.5, .25, 0.1, 0.1, .05]]  # of I0,0
 
 	########## Level 1 ##########
 	# I1,0 = { s' }
@@ -50,14 +46,12 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 		PLAYER2,         # I1,2
 		CHANCE_PLAYER    # I1,3
 	]
-	initial_infoset_strategies[1] = tf.placeholder_with_default(
-			input=[[0.5, 0.4, 0.1],  # of I1,0
-			       [0.1, 0.9, IMAGINARY_PROBABILITIES],  # of I1,1, `nan` for probabilities of imaginary nodes
-			       [0.2, 0.8, IMAGINARY_PROBABILITIES],  # of I1,2, `nan` for probabilities of imaginary nodes
-			       [0.3, 0.3, 0.3]],    # of I1,3
-			shape=[len(infoset_acting_players[1]), actions_per_levels[1]],
-			name="initial_infoset_strategies_lvl{}".format(1)
-	)
+	initial_infoset_strategies[1] = [
+		[0.5, 0.4, 0.1],                      # of I1,0
+		[0.1, 0.9, IMAGINARY_PROBABILITIES],  # of I1,1, `nan` for probabilities of imaginary nodes
+		[0.2, 0.8, IMAGINARY_PROBABILITIES],  # of I1,2, `nan` for probabilities of imaginary nodes
+		[0.3, 0.3, 0.3]                       # of I1,3
+	]
 
 	########## Level 2 ##########
 	# I2,0 = { s5 }
@@ -102,19 +96,17 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 		NO_ACTING_PLAYER,   # of I2,7 ... pseudo-infoset of terminal nodes
 		NO_ACTING_PLAYER    # of I2,8 ... pseudo-infoset of imaginary nodes
 	]
-	initial_infoset_strategies[2] = tf.placeholder_with_default(
-			input=[[0.15, 0.85],  # of I2,0
-			       [0.70, 0.30],  # of I2,1
-			       [0.25, 0.75],  # of I2,2
-			       [0.50, 0.50],  # of I2,3
-			       [0.10, 0.90],  # of I2,4
-			       [0.45, 0.55],  # of I2,5
-			       [0.40, 0.60],  # of I2,6
-			       [IMAGINARY_PROBABILITIES, IMAGINARY_PROBABILITIES],   # of I2,7 ... terminal nodes
-			       [IMAGINARY_PROBABILITIES, IMAGINARY_PROBABILITIES]],  # of I2,8 ... imaginary nodes
-			shape=[len(infoset_acting_players[2]), actions_per_levels[2]],
-			name="initial_infoset_strategies_lvl{}".format(2)
-	)
+	initial_infoset_strategies[2] = [
+		[0.15, 0.85],  # of I2,0
+		[0.70, 0.30],  # of I2,1
+		[0.25, 0.75],  # of I2,2
+		[0.50, 0.50],  # of I2,3
+		[0.10, 0.90],  # of I2,4
+		[0.45, 0.55],  # of I2,5
+		[0.40, 0.60],  # of I2,6
+		[IMAGINARY_PROBABILITIES, IMAGINARY_PROBABILITIES],   # of I2,7 ... terminal nodes
+		[IMAGINARY_PROBABILITIES, IMAGINARY_PROBABILITIES]    # of I2,8 ... imaginary nodes
+	]
 
 	########## Level 3 ##########
 	# There are never any infosets in the final layer, only terminal / imaginary nodes.

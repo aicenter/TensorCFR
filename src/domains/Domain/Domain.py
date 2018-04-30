@@ -2,17 +2,15 @@
 
 import tensorflow as tf
 
-from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, IMAGINARY_NODE, CHANCE_PLAYER, \
-	PLAYER1, \
-	PLAYER2, NO_ACTING_PLAYER, DEFAULT_AVERAGING_DELAY, INT_DTYPE, IMAGINARY_PROBABILITIES
-from src.utils.tensor_utils import print_tensors, masked_assign
+from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE
+from src.utils.tensor_utils import print_tensors
 
 
 class Domain:
-	def __init__(self, actions_per_levels, node_to_infoset, node_types, utilities, infoset_acting_players,
-	             initial_infoset_strategies,
-	             reach_probability_of_root_node=tf.get_variable("reach_probability_of_root_node", initializer=1.0)):
-		with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scope:
+	def __init__(self, domain_name, actions_per_levels, node_to_infoset, node_types, utilities, infoset_acting_players,
+	             initial_infoset_strategies, reach_probability_of_root_node=None):
+		self.domain_name = domain_name
+		with tf.variable_scope(self.domain_name) as self.domain_scope:
 			# tensors on tree dimensions
 			self.actions_per_levels = actions_per_levels    # maximum number of actions per each level
 			self.levels = len(self.actions_per_levels) + 1  # accounting for 0th level
@@ -23,23 +21,13 @@ class Domain:
 			self.node_to_infoset = node_to_infoset
 			self.node_types = node_types
 			self.utilities = utilities
-			self.signum_of_current_player = tf.where(
-					condition=tf.equal(self.current_updating_player, self.player_owning_the_utilities),
-					x=1.0,
-					y=-1.0,  # Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
-					name="signum_of_current_player",
-			)
 			self.infoset_acting_players = infoset_acting_players
-			self.infosets_of_non_chance_player = [
-				tf.reshape(
-						tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
-						shape=[self.current_infoset_strategies[level].shape[0]],
-						name="infosets_of_acting_player_lvl{}".format(level)
-				) for level in range(self.acting_depth)
-			]
 
 			# tensors on strategies
-			self.reach_probability_of_root_node = reach_probability_of_root_node
+			if reach_probability_of_root_node is None:
+				self.reach_probability_of_root_node = tf.get_variable("reach_probability_of_root_node", initializer=1.0)
+			else:
+				self.reach_probability_of_root_node = reach_probability_of_root_node
 			self.initial_infoset_strategies = initial_infoset_strategies
 			self.current_infoset_strategies = [
 				tf.get_variable(
@@ -78,10 +66,6 @@ class Domain:
 			)
 
 			# tensors on players
-			self.player_owning_the_utilities = tf.constant(
-					PLAYER1,  # `utilities[]` are defined from this player's point of view
-					name="player_owning_the_utilities"
-			)
 			self.current_updating_player = tf.get_variable(
 					"current_updating_player",
 					initializer=PLAYER1,
@@ -92,6 +76,23 @@ class Domain:
 					initializer=PLAYER2,
 					dtype=INT_DTYPE,
 			)
+			self.player_owning_the_utilities = tf.constant(
+					PLAYER1,  # `utilities[]` are defined from this player's point of view
+					name="player_owning_the_utilities"
+			)
+			self.signum_of_current_player = tf.where(
+					condition=tf.equal(self.current_updating_player, self.player_owning_the_utilities),
+					x=1.0,
+					y=-1.0,  # Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
+					name="signum_of_current_player",
+			)
+			self.infosets_of_non_chance_player = [
+				tf.reshape(
+						tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
+						shape=[self.current_infoset_strategies[level].shape[0]],
+						name="infosets_of_acting_player_lvl{}".format(level)
+				) for level in range(self.acting_depth)
+			]
 
 	def get_infoset_acting_players(self):
 		return self.infoset_acting_players
@@ -123,13 +124,15 @@ class Domain:
 
 
 if __name__ == '__main__':
+	import src.domains.domain01.domain_definitions as d1
 	domain01 = Domain(
+			domain_name="domain01",
 			actions_per_levels=[5, 3, 2],
-			node_to_infoset=,
-			node_types=,
-			utilities=,
-			infoset_acting_players=,
-			initial_infoset_strategies=,
+			node_to_infoset=d1.node_to_infoset,
+			node_types=d1.node_types,
+			utilities=d1.utilities,
+			infoset_acting_players=d1.infoset_acting_players,
+			initial_infoset_strategies=d1.initial_infoset_strategies,
 	)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

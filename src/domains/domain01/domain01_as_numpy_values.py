@@ -31,7 +31,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	infoset_acting_players[0] = [CHANCE_PLAYER]
 	initial_infoset_strategies[0] = tf.placeholder_with_default(
 			input=[[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
-			shape=[infoset_acting_players[0].shape[0], actions_per_levels[0]],
+			shape=[len(infoset_acting_players[0]), actions_per_levels[0]],
 			name="initial_infoset_strategies_lvl{}".format(0)
 	)
 
@@ -55,7 +55,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 			       [0.1, 0.9, IMAGINARY_PROBABILITIES],  # of I1,1, `nan` for probabilities of imaginary nodes
 			       [0.2, 0.8, IMAGINARY_PROBABILITIES],  # of I1,2, `nan` for probabilities of imaginary nodes
 			       [0.3, 0.3, 0.3]],    # of I1,3
-			shape=[infoset_acting_players[1].shape[0], actions_per_levels[1]],
+			shape=[len(infoset_acting_players[1]), actions_per_levels[1]],
 			name="initial_infoset_strategies_lvl{}".format(1)
 	)
 
@@ -112,7 +112,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 			       [0.40, 0.60],  # of I2,6
 			       [IMAGINARY_PROBABILITIES, IMAGINARY_PROBABILITIES],   # of I2,7 ... terminal nodes
 			       [IMAGINARY_PROBABILITIES, IMAGINARY_PROBABILITIES]],  # of I2,8 ... imaginary nodes
-			shape=[infoset_acting_players[2].shape[0], actions_per_levels[2]],
+			shape=[len(infoset_acting_players[2]), actions_per_levels[2]],
 			name="initial_infoset_strategies_lvl{}".format(2)
 	)
 

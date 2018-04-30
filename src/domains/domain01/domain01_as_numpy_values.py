@@ -28,7 +28,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	reach_probability_of_root_node = tf.Variable(1.0, name="reach_probability_of_root_node")
 	node_types[0] = INNER_NODE
 	utilities[0] = NON_TERMINAL_UTILITY
-	infoset_acting_players[0] = tf.Variable([CHANCE_PLAYER], name="infoset_acting_players_lvl0")
+	infoset_acting_players[0] = [CHANCE_PLAYER]
 	initial_infoset_strategies[0] = tf.placeholder_with_default(
 			input=[[0.5, .25, 0.1, 0.1, .05]],  # of I0,0
 			shape=[infoset_acting_players[0].shape[0], actions_per_levels[0]],
@@ -44,13 +44,12 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	node_to_infoset[1] = [0, 1, 2, 2, 3]
 	node_types[1] = [INNER_NODE] * 5
 	utilities[1] = [NON_TERMINAL_UTILITY] * 5
-	infoset_acting_players[1] = tf.Variable(
-		[PLAYER1,         # I1,0
-		 PLAYER2,         # I1,1
-		 PLAYER2,         # I1,2
-		 CHANCE_PLAYER],  # I1,3
-		name="infoset_acting_players_lvl1"
-	)
+	infoset_acting_players[1] = [
+		PLAYER1,         # I1,0
+		PLAYER2,         # I1,1
+		PLAYER2,         # I1,2
+		CHANCE_PLAYER    # I1,3
+	]
 	initial_infoset_strategies[1] = tf.placeholder_with_default(
 			input=[[0.5, 0.4, 0.1],  # of I1,0
 			       [0.1, 0.9, IMAGINARY_PROBABILITIES],  # of I1,1, `nan` for probabilities of imaginary nodes
@@ -92,18 +91,17 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 		[  0.,   0.,   0.],
 		[130.,   0.,   0.]
 	]
-	infoset_acting_players[2] = tf.Variable(
-		[PLAYER1,            # of I2,0
-		 PLAYER2,            # of I2,1
-		 PLAYER1,            # of I2,2
-		 PLAYER2,            # of I2,3
-		 CHANCE_PLAYER,      # of I2,4
-		 PLAYER1,            # of I2,5
-		 PLAYER2,            # of I2,6
-		 NO_ACTING_PLAYER,   # of I2,7 ... pseudo-infoset of terminal nodes
-		 NO_ACTING_PLAYER],  # of I2,8 ... pseudo-infoset of imaginary nodes
-		name="infoset_acting_players_lvl2"
-	)
+	infoset_acting_players[2] = [
+		PLAYER1,            # of I2,0
+		PLAYER2,            # of I2,1
+		PLAYER1,            # of I2,2
+		PLAYER2,            # of I2,3
+		CHANCE_PLAYER,      # of I2,4
+		PLAYER1,            # of I2,5
+		PLAYER2,            # of I2,6
+		NO_ACTING_PLAYER,   # of I2,7 ... pseudo-infoset of terminal nodes
+		NO_ACTING_PLAYER    # of I2,8 ... pseudo-infoset of imaginary nodes
+	]
 	initial_infoset_strategies[2] = tf.placeholder_with_default(
 			input=[[0.15, 0.85],  # of I2,0
 			       [0.70, 0.30],  # of I2,1

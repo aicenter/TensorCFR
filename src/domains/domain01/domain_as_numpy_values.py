@@ -28,7 +28,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	node_to_infoset[0] = 0
 	reach_probability_of_root_node = tf.Variable(1.0, name="reach_probability_of_root_node")
 	shape[0] = actions_per_levels[:0]
-	node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
+	node_types[0] = INNER_NODE
 	utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
 	infoset_acting_players[0] = tf.Variable([CHANCE_PLAYER], name="infoset_acting_players_lvl0")
 	initial_infoset_strategies[0] = tf.placeholder_with_default(
@@ -45,7 +45,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	# each node has 3 actions
 	node_to_infoset[1] = [0, 1, 2, 2, 3]
 	shape[1] = actions_per_levels[:1]
-	node_types[1] = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
+	node_types[1] = [INNER_NODE] * 5
 	utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
 	infoset_acting_players[1] = tf.Variable(
 		[PLAYER1,         # I1,0
@@ -82,14 +82,13 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 		                     [7, 5, 6]    # s17, s18, s19
 	                     ]
 	shape[2] = actions_per_levels[:2]
-	node_types[2] = tf.Variable(
-		[[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, s6, s7
-		 [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s8, s9, s10
-		 [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s11, s12, s13
-		 [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s14, s15, s16
-		 [TERMINAL_NODE, INNER_NODE, INNER_NODE]],  # s17, s18, s19
-		name="node_types_lvl2"
-	)
+	node_types[2] = [
+		                [INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, s6, s7
+		                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s8, s9, s10
+		                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s11, s12, s13
+		                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s14, s15, s16
+		                [TERMINAL_NODE, INNER_NODE, INNER_NODE]    # s17, s18, s19
+	                ]
 	utilities[2] = masked_assign(
 			ref=tf.Variable(
 					tf.fill(
@@ -133,28 +132,27 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	########## Level 3 ##########
 	# There are never any infosets in the final layer, only terminal / imaginary nodes.
 	shape[3] = actions_per_levels[:3]
-	indices_of_imaginary_nodes_lvl3 = tf.constant(
-		[[0, 2],   # children of s7
-		 [1, 2],   # children of s10
-		 [2, 2],   # children of s13
-		 [3, 2],   # children of s16
-		 [4, 0]],  # children of s17
-		name="indices_of_imaginary_nodes_lvl3"
-	)
-	node_types[3] = tf.scatter_nd_update(
-		ref=tf.Variable(
-					tf.fill(
-						value=TERMINAL_NODE,
-						dims=shape[3]
-					),
-		),
-		indices=indices_of_imaginary_nodes_lvl3,
-		updates=tf.fill(
-			value=IMAGINARY_NODE,
-			dims=indices_of_imaginary_nodes_lvl3.shape
-		),
-		name="node_types_lvl3"
-	)
+	node_types[3] = [
+		[[1, 1],
+		 [1, 1],
+		 [2, 2]],
+
+		[[1, 1],
+		 [1, 1],
+		 [2, 2]],
+
+		[[1, 1],
+		 [1, 1],
+		 [2, 2]],
+
+		[[1, 1],
+		 [1, 1],
+		 [2, 2]],
+
+		[[2, 2],
+		 [1, 1],
+		 [1, 1]]
+	]
 	utilities[3] = masked_assign(
 		ref=tf.Variable(
 					tf.fill(

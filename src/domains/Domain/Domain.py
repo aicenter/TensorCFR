@@ -51,7 +51,7 @@ class Domain:
 			self.current_infoset_strategies = [
 				tf.get_variable(
 						"current_infoset_strategies_lvl{}".format(level),
-						initializer=initial_infoset_strategies[level],
+						initializer=self.initial_infoset_strategies[level],
 				) for level in range(self.acting_depth)
 			]
 			self.positive_cumulative_regrets = [
@@ -166,5 +166,5 @@ if __name__ == '__main__':
 	)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		domain01.print_domain(sess)
+		# domain01.print_domain(sess)
 		matching_pennies.print_domain(sess)

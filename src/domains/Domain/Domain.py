@@ -124,7 +124,7 @@ class Domain:
 
 
 if __name__ == '__main__':
-	import src.domains.domain01.domain_definitions as d1
+	import src.domains.domain01.domain_as_numpy_values as d1
 	domain01 = Domain(
 			domain_name="domain01",
 			actions_per_levels=[5, 3, 2],

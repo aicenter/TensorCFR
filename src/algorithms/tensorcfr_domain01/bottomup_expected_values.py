@@ -2,10 +2,10 @@
 
 import tensorflow as tf
 
-from src.algorithms.tensorcfr_domain01.node_strategies import get_node_strategies
+from src.algorithms.tensorcfr_domain01.node_strategies import get_node_strategies, get_node_cf_strategies
 from src.commons.constants import TERMINAL_NODE
 from src.domains.domain01.domain_definitions import utilities, node_types, levels, signum_of_current_player, \
-	print_misc_variables, current_infoset_strategies, current_updating_player
+	print_misc_variables, current_infoset_strategies, current_updating_player, acting_depth
 from src.utils.tensor_utils import print_tensors
 
 
@@ -57,27 +57,40 @@ def get_infoset_cbr_values(for_player=current_updating_player, strategies=curren
 	:param strategies: List of tensors representing infosets' strategies, for which CBR values are being computed.
 	:return: The list of tensors, each containing counterfactual best response of infosets at each level.
 	"""
-	# TODO continue here
+	# nodal_cf_strategies = get_node_cf_strategies(updating_player=for_player)
+	# with tf.variable_scope("cbr_values"):
+	# 	nodal_cbr_values = [None] * levels
+	# 	with tf.variable_scope("infoset_cbr_values", reuse=False):
+	# 		infoset_cbr_values = [
+	# 			tf.get_variable(
+	# 					name="infoset_cbr_values_lvl{}".format(level),
+	# 					initializer=tf.zeros_like(
+	# 							current_infoset_strategies[level]
+	# 					)
+	# 			)
+	# 			for level in range(acting_depth)
+	# 		]
+	# 	# TODO continue here
+	# 	with tf.variable_scope("nodal_cbr_values", reuse=False):
+	# 		with tf.variable_scope("level{}".format(levels - 1)):
+	# 			nodal_cbr_values[levels - 1] = tf.multiply(
+	# 					signum_of_current_player,
+	# 					utilities[levels - 1],
+	# 					name="nodal_cbr_values_lvl{}".format(levels - 1)
+	# 			)
+	# 		for level in reversed(range(levels - 1)):
+	# 			with tf.variable_scope("level{}".format(level)):
+	# 				weighted_sum_of_values = tf.reduce_sum(
+	# 						input_tensor=nodal_cf_strategies[level] * nodal_cbr_values[level + 1],
+	# 						axis=-1,
+	# 						name="weighted_sum_of_values_lvl{}".format(level))
+	# 				nodal_cbr_values[level] = tf.where(
+	# 						condition=tf.equal(node_types[level], TERMINAL_NODE),
+	# 						x=signum_of_current_player * utilities[level],
+	# 						y=weighted_sum_of_values,
+	# 						name="expected_values_lvl{}".format(level))
+	# return nodal_cbr_values
 	pass
-	node_strategies = get_node_strategies()
-	with tf.variable_scope("expected_values"):
-		expected_values = [None] * levels
-		expected_values[levels - 1] = tf.multiply(
-				signum_of_current_player,
-				utilities[levels - 1],
-				name="expected_values_lvl{}".format(levels - 1)
-		)
-		for level in reversed(range(levels - 1)):
-			weighted_sum_of_values = tf.reduce_sum(
-					input_tensor=node_strategies[level] * expected_values[level + 1],
-					axis=-1,
-					name="weighted_sum_of_values_lvl{}".format(level))
-			expected_values[level] = tf.where(
-					condition=tf.equal(node_types[level], TERMINAL_NODE),
-					x=signum_of_current_player * utilities[level],
-					y=weighted_sum_of_values,
-					name="expected_values_lvl{}".format(level))
-		return expected_values
 
 
 def show_expected_values(session):

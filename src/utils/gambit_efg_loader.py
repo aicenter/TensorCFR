@@ -393,41 +393,41 @@ class GambitEFGLoader:
 		utilities_ = [None] * len(self.utilities)
 		infoset_acting_players_ = [None] * len(self.infoset_acting_players)
 
-		for lvl in range(self.number_of_levels):
-			current_infoset_strategies_[lvl] = tf.Variable(
-					self.current_infoset_strategies[lvl],
-					name='current_infoset_strategies_lvl{}'.format(lvl),
+		for level in range(self.number_of_levels):
+			current_infoset_strategies_[level] = tf.Variable(
+					self.current_infoset_strategies[level],
+					name='current_infoset_strategies_lvl{}'.format(level),
 					dtype=tf.float32
 			)
-			initial_infoset_strategies_[lvl] = tf.placeholder_with_default(
-					self.initial_infoset_strategies[lvl],
-					shape=self.initial_infoset_strategies[lvl].shape,
-					name='initial_infoset_strategies_lvl{}'.format(lvl)
+			initial_infoset_strategies_[level] = tf.placeholder_with_default(
+					self.initial_infoset_strategies[level],
+					shape=self.initial_infoset_strategies[level].shape,
+					name='initial_infoset_strategies_lvl{}'.format(level)
 			)
-			positive_cumulative_regrets_[lvl] = tf.Variable(
-					self.positive_cumulative_regrets[lvl],
-					name='positive_cumulative_regrets_lvl{}'.format(lvl),
+			positive_cumulative_regrets_[level] = tf.Variable(
+					self.positive_cumulative_regrets[level],
+					name='positive_cumulative_regrets_lvl{}'.format(level),
 					dtype=tf.float32
 			)
-			cumulative_regrets[lvl] = tf.Variable(
-					self.cumulative_regrets[lvl],
-					name='cumulative_regrets_lvl{}'.format(lvl),
+			cumulative_regrets[level] = tf.Variable(
+					self.cumulative_regrets[level],
+					name='cumulative_regrets_lvl{}'.format(level),
 					dtype=tf.float32
 			)
-			node_to_infoset_[lvl] = tf.Variable(
-					self.node_to_infoset[lvl],
-					name='node_to_infoset_lvl{}'.format(lvl),
+			node_to_infoset_[level] = tf.Variable(
+					self.node_to_infoset[level],
+					name='node_to_infoset_lvl{}'.format(level),
 					dtype=tf.int32
 			)
-			infoset_acting_players_[lvl] = tf.Variable(
-					self.infoset_acting_players[lvl],
-					name='infoset_acting_players_lvl{}'.format(lvl),
+			infoset_acting_players_[level] = tf.Variable(
+					self.infoset_acting_players[level],
+					name='infoset_acting_players_lvl{}'.format(level),
 					dtype=tf.int32
 			)
 
-		for lvl in range(self.number_of_levels + 1):
-			node_types_[lvl] = tf.Variable(self.node_types[lvl], name='node_types_lvl{}'.format(lvl), dtype=tf.int32)
-			utilities_[lvl] = tf.Variable(self.utilities[lvl], name='utilities_lvl{}'.format(lvl), dtype=tf.float32)
+		for level in range(self.number_of_levels + 1):
+			node_types_[level] = tf.Variable(self.node_types[level], name='node_types_lvl{}'.format(level), dtype=tf.int32)
+			utilities_[level] = tf.Variable(self.utilities[level], name='utilities_lvl{}'.format(level), dtype=tf.float32)
 
 		return_dict = {
 			'current_infoset_strategies' : current_infoset_strategies_,

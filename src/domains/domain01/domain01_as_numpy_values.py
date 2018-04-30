@@ -16,7 +16,6 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 
 	# Init
 	node_to_infoset = [None] * acting_depth
-	shape = [None] * levels  # TODO replace with: shape = [actions_per_levels[:i] for i in range(levels)]
 	node_types = [None] * levels
 	utilities = [None] * levels
 	infoset_acting_players = [None] * acting_depth
@@ -27,7 +26,6 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	# there are 5 actions in node s
 	node_to_infoset[0] = 0
 	reach_probability_of_root_node = tf.Variable(1.0, name="reach_probability_of_root_node")
-	shape[0] = actions_per_levels[:0]
 	node_types[0] = INNER_NODE
 	utilities[0] = NON_TERMINAL_UTILITY
 	infoset_acting_players[0] = tf.Variable([CHANCE_PLAYER], name="infoset_acting_players_lvl0")
@@ -44,7 +42,6 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	# I1,3 = { s4 } ... chance node
 	# each node has 3 actions
 	node_to_infoset[1] = [0, 1, 2, 2, 3]
-	shape[1] = actions_per_levels[:1]
 	node_types[1] = [INNER_NODE] * 5
 	utilities[1] = [NON_TERMINAL_UTILITY] * 5
 	infoset_acting_players[1] = tf.Variable(
@@ -81,7 +78,6 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 		                     [3, 4, 8],   # s14, s15, s16
 		                     [7, 5, 6]    # s17, s18, s19
 	                     ]
-	shape[2] = actions_per_levels[:2]
 	node_types[2] = [
 		                [INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, s6, s7
 		                [INNER_NODE, INNER_NODE, IMAGINARY_NODE],  # s8, s9, s10
@@ -124,7 +120,6 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 
 	########## Level 3 ##########
 	# There are never any infosets in the final layer, only terminal / imaginary nodes.
-	shape[3] = actions_per_levels[:3]
 	node_types[3] = [
 		[[1, 1],
 		 [1, 1],

@@ -25,7 +25,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	########## Level 0 ##########
 	# I0,0 = { s } ... root node, the chance player acts here
 	# there are 5 actions in node s
-	node_to_infoset[0] = tf.Variable(0, name="node_to_infoset_lvl0")
+	node_to_infoset[0] = 0
 	reach_probability_of_root_node = tf.Variable(1.0, name="reach_probability_of_root_node")
 	shape[0] = actions_per_levels[:0]
 	node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
@@ -43,7 +43,7 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	# I1,2 = { s2, s3 }
 	# I1,3 = { s4 } ... chance node
 	# each node has 3 actions
-	node_to_infoset[1] = tf.Variable([0, 1, 2, 2, 3], name="node_to_infoset_lvl1")
+	node_to_infoset[1] = [0, 1, 2, 2, 3]
 	shape[1] = actions_per_levels[:1]
 	node_types[1] = tf.Variable([INNER_NODE] * 5, name="node_types_lvl1")
 	utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
@@ -74,14 +74,13 @@ with tf.variable_scope("domain_definitions", reuse=tf.AUTO_REUSE) as domain_scop
 	# I2,7 = { s7, s17 } ... terminal nodes
 	# I2,8 = { s10, s13, s16 } ... imaginary nodes
 	# each node has 2 actions
-	node_to_infoset[2] = tf.Variable(
-		[[0, 1, 7],   # s5, s6, s7
-		 [2, 2, 8],   # s8, s9, s10
-		 [3, 4, 8],   # s11, s12, s1
-		 [3, 4, 8],   # s14, s15, s16
-		 [7, 5, 6]],  # s17, s18, s19
-		name="node_to_infoset_lvl2"
-	)
+	node_to_infoset[2] = [
+		                     [0, 1, 7],   # s5, s6, s7
+		                     [2, 2, 8],   # s8, s9, s10
+		                     [3, 4, 8],   # s11, s12, s1
+		                     [3, 4, 8],   # s14, s15, s16
+		                     [7, 5, 6]    # s17, s18, s19
+	                     ]
 	shape[2] = actions_per_levels[:2]
 	node_types[2] = tf.Variable(
 		[[INNER_NODE, INNER_NODE, TERMINAL_NODE],   # s5, s6, s7

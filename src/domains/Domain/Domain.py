@@ -22,7 +22,10 @@ class Domain:
 				tf.get_variable("node_to_infoset_lvl{}".format(level), initializer=node_to_infoset[level])
 				for level in range(self.acting_depth)
 			]
-			self.node_types = node_types
+			self.node_types = [
+				tf.get_variable("node_types_lvl{}".format(level), initializer=node_types[level])
+				for level in range(self.levels)
+			]
 			self.utilities = utilities
 			self.infoset_acting_players = infoset_acting_players
 

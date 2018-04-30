@@ -371,17 +371,17 @@ class GambitEFGLoader:
 					self.update_utilities(level, coordinates, node['payoffs'][0])
 					self.update_node_types(level, coordinates, constants.TERMINAL_NODE)
 
-		for lvl in range(1, self.number_of_levels):
-			self.node_to_infoset[lvl] = self.infoset_managers[lvl].make_node_to_infoset(self.node_to_infoset[lvl])
+		for level in range(1, self.number_of_levels):
+			self.node_to_infoset[level] = self.infoset_managers[level].make_node_to_infoset(self.node_to_infoset[level])
 
-		for lvl in range(self.number_of_levels):
-			[infoset_acting_players_, infoset_strategies] = self.infoset_managers[lvl].make_infoset_acting_players(
-					self.actions_per_levels[lvl], self.node_types)
-			self.infoset_acting_players[lvl] = infoset_acting_players_
-			self.current_infoset_strategies[lvl] = infoset_strategies
-			self.initial_infoset_strategies[lvl] = copy.deepcopy(self.current_infoset_strategies[lvl])
-			self.cumulative_regrets[lvl] = np.zeros(infoset_strategies.shape)
-			self.positive_cumulative_regrets[lvl] = np.zeros(infoset_strategies.shape)
+		for level in range(self.number_of_levels):
+			[infoset_acting_players_, infoset_strategies] = self.infoset_managers[level].make_infoset_acting_players(
+					self.actions_per_levels[level], self.node_types)
+			self.infoset_acting_players[level] = infoset_acting_players_
+			self.current_infoset_strategies[level] = infoset_strategies
+			self.initial_infoset_strategies[level] = copy.deepcopy(self.current_infoset_strategies[level])
+			self.cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
+			self.positive_cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
 
 	def get_tensorflow_tensors(self):
 		current_infoset_strategies_ = [None] * len(self.current_infoset_strategies)

@@ -449,8 +449,7 @@ if __name__ == '__main__':
 	# noinspection SpellCheckingInspection
 	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'goofspiel',
 	                             'IIGS5_s1_bf_ft.gbt')
-	# phantomTTT = 'domain01_efg'   # TODO replace with correct filepath to phantomTTT
-
+	
 	domain = GambitEFGLoader(domain01_efg)
 
 	domain_tensors = domain.get_tensorflow_tensors()

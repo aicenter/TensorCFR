@@ -4,6 +4,8 @@ import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2
 from src.domains.Domain import Domain
+from src.utils.distribute_strategies_to_nodes import distribute_strategies_to_nodes
+from src.utils.tensor_utils import print_tensors
 
 
 class TensorCFR:
@@ -42,9 +44,48 @@ class TensorCFR:
 					name="swap",
 			)
 
+	def get_node_strategies(self):
+		with tf.variable_scope("node_strategies"):
+			return [
+				distribute_strategies_to_nodes(
+						self.domain.current_infoset_strategies[level],
+						self.domain.node_to_infoset[level],
+						name="node_strategies_lvl{}".format(level)
+				) for level in range(self.domain.acting_depth)
+			]
+
+	def get_node_cf_strategies(self, updating_player=None):
+		if updating_player is None:
+			updating_player = self.domain.current_updating_player
+		with tf.variable_scope("node_cf_strategies"):
+			# TODO generate node_cf_strategies_* with tf.where on node_strategies
+			return [
+				distribute_strategies_to_nodes(
+						self.domain.current_infoset_strategies[level],
+						self.domain.node_to_infoset[level],
+						updating_player=updating_player,
+						acting_players=self.domain.infoset_acting_players[level],
+						name="node_cf_strategies_lvl{}".format(level)
+				) for level in range(self.domain.acting_depth)
+			]
+
+	def show_strategies(self, session):
+		node_strategies = self.get_node_strategies()
+		node_cf_strategies = self.get_node_cf_strategies()
+		for level in range(self.domain.acting_depth):
+			print("########## Level {} ##########".format(level))
+			print_tensors(session, [
+				self.domain.node_to_infoset[level],
+				self.domain.current_infoset_strategies[level],
+				node_strategies[level],
+				self.domain.infoset_acting_players[level],
+				node_cf_strategies[level],
+			])
+
 
 if __name__ == '__main__':
 	import src.domains.domain01.domain01_as_numpy_values as d1
+
 	domain01 = Domain(
 			domain_name="domain01",
 			actions_per_levels=d1.actions_per_levels,
@@ -55,6 +96,7 @@ if __name__ == '__main__':
 			initial_infoset_strategies=d1.initial_infoset_strategies,
 	)
 	import src.domains.matching_pennies.matching_pennies_as_numpy_values as mp
+
 	matching_pennies = Domain(
 			domain_name="matching_pennies",
 			actions_per_levels=mp.actions_per_levels,

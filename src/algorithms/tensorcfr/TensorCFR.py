@@ -2,10 +2,45 @@
 
 import tensorflow as tf
 
+from src.commons.constants import PLAYER1, PLAYER2
+from src.domains.Domain import Domain
+
 
 class TensorCFR:
-	def __init__(self):
-		pass
+	def __init__(self, domain: Domain):
+		self.domain = domain
+
+	@staticmethod
+	def get_the_other_player_of(tensor_variable_of_player):
+		with tf.variable_scope("get_the_other_player"):
+			return tf.where(
+					condition=tf.equal(tensor_variable_of_player, PLAYER1),
+					x=PLAYER2,
+					y=PLAYER1,
+					name="get_the_other_player"
+			)
+
+	def swap_players(self):
+		with tf.variable_scope("swap_players"):
+			with tf.variable_scope("new_updating_player"):
+				assign_new_updating_player = tf.assign(
+						ref=self.domain.current_updating_player,
+						value=TensorCFR.get_the_other_player_of(self.domain.current_updating_player),
+						name="assign_new_updating_player",
+				)
+			with tf.variable_scope("new_opponent"):
+				assign_opponent = tf.assign(
+						ref=self.domain.current_opponent,
+						value=TensorCFR.get_the_other_player_of(self.domain.current_opponent),
+						name="assign_new_opponent",
+				)
+			return tf.tuple(
+					[
+						assign_new_updating_player,
+						assign_opponent,
+					],
+					name="swap",
+			)
 
 
 if __name__ == '__main__':
@@ -30,9 +65,10 @@ if __name__ == '__main__':
 			initial_infoset_strategies=mp.initial_infoset_strategies,
 	)
 
-	# tensorcfr_domain = TensorCFR()
+	tensorcfr_domain01 = TensorCFR(domain01)
+	tensorcfr_matching_pennies = TensorCFR(matching_pennies)
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		domain01.print_domain(sess)
-		matching_pennies.print_domain(sess)
+		tensorcfr_domain01.domain.print_domain(sess)
+		tensorcfr_matching_pennies.domain.print_domain(sess)

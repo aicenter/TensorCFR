@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.commons.constants import PLAYER1, PLAYER2
+from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE
 from src.domains.Domain import Domain
 from src.utils.distribute_strategies_to_nodes import distribute_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
@@ -82,10 +82,49 @@ class TensorCFR:
 				node_cf_strategies[level],
 			])
 
+	def get_expected_values(self):
+		node_strategies = self.get_node_strategies()
+		with tf.variable_scope("expected_values"):
+			expected_values = [None] * self.domain.levels
+			expected_values[self.domain.levels - 1] = tf.multiply(
+					self.domain.signum_of_current_player,
+					self.domain.utilities[self.domain.levels - 1],
+					name="expected_values_lvl{}".format(self.domain.levels - 1)
+			)
+			for level in reversed(range(self.domain.levels - 1)):
+				weighted_sum_of_values = tf.reduce_sum(
+						input_tensor=node_strategies[level] * expected_values[level + 1],
+						axis=-1,
+						name="weighted_sum_of_values_lvl{}".format(level))
+				expected_values[level] = tf.where(
+						condition=tf.equal(self.domain.node_types[level], TERMINAL_NODE),
+						x=self.domain.signum_of_current_player * self.domain.utilities[level],
+						y=weighted_sum_of_values,
+						name="expected_values_lvl{}".format(level))
+		return expected_values
+
+	def show_expected_values(self, session):
+		self.domain.print_misc_variables(session=session)
+		node_strategies = self.get_node_strategies()
+		expected_values = self.get_expected_values()
+		for level in reversed(range(self.domain.levels)):
+			print("########## Level {} ##########".format(level))
+			if level < len(node_strategies):
+				print_tensors(session, [node_strategies[level]])
+			print_tensors(session, [
+				tf.multiply(
+						self.domain.signum_of_current_player,
+						self.domain.utilities[level],
+						name="signum_utilities_lvl{}".format(level)
+				),
+				expected_values[level]
+			])
+
 
 if __name__ == '__main__':
 	from src.domains.domain01.Domain01 import domain01
 	from src.domains.matching_pennies.MatchingPennies import matching_pennies
+
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:

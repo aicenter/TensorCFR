@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from src.domains.domain01.domain_definitions import node_to_infoset, current_infoset_strategies, \
 	infoset_acting_players, acting_depth, current_updating_player
-from src.utils.distribute_strategies_to_nodes import assign_strategies_to_nodes
+from src.utils.distribute_strategies_to_nodes import distribute_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
 
 
@@ -14,7 +14,7 @@ from src.utils.tensor_utils import print_tensors
 def get_node_strategies():
 	with tf.variable_scope("node_strategies"):
 		return [
-			assign_strategies_to_nodes(
+			distribute_strategies_to_nodes(
 					current_infoset_strategies[level],
 					node_to_infoset[level],
 					name="node_strategies_lvl{}".format(level)
@@ -26,7 +26,7 @@ def get_node_cf_strategies(updating_player=current_updating_player):
 	with tf.variable_scope("node_cf_strategies"):
 		# TODO generate node_cf_strategies_* with tf.where on node_strategies
 		return [
-			assign_strategies_to_nodes(
+			distribute_strategies_to_nodes(
 					current_infoset_strategies[level],
 					node_to_infoset[level],
 					updating_player=updating_player,

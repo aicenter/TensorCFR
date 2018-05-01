@@ -6,7 +6,7 @@ from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERA
 from src.utils.tensor_utils import print_tensors
 
 
-class Domain:
+class TensorCFR:
 	def __init__(self, domain_name, actions_per_levels, node_to_infoset, node_types, utilities, infoset_acting_players,
 	             initial_infoset_strategies, reach_probability_of_root_node=None):
 		self.domain_name = domain_name
@@ -145,7 +145,7 @@ class Domain:
 
 if __name__ == '__main__':
 	import src.domains.domain01.domain01_as_numpy_values as d1
-	domain01 = Domain(
+	domain01 = TensorCFR(
 			domain_name="domain01",
 			actions_per_levels=d1.actions_per_levels,
 			node_to_infoset=d1.node_to_infoset,
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 			initial_infoset_strategies=d1.initial_infoset_strategies,
 	)
 	import src.domains.matching_pennies.matching_pennies_as_numpy_values as mp
-	matching_pennies = Domain(
+	matching_pennies = TensorCFR(
 			domain_name="matching_pennies",
 			actions_per_levels=mp.actions_per_levels,
 			node_to_infoset=mp.node_to_infoset,

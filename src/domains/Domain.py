@@ -185,12 +185,9 @@ if __name__ == '__main__':
 			infoset_acting_players=mp.infoset_acting_players,
 			initial_infoset_strategies=mp.initial_infoset_strategies,
 	)
-
 	import os
-	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc',
-								'domain01_via_gambit.efg')
+	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
 	domain01_gambit = Domain.init_from_gambit_file(domain01_efg)
-
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		domain01.print_domain(sess)

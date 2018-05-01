@@ -125,6 +125,7 @@ class GambitEFGLoader:
 		self.nodes = list()
 		self.number_of_players = 2
 
+		self.domain_name = ""
 		self.actions_per_levels = []
 		self.number_of_levels = 0
 
@@ -136,6 +137,8 @@ class GambitEFGLoader:
 
 			if game_header['format'] == 'NFG':
 				raise NotImplementedFormatException
+
+			self.domain_name = game_header['name']
 
 			self.load()
 
@@ -222,7 +225,6 @@ class GambitEFGLoader:
 		return [int(payoff) for payoff in parse_payoffs]
 
 	def parse_chance_node(self, input_line):
-		print(input_line)
 		parse_line = re.search(
 				r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+)\ ?"?(?P<information_set_name_optional>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{?(?P<payoffs_optional>.*)\}?',
 				input_line
@@ -246,7 +248,6 @@ class GambitEFGLoader:
 		}
 
 	def parse_player_node(self, input_line):
-		print(input_line)
 		parse_line = re.search(
 				r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+)\ ?"?(?P<information_set_name>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name>[^"]*)"?\ ?\{?(?P<payoffs_optional>[^\}]*)\}?',
 				input_line
@@ -271,7 +272,6 @@ class GambitEFGLoader:
 		}
 
 	def parse_terminal_node(self, input_line):
-		print(input_line)
 		parse_line = re.search(
 				r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_TERMINAL + ') "(?P<name>[^"]*)" (?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{(?P<payoffs>.*)\}',
 				input_line
@@ -441,7 +441,6 @@ class GambitEFGLoader:
 
 		return return_dict
 
-
 if __name__ == '__main__':
 	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
 	mini_goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'mini_goofspiel',
@@ -449,23 +448,12 @@ if __name__ == '__main__':
 	# noinspection SpellCheckingInspection
 	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'goofspiel',
 	                             'IIGS5_s1_bf_ft.gbt')
-	
+
 	domain = GambitEFGLoader(domain01_efg)
 
-	domain_tensors = domain.get_tensorflow_tensors()
-
-	current_infoset_strategies = domain_tensors['current_infoset_strategies']
-	initial_infoset_strategies = domain_tensors['initial_infoset_strategies']
-	positive_cumulative_regrets = domain_tensors['positive_cumulative_regrets']
-	node_to_infoset = domain_tensors['node_to_infoset']
-	node_types = domain_tensors['node_types']
-	utilities = domain_tensors['utilities']
-	infoset_acting_players = domain_tensors['infoset_acting_players']
-
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-
-		# TODO print all other tensors from domain definition
-		for lvl in range(domain.number_of_levels):
-			print("Level " + str(lvl))
-			print(sess.run(positive_cumulative_regrets[lvl]))
+	print(domain.actions_per_levels)
+	print(domain.node_to_infoset)
+	print(domain.node_types)
+	print(domain.utilities)
+	print(domain.infoset_acting_players)
+	print(domain.initial_infoset_strategies)

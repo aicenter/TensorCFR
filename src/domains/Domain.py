@@ -4,6 +4,7 @@ import tensorflow as tf
 
 from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE
 from src.utils.tensor_utils import print_tensors
+from src.utils.gambit_efg_loader import GambitEFGLoader
 
 
 class Domain:
@@ -113,6 +114,23 @@ class Domain:
 				) for level in range(self.acting_depth)
 			]
 
+	@classmethod
+	def init_from_gambit_file(cls, path_to_gambitfile, domain_name=None):
+		domain_numpy_tensors = GambitEFGLoader(path_to_gambitfile)
+
+		if domain_name is None:
+			domain_name = "from_gambit"
+
+		return cls(
+			domain_name,
+			domain_numpy_tensors.actions_per_levels,
+			domain_numpy_tensors.node_to_infoset,
+			domain_numpy_tensors.node_types,
+			domain_numpy_tensors.utilities,
+			domain_numpy_tensors.infoset_acting_players,
+			domain_numpy_tensors.initial_infoset_strategies
+		)
+
 	def get_infoset_acting_players(self):
 		return self.infoset_acting_players
 
@@ -167,7 +185,14 @@ if __name__ == '__main__':
 			infoset_acting_players=mp.infoset_acting_players,
 			initial_infoset_strategies=mp.initial_infoset_strategies,
 	)
+
+	import os
+	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc',
+								'domain01_via_gambit.efg')
+	domain01_gambit = Domain.init_from_gambit_file(domain01_efg)
+
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		domain01.print_domain(sess)
 		matching_pennies.print_domain(sess)
+		domain01_gambit.print_domain(sess)

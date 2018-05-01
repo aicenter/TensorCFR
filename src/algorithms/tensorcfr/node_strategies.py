@@ -2,9 +2,10 @@ import tensorflow as tf
 
 from src.algorithms.tensorcfr.TensorCFR import TensorCFR
 from src.domains.domain01.Domain01 import domain01
+from src.domains.matching_pennies.MatchingPennies import matching_pennies
 
 if __name__ == '__main__':
-	for tensorcfr in [TensorCFR(domain01)]:
+	for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:
 		node_strategies = tensorcfr.get_node_strategies()
 		node_cf_strategies = tensorcfr.get_node_cf_strategies()
 		with tf.Session() as sess:

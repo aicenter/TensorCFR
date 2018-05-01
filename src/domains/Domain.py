@@ -116,6 +116,17 @@ class Domain:
 	def get_infoset_acting_players(self):
 		return self.infoset_acting_players
 
+	def print_misc_variables(self, session):
+		print("########## Misc ##########")
+		print_tensors(session, [
+			self.cfr_step,
+			self.averaging_delay,
+			self.current_updating_player,
+			self.current_opponent,
+			self.signum_of_current_player,
+			self.player_owning_the_utilities,
+		])
+
 	def print_domain(self, session):
 		print(">>>>>>>>>> {} <<<<<<<<<<".format(self.domain_name))
 		for level in range(self.levels):
@@ -132,15 +143,7 @@ class Domain:
 					self.positive_cumulative_regrets[level],
 					self.cumulative_infoset_strategies[level],
 				])
-		print("########## Misc ##########")
-		print_tensors(session, [
-			self.cfr_step,
-			self.averaging_delay,
-			self.current_updating_player,
-			self.current_opponent,
-			self.signum_of_current_player,
-			self.player_owning_the_utilities,
-		])
+		self.print_misc_variables(session)
 
 
 if __name__ == '__main__':

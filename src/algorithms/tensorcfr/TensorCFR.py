@@ -5,7 +5,7 @@ import tensorflow as tf
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE
 from src.domains.Domain import Domain
 from src.utils.distribute_strategies_to_nodes import distribute_strategies_to_nodes
-from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum
+from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign
 
 
 class TensorCFR:
@@ -285,6 +285,53 @@ class TensorCFR:
 							name="infoset_uniform_strategies_lvl{}".format(level),
 					)
 		return infoset_uniform_strategies
+
+	def get_regrets(self):  # TODO verify and write a unittest
+		infoset_cf_values, infoset_cf_values_per_actions = self.get_infoset_cf_values()
+		infoset_children_types = self.get_infoset_children_types()
+		with tf.variable_scope("regrets"):
+			regrets = [None] * self.domain.acting_depth
+			for level in range(self.domain.acting_depth):
+				with tf.variable_scope("level{}".format(level)):
+					regrets[level] = tf.where(
+							condition=tf.equal(
+									infoset_children_types[level],
+									IMAGINARY_NODE,
+									name="non_imaginary_children_lvl{}".format(level)
+							),
+							x=tf.zeros_like(
+									infoset_cf_values_per_actions[level],
+									name="zero_regrets_of_imaginary_children_lvl{}".format(level),
+							),
+							y=infoset_cf_values_per_actions[level] - infoset_cf_values[level],
+							name="regrets_lvl{}".format(level),
+					)
+		return regrets
+
+	def update_positive_cumulative_regrets(self, regrets=None):  # TODO verify and write a unittest
+		if regrets is None:
+			regrets = self.get_regrets()
+		with tf.variable_scope("update_cumulative_regrets"):
+			update_regrets_ops = [None] * self.domain.acting_depth
+			for level in range(self.domain.acting_depth):
+				with tf.variable_scope("level{}".format(level)):
+					# TODO optimize by: pre-define `infosets_of_player1` and `infosets_of_player2` (in domain definitions) and switch
+					infosets_of_updating_player = tf.reshape(
+							tf.equal(self.domain.infoset_acting_players[level], self.domain.current_updating_player),
+							shape=[self.domain.positive_cumulative_regrets[level].shape[0]],
+							name="infosets_of_updating_player_lvl{}".format(level),
+					)
+					# TODO implement and use `masked_assign_add` here
+					update_regrets_ops[level] = masked_assign(
+						ref=self.domain.positive_cumulative_regrets[level],
+						mask=infosets_of_updating_player,
+						value=tf.maximum(
+								0.0,
+								self.domain.positive_cumulative_regrets[level] + regrets[level]
+						),
+						name="update_regrets_lvl{}".format(level)
+					)
+			return update_regrets_ops
 
 
 if __name__ == '__main__':

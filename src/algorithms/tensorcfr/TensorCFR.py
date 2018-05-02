@@ -187,6 +187,44 @@ class TensorCFR:
 					node_cf_strategies[level],
 				])
 
+	def get_nodal_cf_values(self):  # TODO verify and write a unittest
+		expected_values = self.get_expected_values()
+		reach_probabilities = self.get_nodal_reach_probabilities()
+		with tf.variable_scope("nodal_counterfactual_values"):
+			return [tf.multiply(reach_probabilities[level], expected_values[level],
+			                    name="nodal_cf_value_lvl{}".format(level)) for level in range(self.domain.levels)]
+
+	def get_infoset_cf_values_per_actions(self):  # TODO verify and write a unittest
+		node_cf_values = self.get_nodal_cf_values()
+		with tf.variable_scope("infoset_cf_values_per_actions"):
+			cf_values_infoset_actions = [None] * (self.domain.levels - 1)
+			cf_values_infoset_actions[0] = tf.expand_dims(
+					node_cf_values[1],
+					axis=0,
+					name="infoset_cf_values_per_actions_lvl0"
+			)
+			for level in range(1, self.domain.levels - 1):  # TODO replace for-loop with parallel_map on TensorArray?
+				cf_values_infoset_actions[level] = scatter_nd_sum(
+						indices=tf.expand_dims(self.domain.node_to_infoset[level], axis=-1),
+						updates=node_cf_values[level + 1],
+						shape=self.domain.current_infoset_strategies[level].shape,
+						name="infoset_cf_values_per_actions_lvl{}".format(level),
+				)
+			return cf_values_infoset_actions
+
+	def get_infoset_cf_values(self):  # TODO verify and write a unittest
+		infoset_cf_values_per_actions = self.get_infoset_cf_values_per_actions()
+		with tf.variable_scope("infoset_cf_values"):
+			infoset_cf_values = [
+				tf.reduce_sum(
+						self.domain.current_infoset_strategies[level] * infoset_cf_values_per_actions[level],
+						axis=-1,
+						keepdims=True,
+						name="infoset_cf_values_lvl{}".format(level),
+						) for level in range(self.domain.levels - 1)
+			]
+		return infoset_cf_values, infoset_cf_values_per_actions
+
 
 if __name__ == '__main__':
 	from src.domains.domain01.Domain01 import domain01

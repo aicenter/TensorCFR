@@ -8,4 +8,5 @@ before_script:
 
 unittest:
   script:
+    - sh run-python-src-files.sh
     - python3 -m unittest

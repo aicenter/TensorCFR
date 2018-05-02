@@ -9,6 +9,7 @@ before_script:
 
 unittest:
   script:
+    - find src/ -name *.py | grep -v  __ | sed -e 's/\//./g' | rev | cut -d '.' -f 2- | rev | xargs -I '{}' -t sh -c 'python -m {} >/dev/null || exit 255'
     - python3 -m unittest
 
 runtest:

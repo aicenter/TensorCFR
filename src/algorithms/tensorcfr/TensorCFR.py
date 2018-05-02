@@ -333,6 +333,39 @@ class TensorCFR:
 					)
 			return update_regrets_ops
 
+	def get_strategy_matched_to_regrets(self):  # TODO unittest
+		update_regrets = self.update_positive_cumulative_regrets()
+		infoset_uniform_strategies = self.get_infoset_uniform_strategies()
+		with tf.control_dependencies(update_regrets):
+			with tf.variable_scope("strategies_matched_to_regrets"):
+				strategies_matched_to_regrets = [None] * (self.domain.levels - 1)
+				for level in range(self.domain.acting_depth):
+					with tf.variable_scope("level{}".format(level)):
+						sums_of_regrets = tf.reduce_sum(
+								self.domain.positive_cumulative_regrets[level].read_value(),
+								axis=-1,
+								keepdims=True,
+								name="sums_of_regrets_lvl{}".format(level)
+						)
+						normalized_regrets = tf.divide(
+								self.domain.positive_cumulative_regrets[level].read_value(),
+								sums_of_regrets,
+								name="normalized_regrets_lvl{}".format(level)
+						)
+						zero_sum_rows = tf.squeeze(
+								tf.equal(sums_of_regrets, 0),
+								name="zero_sum_rows_lvl{}".format(level)
+						)
+						# Note: An all-0's row cannot be normalized. Thus, when PCRegrets sum to 0, a uniform strategy is used instead.
+						# TODO verify uniform strategy is created (mix of both tf.where branches)
+						strategies_matched_to_regrets[level] = tf.where(
+								condition=zero_sum_rows,
+								x=infoset_uniform_strategies[level],
+								y=normalized_regrets,
+								name="strategies_matched_to_regrets_lvl{}".format(level)
+						)
+				return strategies_matched_to_regrets
+
 
 if __name__ == '__main__':
 	from src.domains.domain01.Domain01 import domain01

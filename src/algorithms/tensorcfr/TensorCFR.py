@@ -5,7 +5,7 @@ import tensorflow as tf
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE
 from src.domains.Domain import Domain
 from src.utils.distribute_strategies_to_nodes import distribute_strategies_to_nodes
-from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign
+from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
 class TensorCFR:
@@ -366,6 +366,110 @@ class TensorCFR:
 						)
 				return strategies_matched_to_regrets
 
+	def update_strategy_of_updating_player(self, acting_player=None):  # TODO unittest
+		if acting_player is None:
+			acting_player = self.domain.current_updating_player
+		infoset_strategies_matched_to_regrets = self.get_strategy_matched_to_regrets()
+		infoset_acting_players = self.domain.get_infoset_acting_players()
+		ops_update_infoset_strategies = [None] * self.domain.acting_depth
+		with tf.variable_scope("update_strategy_of_updating_player"):
+			for level in range(self.domain.acting_depth):
+				with tf.variable_scope("level{}".format(level)):
+					infosets_of_acting_player = tf.reshape(  # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+							tf.equal(infoset_acting_players[level], acting_player),
+							shape=[self.domain.current_infoset_strategies[level].shape[0]],
+							name="infosets_of_updating_player_lvl{}".format(level)
+					)
+					ops_update_infoset_strategies[level] = masked_assign(
+							ref=self.domain.current_infoset_strategies[level],
+							mask=infosets_of_acting_player,
+							value=infoset_strategies_matched_to_regrets[level],
+							name="op_update_infoset_strategies_lvl{}".format(level)
+					)
+			return ops_update_infoset_strategies
+
+	def get_weighted_averaging_factor(self, delay=None):  # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
+		if delay is None:
+			delay = self.domain.averaging_delay
+		with tf.variable_scope("weighted_averaging_factor"):
+			if delay is None:   # when `delay` is None, no weighted averaging is used
+				return tf.constant(
+						1.0,
+						name="weighted_averaging_factor"
+				)
+			else:
+				return tf.to_float(
+						tf.maximum(self.domain.cfr_step - delay, 0),
+						name="weighted_averaging_factor",
+				)
+
+	def cumulate_strategy_of_opponent(self, opponent=None):  # TODO unittest
+		if opponent is None:
+			opponent = self.domain.current_opponent
+		infoset_acting_players = self.domain.get_infoset_acting_players()
+		infoset_reach_probabilities = self.get_infoset_reach_probabilities()
+		with tf.variable_scope("cumulate_strategy_of_opponent"):
+			cumulate_infoset_strategies_ops = [None] * self.domain.acting_depth
+			for level in range(self.domain.acting_depth):
+				with tf.variable_scope("level{}".format(level)):
+					infosets_of_opponent = tf.reshape(  # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+							tf.equal(infoset_acting_players[level], opponent),
+							shape=[self.domain.current_infoset_strategies[level].shape[0]],
+							name="infosets_of_opponent_lvl{}".format(level)
+					)
+					averaging_factor = self.get_weighted_averaging_factor()
+					cumulate_infoset_strategies_ops[level] = masked_assign(
+							# TODO implement and use `masked_assign_add` here
+							ref=self.domain.cumulative_infoset_strategies[level],
+							mask=infosets_of_opponent,
+							value=self.domain.cumulative_infoset_strategies[level] + averaging_factor * expanded_multiply(
+									expandable_tensor=infoset_reach_probabilities[level],
+									expanded_tensor=self.domain.current_infoset_strategies[level],
+							),
+							name="op_cumulate_infoset_strategies_lvl{}".format(level)
+					)
+			return cumulate_infoset_strategies_ops
+
+	def process_strategies(self, acting_player=None, opponent=None):
+		if acting_player is None:
+			acting_player = self.domain.current_updating_player
+		if opponent is None:
+			opponent = self.domain.current_opponent
+		update_ops = self.update_strategy_of_updating_player(acting_player=acting_player)
+		cumulate_ops = self.cumulate_strategy_of_opponent(opponent=opponent)
+		return tf.tuple(update_ops + cumulate_ops, name="process_strategies")
+
+	def get_average_infoset_strategies(self):
+		# TODO Do not normalize over imaginary nodes. <- Do we need to solve this? Or is it already ok (cf. `bottomup-*.py`)
+		with tf.variable_scope("average_strategies"):
+			average_infoset_strategies = [None] * self.domain.acting_depth
+			norm_of_strategies = [None] * self.domain.acting_depth
+			infosets_with_nonzero_norm = [None] * self.domain.acting_depth
+			for level in range(self.domain.acting_depth):
+				# TODO add variable scope `level{}`
+				with tf.variable_scope("level{}".format(level)):
+					norm_of_strategies[level] = tf.reduce_sum(
+							self.domain.cumulative_infoset_strategies[level],
+							axis=-1,
+							keepdims=True,
+							name="norm_of_strategies_lvl{}".format(level),
+					)
+					infosets_with_nonzero_norm[level] = tf.squeeze(
+							tf.not_equal(norm_of_strategies[level], 0.0),
+							name="infosets_with_nonzero_norm_lvl{}".format(level)
+					)
+					average_infoset_strategies[level] = tf.where(
+							condition=tf.logical_and(
+									self.domain.infosets_of_non_chance_player[level],
+									infosets_with_nonzero_norm[level],
+									name="non_chance_infosets_with_nonzero_norm_lvl{}".format(level)
+							),
+							x=normalize(self.domain.cumulative_infoset_strategies[level]),
+							y=self.domain.current_infoset_strategies[level],
+							name="average_infoset_strategies_lvl{}".format(level)
+					)
+		return average_infoset_strategies
+
 
 if __name__ == '__main__':
 	from src.domains.domain01.Domain01 import domain01
@@ -375,3 +479,5 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:
 			tensorcfr.domain.print_domain(sess)
+
+

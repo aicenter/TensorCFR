@@ -28,8 +28,8 @@ node_types[0] = tf.Variable(INNER_NODE, name="node_types_lvl0")
 utilities[0] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[0], name="utilities_lvl0")
 infoset_acting_players[0] = tf.Variable([PLAYER1], name="infoset_acting_players_lvl0")
 initial_infoset_strategies[0] = tf.placeholder_with_default(
-		# input=[[0.1, 0.9]],
-		input=[[1.0, 0.0]],
+		input=[[0.1, 0.9]],
+		# input=[[1.0, 0.0]],
 		shape=[infoset_acting_players[0].shape[0], actions_per_levels[0]],
 		name="initial_infoset_strategies_lvl{}".format(0)
 )
@@ -41,8 +41,8 @@ node_types[1] = tf.Variable([INNER_NODE] * 2, name="node_types_lvl1")
 utilities[1] = tf.fill(value=NON_TERMINAL_UTILITY, dims=shape[1], name="utilities_lvl1")
 infoset_acting_players[1] = tf.Variable([PLAYER2], name="infoset_acting_players_lvl1")
 initial_infoset_strategies[1] = tf.placeholder_with_default(
-		# input=[[0.2, 0.8]],
-		input=[[1.0, 0.0]],
+		input=[[0.2, 0.8]],
+		# input=[[1.0, 0.0]],
 		shape=[infoset_acting_players[1].shape[0], actions_per_levels[1]],
 		name="initial_infoset_strategies_lvl{}".format(1)
 )

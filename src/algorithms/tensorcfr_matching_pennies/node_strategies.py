@@ -75,7 +75,10 @@ def show_strategies(session):
 		])
 
 
-if __name__ == '__main__':
+ACTIVATE_FILE = False
+
+
+if __name__ == '__main__' and ACTIVATE_FILE:
 	from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 	node_strategies = get_node_strategies()
 	node_cf_strategies = get_node_cf_strategies()

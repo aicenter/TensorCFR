@@ -9,5 +9,8 @@ before_script:
 
 unittest:
   script:
-    - sh run-python-src-files.sh
     - python3 -m unittest
+
+runtest:
+  script:
+    - sh run-python-src-files.sh

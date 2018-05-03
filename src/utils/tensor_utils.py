@@ -30,7 +30,7 @@ def masked_assign(ref, mask, value, name="masked_assign"):
 	Returns:
 		A corresponding TensorFlow operation (from the computation graph).
 	"""
-	value = tf.to_float(value)  # make sure `value` is TensorFlow scalar of type `float`
+	value = tf.cast(value, dtype=ref.dtype)  # make sure `value` is TensorFlow scalar of type `float`
 
 	# check: all 3 shapes must match, "row-mask" can be a vector of the size of 'ref.shape[0]'
 	assert value.shape == [] or ref.shape == value.shape, \

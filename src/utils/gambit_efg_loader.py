@@ -143,7 +143,7 @@ class GambitEFGLoader:
 
 		self.node_to_infoset = [None] * self.number_of_levels
 		self.current_infoset_strategies = [None] * self.number_of_levels
-		self.initial_infoset_strategies = [None] * self.number_of_levels  # TODO temporary because of tensorcfr.py
+		self.initial_infoset_strategies = [None] * self.number_of_levels  # TODO temporary because of TensorCFR.py
 		self.infoset_acting_players = [None] * self.number_of_levels
 		self.cumulative_regrets = [None] * self.number_of_levels
 		self.positive_cumulative_regrets = [None] * self.number_of_levels

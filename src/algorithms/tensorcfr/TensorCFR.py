@@ -647,3 +647,11 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:
 			tensorcfr.domain.print_domain(sess)
+
+			# tensorcfr.run_cfr(total_steps=10, delay=0)
+			# tensorcfr.run_cfr(total_steps=10, delay=0, quiet=True)
+			# tensorcfr.run_cfr()
+			# from src.commons.constants import DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
+			# tensorcfr.run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
+			tensorcfr.run_cfr(quiet=True)
+			# tensorcfr.run_cfr(quiet=True, total_steps=10000)

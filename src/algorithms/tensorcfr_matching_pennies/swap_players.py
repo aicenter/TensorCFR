@@ -25,7 +25,10 @@ def swap_players():
 		)
 
 
-if __name__ == '__main__':
+ACTIVATE_FILE = False
+
+
+if __name__ == '__main__' and ACTIVATE_FILE:
 	increment_cfr_step_op = tf.assign_add(ref=cfr_step, value=1, name="increment_cfr_step_op")
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

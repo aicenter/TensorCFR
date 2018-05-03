@@ -48,7 +48,10 @@ def show_expected_values(session):
 		])
 
 
-if __name__ == '__main__':
+ACTIVATE_FILE = False
+
+
+if __name__ == '__main__' and ACTIVATE_FILE:
 	from src.algorithms.tensorcfr_matching_pennies.swap_players import swap_players
 	node_strategies_ = get_node_strategies()
 	expected_values_ = get_expected_values()

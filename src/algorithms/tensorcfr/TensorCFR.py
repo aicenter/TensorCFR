@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
+import datetime
+import os
+import re
 
 import tensorflow as tf
 
-from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE
+from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, \
+	DEFAULT_AVERAGING_DELAY
 from src.domains.Domain import Domain
 from src.utils.distribute_strategies_to_nodes import distribute_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
@@ -17,6 +21,7 @@ class TensorCFR:
 					value=1,
 					name="increment_cfr_step"
 			)
+		self.summary_writer = None
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -486,6 +491,152 @@ class TensorCFR:
 				ops_process_strategies + ops_swap_players + [op_inc_step],
 				name="cfr_step"
 		)
+
+	def set_up_feed_dictionary(self, method="by-domain", initial_strategy_values=None):
+		if method == "by-domain":
+			return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
+		elif method == "uniform":
+			with tf.variable_scope("initialize_strategies"):
+				uniform_strategies_tensors = self.get_infoset_uniform_strategies()
+				with tf.Session() as temp_sess:
+					temp_sess.run(tf.global_variables_initializer())
+					uniform_strategy_arrays = temp_sess.run(uniform_strategies_tensors)
+				return "Initializing to uniform strategies...\n", {
+					self.domain.initial_infoset_strategies[level]: uniform_strategy_arrays[level]
+					for level in range(self.domain.acting_depth)
+				}
+		elif method == "custom":
+			if initial_strategy_values is None:
+				raise ValueError('No "initial_strategy_values" given.')
+			if len(initial_strategy_values) != len(self.domain.initial_infoset_strategies):
+				raise ValueError(
+						'Mismatched "len(initial_strategy_values) == {}" and "len(initial_infoset_strategies) == {}".'.format(
+								len(initial_strategy_values), len(self.domain.initial_infoset_strategies)
+						)
+				)
+			return "Initializing strategies to custom values defined by user...\n", {
+				self.domain.initial_infoset_strategies[level]: initial_strategy_values[level]
+				for level in range(self.domain.acting_depth)
+			}
+		else:
+			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
+
+	def set_up_tensorboard(self, session, hyperparameters):
+		log_dir = "logs/{}-{}-{}".format(
+				self.domain.domain_name,
+				datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
+				",".join(
+						("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
+						 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
+		)
+		if not os.path.exists("logs"):
+			os.mkdir("logs")
+		with tf.variable_scope(self.domain.domain_scope):
+			with tf.variable_scope("tensorboard_operations"):
+				self.summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
+				with self.summary_writer.as_default():
+					tf.contrib.summary.initialize(session=session, graph=session.graph)
+
+	def set_up_cfr(self):
+		# TODO extract these lines to a UnitTest
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary()
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
+		setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="uniform")
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="custom")  # should raise ValueError
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
+		# 		method="custom",
+		# 		initial_strategy_values=[
+		# 			[[1.0, 0.0]],
+		# 		],
+		# )  # should raise ValueError
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
+		# 		method="custom",
+		# 		initial_strategy_values=[   # on domain `matching_pennies`
+		# 			[[1.0, 0.0]],
+		# 			[[1.0, 0.0]],
+		# 		]
+		# )
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="invalid")  # should raise ValueError
+		return feed_dictionary, setup_messages
+
+	def log_before_all_steps(self, session, setup_messages, total_steps, averaging_delay):
+		print("TensorCFR\n")
+		print(setup_messages)
+		print_tensors(session, self.domain.current_infoset_strategies)
+		print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay))
+
+	def log_before_every_step(self, session, infoset_cf_values, infoset_cf_values_per_actions, nodal_cf_values,
+	                          expected_values, reach_probabilities, regrets):
+		print("########## CFR+ step #{} ##########".format(self.domain.cfr_step.eval()))
+		print_tensors(session, reach_probabilities)
+		print("___________________________________\n")
+		print_tensors(session, expected_values)
+		print("___________________________________\n")
+		print_tensors(session, nodal_cf_values)
+		print("___________________________________\n")
+		print_tensors(session, infoset_cf_values_per_actions)
+		print("___________________________________\n")
+		print_tensors(session, infoset_cf_values)
+		print("___________________________________\n")
+		print_tensors(session, regrets)
+		print("___________________________________\n")
+		print_tensors(session, infoset_cf_values_per_actions)
+		print("___________________________________\n")
+		print_tensors(session, infoset_cf_values)
+		print("___________________________________\n")
+		print_tensors(session, regrets)
+		print("___________________________________\n")
+		print_tensors(session, self.domain.positive_cumulative_regrets)
+		print("___________________________________\n")
+		print_tensors(session, regrets)
+		print("___________________________________\n")
+
+	def log_after_every_step(self, session, strategies_matched_to_regrets):
+		print_tensors(session, self.domain.positive_cumulative_regrets)
+		print("___________________________________\n")
+		print_tensors(session, strategies_matched_to_regrets)
+		print("___________________________________\n")
+		print_tensors(session, self.domain.current_infoset_strategies)
+
+	def log_after_all_steps(self, session, average_infoset_strategies):
+		print("###################################\n")
+		print_tensors(session, self.domain.cumulative_infoset_strategies)
+		print("___________________________________\n")
+		print_tensors(session, average_infoset_strategies)
+
+	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
+		with tf.variable_scope("initialization"):
+			feed_dictionary, setup_messages = self.set_up_cfr()
+			assign_averaging_delay_op = tf.assign(ref=self.domain.averaging_delay, value=delay, name="assign_averaging_delay")
+		cfr_step_op = self.do_cfr_step()
+
+		# tensors to log if quiet is False
+		reach_probabilities = self.get_nodal_reach_probabilities() if not quiet else None
+		expected_values = self.get_expected_values() if not quiet else None
+		nodal_cf_values = self.get_nodal_cf_values() if not quiet else None
+		infoset_cf_values, infoset_cf_values_per_actions = self.get_infoset_cf_values() if not quiet else (None, None)
+		regrets = self.get_regrets() if not quiet else None
+		strategies_matched_to_regrets = self.get_strategy_matched_to_regrets() if not quiet else None
+		average_infoset_strategies = self.get_average_infoset_strategies()
+
+		with tf.Session() as session:
+			session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+			# hyperparameters = {
+			# 	"total_steps": total_steps,
+			# 	"averaging_delay": delay,
+			# }
+			# self.set_up_tensorboard(session=session, hyperparameters=hyperparameters)
+			assigned_averaging_delay = session.run(assign_averaging_delay_op)
+			if quiet is False:
+				self.log_before_all_steps(session, setup_messages, total_steps, assigned_averaging_delay)
+			for _ in range(total_steps):
+				if quiet is False:
+					self.log_before_every_step(session, infoset_cf_values, infoset_cf_values_per_actions, nodal_cf_values,
+					                           expected_values, reach_probabilities, regrets)
+				session.run(cfr_step_op)
+				if quiet is False:
+					self.log_after_every_step(session, strategies_matched_to_regrets)
+			self.log_after_all_steps(session, average_infoset_strategies)
 
 
 if __name__ == '__main__':

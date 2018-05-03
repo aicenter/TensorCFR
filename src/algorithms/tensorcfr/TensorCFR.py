@@ -11,6 +11,12 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 class TensorCFR:
 	def __init__(self, domain: Domain):
 		self.domain = domain
+		with tf.variable_scope("increment_step"):
+			self.increment_cfr_step = tf.assign_add(
+					ref=self.domain.cfr_step,
+					value=1,
+					name="increment_cfr_step"
+			)
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -469,6 +475,16 @@ class TensorCFR:
 							name="average_infoset_strategies_lvl{}".format(level)
 					)
 		return average_infoset_strategies
+
+	def do_cfr_step(self):
+		ops_process_strategies = self.process_strategies()
+		with tf.control_dependencies(ops_process_strategies):
+			ops_swap_players = self.swap_players()
+			op_inc_step = self.increment_cfr_step
+		return tf.tuple(
+				ops_process_strategies + ops_swap_players + [op_inc_step],
+				name="cfr_step"
+		)
 
 
 if __name__ == '__main__':

@@ -162,8 +162,8 @@ class GambitEFGLoader:
 			self.utilities[idx] = np.ones(self.actions_per_levels[:idx]) * constants.NON_TERMINAL_UTILITY
 			self.node_types[idx] = np.ones(self.actions_per_levels[:idx], dtype=np.int) * constants.IMAGINARY_NODE
 			self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx]) * TMP_NODE_TO_INFOSET_IMAGINARY * (-1)
-		# self.cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
-		# self.positive_cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
+			# self.cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
+			# self.positive_cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()

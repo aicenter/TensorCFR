@@ -1,10 +1,11 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr.TensorCFR import TensorCFR
-from src.domains.domain01.Domain01 import domain01
-from src.domains.matching_pennies.MatchingPennies import matching_pennies
+from src.domains.available_domains import get_domain_by_name
 
 if __name__ == '__main__':
+	domain01 = get_domain_by_name("domain01")
+	matching_pennies = get_domain_by_name("matching_pennies")
 	for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:
 		node_strategies = tensorcfr.get_node_strategies()
 		node_cf_strategies = tensorcfr.get_node_cf_strategies()

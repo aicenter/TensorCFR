@@ -161,7 +161,7 @@ class GambitEFGLoader:
 		for idx in range(len(self.actions_per_levels) + 1):
 			self.utilities[idx] = np.ones(self.actions_per_levels[:idx]) * constants.NON_TERMINAL_UTILITY
 			self.node_types[idx] = np.ones(self.actions_per_levels[:idx], dtype=np.int) * constants.IMAGINARY_NODE
-			self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx]) * TMP_NODE_TO_INFOSET_IMAGINARY * (-1)
+			self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx], dtype=np.int) * TMP_NODE_TO_INFOSET_IMAGINARY * (-1)
 			# self.cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
 			# self.positive_cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
 

@@ -620,11 +620,11 @@ class TensorCFR:
 
 		with tf.Session() as session:
 			session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-			# hyperparameters = {
-			# 	"total_steps": total_steps,
-			# 	"averaging_delay": delay,
-			# }
-			# self.set_up_tensorboard(session=session, hyperparameters=hyperparameters)
+			hyperparameters = {
+				"total_steps": total_steps,
+				"averaging_delay": delay,
+			}
+			self.set_up_tensorboard(session=session, hyperparameters=hyperparameters)
 			assigned_averaging_delay = session.run(assign_averaging_delay_op)
 			if quiet is False:
 				self.log_before_all_steps(session, setup_messages, total_steps, assigned_averaging_delay)

@@ -8,6 +8,8 @@ import tensorflow as tf
 
 from src.commons import constants
 
+# TODO @janrudolf: Why are there these 2 constants?
+# TODO @janrudolf: And why are they set to 7 and 8? It should be the last and the penultimate.
 TMP_NODE_TO_INFOSET_TERMINAL = 7
 TMP_NODE_TO_INFOSET_IMAGINARY = 8
 

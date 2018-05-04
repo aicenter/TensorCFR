@@ -233,7 +233,7 @@ class TensorCFR:
 						axis=-1,
 						keepdims=True,
 						name="infoset_cf_values_lvl{}".format(level),
-						) for level in range(self.domain.levels - 1)
+				) for level in range(self.domain.levels - 1)
 			]
 		return infoset_cf_values, infoset_cf_values_per_actions
 
@@ -335,13 +335,13 @@ class TensorCFR:
 					)
 					# TODO implement and use `masked_assign_add` here
 					update_regrets_ops[level] = masked_assign(
-						ref=self.domain.positive_cumulative_regrets[level],
-						mask=infosets_of_updating_player,
-						value=tf.maximum(
-								0.0,
-								self.domain.positive_cumulative_regrets[level] + regrets[level]
-						),
-						name="update_regrets_lvl{}".format(level)
+							ref=self.domain.positive_cumulative_regrets[level],
+							mask=infosets_of_updating_player,
+							value=tf.maximum(
+									0.0,
+									self.domain.positive_cumulative_regrets[level] + regrets[level]
+							),
+							name="update_regrets_lvl{}".format(level)
 					)
 			return update_regrets_ops
 
@@ -387,7 +387,8 @@ class TensorCFR:
 		with tf.variable_scope("update_strategy_of_updating_player"):
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
-					infosets_of_acting_player = tf.reshape(  # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+					infosets_of_acting_player = tf.reshape(
+							# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
 							tf.equal(infoset_acting_players[level], acting_player),
 							shape=[self.domain.current_infoset_strategies[level].shape[0]],
 							name="infosets_of_updating_player_lvl{}".format(level)
@@ -404,7 +405,7 @@ class TensorCFR:
 		if delay is None:
 			delay = self.domain.averaging_delay
 		with tf.variable_scope("weighted_averaging_factor"):
-			if delay is None:   # when `delay` is None, no weighted averaging is used
+			if delay is None:  # when `delay` is None, no weighted averaging is used
 				return tf.constant(
 						1.0,
 						name="weighted_averaging_factor"
@@ -492,165 +493,178 @@ class TensorCFR:
 				name="cfr_step"
 		)
 
-	def set_up_feed_dictionary(self, method="by-domain", initial_strategy_values=None):
-		if method == "by-domain":
-			return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
-		elif method == "uniform":
-			with tf.variable_scope("initialize_strategies"):
-				uniform_strategies_tensors = self.get_infoset_uniform_strategies()
-				with tf.Session() as temp_sess:
-					temp_sess.run(tf.global_variables_initializer())
-					uniform_strategy_arrays = temp_sess.run(uniform_strategies_tensors)
-				return "Initializing to uniform strategies...\n", {
-					self.domain.initial_infoset_strategies[level]: uniform_strategy_arrays[level]
-					for level in range(self.domain.acting_depth)
-				}
-		elif method == "custom":
-			if initial_strategy_values is None:
-				raise ValueError('No "initial_strategy_values" given.')
-			if len(initial_strategy_values) != len(self.domain.initial_infoset_strategies):
-				raise ValueError(
-						'Mismatched "len(initial_strategy_values) == {}" and "len(initial_infoset_strategies) == {}".'.format(
-								len(initial_strategy_values), len(self.domain.initial_infoset_strategies)
-						)
-				)
-			return "Initializing strategies to custom values defined by user...\n", {
-				self.domain.initial_infoset_strategies[level]: initial_strategy_values[level]
-				for level in range(self.domain.acting_depth)
+
+def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):
+	if method == "by-domain":
+		return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
+	elif method == "uniform":
+		with tf.variable_scope("initialize_strategies"):
+			uniform_strategies_tensors = tensorcfr_instance.get_infoset_uniform_strategies()
+			with tf.Session() as temp_sess:
+				temp_sess.run(tf.global_variables_initializer())
+				uniform_strategy_arrays = temp_sess.run(uniform_strategies_tensors)
+			return "Initializing to uniform strategies...\n", {
+				tensorcfr_instance.domain.initial_infoset_strategies[level]: uniform_strategy_arrays[level]
+				for level in range(tensorcfr_instance.domain.acting_depth)
 			}
-		else:
-			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
+	elif method == "custom":
+		if initial_strategy_values is None:
+			raise ValueError('No "initial_strategy_values" given.')
+		if len(initial_strategy_values) != len(tensorcfr_instance.domain.initial_infoset_strategies):
+			raise ValueError(
+					'Mismatched "len(initial_strategy_values) == {}" and "len(initial_infoset_strategies) == {}".'.format(
+							len(initial_strategy_values), len(tensorcfr_instance.domain.initial_infoset_strategies)
+					)
+			)
+		return "Initializing strategies to custom values defined by user...\n", {
+			tensorcfr_instance.domain.initial_infoset_strategies[level]: initial_strategy_values[level]
+			for level in range(tensorcfr_instance.domain.acting_depth)
+		}
+	else:
+		raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
-	def set_up_tensorboard(self, session, hyperparameters):
-		log_dir = "logs/{}-{}-{}".format(
-				self.domain.domain_name,
-				datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
-				",".join(
-						("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
-						 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
-		)
-		if not os.path.exists("logs"):
-			os.mkdir("logs")
-		with tf.variable_scope("tensorboard_operations"):
-			summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
-			with summary_writer.as_default():
-				tf.contrib.summary.initialize(session=session, graph=session.graph)
 
-	def set_up_cfr(self):
-		# TODO extract these lines to a UnitTest
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary()
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
-		setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="uniform")
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="custom")  # should raise ValueError
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
-		# 		method="custom",
-		# 		initial_strategy_values=[
-		# 			[[1.0, 0.0]],
-		# 		],
-		# )  # should raise ValueError
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
-		# 		method="custom",
-		# 		initial_strategy_values=[   # on domain `matching_pennies`
-		# 			[[1.0, 0.0]],
-		# 			[[1.0, 0.0]],
-		# 		]
-		# )
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="invalid")  # should raise ValueError
-		return feed_dictionary, setup_messages
+def set_up_tensorboard(tensorcfr_instance, session, hyperparameters):
+	log_dir = "logs/{}-{}-{}".format(
+			tensorcfr_instance.domain.domain_name,
+			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
+			",".join(
+					("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
+					 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
+	)
+	if not os.path.exists("logs"):
+		os.mkdir("logs")
+	with tf.variable_scope("tensorboard_operations"):
+		summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
+		with summary_writer.as_default():
+			tf.contrib.summary.initialize(session=session, graph=session.graph)
 
-	def log_before_all_steps(self, session, setup_messages, total_steps, averaging_delay):
-		print("TensorCFR\n")
-		print(setup_messages)
-		print_tensors(session, self.domain.current_infoset_strategies)
-		print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay))
 
-	def log_before_every_step(self, session, infoset_cf_values, infoset_cf_values_per_actions, nodal_cf_values,
-	                          expected_values, reach_probabilities, regrets):
-		print("########## CFR+ step #{} ##########".format(self.domain.cfr_step.eval()))
-		print_tensors(session, reach_probabilities)
-		print("___________________________________\n")
-		print_tensors(session, expected_values)
-		print("___________________________________\n")
-		print_tensors(session, nodal_cf_values)
-		print("___________________________________\n")
-		print_tensors(session, infoset_cf_values_per_actions)
-		print("___________________________________\n")
-		print_tensors(session, infoset_cf_values)
-		print("___________________________________\n")
-		print_tensors(session, regrets)
-		print("___________________________________\n")
-		print_tensors(session, infoset_cf_values_per_actions)
-		print("___________________________________\n")
-		print_tensors(session, infoset_cf_values)
-		print("___________________________________\n")
-		print_tensors(session, regrets)
-		print("___________________________________\n")
-		print_tensors(session, self.domain.positive_cumulative_regrets)
-		print("___________________________________\n")
-		print_tensors(session, regrets)
-		print("___________________________________\n")
+def set_up_cfr(tensorcfr_instance):
+	# TODO extract these lines to a UnitTest
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance)
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance, method="by-domain")
+	setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance, method="uniform")
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance, method="custom")
+	# #  should raise ValueError
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance,
+	# 		method="custom",
+	# 		initial_strategy_values=[
+	# 			[[1.0, 0.0]],
+	# 		],
+	# )  # should raise ValueError
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance,
+	# 		method="custom",
+	# 		initial_strategy_values=[   # on domain `matching_pennies`
+	# 			[[1.0, 0.0]],
+	# 			[[1.0, 0.0]],
+	# 		]
+	# )
+	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance, method="invalid")
+	# #  should raise ValueError
+	return feed_dictionary, setup_messages
 
-	def log_after_every_step(self, session, strategies_matched_to_regrets):
-		print_tensors(session, self.domain.positive_cumulative_regrets)
-		print("___________________________________\n")
-		print_tensors(session, strategies_matched_to_regrets)
-		print("___________________________________\n")
-		print_tensors(session, self.domain.current_infoset_strategies)
 
-	def log_after_all_steps(self, session, average_infoset_strategies):
-		print("###################################\n")
-		print_tensors(session, self.domain.cumulative_infoset_strategies)
-		print("___________________________________\n")
-		print_tensors(session, average_infoset_strategies)
+def log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, averaging_delay):
+	print("TensorCFR\n")
+	print(setup_messages)
+	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
+	print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay))
 
-	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
-		with tf.variable_scope("initialization"):
-			feed_dictionary, setup_messages = self.set_up_cfr()
-			assign_averaging_delay_op = tf.assign(ref=self.domain.averaging_delay, value=delay, name="assign_averaging_delay")
-		cfr_step_op = self.do_cfr_step()
 
-		# tensors to log if quiet is False
-		reach_probabilities = self.get_nodal_reach_probabilities() if not quiet else None
-		expected_values = self.get_expected_values() if not quiet else None
-		nodal_cf_values = self.get_nodal_cf_values() if not quiet else None
-		infoset_cf_values, infoset_cf_values_per_actions = self.get_infoset_cf_values() if not quiet else (None, None)
-		regrets = self.get_regrets() if not quiet else None
-		strategies_matched_to_regrets = self.get_strategy_matched_to_regrets() if not quiet else None
-		average_infoset_strategies = self.get_average_infoset_strategies()
+def log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_cf_values_per_actions,
+                          nodal_cf_values, expected_values, reach_probabilities, regrets):
+	print("########## CFR+ step #{} ##########".format(tensorcfr_instance.domain.cfr_step.eval()))
+	print_tensors(session, reach_probabilities)
+	print("___________________________________\n")
+	print_tensors(session, expected_values)
+	print("___________________________________\n")
+	print_tensors(session, nodal_cf_values)
+	print("___________________________________\n")
+	print_tensors(session, infoset_cf_values_per_actions)
+	print("___________________________________\n")
+	print_tensors(session, infoset_cf_values)
+	print("___________________________________\n")
+	print_tensors(session, regrets)
+	print("___________________________________\n")
+	print_tensors(session, infoset_cf_values_per_actions)
+	print("___________________________________\n")
+	print_tensors(session, infoset_cf_values)
+	print("___________________________________\n")
+	print_tensors(session, regrets)
+	print("___________________________________\n")
+	print_tensors(session, tensorcfr_instance.domain.positive_cumulative_regrets)
+	print("___________________________________\n")
+	print_tensors(session, regrets)
+	print("___________________________________\n")
 
-		with tf.Session() as session:
-			session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-			# hyperparameters = {
-			# 	"total_steps": total_steps,
-			# 	"averaging_delay": delay,
-			# }
-			# self.set_up_tensorboard(session=session, hyperparameters=hyperparameters)
-			assigned_averaging_delay = session.run(assign_averaging_delay_op)
+
+def log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets):
+	print_tensors(session, tensorcfr_instance.domain.positive_cumulative_regrets)
+	print("___________________________________\n")
+	print_tensors(session, strategies_matched_to_regrets)
+	print("___________________________________\n")
+	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
+
+
+def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies):
+	print("###################################\n")
+	print_tensors(session, tensorcfr_instance.domain.cumulative_infoset_strategies)
+	print("___________________________________\n")
+	print_tensors(session, average_infoset_strategies)
+
+
+def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
+	with tf.variable_scope("initialization"):
+		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
+		assign_averaging_delay_op = tf.assign(ref=tensorcfr_instance.domain.averaging_delay, value=delay, name="assign_averaging_delay")
+	cfr_step_op = tensorcfr_instance.do_cfr_step()
+
+	# tensors to log if quiet is False
+	reach_probabilities = tensorcfr_instance.get_nodal_reach_probabilities() if not quiet else None
+	expected_values = tensorcfr_instance.get_expected_values() if not quiet else None
+	nodal_cf_values = tensorcfr_instance.get_nodal_cf_values() if not quiet else None
+	infoset_cf_values, infoset_cf_values_per_actions = tensorcfr_instance.get_infoset_cf_values() if not quiet else (None, None)
+	regrets = tensorcfr_instance.get_regrets() if not quiet else None
+	strategies_matched_to_regrets = tensorcfr_instance.get_strategy_matched_to_regrets() if not quiet else None
+	average_infoset_strategies = tensorcfr_instance.get_average_infoset_strategies()
+
+	with tf.Session() as session:
+		session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+		# hyperparameters = {
+		# 	"total_steps": total_steps,
+		# 	"averaging_delay": delay,
+		# }
+		# tensorcfr_instance.set_up_tensorboard(session=session, hyperparameters=hyperparameters)
+		assigned_averaging_delay = session.run(assign_averaging_delay_op)
+		if quiet is False:
+			log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, assigned_averaging_delay)
+		for _ in range(total_steps):
 			if quiet is False:
-				self.log_before_all_steps(session, setup_messages, total_steps, assigned_averaging_delay)
-			for _ in range(total_steps):
-				if quiet is False:
-					self.log_before_every_step(session, infoset_cf_values, infoset_cf_values_per_actions, nodal_cf_values,
-					                           expected_values, reach_probabilities, regrets)
-				session.run(cfr_step_op)
-				if quiet is False:
-					self.log_after_every_step(session, strategies_matched_to_regrets)
-			self.log_after_all_steps(session, average_infoset_strategies)
+				log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_cf_values_per_actions, nodal_cf_values,
+				                                         expected_values, reach_probabilities, regrets)
+			session.run(cfr_step_op)
+			if quiet is False:
+				log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
+		log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies)
 
 
 if __name__ == '__main__':
 	from src.domains.domain01.Domain01 import domain01
 	from src.domains.matching_pennies.MatchingPennies import matching_pennies
 
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:
-			tensorcfr.domain.print_domain(sess)
+	for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:
+		run_cfr(tensorcfr_instance=tensorcfr, quiet=True)
 
-			# tensorcfr.run_cfr(total_steps=10, delay=0)
-			# tensorcfr.run_cfr(total_steps=10, delay=0, quiet=True)
-			# tensorcfr.run_cfr()
-			# from src.commons.constants import DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
-			# tensorcfr.run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
-			tensorcfr.run_cfr(quiet=True)
-			# tensorcfr.run_cfr(quiet=True, total_steps=10000)
+	# with tf.Session() as sess:
+	# 	sess.run(tf.global_variables_initializer())
+	# 	for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:
+	# 		tensorcfr.domain.print_domain(sess)
+	#
+	# 		# tensorcfr.run_cfr(total_steps=10, delay=0)
+	# 		# tensorcfr.run_cfr(total_steps=10, delay=0, quiet=True)
+	# 		# tensorcfr.run_cfr()
+	# 		# from src.commons.constants import DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
+	# 		# tensorcfr.run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
+	# 		tensorcfr.run_cfr(quiet=True)
+	# 		# tensorcfr.run_cfr(quiet=True, total_steps=10000)

@@ -12,4 +12,11 @@ def get_domain_by_name(name):
 		raise ValueError("Invalid name '{}' for get_domain_by_name().".format(name))
 
 
-# TODO fill-in __main__
+if __name__ == '__main__':
+	import tensorflow as tf
+
+	for domain_name in ["domain01", "matching_pennies"]:
+		domain = get_domain_by_name(domain_name)
+		with tf.Session() as sess:
+			sess.run(tf.global_variables_initializer())
+			domain.print_domain(session=sess)

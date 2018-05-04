@@ -115,12 +115,8 @@ class Domain:
 			]
 
 	@classmethod
-	def init_from_gambit_file(cls, path_to_gambitfile, domain_name=None):
+	def init_from_gambit_file(cls, path_to_gambitfile, domain_name="from_gambit"):
 		domain_numpy_tensors = GambitEFGLoader(path_to_gambitfile)
-
-		if domain_name is None:
-			domain_name = "from_gambit"
-
 		return cls(
 			domain_name,
 			domain_numpy_tensors.actions_per_levels,

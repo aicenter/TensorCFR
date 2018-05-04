@@ -179,8 +179,16 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 
 			sess.run(cfr_step_op, options=run_options, run_metadata=metadata)
 
-			print(metadata)
+			# gives the Model report with total compute time and memory consumption:
+			if quiet == False:
+				tf.profiler.profile(
+					sess.graph,
+					run_meta=metadata,
+					cmd='scope', # can vary - scope / op ... https://github.com/tensorflow/tensorflow/blob/r1.5/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
+					options=tf.profiler.ProfileOptionBuilder.time_and_memory()
+				)
 
+			# save metadata about
 			writer.add_run_metadata(metadata, 'step%d' % i)
 
 			if quiet is False:
@@ -195,5 +203,5 @@ if __name__ == '__main__':
 	# run_cfr(total_steps=10, delay=0, quiet=True)
 	# run_cfr()
 	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
-	run_cfr(quiet=True)
+	run_cfr(total_steps=20, quiet=True)
 	# run_cfr(quiet=True, total_steps=10000)

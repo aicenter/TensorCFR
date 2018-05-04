@@ -8,6 +8,7 @@ import tensorflow as tf
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, \
 	DEFAULT_AVERAGING_DELAY
 from src.domains.Domain import Domain
+from src.domains.available_domains import get_domain_by_name
 from src.utils.distribute_strategies_to_nodes import distribute_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
@@ -654,18 +655,6 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 			if quiet is False:
 				log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
 		log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies)
-
-
-def get_domain_by_name():
-	from src.domains.domain01.Domain01 import get_domain01
-	from src.domains.matching_pennies.MatchingPennies import get_domain_matching_pennies
-
-	domain_choice = "domain01"
-	# domain_choice = "matching_pennies"
-	return {
-		"domain01"        : get_domain01(),
-		"matching_pennies": get_domain_matching_pennies(),
-	}[domain_choice]
 
 
 if __name__ == '__main__':

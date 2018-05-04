@@ -657,13 +657,14 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 
 
 if __name__ == '__main__':
-	from src.domains.domain01.Domain01 import domain01
-	from src.domains.matching_pennies.MatchingPennies import matching_pennies
+	from src.domains.domain01.Domain01 import get_domain01
+	from src.domains.matching_pennies.MatchingPennies import get_domain_matching_pennies
 
 	domain_choice = "domain01"
 	# domain_choice = "matching_pennies"
-	tensorcfr = {
-		"domain01": TensorCFR(domain01),
-		"matching_pennies": TensorCFR(matching_pennies),
+	domain = {
+		"domain01": get_domain01(),
+		"matching_pennies": get_domain_matching_pennies(),
 	}[domain_choice]
+	tensorcfr = TensorCFR(domain)
 	run_cfr(tensorcfr_instance=tensorcfr, quiet=True)

@@ -660,18 +660,10 @@ if __name__ == '__main__':
 	from src.domains.domain01.Domain01 import domain01
 	from src.domains.matching_pennies.MatchingPennies import matching_pennies
 
-	for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:
-		run_cfr(tensorcfr_instance=tensorcfr, quiet=True)
-
-	# with tf.Session() as sess:
-	# 	sess.run(tf.global_variables_initializer())
-	# 	for tensorcfr in [TensorCFR(domain01), TensorCFR(matching_pennies)]:
-	# 		tensorcfr.domain.print_domain(sess)
-	#
-	# 		# tensorcfr.run_cfr(total_steps=10, delay=0)
-	# 		# tensorcfr.run_cfr(total_steps=10, delay=0, quiet=True)
-	# 		# tensorcfr.run_cfr()
-	# 		# from src.commons.constants import DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS
-	# 		# tensorcfr.run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
-	# 		tensorcfr.run_cfr(quiet=True)
-	# 		# tensorcfr.run_cfr(quiet=True, total_steps=10000)
+	domain_choice = "domain01"
+	# domain_choice = "matching_pennies"
+	tensorcfr = {
+		"domain01": TensorCFR(domain01),
+		"matching_pennies": TensorCFR(matching_pennies),
+	}[domain_choice]
+	run_cfr(tensorcfr_instance=tensorcfr, quiet=True)

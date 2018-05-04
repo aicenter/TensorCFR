@@ -155,22 +155,39 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+
 		hyperparameters = {
 			"total_steps": total_steps,
 			"averaging_delay": delay,
 		}
+
+
 		set_up_tensorboard(session=sess, hyperparameters=hyperparameters)
 		assigned_averaging_delay = sess.run(assign_averaging_delay_op)
 		if quiet is False:
 			log_before_all_steps(sess, setup_messages, total_steps, assigned_averaging_delay)
-		for _ in range(total_steps):
+
+		writer = tf.summary.FileWriter('logs', tf.get_default_graph())
+
+		for i in range(total_steps):
 			if quiet is False:
 				log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values,
 				                      reach_probabilities, regrets)
-			sess.run(cfr_step_op)
+
+			run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+			metadata = tf.RunMetadata()
+
+			sess.run(cfr_step_op, options=run_options, run_metadata=metadata)
+
+			print(metadata)
+
+			writer.add_run_metadata(metadata, 'step%d' % i)
+
 			if quiet is False:
 				log_after_every_step(sess, strategies_matched_to_regrets)
 		log_after_all_steps(sess, average_infoset_strategies)
+
+		writer.close()
 
 
 if __name__ == '__main__':

@@ -65,6 +65,8 @@ def set_up_tensorboard(session, hyperparameters):
 		with summary_writer.as_default():
 			tf.contrib.summary.initialize(session=session, graph=session.graph)
 
+	return log_dir
+
 
 def set_up_cfr():
 	# TODO extract these lines to a UnitTest
@@ -161,13 +163,13 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 			"averaging_delay": delay,
 		}
 
+		log_dir = set_up_tensorboard(session=sess, hyperparameters=hyperparameters)
 
-		set_up_tensorboard(session=sess, hyperparameters=hyperparameters)
 		assigned_averaging_delay = sess.run(assign_averaging_delay_op)
 		if quiet is False:
 			log_before_all_steps(sess, setup_messages, total_steps, assigned_averaging_delay)
 
-		writer = tf.summary.FileWriter('logs', tf.get_default_graph())
+		writer = tf.summary.FileWriter(log_dir+',with_time_mem', tf.get_default_graph())
 
 		for i in range(total_steps):
 			if quiet is False:
@@ -180,7 +182,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 			sess.run(cfr_step_op, options=run_options, run_metadata=metadata)
 
 			# gives the Model report with total compute time and memory consumption:
-			if quiet == False:
+			if quiet is False:
 				tf.profiler.profile(
 					sess.graph,
 					run_meta=metadata,
@@ -188,7 +190,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 					options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 				)
 
-			# save metadata about
+			# save metadata about time and memory for tensorboard
 			writer.add_run_metadata(metadata, 'step%d' % i)
 
 			if quiet is False:
@@ -201,7 +203,6 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 if __name__ == '__main__':
 	# run_cfr(total_steps=10, delay=0)
 	# run_cfr(total_steps=10, delay=0, quiet=True)
-	# run_cfr()
+	run_cfr(quiet=True, total_steps=1000)
 	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
-	run_cfr(total_steps=20, quiet=True)
 	# run_cfr(quiet=True, total_steps=10000)

@@ -3,7 +3,8 @@
 import tensorflow as tf
 
 
-def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updating_player=None, acting_players=None):
+def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updating_player=None,
+                                   acting_players=None):
 	"""
   Translate 2-D tensor `infoset_strategies` of strategies per information sets to strategies per game states.
   The translation is done based on N-D tensor `states_to_infosets`: each state (indexed by N-D coordinate)

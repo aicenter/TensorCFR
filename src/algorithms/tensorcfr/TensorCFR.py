@@ -531,11 +531,10 @@ class TensorCFR:
 		)
 		if not os.path.exists("logs"):
 			os.mkdir("logs")
-		with tf.variable_scope(self.domain.domain_scope):
-			with tf.variable_scope("tensorboard_operations"):
-				summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
-				with summary_writer.as_default():
-					tf.contrib.summary.initialize(session=session, graph=session.graph)
+		with tf.variable_scope("tensorboard_operations"):
+			summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
+			with summary_writer.as_default():
+				tf.contrib.summary.initialize(session=session, graph=session.graph)
 
 	def set_up_cfr(self):
 		# TODO extract these lines to a UnitTest

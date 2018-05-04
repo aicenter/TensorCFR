@@ -133,8 +133,8 @@ class TensorCFR:
 
 	def get_nodal_reach_probabilities(self, for_player=None):
 		"""
-		:param for_player: The player for which the reach probabilities are computed. These probabilities are usually computed
-		 for the updating player when counterfactual values are computed. Therefore, `for_player` is set to
+		:param for_player: The player for which the reach probabilities are computed. These probabilities are usually
+		 computed for the updating player when counterfactual values are computed. Therefore, `for_player` is set to
 			`current_updating_player` by default.
 		:return: The reach probabilities of nodes based on `current_infoset_strategies`.
 		"""
@@ -327,7 +327,8 @@ class TensorCFR:
 			update_regrets_ops = [None] * self.domain.acting_depth
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
-					# TODO optimize by: pre-define `infosets_of_player1` and `infosets_of_player2` (in domain definitions) and switch
+					# TODO optimize by: pre-define `infosets_of_player1` and `infosets_of_player2` (in domain definitions) and
+					#  switch
 					infosets_of_updating_player = tf.reshape(
 							tf.equal(self.domain.infoset_acting_players[level], self.domain.current_updating_player),
 							shape=[self.domain.positive_cumulative_regrets[level].shape[0]],
@@ -368,7 +369,8 @@ class TensorCFR:
 								tf.equal(sums_of_regrets, 0),
 								name="zero_sum_rows_lvl{}".format(level)
 						)
-						# Note: An all-0's row cannot be normalized. Thus, when PCRegrets sum to 0, a uniform strategy is used instead.
+						# Note: An all-0's row cannot be normalized. Thus, when PCRegrets sum to 0, a uniform strategy is used
+						#  instead.
 						# TODO verify uniform strategy is created (mix of both tf.where branches)
 						strategies_matched_to_regrets[level] = tf.where(
 								condition=zero_sum_rows,
@@ -617,14 +619,19 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies)
 def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
-		assign_averaging_delay_op = tf.assign(ref=tensorcfr_instance.domain.averaging_delay, value=delay, name="assign_averaging_delay")
+		assign_averaging_delay_op = tf.assign(
+				ref=tensorcfr_instance.domain.averaging_delay,
+				value=delay,
+				name="assign_averaging_delay"
+		)
 	cfr_step_op = tensorcfr_instance.do_cfr_step()
 
 	# tensors to log if quiet is False
 	reach_probabilities = tensorcfr_instance.get_nodal_reach_probabilities() if not quiet else None
 	expected_values = tensorcfr_instance.get_expected_values() if not quiet else None
 	nodal_cf_values = tensorcfr_instance.get_nodal_cf_values() if not quiet else None
-	infoset_cf_values, infoset_cf_values_per_actions = tensorcfr_instance.get_infoset_cf_values() if not quiet else (None, None)
+	infoset_cf_values, infoset_cf_values_per_actions = tensorcfr_instance.get_infoset_cf_values() if not quiet \
+		else (None, None)
 	regrets = tensorcfr_instance.get_regrets() if not quiet else None
 	strategies_matched_to_regrets = tensorcfr_instance.get_strategy_matched_to_regrets() if not quiet else None
 	average_infoset_strategies = tensorcfr_instance.get_average_infoset_strategies()
@@ -641,8 +648,8 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 			log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, assigned_averaging_delay)
 		for _ in range(total_steps):
 			if quiet is False:
-				log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_cf_values_per_actions, nodal_cf_values,
-				                                         expected_values, reach_probabilities, regrets)
+				log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_cf_values_per_actions,
+				                      nodal_cf_values, expected_values, reach_probabilities, regrets)
 			session.run(cfr_step_op)
 			if quiet is False:
 				log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)

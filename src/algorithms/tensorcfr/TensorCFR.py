@@ -658,6 +658,7 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 
 
 if __name__ == '__main__':
-	domain = get_domain_by_name()
+	domain = get_domain_by_name("domain01")
+	# domain = get_domain_by_name("matching_pennies")
 	tensorcfr = TensorCFR(domain)
 	run_cfr(tensorcfr_instance=tensorcfr, quiet=True)

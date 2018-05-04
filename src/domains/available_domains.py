@@ -2,10 +2,14 @@
 
 
 def get_domain_by_name(name):
-	from src.domains.domain01.Domain01 import get_domain01
-	from src.domains.matching_pennies.MatchingPennies import get_domain_matching_pennies
+	if name == "domain01":
+		from src.domains.domain01.Domain01 import get_domain01
+		return get_domain01()
+	elif name == "matching_pennies":
+		from src.domains.matching_pennies.MatchingPennies import get_domain_matching_pennies
+		return get_domain_matching_pennies()
+	else:
+		raise ValueError("Invalid name '{}' for get_domain_by_name().".format(name))
 
-	return {
-		"domain01"        : get_domain01(),
-		"matching_pennies": get_domain_matching_pennies(),
-	}[name]
+
+# TODO fill-in __main__

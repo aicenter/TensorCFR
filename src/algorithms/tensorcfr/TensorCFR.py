@@ -631,11 +631,11 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 
 	with tf.Session() as session:
 		session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-		# hyperparameters = {
-		# 	"total_steps": total_steps,
-		# 	"averaging_delay": delay,
-		# }
-		# tensorcfr_instance.set_up_tensorboard(session=session, hyperparameters=hyperparameters)
+		hyperparameters = {
+			"total_steps": total_steps,
+			"averaging_delay": delay,
+		}
+		set_up_tensorboard(tensorcfr_instance, session=session, hyperparameters=hyperparameters)
 		assigned_averaging_delay = session.run(assign_averaging_delay_op)
 		if quiet is False:
 			log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, assigned_averaging_delay)

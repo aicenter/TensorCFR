@@ -4,7 +4,10 @@ MATCHING_PENNIES = "matching_pennies"
 DOMAIN01_GAMBIT = "domain01_via_gambit"
 GOOFSPIEL2_GAMBIT = "II-GS2_via_gambit"
 GOOFSPIEL3_GAMBIT = "II-GS3_via_gambit"
+GOOFSPIEL5_GAMBIT = "IIGS5_s1_bf_ft_via_gambit"
 AVAILABLE_DOMAINS = [DOMAIN01, MATCHING_PENNIES, DOMAIN01_GAMBIT, GOOFSPIEL2_GAMBIT, GOOFSPIEL3_GAMBIT]
+DOMAINS_WITH_LARGE_GAMBIT_FILES = [GOOFSPIEL5_GAMBIT]
+DOMAINS = AVAILABLE_DOMAINS + DOMAINS_WITH_LARGE_GAMBIT_FILES
 
 
 def get_domain_by_name(name):
@@ -23,6 +26,9 @@ def get_domain_by_name(name):
 	elif name == GOOFSPIEL3_GAMBIT:
 		from src.domains.goofspiel_3.domain_from_gambit_loader import get_domain_goofspiel_3
 		return get_domain_goofspiel_3()
+	elif name == GOOFSPIEL5_GAMBIT:
+		from src.domains.goofspiel_5.domain_from_gambit_loader import get_domain_goofspiel_5
+		return get_domain_goofspiel_5()
 	else:
 		raise ValueError("Invalid name '{}' for get_domain_by_name().".format(name))
 

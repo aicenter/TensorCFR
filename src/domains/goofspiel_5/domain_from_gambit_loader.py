@@ -20,7 +20,10 @@ def get_domain_goofspiel_5():
 	return Domain.init_from_gambit_file(path_to_domain_filename)
 
 
-if __name__ == '__main__':
+ACTIVATE_FILE = False
+
+
+if __name__ == '__main__' and ACTIVATE_FILE:
 	goofspiel_5 = get_domain_goofspiel_5()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

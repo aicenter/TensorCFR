@@ -17,7 +17,7 @@ def get_domain_phantom_ttt():
 			'phantom_ttt',
 			'phantom_ttt.efg'
 	)
-	return Domain.init_from_gambit_file(path_to_domain_filename)
+	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="phantom_ttt_via_gambit")
 
 
 ACTIVATE_FILE = False

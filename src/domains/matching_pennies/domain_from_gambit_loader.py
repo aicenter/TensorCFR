@@ -4,7 +4,7 @@ import tensorflow as tf
 from src.domains.Domain import Domain
 
 
-def get_domain_matching_pennies():
+def get_matching_pennies_from_gambit():
 	path_to_domain_filename = os.path.join(
 			os.path.dirname(
 					os.path.abspath(
@@ -21,7 +21,7 @@ def get_domain_matching_pennies():
 
 
 if __name__ == '__main__':
-	matching_pennies = get_domain_matching_pennies()
+	matching_pennies = get_matching_pennies_from_gambit()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		matching_pennies.print_domain(sess)

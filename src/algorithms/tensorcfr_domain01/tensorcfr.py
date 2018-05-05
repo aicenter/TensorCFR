@@ -181,12 +181,16 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 
 			sess.run(cfr_step_op, options=run_options, run_metadata=metadata)
 
-			# gives the Model report with total compute time and memory consumption:
+			"""
+			Profiler gives the Model report with total compute time and memory consumption.
+			- Add CUDA libs to LD_LIBRARY_PATH: https://github.com/tensorflow/tensorflow/issues/8830
+			- For `cmd` see:
+			https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
+			"""
 			if quiet is False:
 				tf.profiler.profile(
 					sess.graph,
 					run_meta=metadata,
-					# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
 					# cmd='op',
 					cmd='scope',
 					options=tf.profiler.ProfileOptionBuilder.time_and_memory()

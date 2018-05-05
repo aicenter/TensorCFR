@@ -2,10 +2,18 @@
 DOMAIN01 = "domain01"
 MATCHING_PENNIES = "matching_pennies"
 DOMAIN01_GAMBIT = "domain01_via_gambit"
+MATCHING_PENNIES_GAMBIT = "matching_pennies_via_gambit"
 GOOFSPIEL2_GAMBIT = "II-GS2_via_gambit"
 GOOFSPIEL3_GAMBIT = "II-GS3_via_gambit"
 GOOFSPIEL5_GAMBIT = "IIGS5_s1_bf_ft_via_gambit"
-AVAILABLE_DOMAINS = [DOMAIN01, MATCHING_PENNIES, DOMAIN01_GAMBIT, GOOFSPIEL2_GAMBIT, GOOFSPIEL3_GAMBIT]
+AVAILABLE_DOMAINS = [
+	DOMAIN01,
+	MATCHING_PENNIES,
+	DOMAIN01_GAMBIT,
+	MATCHING_PENNIES_GAMBIT,
+	GOOFSPIEL2_GAMBIT,
+	GOOFSPIEL3_GAMBIT
+]
 DOMAINS_WITH_LARGE_GAMBIT_FILES = [GOOFSPIEL5_GAMBIT]
 DOMAINS = AVAILABLE_DOMAINS + DOMAINS_WITH_LARGE_GAMBIT_FILES
 
@@ -20,6 +28,9 @@ def get_domain_by_name(name):
 	elif name == DOMAIN01_GAMBIT:
 		from src.domains.domain01.domain_from_gambit_loader import get_domain01_from_gambit
 		return get_domain01_from_gambit()
+	elif name == MATCHING_PENNIES_GAMBIT:
+		from src.domains.matching_pennies.domain_from_gambit_loader import get_matching_pennies_from_gambit
+		return get_matching_pennies_from_gambit()
 	elif name == GOOFSPIEL2_GAMBIT:
 		from src.domains.goofspiel_2.domain_from_gambit_loader import get_domain_goofspiel_2
 		return get_domain_goofspiel_2()

@@ -2,7 +2,8 @@
 DOMAIN01 = "domain01"
 MATCHING_PENNIES = "matching_pennies"
 DOMAIN01_GAMBIT = "domain01_via_gambit"
-AVAILABLE_DOMAINS = [DOMAIN01, MATCHING_PENNIES, DOMAIN01_GAMBIT]
+GOOFSPIEL2_GAMBIT = "II-GS2_via_gambit"
+AVAILABLE_DOMAINS = [DOMAIN01, MATCHING_PENNIES, DOMAIN01_GAMBIT, GOOFSPIEL2_GAMBIT]
 
 
 def get_domain_by_name(name):
@@ -15,6 +16,9 @@ def get_domain_by_name(name):
 	elif name == DOMAIN01_GAMBIT:
 		from src.domains.domain01.domain_from_gambit_loader import get_domain01_from_gambit
 		return get_domain01_from_gambit()
+	elif name == GOOFSPIEL2_GAMBIT:
+		from src.domains.goofspiel_2.domain_from_gambit_loader import get_domain_goofspiel_2
+		return get_domain_goofspiel_2()
 	else:
 		raise ValueError("Invalid name '{}' for get_domain_by_name().".format(name))
 

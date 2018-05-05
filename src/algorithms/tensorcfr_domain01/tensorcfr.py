@@ -159,29 +159,22 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-
 		hyperparameters = {
 			"total_steps": total_steps,
 			"averaging_delay": delay,
 		}
-
 		log_dir_path = get_log_dir_path(hyperparameters)
 		set_up_tensorboard(session=sess, log_dir_path=log_dir_path)
-
 		assigned_averaging_delay = sess.run(assign_averaging_delay_op)
 		if quiet is False:
 			log_before_all_steps(sess, setup_messages, total_steps, assigned_averaging_delay)
-
 		writer = tf.summary.FileWriter("{},time_mem".format(log_dir_path), tf.get_default_graph())
-
 		for i in range(total_steps):
 			if quiet is False:
 				log_before_every_step(sess, cf_values_infoset, cf_values_infoset_actions, cf_values_nodes, expected_values,
 				                      reach_probabilities, regrets)
-
 			run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
 			metadata = tf.RunMetadata()
-
 			sess.run(cfr_step_op, options=run_options, run_metadata=metadata)
 
 			"""
@@ -198,14 +191,10 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 					cmd='scope',
 					options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 				)
-
-			# save metadata about time and memory for tensorboard
-			writer.add_run_metadata(metadata, 'step%d' % i)
-
+			writer.add_run_metadata(metadata, 'step%d' % i)  # save metadata about time and memory for tensorboard
 			if quiet is False:
 				log_after_every_step(sess, strategies_matched_to_regrets)
 		log_after_all_steps(sess, average_infoset_strategies)
-
 		writer.close()
 
 

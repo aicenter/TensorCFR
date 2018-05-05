@@ -17,7 +17,7 @@ def get_domain_goofspiel_2():
 			'goofspiel',
 			'II-GS2.gbt'
 	)
-	return Domain.init_from_gambit_file(path_to_domain_filename)
+	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="II-GS2_via_gambit")
 
 
 if __name__ == '__main__':

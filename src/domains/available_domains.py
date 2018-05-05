@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+AVAILABLE_DOMAINS = ["domain01", "matching_pennies"]
 
 
 def get_domain_by_name(name):
@@ -15,7 +16,7 @@ def get_domain_by_name(name):
 if __name__ == '__main__':
 	import tensorflow as tf
 
-	for domain_name in ["domain01", "matching_pennies"]:
+	for domain_name in AVAILABLE_DOMAINS:
 		domain = get_domain_by_name(domain_name)
 		with tf.Session() as sess:
 			sess.run(tf.global_variables_initializer())

@@ -140,7 +140,7 @@ def log_after_all_steps(sess, average_infoset_strategies):
 	print_tensors(sess, average_infoset_strategies)
 
 
-def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY):
+def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY, profiling=False):
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr()
 		assign_averaging_delay_op = tf.assign(ref=averaging_delay, value=delay, name="assign_averaging_delay")
@@ -187,7 +187,7 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 			- For `cmd` see:
 			https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
 			"""
-			if quiet is False:
+			if profiling:
 				tf.profiler.profile(
 					sess.graph,
 					run_meta=metadata,
@@ -212,3 +212,4 @@ if __name__ == '__main__':
 	run_cfr(quiet=True, total_steps=1000)
 	# run_cfr(total_steps=DEFAULT_TOTAL_STEPS_ON_SMALL_DOMAINS, delay=5)
 	# run_cfr(quiet=True, total_steps=10000)
+	# run_cfr(quiet=True, profiling=True, total_steps=10)

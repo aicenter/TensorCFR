@@ -50,8 +50,8 @@ def set_up_feed_dictionary(method="by-domain", initial_strategy_values=None):
 		raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
 
-def set_up_tensorboard(session, hyperparameters):
-	log_dir = "logs/{}-{}-{}".format(
+def get_log_dir_path(hyperparameters):
+	log_dir_path = "logs/{}-{}-{}".format(
 			"domain01",
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
 			",".join(
@@ -60,12 +60,14 @@ def set_up_tensorboard(session, hyperparameters):
 	)
 	if not os.path.exists("logs"):
 		os.mkdir("logs")
+	return log_dir_path
+
+
+def set_up_tensorboard(session, log_dir_path):
 	with tf.variable_scope("tensorboard_operations"):
-		summary_writer = tf.contrib.summary.create_file_writer(log_dir, flush_millis=10 * 1000)
+		summary_writer = tf.contrib.summary.create_file_writer(log_dir_path, flush_millis=10 * 1000)
 		with summary_writer.as_default():
 			tf.contrib.summary.initialize(session=session, graph=session.graph)
-
-	return log_dir
 
 
 def set_up_cfr():
@@ -163,13 +165,14 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 			"averaging_delay": delay,
 		}
 
-		log_dir = set_up_tensorboard(session=sess, hyperparameters=hyperparameters)
+		log_dir_path = get_log_dir_path(hyperparameters)
+		set_up_tensorboard(session=sess, log_dir_path=log_dir_path)
 
 		assigned_averaging_delay = sess.run(assign_averaging_delay_op)
 		if quiet is False:
 			log_before_all_steps(sess, setup_messages, total_steps, assigned_averaging_delay)
 
-		writer = tf.summary.FileWriter(log_dir+',with_time_mem', tf.get_default_graph())
+		writer = tf.summary.FileWriter("{},time_mem".format(log_dir_path), tf.get_default_graph())
 
 		for i in range(total_steps):
 			if quiet is False:

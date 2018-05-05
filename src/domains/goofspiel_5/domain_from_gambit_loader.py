@@ -17,7 +17,7 @@ def get_domain_goofspiel_5():
 			'goofspiel',
 			'IIGS5_s1_bf_ft.gbt'
 	)
-	return Domain.init_from_gambit_file(path_to_domain_filename)
+	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="IIGS5_s1_bf_ft_via_gambit")
 
 
 ACTIVATE_FILE = False

@@ -186,7 +186,9 @@ def run_cfr(total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGIN
 				tf.profiler.profile(
 					sess.graph,
 					run_meta=metadata,
-					cmd='scope', # can vary - scope / op ... https://github.com/tensorflow/tensorflow/blob/r1.5/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
+					# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
+					# cmd='op',
+					cmd='scope',
 					options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 				)
 

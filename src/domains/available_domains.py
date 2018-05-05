@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 DOMAIN01 = "domain01"
 MATCHING_PENNIES = "matching_pennies"
-AVAILABLE_DOMAINS = [DOMAIN01, MATCHING_PENNIES]
+DOMAIN01_GAMBIT = "domain01_via_gambit"
+AVAILABLE_DOMAINS = [DOMAIN01, MATCHING_PENNIES, DOMAIN01_GAMBIT]
 
 
 def get_domain_by_name(name):
@@ -11,6 +12,9 @@ def get_domain_by_name(name):
 	elif name == MATCHING_PENNIES:
 		from src.domains.matching_pennies.MatchingPennies import get_domain_matching_pennies
 		return get_domain_matching_pennies()
+	elif name == DOMAIN01_GAMBIT:
+		from src.domains.domain01.domain_from_gambit_loader import get_domain01_from_gambit
+		return get_domain01_from_gambit()
 	else:
 		raise ValueError("Invalid name '{}' for get_domain_by_name().".format(name))
 

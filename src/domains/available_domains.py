@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-AVAILABLE_DOMAINS = ["domain01", "matching_pennies"]
+DOMAIN01 = "domain01"
+MATCHING_PENNIES = "matching_pennies"
+AVAILABLE_DOMAINS = [DOMAIN01, MATCHING_PENNIES]
 
 
 def get_domain_by_name(name):
-	if name == "domain01":
+	if name == DOMAIN01:
 		from src.domains.domain01.Domain01 import get_domain01
 		return get_domain01()
-	elif name == "matching_pennies":
+	elif name == MATCHING_PENNIES:
 		from src.domains.matching_pennies.MatchingPennies import get_domain_matching_pennies
 		return get_domain_matching_pennies()
 	else:

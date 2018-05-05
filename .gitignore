@@ -333,3 +333,4 @@ src/out/
 .cache/
 *.out.*
 doc/goofspiel/IIGS5_s1_bf_ft.gbt
+doc/phantom_ttt/phantom_ttt.efg

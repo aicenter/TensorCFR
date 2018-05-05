@@ -16,7 +16,7 @@ def get_domain01_from_gambit():
 			'doc',
 			'domain01_via_gambit.efg'
 	)
-	return Domain.init_from_gambit_file(path_to_domain_filename)
+	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="domain01_via_gambit")
 
 
 if __name__ == '__main__':

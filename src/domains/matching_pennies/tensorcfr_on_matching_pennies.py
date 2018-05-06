@@ -6,7 +6,9 @@ if __name__ == '__main__':
 	domain = get_domain_by_name("matching_pennies_via_gambit")
 	tensorcfr = TensorCFR(domain)
 	run_cfr(
-			# total_steps=10,
+			total_steps=10,
 			tensorcfr_instance=tensorcfr,
-			quiet=True
+			quiet=True,
+			# profiling=True,
+			delay=0
 	)

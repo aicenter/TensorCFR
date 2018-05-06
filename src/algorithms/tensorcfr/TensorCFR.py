@@ -345,7 +345,7 @@ class TensorCFR:
 							ref=self.domain.positive_cumulative_regrets[level],
 							mask=infosets_of_updating_player,
 							value=tf.maximum(
-									0.0,
+									tf.cast(0.0, dtype=FLOAT_DTYPE),
 									self.domain.positive_cumulative_regrets[level] + regrets[level]
 							),
 							name="update_regrets_lvl{}".format(level)

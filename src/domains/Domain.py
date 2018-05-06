@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE
+from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE
 from src.utils.tensor_utils import print_tensors
 from src.utils.gambit_efg_loader import GambitEFGLoader
 
@@ -43,9 +43,9 @@ class Domain:
 				self.reach_probability_of_root_node = reach_probability_of_root_node
 			self.initial_infoset_strategies = [
 				tf.placeholder_with_default(
-						input=initial_infoset_strategies[level],
+						input=tf.cast(initial_infoset_strategies[level], dtype=FLOAT_DTYPE),
 						shape=[len(infoset_acting_players[level]), actions_per_levels[level]],
-						name="initial_infoset_strategies_lvl{}".format(level)
+						name="initial_infoset_strategies_lvl{}".format(level),
 				)
 				for level in range(self.acting_depth)
 			]
@@ -61,6 +61,7 @@ class Domain:
 						initializer=tf.zeros_like(
 								self.current_infoset_strategies[level]
 						),
+						dtype=FLOAT_DTYPE,
 				) for level in range(self.acting_depth)
 			]
 			self.cumulative_infoset_strategies = [    # used for the final average strategy
@@ -69,6 +70,7 @@ class Domain:
 						initializer=tf.zeros_like(
 								self.current_infoset_strategies[level]
 						),
+						dtype=FLOAT_DTYPE,
 				)
 				for level in range(self.acting_depth)
 			]

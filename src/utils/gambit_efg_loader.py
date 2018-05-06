@@ -103,7 +103,7 @@ class InformationSetManager:
 			infoset_acting_players_.append(self.infoset_dict[infoset_id][2])
 
 			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
-				# TODO: @janrudolf
+				# TODO: @janrudolf Fix here
 				#  This is not the correct way to compute uniform strategies. Normalization is not over all nodes in the next
 				#  level. It is over number of children from the information set (alternatively number of children at each node
 				#  of the information set). But one also needs to keep in mind imaginary node which should not be counted
@@ -112,12 +112,20 @@ class InformationSetManager:
 				#  Check out the method `get_infoset_uniform_strategies()` located at line 266 of
 				#  `algorithms.tensorcfr.TensorCFR.py`.
 				current_infoset_strategies_.append(
-					[float(1 / (next_level_max_no_actions * self.cnt_player_nodes))] * next_level_max_no_actions)
+					# [float(1 / (next_level_max_no_actions * self.cnt_player_nodes))] * next_level_max_no_actions
+					[np.nan] * next_level_max_no_actions    # TODO This is a hotfix.
+				)
 			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
+				# TODO: @janrudolf Fix here
+				#  Again, chance node can have less actions than max number of actions (some of the children may be imaginary).
 				current_infoset_strategies_.append(
-						[action['probability'] for action in reversed(self.infoset_dict[infoset_id][3]['actions'])])
+					# [action['probability'] for action in reversed(self.infoset_dict[infoset_id][3]['actions'])]
+					[np.nan] * next_level_max_no_actions    # TODO This is a hotfix.
+				)
 			else:
-				current_infoset_strategies_.append([0] * next_level_max_no_actions)
+				# current_infoset_strategies_.append([0] * next_level_max_no_actions)
+				# TODO Just to be sure, let's put NaNs everywhere.
+				current_infoset_strategies_.append([np.nan] * next_level_max_no_actions)
 
 		return [infoset_acting_players_, np.array(current_infoset_strategies_)]
 
@@ -450,6 +458,7 @@ class GambitEFGLoader:
 		}
 
 		return return_dict
+
 
 if __name__ == '__main__':
 	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')

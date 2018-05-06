@@ -116,11 +116,8 @@ class InformationSetManager:
 					[np.nan] * next_level_max_no_actions    # TODO This is a hotfix.
 				)
 			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
-				# TODO: @janrudolf Fix here
-				#  Again, chance node can have less actions than max number of actions (some of the children may be imaginary).
 				current_infoset_strategies_.append(
-					# [action['probability'] for action in reversed(self.infoset_dict[infoset_id][3]['actions'])]
-					[np.nan] * next_level_max_no_actions    # TODO This is a hotfix.
+					[action['probability'] for action in reversed(self.infoset_dict[infoset_id][3]['actions'])]
 				)
 			else:
 				# current_infoset_strategies_.append([0] * next_level_max_no_actions)

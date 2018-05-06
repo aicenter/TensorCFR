@@ -28,7 +28,10 @@ class Domain:
 				for level in range(self.levels)
 			]
 			self.utilities = [
-				tf.get_variable("utilities_lvl{}".format(level), initializer=utilities[level])
+				tf.get_variable(
+						"utilities_lvl{}".format(level),
+						initializer=tf.cast(utilities[level], dtype=FLOAT_DTYPE),
+				)
 				for level in range(self.levels)
 			]
 			self.infoset_acting_players = [
@@ -104,8 +107,9 @@ class Domain:
 			)
 			self.signum_of_current_player = tf.where(
 					condition=tf.equal(self.current_updating_player, self.player_owning_the_utilities),
-					x=1.0,
-					y=-1.0,  # Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
+					x=tf.cast(1.0, dtype=FLOAT_DTYPE),
+					# Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
+					y=tf.cast(-1.0, dtype=FLOAT_DTYPE),
 					name="signum_of_current_player",
 			)
 			self.infosets_of_non_chance_player = [

@@ -41,9 +41,12 @@ class Domain:
 
 			# tensors on strategies
 			if reach_probability_of_root_node is None:
-				self.reach_probability_of_root_node = tf.get_variable("reach_probability_of_root_node", initializer=1.0)
+				self.reach_probability_of_root_node = tf.get_variable(
+						"reach_probability_of_root_node",
+						initializer=tf.cast(1.0, dtype=FLOAT_DTYPE),
+				)
 			else:
-				self.reach_probability_of_root_node = reach_probability_of_root_node
+				self.reach_probability_of_root_node = tf.cast(reach_probability_of_root_node, dtype=FLOAT_DTYPE)
 			self.initial_infoset_strategies = [
 				tf.placeholder_with_default(
 						input=tf.cast(initial_infoset_strategies[level], dtype=FLOAT_DTYPE),

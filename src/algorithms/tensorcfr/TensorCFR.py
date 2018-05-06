@@ -269,7 +269,10 @@ class TensorCFR:
 			infoset_uniform_strategies = [None] * (self.domain.levels - 1)
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
-					infoset_uniform_strategies[level] = tf.to_float(tf.not_equal(infoset_children_types[level], IMAGINARY_NODE))
+					infoset_uniform_strategies[level] = tf.cast(
+							tf.not_equal(infoset_children_types[level], IMAGINARY_NODE),
+							dtype=FLOAT_DTYPE,
+					)
 					# Note: An all-0's row cannot be normalized. This is caused when an infoset has only imaginary children. As of
 					#       now, an all-0's row is kept without normalizing.
 					count_of_actions = tf.reduce_sum(
@@ -482,7 +485,8 @@ class TensorCFR:
 							),
 							x=normalize(self.domain.cumulative_infoset_strategies[level]),
 							y=self.domain.current_infoset_strategies[level],
-							name="average_infoset_strategies_lvl{}".format(level)
+							name="average_infoset_strategies_lvl{}".format(level),
+							dtype=FLOAT_DTYPE,
 					)
 		return average_infoset_strategies
 

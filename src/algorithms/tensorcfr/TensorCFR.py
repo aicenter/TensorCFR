@@ -420,11 +420,9 @@ class TensorCFR:
 						name="weighted_averaging_factor"
 				)
 			else:
-				return tf.to_float(
-						tf.cast(
-								tf.maximum(self.domain.cfr_step - delay, 0),
-								dtype=FLOAT_DTYPE
-						),
+				return tf.cast(
+						tf.maximum(self.domain.cfr_step - delay, 0),
+						dtype=FLOAT_DTYPE,
 						name="weighted_averaging_factor",
 				)
 

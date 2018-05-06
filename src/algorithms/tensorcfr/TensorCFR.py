@@ -101,18 +101,20 @@ class TensorCFR:
 			expected_values[self.domain.levels - 1] = tf.multiply(
 					self.domain.signum_of_current_player,
 					self.domain.utilities[self.domain.levels - 1],
-					name="expected_values_lvl{}".format(self.domain.levels - 1)
+					name="expected_values_lvl{}".format(self.domain.levels - 1),
 			)
 			for level in reversed(range(self.domain.levels - 1)):
 				weighted_sum_of_values = tf.reduce_sum(
 						input_tensor=node_strategies[level] * expected_values[level + 1],
 						axis=-1,
-						name="weighted_sum_of_values_lvl{}".format(level))
+						name="weighted_sum_of_values_lvl{}".format(level),
+				)
 				expected_values[level] = tf.where(
 						condition=tf.equal(self.domain.node_types[level], TERMINAL_NODE),
 						x=self.domain.signum_of_current_player * self.domain.utilities[level],
 						y=weighted_sum_of_values,
-						name="expected_values_lvl{}".format(level))
+						name="expected_values_lvl{}".format(level)
+				)
 		return expected_values
 
 	def show_expected_values(self, session):

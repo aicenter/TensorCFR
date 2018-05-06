@@ -103,6 +103,14 @@ class InformationSetManager:
 			infoset_acting_players_.append(self.infoset_dict[infoset_id][2])
 
 			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
+				# TODO: @janrudolf
+				#  This is not the correct way to compute uniform strategies. Normalization is not over all nodes in the next
+				#  level. It is over number of children from the information set (alternatively number of children at each node
+				#  of the information set). But one also needs to keep in mind imaginary node which should not be counted
+				#  towards the normalization sum.
+				#
+				#  Check out the method `get_infoset_uniform_strategies()` located at line 266 of
+				#  `algorithms.tensorcfr.TensorCFR.py`.
 				current_infoset_strategies_.append(
 					[float(1 / (next_level_max_no_actions * self.cnt_player_nodes))] * next_level_max_no_actions)
 			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:

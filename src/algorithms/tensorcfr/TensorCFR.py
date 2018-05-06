@@ -487,10 +487,12 @@ class TensorCFR:
 									infosets_with_nonzero_norm[level],
 									name="non_chance_infosets_with_nonzero_norm_lvl{}".format(level)
 							),
-							x=normalize(self.domain.cumulative_infoset_strategies[level]),
+							x=tf.cast(
+									normalize(self.domain.cumulative_infoset_strategies[level]),
+									dtype=FLOAT_DTYPE,
+							),
 							y=self.domain.current_infoset_strategies[level],
 							name="average_infoset_strategies_lvl{}".format(level),
-							dtype=FLOAT_DTYPE,
 					)
 		return average_infoset_strategies
 

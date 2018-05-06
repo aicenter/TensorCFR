@@ -26,20 +26,27 @@ class TestGambitEFGLoaderDomain01(unittest.TestCase):
 	def test_current_infoset_strategies(self):
 		expected_output = [None] * 3
 		expected_output[0] = np.array([[0.5, 0.25, 0.1, 0.1, 0.05]])
-		expected_output[1] = np.array([[0.08333333333333333, 0.08333333333333333, 0.08333333333333333],
-		                               [0.08333333333333333, 0.08333333333333333, 0.08333333333333333],
-		                               [0.08333333333333333, 0.08333333333333333, 0.08333333333333333],
-		                               [0.3333333333333333, 0.3333333333333333, 0.3333333333333333]])
-		expected_output[2] = np.array([[0.0625, 0.0625],
-		                               [0.0625, 0.0625],
-		                               [0.0625, 0.0625],
-		                               [0.0625, 0.0625],
-		                               [0.1, 0.9],
-		                               [0., 0.],
-		                               [0.0625, 0.0625],
-		                               [0.0625, 0.0625],
-		                               [0., 0.]])
-
+		expected_output[1] = np.array(
+				[
+					[0.33333334, 0.33333334, 0.33333334],
+					[0.5, 0.5, 0.],
+					[0.5, 0.5, 0.],
+					[0.3, 0.3, 0.3]
+				]
+		)
+		expected_output[2] = np.array(
+				[
+					[0.5, 0.5],
+					[0.5, 0.5],
+					[0.5, 0.5],
+					[0.5, 0.5],
+					[0.1, 0.9],
+					[0.5, 0.5],
+					[0.5, 0.5],
+					[0.0, 0.0],
+					[0.0, 0.0]
+				]
+		)
 		for lvl in range(self.number_of_levels):
 			np.testing.assert_array_equal(expected_output[lvl], self.domain.current_infoset_strategies[lvl])
 

@@ -416,11 +416,15 @@ class TensorCFR:
 			if delay is None:  # when `delay` is None, no weighted averaging is used
 				return tf.constant(
 						1.0,
+						dtype=FLOAT_DTYPE,
 						name="weighted_averaging_factor"
 				)
 			else:
 				return tf.to_float(
-						tf.maximum(self.domain.cfr_step - delay, 0),
+						tf.cast(
+								tf.maximum(self.domain.cfr_step - delay, 0),
+								dtype=FLOAT_DTYPE
+						),
 						name="weighted_averaging_factor",
 				)
 

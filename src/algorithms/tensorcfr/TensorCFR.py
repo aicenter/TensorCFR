@@ -698,9 +698,9 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("invalid domain name test")
 	tensorcfr = TensorCFR(domain)
 	run_cfr(
-			total_steps=10,
+			# total_steps=10,
 			tensorcfr_instance=tensorcfr,
 			quiet=True,
 			# profiling=True,
-			delay=0
+			# delay=0
 	)

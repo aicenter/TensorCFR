@@ -5,7 +5,7 @@ import re
 
 import tensorflow as tf
 
-from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, \
+from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
 	DEFAULT_AVERAGING_DELAY
 from src.domains.Domain import Domain
 from src.domains.available_domains import get_domain_by_name
@@ -687,5 +687,10 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("matching_pennies")
 	# domain = get_domain_by_name("invalid domain name test")
 	tensorcfr = TensorCFR(domain)
-	run_cfr(total_steps=10, tensorcfr_instance=tensorcfr, quiet=True)
-	# run_cfr(total_steps=10, tensorcfr_instance=tensorcfr, quiet=True, profiling=True)
+	run_cfr(
+			total_steps=10,
+			tensorcfr_instance=tensorcfr,
+			quiet=True,
+			# profiling=True,
+			delay=0
+	)

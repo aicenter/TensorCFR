@@ -21,7 +21,7 @@ def get_domain_goofspiel3():
 
 
 if __name__ == '__main__':
-	goofspiel_3 = get_domain_goofspiel3()
+	goofspiel3 = get_domain_goofspiel3()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		goofspiel_3.print_domain(sess)
+		goofspiel3.print_domain(sess)

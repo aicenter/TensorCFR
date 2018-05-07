@@ -24,7 +24,7 @@ ACTIVATE_FILE = False
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
-	goofspiel_5 = get_domain_goofspiel5()
+	goofspiel5 = get_domain_goofspiel5()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		goofspiel_5.print_domain(sess)
+		goofspiel5.print_domain(sess)

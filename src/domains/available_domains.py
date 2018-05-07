@@ -36,8 +36,8 @@ def get_domain_by_name(name):
 		from src.domains.matching_pennies.domain_from_gambit_loader import get_matching_pennies_from_gambit
 		return get_matching_pennies_from_gambit()
 	elif name == GOOFSPIEL2_GAMBIT:
-		from src.domains.goofspiel_2.domain_from_gambit_loader import get_domain_goofspiel_2
-		return get_domain_goofspiel_2()
+		from src.domains.goofspiel2.domain_from_gambit_loader import get_domain_goofspiel2
+		return get_domain_goofspiel2()
 	elif name == GOOFSPIEL3_GAMBIT:
 		from src.domains.goofspiel_3.domain_from_gambit_loader import get_domain_goofspiel_3
 		return get_domain_goofspiel_3()

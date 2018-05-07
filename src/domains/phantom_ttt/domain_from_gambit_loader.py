@@ -20,6 +20,7 @@ def get_domain_phantom_ttt():
 	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="phantom_ttt_via_gambit")
 
 
+# TODO: Get rid of `ACTIVATE_FILE` hotfix in "#74 Storage for large files"
 ACTIVATE_FILE = False
 
 

@@ -4,7 +4,7 @@ import tensorflow as tf
 from src.domains.Domain import Domain
 
 
-def get_domain_goofspiel_5():
+def get_domain_goofspiel5():
 	path_to_domain_filename = os.path.join(
 			os.path.dirname(
 					os.path.abspath(
@@ -24,7 +24,7 @@ ACTIVATE_FILE = False
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
-	goofspiel_5 = get_domain_goofspiel_5()
+	goofspiel_5 = get_domain_goofspiel5()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		goofspiel_5.print_domain(sess)

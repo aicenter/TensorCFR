@@ -2,6 +2,7 @@
 import datetime
 import os
 import re
+import numpy as np
 
 import tensorflow as tf
 
@@ -616,13 +617,16 @@ def log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regr
 	print("___________________________________\n")
 	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
 
-
-def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies):
+def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path):
 	print("###################################\n")
 	print_tensors(session, tensorcfr_instance.domain.cumulative_infoset_strategies)
 	print("___________________________________\n")
 	print_tensors(session, average_infoset_strategies)
 
+	print(log_dir_path)
+
+	for level in range(len(average_infoset_strategies)):
+		np.savetxt('{}/average_infoset_strategies_level_{}.txt'.format(log_dir_path, level), session.run(average_infoset_strategies[level]), delimiter=',')
 
 def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY,
             profiling=False):
@@ -688,7 +692,7 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
-			log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies)
+			log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)
 
 
 if __name__ == '__main__':

@@ -624,7 +624,7 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 	print("___________________________________\n")
 	print_tensors(session, average_infoset_strategies)
 
-	print(log_dir_path)
+	print("Storing average strategies to '{}'...".format(log_dir_path))
 
 	for level in range(len(average_infoset_strategies)):
 		np.savetxt('{}/average_infoset_strategies_level_{}.txt'.format(log_dir_path, level), session.run(average_infoset_strategies[level]), delimiter=',')

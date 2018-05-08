@@ -549,14 +549,6 @@ def get_log_dir_path(tensorcfr_instance, hyperparameters):
 		os.mkdir("logs")
 	return log_dir_path
 
-
-def set_up_tensorboard(session, log_dir_path):
-	with tf.variable_scope("tensorboard_operations"):
-		summary_writer = tf.contrib.summary.create_file_writer(log_dir_path, flush_millis=10 * 1000)
-		with summary_writer.as_default():
-			tf.contrib.summary.initialize(session=session, graph=session.graph)
-
-
 def set_up_cfr(tensorcfr_instance):
 	# TODO extract these lines to a UnitTest
 	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance)
@@ -659,18 +651,18 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 			"averaging_delay": delay,
 		}
 		log_dir_path = get_log_dir_path(tensorcfr_instance, hyperparameters)
-		set_up_tensorboard(session=session, log_dir_path=log_dir_path)
+		log_dir_path = log_dir_path if profiling is False else log_dir_path + '_w_profiler'
+
 		assigned_averaging_delay = session.run(assign_averaging_delay_op)
 		if quiet is False:
 			log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, assigned_averaging_delay)
-		with tf.summary.FileWriter("{},time_mem".format(log_dir_path), tf.get_default_graph()) as writer:
+
+
+		with tf.summary.FileWriter(log_dir_path, tf.get_default_graph()) as writer:
 			for i in range(total_steps):
 				if quiet is False:
 					log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_cf_values_per_actions,
 																nodal_cf_values, expected_values, reach_probabilities, regrets)
-				run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-				metadata = tf.RunMetadata()
-				session.run(cfr_step_op, options=run_options, run_metadata=metadata)
 
 				"""
 				Profiler gives the Model report with total compute time and memory consumption.
@@ -679,6 +671,11 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 				https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
 				"""
 				if profiling:
+					run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+					metadata = tf.RunMetadata()
+
+					session.run(cfr_step_op, options=run_options, run_metadata=metadata)
+
 					tf.profiler.profile(
 						session.graph,
 						run_meta=metadata,
@@ -686,7 +683,11 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 						cmd='scope',
 						options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 					)
-				writer.add_run_metadata(metadata, 'step%d' % i)  # save metadata about time and memory for tensorboard
+
+					writer.add_run_metadata(metadata, 'step%d' % i)  # save metadata about time and memory for tensorboard
+				else:
+					session.run(cfr_step_op)
+
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
 			log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies)

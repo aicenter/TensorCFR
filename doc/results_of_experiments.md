@@ -11,7 +11,7 @@
     
 ## Time measurements
 
-* `tensorcfr_on_goofspiel5.py` ~40 seconds
+* `tensorcfr_on_goofspiel5.py` with `profiling=True` ~40 seconds
     * run 1
     
         ```
@@ -75,4 +75,59 @@
         [0] GeForce GTX 1050 | 66'C,  11 % |  3730 /  4042 MB | mathemage(2785M) root(531M) mathemage(117M) mathemage(60M) mathemage(193M) mathemage(32M)
         mathemage-XPS-15-9560  Mon May  7 11:22:46 2018
         [0] GeForce GTX 1050 | 67'C,   9 % |  3746 /  4042 MB | mathemage(2785M) root(536M) mathemage(127M) mathemage(60M) mathemage(193M) mathemage(32M)
+        ```
+        
+* `tensorcfr_on_goofspiel5.py` with `profiling=False` ~11 seconds
+    * run 1
+    
+        ```
+        mathemage-XPS-15-9560  Tue May  8 19:38:45 2018
+        [0] GeForce GTX 1050 | 48'C,   0 % |  1326 /  4042 MB | root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:47 2018
+        [0] GeForce GTX 1050 | 49'C,   0 % |  3743 /  4042 MB | mathemage(2407M) root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:48 2018
+        [0] GeForce GTX 1050 | 49'C,   2 % |  3743 /  4042 MB | mathemage(2407M) root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:49 2018
+        [0] GeForce GTX 1050 | 50'C,  32 % |  3743 /  4042 MB | mathemage(2407M) root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:50 2018
+        [0] GeForce GTX 1050 | 51'C,  29 % |  3743 /  4042 MB | mathemage(2407M) root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:51 2018
+        [0] GeForce GTX 1050 | 51'C,  28 % |  3743 /  4042 MB | mathemage(2407M) root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:52 2018
+        [0] GeForce GTX 1050 | 52'C,  28 % |  3743 /  4042 MB | mathemage(2407M) root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:53 2018
+        [0] GeForce GTX 1050 | 52'C,  29 % |  3743 /  4042 MB | mathemage(2407M) root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:54 2018
+        [0] GeForce GTX 1050 | 53'C,  29 % |  3743 /  4042 MB | mathemage(2407M) root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:56 2018
+        [0] GeForce GTX 1050 | 54'C,  28 % |  3743 /  4042 MB | mathemage(2407M) root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:38:57 2018
+        [0] GeForce GTX 1050 | 54'C,  48 % |  1326 /  4042 MB | root(607M) mathemage(104M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        ```
+        
+    * run 2
+    
+        ```
+        mathemage-XPS-15-9560  Tue May  8 19:39:37 2018
+        [0] GeForce GTX 1050 | 52'C,   2 % |  1317 /  4042 MB | root(607M) mathemage(95M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:39 2018
+        [0] GeForce GTX 1050 | 52'C,   1 % |  3744 /  4042 MB | mathemage(2417M) root(607M) mathemage(95M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:40 2018
+        [0] GeForce GTX 1050 | 52'C,   3 % |  3744 /  4042 MB | mathemage(2417M) root(607M) mathemage(95M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:41 2018
+        [0] GeForce GTX 1050 | 53'C,  21 % |  3751 /  4042 MB | mathemage(2417M) root(607M) mathemage(102M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:42 2018
+        [0] GeForce GTX 1050 | 54'C,  22 % |  3751 /  4042 MB | mathemage(2417M) root(607M) mathemage(102M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:43 2018
+        [0] GeForce GTX 1050 | 55'C,  25 % |  3751 /  4042 MB | mathemage(2417M) root(607M) mathemage(102M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:44 2018
+        [0] GeForce GTX 1050 | 55'C,  24 % |  3751 /  4042 MB | mathemage(2417M) root(607M) mathemage(102M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:45 2018
+        [0] GeForce GTX 1050 | 56'C,  24 % |  3751 /  4042 MB | mathemage(2417M) root(607M) mathemage(102M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:47 2018
+        [0] GeForce GTX 1050 | 56'C,  24 % |  3751 /  4042 MB | mathemage(2417M) root(607M) mathemage(102M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:48 2018
+        [0] GeForce GTX 1050 | 57'C,  23 % |  3751 /  4042 MB | mathemage(2417M) root(607M) mathemage(102M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
+        mathemage-XPS-15-9560  Tue May  8 19:39:49 2018
+        [0] GeForce GTX 1050 | 57'C,  40 % |  1324 /  4042 MB | root(607M) mathemage(102M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
         ```

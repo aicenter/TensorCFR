@@ -652,7 +652,8 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 			"averaging_delay": delay,
 		}
 		log_dir_path = get_log_dir_path(tensorcfr_instance, hyperparameters)
-		log_dir_path = log_dir_path if profiling is False else log_dir_path + '_w_profiler'
+		if profiling:
+			log_dir_path += "-profiling"
 
 		assigned_averaging_delay = session.run(assign_averaging_delay_op)
 		if quiet is False:

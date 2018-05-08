@@ -549,6 +549,7 @@ def get_log_dir_path(tensorcfr_instance, hyperparameters):
 		os.mkdir("logs")
 	return log_dir_path
 
+
 def set_up_cfr(tensorcfr_instance):
 	# TODO extract these lines to a UnitTest
 	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance)
@@ -647,7 +648,7 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 	with tf.Session() as session:
 		session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 		hyperparameters = {
-			"total_steps": total_steps,
+			"total_steps"    : total_steps,
 			"averaging_delay": delay,
 		}
 		log_dir_path = get_log_dir_path(tensorcfr_instance, hyperparameters)
@@ -657,12 +658,11 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 		if quiet is False:
 			log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, assigned_averaging_delay)
 
-
 		with tf.summary.FileWriter(log_dir_path, tf.get_default_graph()) as writer:
 			for i in range(total_steps):
 				if quiet is False:
 					log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_cf_values_per_actions,
-																nodal_cf_values, expected_values, reach_probabilities, regrets)
+					                      nodal_cf_values, expected_values, reach_probabilities, regrets)
 
 				"""
 				Profiler gives the Model report with total compute time and memory consumption.
@@ -673,17 +673,14 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 				if profiling:
 					run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
 					metadata = tf.RunMetadata()
-
 					session.run(cfr_step_op, options=run_options, run_metadata=metadata)
-
 					tf.profiler.profile(
-						session.graph,
-						run_meta=metadata,
-						# cmd='op',
-						cmd='scope',
-						options=tf.profiler.ProfileOptionBuilder.time_and_memory()
+							session.graph,
+							run_meta=metadata,
+							# cmd='op',
+							cmd='scope',
+							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 					)
-
 					writer.add_run_metadata(metadata, 'step%d' % i)  # save metadata about time and memory for tensorboard
 				else:
 					session.run(cfr_step_op)

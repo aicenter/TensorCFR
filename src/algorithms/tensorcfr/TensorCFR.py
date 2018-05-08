@@ -627,7 +627,11 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 	print("Storing average strategies to '{}'...".format(log_dir_path))
 
 	for level in range(len(average_infoset_strategies)):
-		np.savetxt('{}/average_infoset_strategies_level_{}.txt'.format(log_dir_path, level), session.run(average_infoset_strategies[level]), delimiter=',')
+		np.savetxt(
+				'{}/average_infoset_strategies_level_{}.txt'.format(log_dir_path, level),
+				session.run(average_infoset_strategies[level]),
+				delimiter=',',
+		)
 
 
 def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY,

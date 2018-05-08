@@ -131,3 +131,5 @@
         mathemage-XPS-15-9560  Tue May  8 19:39:49 2018
         [0] GeForce GTX 1050 | 57'C,  40 % |  1324 /  4042 MB | root(607M) mathemage(102M) mathemage(482M) mathemage(57M) mathemage(48M) mathemage(25M)
         ```
+ 
+ Notice that switching on `profiling` slows down the entire execution. Hence [Issue #74](https://gitlab.com/beyond-deepstack/TensorCFR/issues/74).

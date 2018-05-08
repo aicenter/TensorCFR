@@ -682,7 +682,7 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 							cmd='scope',
 							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 					)
-					writer.add_run_metadata(metadata, 'step%d' % i)  # save metadata about time and memory for tensorboard
+					writer.add_run_metadata(metadata, "step{}".format(i))  # save metadata about time and memory for tensorboard
 				else:
 					session.run(cfr_step_op)
 

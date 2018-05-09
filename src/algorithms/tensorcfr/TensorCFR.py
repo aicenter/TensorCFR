@@ -244,10 +244,10 @@ class TensorCFR:
 		return infoset_cf_values, infoset_cf_values_per_actions
 
 	def get_infoset_children_types(self):  # TODO unittest
-		with tf.variable_scope("infoset_children_types"):
+		with tf.variable_scope("children_types", reuse=tf.AUTO_REUSE):
 			infoset_children_types = [None] * (self.domain.levels - 1)
 			for level in range(self.domain.levels - 1):
-				with tf.variable_scope("level{}".format(level)):
+				with tf.variable_scope("level{}".format(level), reuse=tf.AUTO_REUSE):
 					if level == 0:
 						infoset_children_types[0] = tf.expand_dims(
 								self.domain.node_types[1],

@@ -29,13 +29,14 @@ class Domain:
 					tf.get_variable("node_types_lvl{}".format(level), initializer=node_types[level])
 					for level in range(self.levels)
 				]
-			self.utilities = [
-				tf.get_variable(
-						"utilities_lvl{}".format(level),
-						initializer=tf.cast(utilities[level], dtype=FLOAT_DTYPE),
-				)
-				for level in range(self.levels)
-			]
+			with tf.variable_scope("utilities", reuse=tf.AUTO_REUSE):
+				self.utilities = [
+					tf.get_variable(
+							"utilities_lvl{}".format(level),
+							initializer=tf.cast(utilities[level], dtype=FLOAT_DTYPE),
+					)
+					for level in range(self.levels)
+				]
 			self.infoset_acting_players = [
 				tf.get_variable("infoset_acting_players_lvl{}".format(level), initializer=infoset_acting_players[level])
 				for level in range(self.acting_depth)

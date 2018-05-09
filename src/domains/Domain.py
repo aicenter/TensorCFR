@@ -103,34 +103,35 @@ class Domain:
 				)
 
 			# tensors on players
-			self.current_updating_player = tf.get_variable(
-					"current_updating_player",
-					initializer=PLAYER1,
-					dtype=INT_DTYPE,
-			)
-			self.current_opponent = tf.get_variable(
-					"current_opponent",
-					initializer=PLAYER2,
-					dtype=INT_DTYPE,
-			)
-			self.player_owning_the_utilities = tf.constant(
-					PLAYER1,  # `utilities[]` are defined from this player's point of view
-					name="player_owning_the_utilities"
-			)
-			self.signum_of_current_player = tf.where(
-					condition=tf.equal(self.current_updating_player, self.player_owning_the_utilities),
-					x=tf.cast(1.0, dtype=FLOAT_DTYPE),
-					# Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
-					y=tf.cast(-1.0, dtype=FLOAT_DTYPE),
-					name="signum_of_current_player",
-			)
-			self.infosets_of_non_chance_player = [
-				tf.reshape(
-						tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
-						shape=[self.current_infoset_strategies[level].shape[0]],
-						name="infosets_of_acting_player_lvl{}".format(level)
-				) for level in range(self.acting_depth)
-			]
+			with tf.variable_scope("players", reuse=tf.AUTO_REUSE):
+				self.current_updating_player = tf.get_variable(
+						"current_updating_player",
+						initializer=PLAYER1,
+						dtype=INT_DTYPE,
+				)
+				self.current_opponent = tf.get_variable(
+						"current_opponent",
+						initializer=PLAYER2,
+						dtype=INT_DTYPE,
+				)
+				self.player_owning_the_utilities = tf.constant(
+						PLAYER1,  # `utilities[]` are defined from this player's point of view
+						name="player_owning_the_utilities"
+				)
+				self.signum_of_current_player = tf.where(
+						condition=tf.equal(self.current_updating_player, self.player_owning_the_utilities),
+						x=tf.cast(1.0, dtype=FLOAT_DTYPE),
+						# Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
+						y=tf.cast(-1.0, dtype=FLOAT_DTYPE),
+						name="signum_of_current_player",
+				)
+				self.infosets_of_non_chance_player = [
+					tf.reshape(
+							tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
+							shape=[self.current_infoset_strategies[level].shape[0]],
+							name="infosets_of_acting_player_lvl{}".format(level)
+					) for level in range(self.acting_depth)
+				]
 
 	@classmethod
 	def init_from_gambit_file(cls, path_to_gambitfile, domain_name="from_gambit"):

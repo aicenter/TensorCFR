@@ -24,10 +24,11 @@ class Domain:
 					tf.get_variable("node_to_infoset_lvl{}".format(level), initializer=node_to_infoset[level])
 					for level in range(self.acting_depth)
 				]
-			self.node_types = [
-				tf.get_variable("node_types_lvl{}".format(level), initializer=node_types[level])
-				for level in range(self.levels)
-			]
+			with tf.variable_scope("nodal_types", reuse=tf.AUTO_REUSE):
+				self.node_types = [
+					tf.get_variable("node_types_lvl{}".format(level), initializer=node_types[level])
+					for level in range(self.levels)
+				]
 			self.utilities = [
 				tf.get_variable(
 						"utilities_lvl{}".format(level),

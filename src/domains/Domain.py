@@ -90,16 +90,17 @@ class Domain:
 				]
 
 			# tensors on CFR+ iterations
-			self.cfr_step = tf.get_variable(     # counter of CFR+ iterations
-					"cfr_step",
-					initializer=1,
-					dtype=tf.int32,
-			)
-			self.averaging_delay = tf.get_variable(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
-					name="averaging_delay",
-					initializer=DEFAULT_AVERAGING_DELAY,
-					dtype=tf.int32,
-			)
+			with tf.variable_scope("iterations", reuse=tf.AUTO_REUSE):
+				self.cfr_step = tf.get_variable(     # counter of CFR+ iterations
+						"cfr_step",
+						initializer=1,
+						dtype=tf.int32,
+				)
+				self.averaging_delay = tf.get_variable(  # https://arxiv.org/pdf/1407.5042.pdf (Figure 2)
+						name="averaging_delay",
+						initializer=DEFAULT_AVERAGING_DELAY,
+						dtype=tf.int32,
+				)
 
 			# tensors on players
 			self.current_updating_player = tf.get_variable(

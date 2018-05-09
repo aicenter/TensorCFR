@@ -125,11 +125,14 @@ class Domain:
 						y=tf.cast(-1.0, dtype=FLOAT_DTYPE),
 						name="signum_of_current_player",
 				)
+			with tf.variable_scope("nonchance_infosets", reuse=tf.AUTO_REUSE):
 				self.infosets_of_non_chance_player = [
-					tf.reshape(
-							tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
-							shape=[self.current_infoset_strategies[level].shape[0]],
-							name="infosets_of_acting_player_lvl{}".format(level)
+					tf.get_variable(
+							name="infosets_of_acting_player_lvl{}".format(level),
+							initializer=tf.reshape(
+									tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
+									shape=[self.current_infoset_strategies[level].shape[0]],
+							)
 					) for level in range(self.acting_depth)
 				]
 

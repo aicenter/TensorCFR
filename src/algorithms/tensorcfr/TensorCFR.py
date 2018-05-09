@@ -512,6 +512,8 @@ class TensorCFR:
 
 def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):
 	if method == "by-domain":
+		# TODO: @janrudolf Fix here
+		# if tensorcfr_instance.domain.initial_infoset_strategies has nans use uniform methods
 		return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
 	elif method == "uniform":
 		with tf.variable_scope("initialize_strategies"):

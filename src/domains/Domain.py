@@ -37,10 +37,11 @@ class Domain:
 					)
 					for level in range(self.levels)
 				]
-			self.infoset_acting_players = [
-				tf.get_variable("infoset_acting_players_lvl{}".format(level), initializer=infoset_acting_players[level])
-				for level in range(self.acting_depth)
-			]
+			with tf.variable_scope("acting_players", reuse=tf.AUTO_REUSE):
+				self.infoset_acting_players = [
+					tf.get_variable("infoset_acting_players_lvl{}".format(level), initializer=infoset_acting_players[level])
+					for level in range(self.acting_depth)
+				]
 
 			# tensors on strategies
 			if reach_probability_of_root_node is None:

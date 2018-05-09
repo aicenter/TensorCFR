@@ -704,10 +704,10 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 
 
 if __name__ == '__main__':
-	domain = get_domain_by_name("domain01")
-	# domain = get_domain_by_name("matching_pennies")
-	# domain = get_domain_by_name("invalid domain name test")
-	tensorcfr = TensorCFR(domain)
+	domain_ = get_domain_by_name("domain01")
+	# domain_ = get_domain_by_name("matching_pennies")
+	# domain_ = get_domain_by_name("invalid domain name test")
+	tensorcfr = TensorCFR(domain_)
 	run_cfr(
 			# total_steps=10,
 			tensorcfr_instance=tensorcfr,

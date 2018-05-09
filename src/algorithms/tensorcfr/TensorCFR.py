@@ -3,7 +3,7 @@ import datetime
 import os
 import re
 import numpy as np
-
+import math
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
@@ -118,6 +118,12 @@ class TensorCFR:
 							y=weighted_sum_of_values,
 							name="expected_values_lvl{}".format(level)
 					)
+
+			averaging_factor = self.get_weighted_averaging_factor()
+
+			tf.summary.scalar('expected_value', expected_values[0] * self.domain.signum_of_current_player)
+			tf.summary.scalar('average_expected_value', averaging_factor * expected_values[0] * self.domain.signum_of_current_player)
+			tf.summary.scalar('average_expected_value_w_division', (averaging_factor * expected_values[0] * self.domain.signum_of_current_player) / tf.cast(self.domain.cfr_step, tf.float32))
 		return expected_values
 
 	def show_expected_values(self, session):
@@ -683,10 +689,14 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 				- For `cmd` see:
 				https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
 				"""
+				merged = tf.summary.merge_all()
+
 				if profiling:
 					run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
 					metadata = tf.RunMetadata()
-					session.run(cfr_step_op, options=run_options, run_metadata=metadata)
+
+					summary, _ = session.run([merged, cfr_step_op], options=run_options, run_metadata=metadata)
+
 					tf.profiler.profile(
 							session.graph,
 							run_meta=metadata,
@@ -694,9 +704,12 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 							cmd='scope',
 							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 					)
+
 					writer.add_run_metadata(metadata, "step{}".format(i))  # save metadata about time and memory for tensorboard
 				else:
-					session.run(cfr_step_op)
+					summary, _ = session.run([merged, cfr_step_op])
+
+				writer.add_summary(summary, i)
 
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)

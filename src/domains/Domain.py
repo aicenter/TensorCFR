@@ -26,7 +26,7 @@ class Domain:
 				]
 			with tf.variable_scope("nodal_types", reuse=tf.AUTO_REUSE):
 				self.node_types = [
-					tf.get_variable("node_types_lvl{}".format(level), initializer=node_types[level])
+					tf.get_variable("node_types_lvl{}".format(level), initializer=tf.cast(node_types[level], dtype=INT_DTYPE))
 					for level in range(self.levels)
 				]
 			with tf.variable_scope("utilities", reuse=tf.AUTO_REUSE):

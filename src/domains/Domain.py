@@ -67,15 +67,16 @@ class Domain:
 							initializer=self.initial_infoset_strategies[level],
 					) for level in range(self.acting_depth)
 				]
-			self.positive_cumulative_regrets = [
-				tf.get_variable(
-						"positive_cumulative_regrets_lvl{}".format(level),
-						initializer=tf.zeros_like(
-								self.current_infoset_strategies[level]
-						),
-						dtype=FLOAT_DTYPE,
-				) for level in range(self.acting_depth)
-			]
+			with tf.variable_scope("cumulative_regrets", reuse=tf.AUTO_REUSE):
+				self.positive_cumulative_regrets = [
+					tf.get_variable(
+							"positive_cumulative_regrets_lvl{}".format(level),
+							initializer=tf.zeros_like(
+									self.current_infoset_strategies[level]
+							),
+							dtype=FLOAT_DTYPE,
+					) for level in range(self.acting_depth)
+				]
 			self.cumulative_infoset_strategies = [    # used for the final average strategy
 				tf.get_variable(
 						name="cumulative_infoset_strategies_lvl{}".format(level),

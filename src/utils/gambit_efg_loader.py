@@ -9,26 +9,22 @@ import tensorflow as tf
 
 from src.commons import constants
 
-# TODO @janrudolf: Why are there these 2 constants?
-# TODO @janrudolf: And why are they set to 7 and 8? It should be the last and the penultimate.
-
-TMP_NODE_TO_INFOSET_TERMINAL = 7
-TMP_NODE_TO_INFOSET_IMAGINARY = 8
+TMP_NODE_TO_INFOSET_IMAGINARY_NODE = -1
 
 
-class NotAcceptableFormatException:
+class NotAcceptableFormatException(Exception):
 	pass
 
 
-class NotRecognizedPlayersException:
+class NotRecognizedPlayersException(Exception):
 	pass
 
 
-class NotRecognizedTreeNodeException:
+class NotRecognizedTreeNodeException(Exception):
 	pass
 
 
-class NotImplementedFormatException:
+class NotImplementedFormatException(Exception):
 	pass
 
 
@@ -133,7 +129,7 @@ class InformationSetManager:
 		        np.asarray(current_infoset_strategies_)]
 
 	def make_node_to_infoset(self, tensor):
-		tensor[np.where(tensor == ((-1) * TMP_NODE_TO_INFOSET_IMAGINARY))] = -self.infoset_cnt
+		tensor[np.where(tensor == TMP_NODE_TO_INFOSET_IMAGINARY_NODE)] = -self.infoset_cnt
 		tensor[np.where(tensor >= 0)] += -(self.infoset_cnt - 1)
 		tensor[np.where(tensor != 0)] *= -1
 		return tensor
@@ -179,7 +175,9 @@ class GambitEFGLoader:
 		for idx in range(len(self.actions_per_levels) + 1):
 			self.utilities[idx] = np.ones(self.actions_per_levels[:idx]) * constants.NON_TERMINAL_UTILITY
 			self.node_types[idx] = np.ones(self.actions_per_levels[:idx], dtype=np.int) * constants.IMAGINARY_NODE
-			self.node_to_infoset[idx] = - np.ones(self.actions_per_levels[:idx], dtype=np.int) * TMP_NODE_TO_INFOSET_IMAGINARY
+			self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx], dtype=np.int) * TMP_NODE_TO_INFOSET_IMAGINARY_NODE
+			# self.cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
+			# self.positive_cumulative_regrets[idx] = np.zeros(self.actions_per_levels[:idx])
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()

@@ -60,12 +60,13 @@ class Domain:
 					)
 					for level in range(self.acting_depth)
 				]
-			self.current_infoset_strategies = [
-				tf.get_variable(
-						"current_infoset_strategies_lvl{}".format(level),
-						initializer=self.initial_infoset_strategies[level],
-				) for level in range(self.acting_depth)
-			]
+			with tf.variable_scope("current_strategies", reuse=tf.AUTO_REUSE):
+				self.current_infoset_strategies = [
+					tf.get_variable(
+							"current_infoset_strategies_lvl{}".format(level),
+							initializer=self.initial_infoset_strategies[level],
+					) for level in range(self.acting_depth)
+				]
 			self.positive_cumulative_regrets = [
 				tf.get_variable(
 						"positive_cumulative_regrets_lvl{}".format(level),

@@ -51,14 +51,15 @@ class Domain:
 				)
 			else:
 				self.reach_probability_of_root_node = tf.cast(reach_probability_of_root_node, dtype=FLOAT_DTYPE)
-			self.initial_infoset_strategies = [
-				tf.placeholder_with_default(
-						input=tf.cast(initial_infoset_strategies[level], dtype=FLOAT_DTYPE),
-						shape=[len(infoset_acting_players[level]), actions_per_levels[level]],
-						name="initial_infoset_strategies_lvl{}".format(level),
-				)
-				for level in range(self.acting_depth)
-			]
+			with tf.variable_scope("initial_strategies", reuse=tf.AUTO_REUSE):
+				self.initial_infoset_strategies = [
+					tf.placeholder_with_default(
+							input=tf.cast(initial_infoset_strategies[level], dtype=FLOAT_DTYPE),
+							shape=[len(infoset_acting_players[level]), actions_per_levels[level]],
+							name="initial_infoset_strategies_lvl{}".format(level),
+					)
+					for level in range(self.acting_depth)
+				]
 			self.current_infoset_strategies = [
 				tf.get_variable(
 						"current_infoset_strategies_lvl{}".format(level),

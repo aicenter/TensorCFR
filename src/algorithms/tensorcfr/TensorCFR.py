@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY
+	DEFAULT_AVERAGING_DELAY, INT_DTYPE
 from src.domains.Domain import Domain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.distribute_strategies_to_nodes import distribute_strategies_to_nodes
@@ -254,6 +254,16 @@ class TensorCFR:
 								axis=0,
 								name="infoset_children_types_lvl0"
 						)
+						# infoset_children_types[0] = tf.get_variable(
+						# 		name="infoset_children_types_lvl0",
+						# 		initializer=tf.cast(
+						# 				tf.expand_dims(
+						# 						self.domain.node_types[1],
+						# 						axis=0,
+						# 				),
+						# 				dtype=INT_DTYPE,
+						# 		)
+						# )
 					else:
 						infoset_children_types[level] = tf.scatter_nd_update(
 								ref=tf.Variable(
@@ -266,6 +276,22 @@ class TensorCFR:
 								updates=self.domain.node_types[level + 1],
 								name="infoset_children_types_lvl{}".format(level)
 						)
+						# infoset_children_types[level] = tf.get_variable(
+						# 		name="infoset_children_types_lvl{}".format(level),
+						# 		initializer=tf.cast(
+						# 				tf.scatter_nd_update(
+						# 						ref=tf.Variable(
+						# 								tf.zeros_like(
+						# 										self.domain.current_infoset_strategies[level],
+						# 										# dtype=INT_DTYPE,
+						# 								)
+						# 						),
+						# 						indices=tf.expand_dims(self.domain.node_to_infoset[level], axis=-1),
+						# 						updates=self.domain.node_types[level + 1],
+						# 				),
+						# 				dtype=INT_DTYPE,
+						# 		)
+						# )
 			return infoset_children_types
 
 	def get_infoset_uniform_strategies(self):  # TODO unittest

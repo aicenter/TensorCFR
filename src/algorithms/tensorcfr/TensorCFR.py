@@ -682,7 +682,6 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 				if quiet is False:
 					log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_cf_values_per_actions,
 					                      nodal_cf_values, expected_values, reach_probabilities, regrets)
-
 				"""
 				Profiler gives the Model report with total compute time and memory consumption.
 				- Add CUDA libs to LD_LIBRARY_PATH: https://github.com/tensorflow/tensorflow/issues/8830
@@ -690,13 +689,10 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 				https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
 				"""
 				merged = tf.summary.merge_all()
-
 				if profiling:
 					run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
 					metadata = tf.RunMetadata()
-
 					summary, _ = session.run([merged, cfr_step_op], options=run_options, run_metadata=metadata)
-
 					tf.profiler.profile(
 							session.graph,
 							run_meta=metadata,
@@ -704,13 +700,10 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 							cmd='scope',
 							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 					)
-
 					writer.add_run_metadata(metadata, "step{}".format(i))  # save metadata about time and memory for tensorboard
 				else:
 					summary, _ = session.run([merged, cfr_step_op])
-
 				writer.add_summary(summary, i)
-
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
 			log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)

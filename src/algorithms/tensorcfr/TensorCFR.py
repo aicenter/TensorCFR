@@ -118,12 +118,15 @@ class TensorCFR:
 							y=weighted_sum_of_values,
 							name="expected_values_lvl{}".format(level)
 					)
-
 			averaging_factor = self.get_weighted_averaging_factor()
-
-			tf.summary.scalar('expected_value', expected_values[0] * self.domain.signum_of_current_player)
-			tf.summary.scalar('average_expected_value', averaging_factor * expected_values[0] * self.domain.signum_of_current_player)
-			tf.summary.scalar('average_expected_value_w_division', (averaging_factor * expected_values[0] * self.domain.signum_of_current_player) / tf.cast(self.domain.cfr_step, tf.float32))
+			expected_value_at_root = expected_values[0] * self.domain.signum_of_current_player
+			average_expected_value_at_root = averaging_factor * expected_value_at_root
+			tf.summary.scalar('expected_value', expected_value_at_root)
+			tf.summary.scalar('average_expected_value', average_expected_value_at_root)
+			tf.summary.scalar(
+					'average_expected_value_w_division',
+					average_expected_value_at_root / tf.to_float(self.domain.cfr_step)
+			)
 		return expected_values
 
 	def show_expected_values(self, session):

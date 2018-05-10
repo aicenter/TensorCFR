@@ -703,10 +703,10 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 							cmd='scope',
 							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 					)
-					writer.add_run_metadata(metadata, "step{}".format(i))  # save metadata about time and memory for tensorboard
+					writer.add_run_metadata(metadata, "step{}".format(i + 1))
 				else:
 					summary, _ = session.run([merged, cfr_step_op])
-				writer.add_summary(summary, i)
+				writer.add_summary(summary, i + 1)
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
 			log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)

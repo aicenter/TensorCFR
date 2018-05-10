@@ -24,6 +24,8 @@ class TensorCFR:
 					name="increment_cfr_step"
 			)
 		self.summary_writer = None
+		self.immediate_expected_value = None
+		self.cumulative_expected_value = tf.Variable(0.0, name="cumulative_expected_value")
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -118,15 +120,21 @@ class TensorCFR:
 							y=weighted_sum_of_values,
 							name="expected_values_lvl{}".format(level)
 					)
-			averaging_factor = self.get_weighted_averaging_factor()
-			expected_value_at_root = expected_values[0] * self.domain.signum_of_current_player
-			average_expected_value_at_root = averaging_factor * expected_value_at_root
-			tf.summary.scalar('expected_value', expected_value_at_root)
-			tf.summary.scalar('average_expected_value', average_expected_value_at_root)
-			tf.summary.scalar(
-					'average_expected_value_w_division',
-					average_expected_value_at_root / tf.to_float(self.domain.cfr_step)
-			)
+		self.immediate_expected_value = expected_values[0] * self.domain.signum_of_current_player
+		self.cumulative_expected_value = tf.assign_add(
+				ref=self.cumulative_expected_value,
+				value=self.get_weighted_averaging_factor() * self.immediate_expected_value,
+				name="cumulative_expected_value",
+		)
+		tf.summary.scalar('immediate expected_value', self.immediate_expected_value)
+		tf.summary.scalar('cumulative expected value', self.cumulative_expected_value)
+		tf.summary.scalar(
+				'average expected value',
+				self.cumulative_expected_value / tf.to_float(
+						(self.domain.cfr_step - self.domain.averaging_delay + 1) * (self.domain.cfr_step - self.domain.averaging_delay)
+						# / tf.constant(2.0)
+				)
+		)
 		return expected_values
 
 	def show_expected_values(self, session):

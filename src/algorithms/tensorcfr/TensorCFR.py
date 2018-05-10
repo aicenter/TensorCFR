@@ -25,7 +25,8 @@ class TensorCFR:
 			)
 		self.summary_writer = None
 		self.immediate_expected_value = None
-		self.cumulative_expected_value = tf.Variable(0.0, name="cumulative_expected_value")
+		self.cumulative_expected_value = tf.get_variable("cumulative_expected_value", initializer=0.0)
+		self.sum_of_averaging_weights = tf.get_variable("sum_of_averaging_weights", initializer=0.0)
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -120,21 +121,26 @@ class TensorCFR:
 							y=weighted_sum_of_values,
 							name="expected_values_lvl{}".format(level)
 					)
+		# TODO extract these to summaries to a dedicated function, e.g. `set_up_tensorboard` or `set_up_summaries`
 		self.immediate_expected_value = expected_values[0] * self.domain.signum_of_current_player
+		averaging_weights = self.get_weighted_averaging_factor()
 		self.cumulative_expected_value = tf.assign_add(
 				ref=self.cumulative_expected_value,
-				value=self.get_weighted_averaging_factor() * self.immediate_expected_value,
+				value=averaging_weights * self.immediate_expected_value,
 				name="cumulative_expected_value",
 		)
-		tf.summary.scalar('immediate expected_value', self.immediate_expected_value)
-		tf.summary.scalar('cumulative expected value', self.cumulative_expected_value)
-		tf.summary.scalar(
-				'average expected value',
-				self.cumulative_expected_value / tf.to_float(
-						(self.domain.cfr_step - self.domain.averaging_delay + 1) * (self.domain.cfr_step - self.domain.averaging_delay)
-						# / tf.constant(2.0)
-				)
+		self.sum_of_averaging_weights = tf.assign_add(
+				ref=self.sum_of_averaging_weights,
+				value=averaging_weights,
+				name="sum_of_averaging_weights",
 		)
+		with tf.variable_scope("expected_values"):
+			tf.summary.scalar('immediate expected_value', self.immediate_expected_value)
+			tf.summary.scalar('cumulative expected value', self.cumulative_expected_value)
+			tf.summary.scalar('average expected value', self.cumulative_expected_value / self.sum_of_averaging_weights)
+		with tf.variable_scope("averaging_weights"):
+			tf.summary.scalar('immediate averaging weights', averaging_weights)
+			tf.summary.scalar('cumulative averaging weights', self.sum_of_averaging_weights)
 		return expected_values
 
 	def show_expected_values(self, session):

@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]="-1"   # off GPU
+# os.environ["CUDA_VISIBLE_DEVICES"]="-1"   # off GPU
 import tensorflow as tf
 
 from src.domains.Domain import Domain

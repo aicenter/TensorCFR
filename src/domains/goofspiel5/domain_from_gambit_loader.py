@@ -23,7 +23,6 @@ def get_domain_goofspiel5():
 # TODO: Get rid of `ACTIVATE_FILE` hotfix in "#74 Storage for large files"
 ACTIVATE_FILE = False
 
-
 if __name__ == '__main__' and ACTIVATE_FILE:
 	goofspiel5 = get_domain_goofspiel5()
 	with tf.Session() as sess:

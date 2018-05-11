@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 DOMAIN01 = "domain01"
 MATCHING_PENNIES = "matching_pennies"
 DOMAIN01_GAMBIT = "domain01_via_gambit"
@@ -7,6 +8,9 @@ GOOFSPIEL2_GAMBIT = "II-GS2_via_gambit"
 GOOFSPIEL3_GAMBIT = "II-GS3_via_gambit"
 GOOFSPIEL5_GAMBIT = "IIGS5_s1_bf_ft_via_gambit"
 PHANTOM_TTT_GAMBIT = "phantom_ttt_via_gambit"
+GP_CARDS2X2_122 = "GP_cards2x2_122_via_gambit"
+GP_CARDS4X3_222 = "GP_cards4x3_222_via_gambit"
+GP_CARDS4X3_224 = "GP_cards4x3_224_via_gambit"
 AVAILABLE_DOMAINS = [
 	DOMAIN01,
 	MATCHING_PENNIES,
@@ -18,6 +22,9 @@ AVAILABLE_DOMAINS = [
 DOMAINS_WITH_LARGE_GAMBIT_FILES = [
 	GOOFSPIEL5_GAMBIT,
 	PHANTOM_TTT_GAMBIT,
+	GP_CARDS2X2_122,
+	GP_CARDS4X3_222,
+	GP_CARDS4X3_224,
 ]
 DOMAINS = AVAILABLE_DOMAINS + DOMAINS_WITH_LARGE_GAMBIT_FILES
 
@@ -47,6 +54,15 @@ def get_domain_by_name(name):
 	elif name == PHANTOM_TTT_GAMBIT:
 		from src.domains.phantom_ttt.domain_from_gambit_loader import get_domain_phantom_ttt
 		return get_domain_phantom_ttt()
+	elif name == GP_CARDS2X2_122:
+		from src.domains.GP_cards2x2_122.domain_from_gambit_loader import get_domain_GP_cards2x2_122
+		return get_domain_GP_cards2x2_122()
+	elif name == GP_CARDS4X3_222:
+		from src.domains.GP_cards4x3_222.domain_from_gambit_loader import get_domain_GP_cards4x3_222
+		return get_domain_GP_cards4x3_222()
+	elif name == GP_CARDS4X3_224:
+		from src.domains.GP_cards4x3_224.domain_from_gambit_loader import get_domain_GP_cards4x3_224
+		return get_domain_GP_cards4x3_224()
 	else:
 		raise ValueError("Invalid name '{}' for get_domain_by_name().".format(name))
 

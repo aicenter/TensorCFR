@@ -335,3 +335,6 @@ src/out/
 doc/goofspiel/IIGS5_s1_bf_ft.gbt
 doc/phantom_ttt/phantom_ttt.efg
 src/algorithms/tensorcfr/logs/*
+/doc/poker/GP_cards4x3_224.gbt
+/doc/poker/GP_cards2x2_122.gbt
+/doc/poker/GP_cards4x3_222.gbt

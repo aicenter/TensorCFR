@@ -7,6 +7,7 @@ MATCHING_PENNIES_GAMBIT = "matching_pennies_via_gambit"
 GOOFSPIEL2_GAMBIT = "II-GS2_via_gambit"
 GOOFSPIEL3_GAMBIT = "II-GS3_via_gambit"
 GOOFSPIEL5_GAMBIT = "IIGS5_s1_bf_ft_via_gambit"
+GOOFSPIEL6_GAMBIT = "IIGS6_s1_bf_ft_via_gambit"
 PHANTOM_TTT_GAMBIT = "phantom_ttt_via_gambit"
 GP_CARDS2X2_122 = "GP_cards2x2_122_via_gambit"
 GP_CARDS4X3_222 = "GP_cards4x3_222_via_gambit"
@@ -21,6 +22,7 @@ AVAILABLE_DOMAINS = [
 ]
 DOMAINS_WITH_LARGE_GAMBIT_FILES = [
 	GOOFSPIEL5_GAMBIT,
+	GOOFSPIEL6_GAMBIT,
 	PHANTOM_TTT_GAMBIT,
 	GP_CARDS2X2_122,
 	GP_CARDS4X3_222,
@@ -51,6 +53,9 @@ def get_domain_by_name(name):
 	elif name == GOOFSPIEL5_GAMBIT:
 		from src.domains.goofspiel5.domain_from_gambit_loader import get_domain_goofspiel5
 		return get_domain_goofspiel5()
+	elif name == GOOFSPIEL6_GAMBIT:
+		from src.domains.goofspiel6.domain_from_gambit_loader import get_domain_goofspiel6
+		return get_domain_goofspiel6()
 	elif name == PHANTOM_TTT_GAMBIT:
 		from src.domains.phantom_ttt.domain_from_gambit_loader import get_domain_phantom_ttt
 		return get_domain_phantom_ttt()

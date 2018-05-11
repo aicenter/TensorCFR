@@ -3,7 +3,7 @@ import datetime
 import os
 import re
 import numpy as np
-import math
+import argparse
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
@@ -15,7 +15,7 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 
 
 class TensorCFR:
-	def __init__(self, domain: Domain):
+	def __init__(self, options, domain: Domain):
 		self.domain = domain
 		with tf.variable_scope("increment_step"):
 			self.increment_cfr_step = tf.assign_add(
@@ -27,6 +27,10 @@ class TensorCFR:
 		self.immediate_expected_value = None
 		self.cumulative_expected_value = tf.get_variable("cumulative_expected_value", initializer=0.0)
 		self.sum_of_averaging_weights = tf.get_variable("sum_of_averaging_weights", initializer=0.0)
+
+		self.options = options
+
+		print('init options', options)
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -121,26 +125,27 @@ class TensorCFR:
 							y=weighted_sum_of_values,
 							name="expected_values_lvl{}".format(level)
 					)
-		# TODO extract these to summaries to a dedicated function, e.g. `set_up_tensorboard` or `set_up_summaries`
-		self.immediate_expected_value = expected_values[0] * self.domain.signum_of_current_player
-		averaging_weights = self.get_weighted_averaging_factor()
-		self.cumulative_expected_value = tf.assign_add(
-				ref=self.cumulative_expected_value,
-				value=averaging_weights * self.immediate_expected_value,
-				name="cumulative_expected_value",
-		)
-		self.sum_of_averaging_weights = tf.assign_add(
-				ref=self.sum_of_averaging_weights,
-				value=averaging_weights,
-				name="sum_of_averaging_weights",
-		)
-		with tf.variable_scope("expected_values"):
-			tf.summary.scalar('immediate expected_value', self.immediate_expected_value)
-			tf.summary.scalar('cumulative expected value', self.cumulative_expected_value)
-			tf.summary.scalar('average expected value', self.cumulative_expected_value / self.sum_of_averaging_weights)
-		with tf.variable_scope("averaging_weights"):
-			tf.summary.scalar('immediate averaging weights', averaging_weights)
-			tf.summary.scalar('cumulative averaging weights', self.sum_of_averaging_weights)
+
+			if self.options.track_values:
+				self.immediate_expected_value = expected_values[0] * self.domain.signum_of_current_player
+				averaging_weights = self.get_weighted_averaging_factor()
+				self.cumulative_expected_value = tf.assign_add(
+						ref=self.cumulative_expected_value,
+						value=averaging_weights * self.immediate_expected_value,
+						name="cumulative_expected_value",
+				)
+				self.sum_of_averaging_weights = tf.assign_add(
+						ref=self.sum_of_averaging_weights,
+						value=averaging_weights,
+						name="sum_of_averaging_weights",
+				)
+				with tf.variable_scope("expected_values"):
+					tf.summary.scalar('immediate expected_value', self.immediate_expected_value)
+					tf.summary.scalar('cumulative expected value', self.cumulative_expected_value)
+					tf.summary.scalar('average expected value', self.cumulative_expected_value / self.sum_of_averaging_weights)
+				with tf.variable_scope("averaging_weights"):
+					tf.summary.scalar('immediate averaging weights', averaging_weights)
+					tf.summary.scalar('cumulative averaging weights', self.sum_of_averaging_weights)
 		return expected_values
 
 	def show_expected_values(self, session):
@@ -694,6 +699,13 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 		if quiet is False:
 			log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, assigned_averaging_delay)
 
+		if tensorcfr_instance.options.track_values:
+			merged = tf.summary.merge_all()
+
+			session_run_list = [merged, cfr_step_op]
+		else:
+			session_run_list = [cfr_step_op]
+
 		with tf.summary.FileWriter(log_dir_path, tf.get_default_graph()) as writer:
 			for i in range(total_steps):
 				if quiet is False:
@@ -705,11 +717,10 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 				- For `cmd` see:
 				https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
 				"""
-				merged = tf.summary.merge_all()
 				if profiling:
 					run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
 					metadata = tf.RunMetadata()
-					summary, _ = session.run([merged, cfr_step_op], options=run_options, run_metadata=metadata)
+					session_run_result = session.run(session_run_list, options=run_options, run_metadata=metadata)
 					tf.profiler.profile(
 							session.graph,
 							run_meta=metadata,
@@ -719,18 +730,27 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 					)
 					writer.add_run_metadata(metadata, "step{}".format(i + 1))
 				else:
-					summary, _ = session.run([merged, cfr_step_op])
-				writer.add_summary(summary, i + 1)
+					session_run_result = session.run(session_run_list)
+
+				if tensorcfr_instance.options.track_values:
+					# write merged summary with FileWriter into log
+					writer.add_summary(session_run_result[0], i + 1)
+
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
 			log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)
 
 
 if __name__ == '__main__':
+	args_parser = argparse.ArgumentParser(description='Program runs TensorCFR algorithm')
+	args_parser.add_argument('--track-values', action='store_true', default=False, help='it tracks scalar values for TensorBoard (default: False)')
+	options = args_parser.parse_args()
+
 	domain = get_domain_by_name("domain01")
 	# domain = get_domain_by_name("matching_pennies")
 	# domain = get_domain_by_name("invalid domain name test")
-	tensorcfr = TensorCFR(domain)
+	tensorcfr = TensorCFR(options, domain)
+
 	run_cfr(
 			# total_steps=10,
 			tensorcfr_instance=tensorcfr,

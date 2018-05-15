@@ -116,15 +116,18 @@ class InformationSetManager:
 					[np.nan] * next_level_max_no_actions    # TODO This is a hotfix.
 				)
 			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
-				current_infoset_strategies_.append(
-					[action['probability'] for action in reversed(self.infoset_dict[infoset_id][3]['actions'])]
-				)
+				current_infoset_strategy = [np.nan] * next_level_max_no_actions
+
+				for index, action in enumerate(reversed(self.infoset_dict[infoset_id][3]['actions'])):
+					current_infoset_strategy[index] = action['probability']
+
+				current_infoset_strategies_.append(current_infoset_strategy)
 			else:
 				# current_infoset_strategies_.append([0] * next_level_max_no_actions)
 				# TODO Just to be sure, let's put NaNs everywhere.
 				current_infoset_strategies_.append([np.nan] * next_level_max_no_actions)
 
-		return [infoset_acting_players_, np.array(current_infoset_strategies_)]
+		return [np.asarray(infoset_acting_players_), np.asarray(current_infoset_strategies_)]
 
 	def make_node_to_infoset(self, tensor):
 		tensor[np.where(tensor == ((-1) * TMP_NODE_TO_INFOSET_IMAGINARY))] = -self.infoset_cnt
@@ -389,7 +392,7 @@ class GambitEFGLoader:
 					self.actions_per_levels[level], self.node_types)
 			self.infoset_acting_players[level] = infoset_acting_players_
 			self.current_infoset_strategies[level] = infoset_strategies
-			self.initial_infoset_strategies[level] = copy.deepcopy(self.current_infoset_strategies[level])
+			self.initial_infoset_strategies[level] = np.array(copy.deepcopy(self.current_infoset_strategies[level]))
 			self.cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
 			self.positive_cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
 
@@ -460,11 +463,19 @@ if __name__ == '__main__':
 	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'goofspiel',
 	                             'IIGS5_s1_bf_ft.gbt')
 
-	domain = GambitEFGLoader(domain01_efg)
+	poker = os.path.join(
+		os.path.dirname(
+			os.path.abspath(
+				__file__)
+		),
+		'..',
+		'..',
+		'doc',
+		'poker',
+		'GP_cards2x2_122.gbt'
+	)
 
-	print(domain.actions_per_levels)
-	print(domain.node_to_infoset)
-	print(domain.node_types)
-	print(domain.utilities)
-	print(domain.infoset_acting_players)
-	print(domain.initial_infoset_strategies)
+	domain = GambitEFGLoader(poker)
+
+	for level in range(len(domain.actions_per_levels)):
+		print(domain.current_infoset_strategies[level])

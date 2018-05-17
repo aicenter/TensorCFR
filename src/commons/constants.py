@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 # utilities
-import numpy as np
 import tensorflow as tf
 
 NON_TERMINAL_UTILITY = 0.0

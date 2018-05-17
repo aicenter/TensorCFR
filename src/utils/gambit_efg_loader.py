@@ -463,6 +463,7 @@ if __name__ == '__main__':
 	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'goofspiel',
 	                             'IIGS5_s1_bf_ft.gbt')
 
+	"""
 	poker = os.path.join(
 		os.path.dirname(
 			os.path.abspath(
@@ -474,8 +475,9 @@ if __name__ == '__main__':
 		'poker',
 		'GP_cards2x2_122.gbt'
 	)
+	"""
 
-	domain = GambitEFGLoader(poker)
+	domain = GambitEFGLoader(domain01_efg)
 
 	for level in range(len(domain.actions_per_levels)):
 		print(domain.current_infoset_strategies[level])

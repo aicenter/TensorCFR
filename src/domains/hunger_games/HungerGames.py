@@ -21,7 +21,7 @@ def get_domain_hunger_games():
 
 
 if __name__ == '__main__':
-	matching_pennies = get_domain_hunger_games()
+	hunger_games = get_domain_hunger_games()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		matching_pennies.print_domain(sess)
+		hunger_games.print_domain(sess)

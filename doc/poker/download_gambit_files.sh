@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
 # Gambit files Google Drive from https://drive.google.com/drive/folders/1D3RomFdf9kPkyLQKdOX3hpi1dQEy5Ewt
-# Cesnet OwnCloud https://owncloud.cesnet.cz/index.php/s/w3UP5EjMTKCKTdS
 files=(
-"ECCpaQkzm3oMVqT" # GP_card2x2_122.gbt
-"vxJaXvPM9nCfNPz" # GP_card2x2_222.gbt
-"0hgf5xbD1WWic3w" # GP_card2x2_224.gbt
+"GP_cards2x2_122.gbt:K8YeGzUbCmDEcV2"
+"GP_cards4x3_222.gbt:RyXsSf7nKa2smI9"
+"GP_cards4x3_224.gbt:XCl5U4AnGCFKPkx"
 )

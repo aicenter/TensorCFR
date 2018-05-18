@@ -486,6 +486,12 @@ if __name__ == '__main__':
 	for gbt_file in gbt_files:
 		domain = GambitEFGLoader(gbt_file)
 		print("\n>>>>>>>>>> {} <<<<<<<<<<".format(gbt_file))
-		for level in range(len(domain.actions_per_levels)):
+		for level in range(len(domain.actions_per_levels) + 1):
 			print("\n########## Level {} ##########".format(level))
-			print(domain.current_infoset_strategies[level])
+			print(domain.node_types[level])
+			print(domain.utilities[level])
+			if level < len(domain.actions_per_levels):
+				print(domain.node_to_infoset[level])
+				print(domain.infoset_acting_players[level])
+				print(domain.initial_infoset_strategies[level])
+				print(domain.current_infoset_strategies[level])

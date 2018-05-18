@@ -465,9 +465,7 @@ if __name__ == '__main__':
 	# noinspection SpellCheckingInspection
 	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'goofspiel',
 	                             'IIGS5_s1_bf_ft.gbt')
-
-	"""
-	poker = os.path.join(
+	poker_gbt = os.path.join(
 		os.path.dirname(
 			os.path.abspath(
 				__file__)
@@ -478,9 +476,16 @@ if __name__ == '__main__':
 		'poker',
 		'GP_cards2x2_122.gbt'
 	)
-	"""
+	gbt_files = [
+		domain01_efg,
+		# mini_goofspiel_gbt,
+		# goofspiel_gbt,
+		# poker_gbt,
+	]
 
-	domain = GambitEFGLoader(domain01_efg)
-
-	for level in range(len(domain.actions_per_levels)):
-		print(domain.current_infoset_strategies[level])
+	for gbt_file in gbt_files:
+		domain = GambitEFGLoader(gbt_file)
+		print("\n>>>>>>>>>> {} <<<<<<<<<<".format(gbt_file))
+		for level in range(len(domain.actions_per_levels)):
+			print("\n########## Level {} ##########".format(level))
+			print(domain.current_infoset_strategies[level])

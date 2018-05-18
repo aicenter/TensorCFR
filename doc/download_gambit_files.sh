@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 download_gambit_files () {
     # load filenames according to the domain $arg
     command=". $1/download_gambit_files.sh"
@@ -8,11 +9,20 @@ download_gambit_files () {
     # download domain files
     for file in "${files[@]}";
     do
+        fileraw=(${file//:/ }) # split ':' into spaces and make an array from the result
+        filename=${fileraw[0]}
+        filecode=${fileraw[1]}
+
+        if [ ! -f $1/$filename ];
+        then
             cd $1
-            url="https://owncloud.cesnet.cz/index.php/s/$file/download"
-            wget --no-check-certificate --content-disposition -q --show-progress $url
-            ls | grep ".gz" | xargs gzip -f -d
-            cd ..
+                    url="https://owncloud.cesnet.cz/index.php/s/$filecode/download"
+                    wget --no-check-certificate --content-disposition -q --show-progress $url
+                    ls | grep ".gz" | xargs gzip -f -d
+                    cd ..
+        else
+            echo "$filename already exists (skipping download)"
+        fi
     done
 }
 
@@ -35,6 +45,13 @@ then
 else
 	for arg;
 	do
-		download_gambit_files $PWD/$arg
+	    echo $arg
+
+	    if [ -d $PWD/$arg/download_gambit_files.sh ];
+	    then
+		    download_gambit_files $PWD/$arg
+		else
+		    echo -e "skipping $filename - no download_gambit_files.sh"
+		fi
 	done
 fi

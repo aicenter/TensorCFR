@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
+import copy
 import os
 import re
-import copy
+
 import numpy as np
 import tensorflow as tf
 
@@ -10,6 +11,7 @@ from src.commons import constants
 
 # TODO @janrudolf: Why are there these 2 constants?
 # TODO @janrudolf: And why are they set to 7 and 8? It should be the last and the penultimate.
+
 TMP_NODE_TO_INFOSET_TERMINAL = 7
 TMP_NODE_TO_INFOSET_IMAGINARY = 8
 
@@ -112,8 +114,8 @@ class InformationSetManager:
 				#  Check out the method `get_infoset_uniform_strategies()` located at line 266 of
 				#  `algorithms.tensorcfr.TensorCFR.py`.
 				current_infoset_strategies_.append(
-					# [float(1 / (next_level_max_no_actions * self.cnt_player_nodes))] * next_level_max_no_actions
-					[np.nan] * next_level_max_no_actions    # TODO This is a hotfix.
+						# [float(1 / (next_level_max_no_actions * self.cnt_player_nodes))] * next_level_max_no_actions
+						[np.nan] * next_level_max_no_actions  # TODO This is a hotfix.
 				)
 			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
 				current_infoset_strategy = [np.nan] * next_level_max_no_actions
@@ -127,7 +129,8 @@ class InformationSetManager:
 				# TODO Just to be sure, let's put NaNs everywhere.
 				current_infoset_strategies_.append([np.nan] * next_level_max_no_actions)
 
-		return [np.asarray(infoset_acting_players_), np.asarray(current_infoset_strategies_)]
+		return [np.asarray(infoset_acting_players_, dtype=constants.INT_DTYPE_NUMPY),
+		        np.asarray(current_infoset_strategies_)]
 
 	def make_node_to_infoset(self, tensor):
 		tensor[np.where(tensor == ((-1) * TMP_NODE_TO_INFOSET_IMAGINARY))] = -self.infoset_cnt

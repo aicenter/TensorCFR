@@ -2,6 +2,7 @@
 
 # utilities
 import tensorflow as tf
+import numpy as np
 
 NON_TERMINAL_UTILITY = 0.0
 

@@ -8,7 +8,7 @@ from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NOD
 
 # domain `hunger_games`: see doc/hunger_games_via_drawing.png
 
-actions_per_levels = [2, 6, 4]
+actions_per_levels = [2, 6, 4, 3, 2]
 levels = len(actions_per_levels) + 1  # accounting for 0th level
 acting_depth = len(actions_per_levels)
 

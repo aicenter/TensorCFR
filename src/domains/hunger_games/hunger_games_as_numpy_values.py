@@ -58,7 +58,25 @@ initial_infoset_strategies[2] = [
 ]
 
 ########## Level 3 ##########
-# There are never any infosets in the final layer, only terminal / imaginary nodes.
+node_to_infoset[3] = [
+	[
+		[0, 0, 1, 1],
+		[2] * 4,   # `2` for the infoset of imaginary nodes
+		[2] * 4,
+		[2] * 4,
+		[2] * 4,
+		[2] * 4
+	],
+	[
+		[2] * 4,
+		[2] * 4,
+		[2] * 4,
+		[2] * 4,
+		[2] * 4,
+		[2] * 4
+	]
+]
+# TODO continue here
 node_types[3] = [
 	[
 		[TERMINAL_NODE] * 4,

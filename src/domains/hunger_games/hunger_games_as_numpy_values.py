@@ -113,7 +113,11 @@ utilities[3] = [
 	]
 ]
 infoset_acting_players[3] = [PLAYER2, PLAYER2, NO_ACTING_PLAYER]
-# TODO continue here
+initial_infoset_strategies[3] = [
+	[0.1, 0.0, 0.9],
+	[np.nan] * 3,
+	[np.nan] * 3
+]
 
 ########## Level 4 ##########
 # There are never any infosets in the final layer, only terminal / imaginary nodes.

@@ -76,7 +76,6 @@ node_to_infoset[3] = [
 		[2] * 4
 	]
 ]
-# TODO continue here
 node_types[3] = [
 	[
 		[TERMINAL_NODE] * 4,
@@ -113,3 +112,8 @@ utilities[3] = [
 		[NON_TERMINAL_UTILITY] * 4
 	]
 ]
+infoset_acting_players[3] = [PLAYER2, PLAYER2, NO_ACTING_PLAYER]
+# TODO continue here
+
+########## Level 4 ##########
+# There are never any infosets in the final layer, only terminal / imaginary nodes.

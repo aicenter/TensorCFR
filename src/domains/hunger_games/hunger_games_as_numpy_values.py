@@ -356,6 +356,19 @@ utilities[4] = [
 		]
 	]
 ]
+infoset_acting_players[4] = [
+	PLAYER1,
+	PLAYER1,
+	PLAYER1,
+	PLAYER1,
+	PLAYER1,
+	PLAYER1,
+	PLAYER1,
+	PLAYER1,
+	PLAYER1,
+	PLAYER1,
+	NO_ACTING_PLAYER,
+]
 
 
 # TODO continue here

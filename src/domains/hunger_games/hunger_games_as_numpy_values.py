@@ -654,6 +654,273 @@ node_types[5] = [
 		],
 	],
 ]
-
-# TODO continue here
-pprint(node_types[5], indent=1, width=25)
+utilities[5] = [
+	[
+		[
+			[
+				[1.0] * 2,
+				[1.0] * 2,
+				[1.0] * 2
+			],
+			[
+				[1.0] * 2,
+				[1.0] * 2,
+				[1.0] * 2
+			],
+			[
+				[1.0] * 2,
+				[1.0] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[1.0] * 2,
+				[1.0] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+	],
+	[
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+		[
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+			[
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2,
+				[NON_TERMINAL_UTILITY] * 2
+			],
+		],
+	],
+]

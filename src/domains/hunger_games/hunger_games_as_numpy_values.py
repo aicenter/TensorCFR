@@ -121,7 +121,6 @@ initial_infoset_strategies[3] = [
 ]
 
 ########## Level 4 ##########
-# There are never any infosets in the final layer, only terminal / imaginary nodes.
 node_to_infoset[4] = [
 	[
 		[
@@ -383,6 +382,278 @@ initial_infoset_strategies[4] = [
 	[np.nan] * 2,
 ]
 
+########## Level 5 ##########
+# There are never any infosets in the final layer, only terminal / imaginary nodes.
+node_types[5] = [
+	[
+		[
+			[
+				[INNER_NODE] * 2,
+				[INNER_NODE] * 2,
+				[INNER_NODE] * 2
+			],
+			[
+				[INNER_NODE] * 2,
+				[INNER_NODE] * 2,
+				[INNER_NODE] * 2
+			],
+			[
+				[INNER_NODE] * 2,
+				[INNER_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[INNER_NODE] * 2,
+				[INNER_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+	],
+	[
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+		[
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+			[
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2,
+				[IMAGINARY_NODE] * 2
+			],
+		],
+	],
+]
 
 # TODO continue here
-pprint(utilities[4], indent=1, width=30)
+pprint(node_types[5], indent=1, width=25)

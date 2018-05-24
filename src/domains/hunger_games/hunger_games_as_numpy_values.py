@@ -369,6 +369,19 @@ infoset_acting_players[4] = [
 	PLAYER1,
 	NO_ACTING_PLAYER,
 ]
+initial_infoset_strategies[4] = [
+	[0.1, 0.9],
+	[0.2, 0.8],
+	[0.3, 0.7],
+	[0.4, 0.6],
+	[0.5, 0.5],
+	[0.6, 0.4],
+	[0.7, 0.3],
+	[0.8, 0.2],
+	[0.9, 0.1],
+	[1.0, 0.0],
+	[np.nan] * 2,
+]
 
 
 # TODO continue here

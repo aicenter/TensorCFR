@@ -20,7 +20,7 @@ def get_domain_goofspiel6():
 	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="IIGS6_s1_bf_ft_via_gambit")
 
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix in "#74 Storage for large files"
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
 ACTIVATE_FILE = False
 
 if __name__ == '__main__' and ACTIVATE_FILE:

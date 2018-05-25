@@ -47,7 +47,7 @@ else
 	do
 	    echo $arg
 
-	    if [ -d $PWD/$arg/download_gambit_files.sh ];
+	    if [ -f $PWD/$arg/download_gambit_files.sh ];
 	    then
 		    download_gambit_files $PWD/$arg
 		else

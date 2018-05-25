@@ -26,7 +26,7 @@ download_gambit_files () {
     done
 }
 
-echo "Downloading domains:"
+echo "DOWNLOAD GAMBIT FILES"
 
 if [ $# -eq 0 ];
 then
@@ -43,15 +43,20 @@ then
 		fi
 	done
 else
+    if [ "$1" = "-h" -o "$1" = "--help" ]; then
+        echo "Help:"
+        echo -e "\nThe script will download Gambit files from Cesnet ownCloud according to '<domain>/download_gambit_files.sh' specified arrays 'files'."
+        echo -e "\nIf you run the script with no parameters, if will scan the 'doc/' subdirectories looking for 'download_gambit_files.sh' and downloading all files, that are there specified."
+        echo -e "\nAlternatively you can download Gambit files for just one domain. For example 'bash download_gambit_files.sh poker' will look into 'doc/poker/download_gambit_files.sh' and download all files listed there."
+        exit 0;
+    fi
 	for arg;
 	do
-	    echo $arg
-
 	    if [ -f $PWD/$arg/download_gambit_files.sh ];
 	    then
 		    download_gambit_files $PWD/$arg
 		else
-		    echo -e "skipping $filename - no download_gambit_files.sh"
+		    echo -e "\nskipping $filename - no download_gambit_files.sh"
 		fi
 	done
 fi

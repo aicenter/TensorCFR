@@ -1,7 +1,7 @@
 from src.algorithms.tensorcfr.TensorCFR import TensorCFR, run_cfr
 from src.domains.available_domains import get_domain_by_name
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix in "#74 Storage for large files"
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
 ACTIVATE_FILE = False
 
 

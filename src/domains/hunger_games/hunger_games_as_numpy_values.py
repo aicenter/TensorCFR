@@ -116,7 +116,7 @@ utilities[3] = [
 infoset_acting_players[3] = [PLAYER2, PLAYER2, NO_ACTING_PLAYER]
 initial_infoset_strategies[3] = [
 	[0.1, 0.0, 0.9],
-	[0.2, 0.8],
+	[0.2, 0.8, IMAGINARY_PROBABILITIES],
 	[np.nan] * 3
 ]
 

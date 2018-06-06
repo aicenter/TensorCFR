@@ -44,10 +44,7 @@ initial_infoset_strategies[1] = [
 ]
 
 ########## Level 2 ##########
-node_to_infoset[2] = [
-	[0, 2, 2, 2, 2, 2],   # `2` for the infoset of imaginary nodes
-	[1, 1, 1, 1, 1, 1]    # `1` for the infoset of terminal nodes
-]
+node_to_infoset[2] = [0, 1, 1, 1, 1, 1, 1]    # `1` for the infoset of terminal nodes
 node_types[2] = [
 	[INNER_NODE, IMAGINARY_NODE, IMAGINARY_NODE, IMAGINARY_NODE, IMAGINARY_NODE, IMAGINARY_NODE],
 	[TERMINAL_NODE, TERMINAL_NODE, TERMINAL_NODE, TERMINAL_NODE, TERMINAL_NODE, TERMINAL_NODE]
@@ -64,24 +61,7 @@ initial_infoset_strategies[2] = [
 ]
 
 ########## Level 3 ##########
-node_to_infoset[3] = [
-	[
-		[0, 0, 1, 1],
-		[2] * 4,   # `2` for the infoset of imaginary nodes
-		[2] * 4,
-		[2] * 4,
-		[2] * 4,
-		[2] * 4
-	],
-	[
-		[2] * 4,
-		[2] * 4,
-		[2] * 4,
-		[2] * 4,
-		[2] * 4,
-		[2] * 4
-	]
-]
+node_to_infoset[3] = [0, 0, 1, 1]
 node_types[3] = [
 	[
 		[TERMINAL_NODE] * 4,
@@ -126,84 +106,7 @@ initial_infoset_strategies[3] = [
 ]
 
 ########## Level 4 ##########
-node_to_infoset[4] = [
-	[
-		[
-			[0, 1,  2],
-			[3, 4,  5],
-			[6, 7, 10],
-			[8, 9, 10]
-		],
-		[
-			[10] * 3,   # `10` for the infoset of imaginary nodes
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		]
-	],
-	[
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-		[
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-			[10] * 3,
-		],
-	]
-]
+node_to_infoset[4] = [0, 1,  2, 3, 4,  5, 6, 7, 8, 9]
 node_types[4] = [
 	[
 		[

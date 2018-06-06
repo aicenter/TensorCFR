@@ -80,6 +80,7 @@ class Parser:
 		parse_payoffs = re.findall(r'[\-]?[\d]+', input_payoffs_str)
 		return [int(payoff) for payoff in parse_payoffs]
 
+	@staticmethod
 	def parse_chance_node(input_line):
 		parse_line = re.search(
 			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+)\ ?"?(?P<information_set_name_optional>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{?(?P<payoffs_optional>.*)\}?',

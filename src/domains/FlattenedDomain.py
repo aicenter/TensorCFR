@@ -15,9 +15,13 @@ class FlattenedDomain:
 		self.domain_name = domain_name
 		with tf.variable_scope(self.domain_name) as self.domain_scope:
 			# tensors on tree dimensions
-			self.actions_per_levels = actions_per_levels    # maximum number of actions per each level
-			self.levels = len(self.actions_per_levels) + 1  # accounting for 0th level
-			self.acting_depth = len(self.actions_per_levels)
+			self.action_counts = action_counts    # count of (nodal) actions at each levels
+			self.levels = len(self.action_counts) + 1  # accounting for 0th level
+			self.acting_depth = len(self.action_counts)
+			self.actions_per_levels = [
+				np.amax(self.action_counts[level])
+				for level in range(self.acting_depth)
+			]    # maximum number of actions per each level
 			self.shape = [self.actions_per_levels[:i] for i in range(self.levels)]
 
 			# tensors on tree definition
@@ -151,6 +155,8 @@ class FlattenedDomain:
 			self.signum_of_current_player,
 			self.player_owning_the_utilities,
 		])
+		print("action_counts:")
+		pprint(self.action_counts, indent=1, width=50)
 
 	def print_domain(self, session):
 		print(">>>>>>>>>> {} <<<<<<<<<<".format(self.domain_name))

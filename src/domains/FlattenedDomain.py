@@ -18,11 +18,11 @@ class FlattenedDomain:
 			self.action_counts = action_counts    # count of (nodal) actions at each levels
 			self.levels = len(self.action_counts) + 1  # accounting for 0th level
 			self.acting_depth = len(self.action_counts)
-			self.actions_per_levels = [
+			self.max_actions_per_levels = [
 				np.amax(self.action_counts[level])
 				for level in range(self.acting_depth)
 			]    # maximum number of actions per each level
-			self.shape = [self.actions_per_levels[:i] for i in range(self.levels)]
+			self.shape = [self.max_actions_per_levels[:i] for i in range(self.levels)]
 
 			# tensors on tree definition
 			self.node_to_infoset = [
@@ -56,7 +56,7 @@ class FlattenedDomain:
 			self.initial_infoset_strategies = [
 				tf.placeholder_with_default(
 						input=tf.cast(initial_infoset_strategies[level], dtype=FLOAT_DTYPE),
-						shape=[len(infoset_acting_players[level]), self.actions_per_levels[level]],
+						shape=[len(infoset_acting_players[level]), self.max_actions_per_levels[level]],
 						name="initial_infoset_strategies_lvl{}".format(level),
 				)
 				for level in range(self.acting_depth)
@@ -158,7 +158,7 @@ class FlattenedDomain:
 		print("action_counts:")
 		pprint(self.action_counts, indent=1, width=50)
 		print("actions_per_level:")
-		pprint(self.actions_per_levels, indent=1, width=4)
+		pprint(self.max_actions_per_levels, indent=1, width=4)
 
 	def print_domain(self, session):
 		print(">>>>>>>>>> {} <<<<<<<<<<".format(self.domain_name))

@@ -9,9 +9,15 @@ from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NOD
 
 # domain `hunger_games`: see doc/hunger_games_via_drawing.png
 
-actions_per_levels = [2, 6, 4, 3, 2]
-levels = len(actions_per_levels) + 1  # accounting for 0th level
-acting_depth = len(actions_per_levels)
+action_counts = [
+	[2],
+	[1, 6],
+	[4],
+	[3, 3, 2, 2],
+	[2] * 10
+]
+levels = len(action_counts) + 1  # accounting for 0th level
+acting_depth = len(action_counts)
 
 # allocate Python arrays
 node_to_infoset: List[int] = [None] * acting_depth
@@ -97,7 +103,7 @@ node_types[3] = [
 ]
 utilities[3] = [
 	[
-		[1.0] * 4,  # TODO: Fix her by updating to `NON_TERMINAL_UTILITY`
+		[1.0] * 4,  # TODO: Fix here by updating to `NON_TERMINAL_UTILITY`
 		[NON_TERMINAL_UTILITY] * 4,
 		[NON_TERMINAL_UTILITY] * 4,
 		[NON_TERMINAL_UTILITY] * 4,

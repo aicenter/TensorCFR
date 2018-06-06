@@ -161,8 +161,8 @@ class FlattenedDomain:
 		pprint(self.max_actions_per_levels, indent=1, width=4)
 		print("levels: ", self.levels)
 		print("acting_depth: ", self.acting_depth)
-
-		# self.shape = [self.max_actions_per_levels[:i] for i in range(self.levels)]
+		print("shape:")
+		pprint(self.shape, indent=1, width=50)
 
 	def print_domain(self, session):
 		print(">>>>>>>>>> {} <<<<<<<<<<".format(self.domain_name))

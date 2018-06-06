@@ -20,13 +20,13 @@ class NotImplementedFormatException(Exception):
 
 
 class Parser:
-	def __init__(self):
-		pass
 
 	@staticmethod
 	def parse_header(input_line):
-		results = re.search(r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" \{(?P<players_dirty>.*)\}',
-							input_line)
+		results = re.search(
+			r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" {(?P<players_dirty>.*)}',
+			input_line
+		)
 		if results:
 			results_players = re.findall(r'"([^"]+)"', results.group('players_dirty'))
 			if results_players is None:
@@ -42,7 +42,7 @@ class Parser:
 			raise NotAcceptableFormatException
 
 	@staticmethod
-	def parse_node(self, input_line):
+	def parse_node(input_line):
 		# http://www.gambit-project.org/gambit13/formats.html
 		if len(input_line) == 0:
 			return False
@@ -50,11 +50,11 @@ class Parser:
 		node_type = input_line[0]
 
 		if node_type == constants.GAMBIT_NODE_TYPE_CHANCE:
-			return self.parse_chance_node(input_line)
+			return Parser.parse_chance_node(input_line)
 		elif node_type == constants.GAMBIT_NODE_TYPE_PLAYER:
-			return self.parse_player_node(input_line)
+			return Parser.parse_player_node(input_line)
 		elif node_type == constants.GAMBIT_NODE_TYPE_TERMINAL:
-			return self.parse_terminal_node(input_line)
+			return Parser.parse_terminal_node(input_line)
 		else:
 			return False
 
@@ -66,9 +66,9 @@ class Parser:
 		else:
 			return float(probability_str)
 
-	def parse_actions_chance(self, input_actions_str):
+	def parse_actions_chance(input_actions_str):
 		parse_actions = re.findall(r'"(?P<name>[^"]*)" (?P<probability>[\d\./]+)', input_actions_str)
-		return [{'name': action[0], 'probability': self.parse_probability(action[1])} for action in parse_actions]
+		return [{'name': action[0], 'probability': Parser.parse_probability(action[1])} for action in parse_actions]
 
 	@staticmethod
 	def parse_actions_player(input_actions_str):
@@ -80,14 +80,14 @@ class Parser:
 		parse_payoffs = re.findall(r'[\-]?[\d]+', input_payoffs_str)
 		return [int(payoff) for payoff in parse_payoffs]
 
-	def parse_chance_node(self, input_line):
+	def parse_chance_node(input_line):
 		parse_line = re.search(
 			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+)\ ?"?(?P<information_set_name_optional>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{?(?P<payoffs_optional>.*)\}?',
 			input_line
 		)
 
-		actions = self.parse_actions_chance(parse_line.group('actions_optional'))
-		payoffs = self.parse_payoffs(parse_line.group('payoffs_optional'))
+		actions = Parser.parse_actions_chance(parse_line.group('actions_optional'))
+		payoffs = Parser.parse_payoffs(parse_line.group('payoffs_optional'))
 		infoset_id = 'c-' + parse_line.group('information_set_number')
 
 		return {
@@ -103,14 +103,15 @@ class Parser:
 			'infoset_id': infoset_id
 		}
 
-	def parse_player_node(self, input_line):
+	@staticmethod
+	def parse_player_node(input_line):
 		parse_line = re.search(
 			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+)\ ?"?(?P<information_set_name>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name>[^"]*)"?\ ?\{?(?P<payoffs_optional>[^\}]*)\}?',
 			input_line
 		)
 
-		actions = self.parse_actions_player(parse_line.group('actions_optional'))
-		payoffs = self.parse_payoffs(parse_line.group('payoffs_optional'))
+		actions = Parser.parse_actions_player(parse_line.group('actions_optional'))
+		payoffs = Parser.parse_payoffs(parse_line.group('payoffs_optional'))
 		infoset_id = 'p-' + parse_line.group('player_number') + '-' + parse_line.group('information_set_number')
 
 		return {
@@ -127,17 +128,16 @@ class Parser:
 			'infoset_id': infoset_id
 		}
 
-	def parse_terminal_node(self, input_line):
+	@staticmethod
+	def parse_terminal_node(input_line):
 		parse_line = re.search(
 			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_TERMINAL + ') "(?P<name>[^"]*)" (?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{(?P<payoffs>.*)\}',
 			input_line
 		)
 
-		payoffs = self.parse_payoffs(parse_line.group('payoffs'))
+		payoffs = Parser.parse_payoffs(parse_line.group('payoffs'))
 		# infoset_id = 't-' + str(self.terminal_nodes_cnt)
 		infoset_id = 't'
-
-		self.terminal_nodes_cnt += 1
 
 		return {
 			'type': parse_line.group('type'),
@@ -155,3 +155,20 @@ class Parser:
 			0] == constants.GAMBIT_NODE_TYPE_TERMINAL:
 			return True
 		return False
+
+if __name__ == "__main__":
+	import os
+
+
+	domain01_path = os.path.join(
+		os.path.dirname(os.path.abspath(__file__)),
+		'..',
+		'..',
+		'doc',
+		'domain01_via_gambit.efg'
+	)
+
+	with open(domain01_path) as f:
+		for line_number, line in enumerate(f):
+			print(Parser.parse_node(line))
+

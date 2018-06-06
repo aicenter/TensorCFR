@@ -157,6 +157,8 @@ class FlattenedDomain:
 		])
 		print("action_counts:")
 		pprint(self.action_counts, indent=1, width=50)
+		print("actions_per_level:")
+		pprint(self.actions_per_levels, indent=1, width=4)
 
 	def print_domain(self, session):
 		print(">>>>>>>>>> {} <<<<<<<<<<".format(self.domain_name))

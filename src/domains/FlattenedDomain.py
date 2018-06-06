@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
+from pprint import pprint
 
 import tensorflow as tf
+import numpy as np
 
 from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE
 from src.utils.tensor_utils import print_tensors
 from src.utils.gambit_efg_loader import GambitEFGLoader
 
 
-class Domain:
-	def __init__(self, domain_name, actions_per_levels, node_to_infoset, node_types, utilities, infoset_acting_players,
+class FlattenedDomain:
+	def __init__(self, domain_name, action_counts, node_to_infoset, node_types, utilities, infoset_acting_players,
 	             initial_infoset_strategies, reach_probability_of_root_node=None):
 		self.domain_name = domain_name
 		with tf.variable_scope(self.domain_name) as self.domain_scope:
@@ -50,7 +52,7 @@ class Domain:
 			self.initial_infoset_strategies = [
 				tf.placeholder_with_default(
 						input=tf.cast(initial_infoset_strategies[level], dtype=FLOAT_DTYPE),
-						shape=[len(infoset_acting_players[level]), actions_per_levels[level]],
+						shape=[len(infoset_acting_players[level]), self.actions_per_levels[level]],
 						name="initial_infoset_strategies_lvl{}".format(level),
 				)
 				for level in range(self.acting_depth)
@@ -170,31 +172,16 @@ class Domain:
 
 
 if __name__ == '__main__':
-	import src.domains.domain01.domain01_as_numpy_values as d1
-	domain01 = Domain(
-			domain_name="domain01",
-			actions_per_levels=d1.actions_per_levels,
-			node_to_infoset=d1.node_to_infoset,
-			node_types=d1.node_types,
-			utilities=d1.utilities,
-			infoset_acting_players=d1.infoset_acting_players,
-			initial_infoset_strategies=d1.initial_infoset_strategies,
+	import src.domains.flattened_hunger_games.flattened_hunger_games_as_numpy_values as hg
+	hunger_games = FlattenedDomain(
+			domain_name="hunger_games",
+			action_counts=hg.action_counts,
+			node_to_infoset=hg.node_to_infoset,
+			node_types=hg.node_types,
+			utilities=hg.utilities,
+			infoset_acting_players=hg.infoset_acting_players,
+			initial_infoset_strategies=hg.initial_infoset_strategies,
 	)
-	import src.domains.matching_pennies.matching_pennies_as_numpy_values as mp
-	matching_pennies = Domain(
-			domain_name="matching_pennies",
-			actions_per_levels=mp.actions_per_levels,
-			node_to_infoset=mp.node_to_infoset,
-			node_types=mp.node_types,
-			utilities=mp.utilities,
-			infoset_acting_players=mp.infoset_acting_players,
-			initial_infoset_strategies=mp.initial_infoset_strategies,
-	)
-	import os
-	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
-	domain01_gambit = Domain.init_from_gambit_file(domain01_efg)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		domain01.print_domain(sess)
-		matching_pennies.print_domain(sess)
-		domain01_gambit.print_domain(sess)
+		hunger_games.print_domain(sess)

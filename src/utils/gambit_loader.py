@@ -147,9 +147,11 @@ class GambitEFGLoader:
 
 		self.domain_name = ""
 		self.actions_per_levels = []
+		# number of nodes per level starting from level 0
+		self.nodes_per_levels = [1]  # level 0 has always one node
 		self.number_of_levels = 0
 
-		self.terminal_nodes_cnt = 0
+		# self.terminal_nodes_cnt = 0
 
 		with open(efg_file) as self.gambit_file:
 			game_header_line = self.gambit_file.readline()
@@ -161,7 +163,10 @@ class GambitEFGLoader:
 			self.domain_name = game_header['name']
 			print(game_header)
 
-			# self.load()
+			self.load()
+
+			print(self.actions_per_levels)
+			print(self.nodes_per_levels)
 
 		# self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.actions_per_levels) + 1)]
 		#
@@ -190,13 +195,13 @@ class GambitEFGLoader:
 		stack_nodes_lvl = [TreeNode(level=0)]
 
 		for cnt, line in enumerate(self.gambit_file):
-			if self.is_gambit_node(line):
-				node = self.parse_node(line)
+			if Parser.is_gambit_node(line):
+				node = Parser.parse_node(line)
 
 				tree_node = stack_nodes_lvl.pop()
 
 				level = tree_node.level
-				coordinates = tree_node.coordinates
+				# coordinates = tree_node.coordinates
 
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					if len(self.actions_per_levels) < (level + 1):
@@ -204,12 +209,14 @@ class GambitEFGLoader:
 
 					for idx, action in enumerate(reversed(node['actions'])):
 						new_level = level + 1
-						new_coordinates = copy.deepcopy(coordinates)
-						new_coordinates.append(idx)
-						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
+						# new_coordinates = copy.deepcopy(coordinates)
+						# new_coordinates.append(idx)
+						stack_nodes_lvl.append(TreeNode(level=new_level))
 
-					self.actions_per_levels[level] = max(len(node['actions']), self.actions_per_levels[level])
+					self.actions_per_levels[level] += len(node['actions'])
 			self.number_of_levels = len(self.actions_per_levels)
+
+		self.nodes_per_levels.extend(self.actions_per_levels)
 
 	def update_utilities(self, level, coordinates, value):
 		if level == 0:

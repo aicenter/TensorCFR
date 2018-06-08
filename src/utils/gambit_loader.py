@@ -165,8 +165,15 @@ class GambitEFGLoader:
 
 			self.load()
 
-			print(self.actions_per_levels)
-			print(self.nodes_per_levels)
+		print(self.actions_per_levels)
+		print(self.nodes_per_levels)
+
+		self.number_of_levels = len(self.nodes_per_levels)
+
+		self.utilities = [None] * self.number_of_levels
+
+		for level, number_of_nodes in enumerate(self.nodes_per_levels):
+			self.utilities[level] = np.zeros((1, number_of_nodes,))
 
 		# self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.actions_per_levels) + 1)]
 		#
@@ -188,7 +195,8 @@ class GambitEFGLoader:
 
 		# with open(efg_file) as self.gambit_file:
 		# 	self.load_post()
-
+		import pprint
+		pprint.pprint(self.utilities)
 
 	def load(self):
 		# determines the maximum number of actions per level

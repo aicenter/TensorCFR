@@ -246,27 +246,28 @@ class GambitEFGLoader:
 		# a vector of indices to filling vectors
 		self.placement_indices = copy.deepcopy(self.nodes_per_levels)
 		self.placement_indices[0] = 0
-		# stack to safe nodes to visit
+		# stack to safe nodes to visit, init with the root node
 		nodes_stack = [TreeNode(level=0, action_index=0)]
 
 		for cnt, line in enumerate(self.gambit_file):
 			if Parser.is_gambit_node(line):  # TODO try use yield and get rid of this condition
-				node = Parser.parse_node(line)
+				current_node = Parser.parse_node(line)
 				current_tree_node = nodes_stack.pop()
 
 				# node_to_infoset_value = self.infoset_managers[level].add(node)
 				# self.update_node_to_infoset(level, coordinates, node_to_infoset_value)
 
-				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
+				if current_node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					# count the number of actions of the current node
-					node_actions_count = len(node['actions'])
+					actions_count = len(current_node['actions'])
 					# update the index of placement for the next level
-					self.placement_indices[current_tree_node.level+1] -= node_actions_count
+					self.placement_indices[current_tree_node.level+1] -= actions_count
 
-					for action_index, action in enumerate(reversed(node['actions'])):
+					for action_index, action in enumerate(reversed(current_node['actions'])):
 						nodes_stack.append(TreeNode(level=current_tree_node.level+1, action_index=action_index))
 				else:
-					self.update_utilities(current_tree_node.level, current_tree_node.action_index, node['payoffs'][0])
+					# update utilities for a terminal node
+					self.update_utilities(current_tree_node.level, current_tree_node.action_index, current_node['payoffs'][0])
 
 		# for level in range(1, self.number_of_levels):
 		# 	self.node_to_infoset[level] = self.infoset_managers[level].make_node_to_infoset(self.node_to_infoset[level])

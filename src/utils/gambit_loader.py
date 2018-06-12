@@ -32,11 +32,9 @@ class NotImplementedFormatException(Exception):
 
 
 class TreeNode:
-	def __init__(self, level=None, coordinates=None):
-		if coordinates is None:
-			coordinates = []
+	def __init__(self, level=None, action_index=None):
 		self.level = level
-		self.coordinates = coordinates
+		self.action_index = action_index
 
 
 class InformationSetManager:
@@ -169,11 +167,12 @@ class GambitEFGLoader:
 		print(self.nodes_per_levels)
 
 		self.number_of_levels = len(self.nodes_per_levels)
+		self.nodes_indexes = copy.deepcopy(self.nodes_per_levels)
 
 		self.utilities = [None] * self.number_of_levels
 
 		for level, number_of_nodes in enumerate(self.nodes_per_levels):
-			self.utilities[level] = np.zeros((1, number_of_nodes,))
+			self.utilities[level] = [0] * number_of_nodes
 
 		# self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.actions_per_levels) + 1)]
 		#
@@ -193,8 +192,9 @@ class GambitEFGLoader:
 		# 	self.node_types[idx] = np.ones(self.actions_per_levels[:idx], dtype=np.int) * constants.IMAGINARY_NODE
 		# 	self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx], dtype=np.int) * TMP_NODE_TO_INFOSET_IMAGINARY_NODE
 
-		# with open(efg_file) as self.gambit_file:
-		# 	self.load_post()
+		with open(efg_file) as self.gambit_file:
+			self.load_post()
+
 		import pprint
 		pprint.pprint(self.utilities)
 
@@ -205,32 +205,29 @@ class GambitEFGLoader:
 		for cnt, line in enumerate(self.gambit_file):
 			if Parser.is_gambit_node(line):
 				node = Parser.parse_node(line)
-
 				tree_node = stack_nodes_lvl.pop()
 
 				level = tree_node.level
-				# coordinates = tree_node.coordinates
 
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					if len(self.actions_per_levels) < (level + 1):
 						self.actions_per_levels.append(0)
 
-					for idx, action in enumerate(reversed(node['actions'])):
+					for action in node['actions']:
 						new_level = level + 1
-						# new_coordinates = copy.deepcopy(coordinates)
-						# new_coordinates.append(idx)
-						stack_nodes_lvl.append(TreeNode(level=new_level))
+						stack_nodes_lvl.append(
+							TreeNode(
+								level=new_level,
+							)
+						)
 
 					self.actions_per_levels[level] += len(node['actions'])
 			self.number_of_levels = len(self.actions_per_levels)
 
 		self.nodes_per_levels.extend(self.actions_per_levels)
 
-	def update_utilities(self, level, coordinates, value):
-		if level == 0:
-			self.utilities[level] = value
-		else:
-			self.utilities[level][tuple(coordinates)] = value
+	def update_utilities(self, level, action_index, value):
+		self.utilities[level][self.placement_indices[level] + action_index] = value
 
 	def update_node_types(self, level, coordinates, value):
 		if level == 0:
@@ -244,102 +241,44 @@ class GambitEFGLoader:
 		else:
 			self.node_to_infoset[level][tuple(coordinates)] = value
 
+
 	def load_post(self):
-		stack_nodes_lvl = [TreeNode(level=0)]
+		# a vector of indices to filling vectors
+		self.placement_indices = copy.deepcopy(self.nodes_per_levels)
+		self.placement_indices[0] = 0
+		# stack to safe nodes to visit
+		nodes_stack = [TreeNode(level=0, action_index=0)]
 
 		for cnt, line in enumerate(self.gambit_file):
-			if self.is_gambit_node(line):
-				node = self.parse_node(line)
+			if Parser.is_gambit_node(line):  # TODO try use yield and get rid of this condition
+				node = Parser.parse_node(line)
+				current_tree_node = nodes_stack.pop()
 
-				tree_node = stack_nodes_lvl.pop()
+				# node_to_infoset_value = self.infoset_managers[level].add(node)
+				# self.update_node_to_infoset(level, coordinates, node_to_infoset_value)
 
-				level = tree_node.level
-				coordinates = tree_node.coordinates
+				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
+					# count the number of actions of the current node
+					node_actions_count = len(node['actions'])
+					# update the index of placement for the next level
+					self.placement_indices[current_tree_node.level+1] -= node_actions_count
 
-				node_to_infoset_value = self.infoset_managers[level].add(node)
-				self.update_node_to_infoset(level, coordinates, node_to_infoset_value)
-
-				if node['type'] == constants.GAMBIT_NODE_TYPE_CHANCE or node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
-					self.update_node_types(level, coordinates, constants.INNER_NODE)
-
-					for idx, action in enumerate(reversed(node['actions'])):
-						new_level = level + 1
-						new_coordinates = copy.deepcopy(coordinates)
-						new_coordinates.append(idx)
-						stack_nodes_lvl.append(TreeNode(level=new_level, coordinates=new_coordinates))
+					for action_index, action in enumerate(reversed(node['actions'])):
+						nodes_stack.append(TreeNode(level=current_tree_node.level+1, action_index=action_index))
 				else:
-					self.update_utilities(level, coordinates, node['payoffs'][0])
-					self.update_node_types(level, coordinates, constants.TERMINAL_NODE)
+					self.update_utilities(current_tree_node.level, current_tree_node.action_index, node['payoffs'][0])
 
-		for level in range(1, self.number_of_levels):
-			self.node_to_infoset[level] = self.infoset_managers[level].make_node_to_infoset(self.node_to_infoset[level])
-
-		for level in range(self.number_of_levels):
-			[infoset_acting_players_, infoset_strategies] = self.infoset_managers[level].make_infoset_acting_players(
-					self.actions_per_levels[level], self.node_types)
-			self.infoset_acting_players[level] = infoset_acting_players_
-			self.current_infoset_strategies[level] = infoset_strategies
-			self.initial_infoset_strategies[level] = np.array(copy.deepcopy(self.current_infoset_strategies[level]))
-			self.cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
-			self.positive_cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
-
-	def get_tensorflow_tensors(self):
-		current_infoset_strategies_ = [None] * len(self.current_infoset_strategies)
-		initial_infoset_strategies_ = [None] * len(self.initial_infoset_strategies)
-		positive_cumulative_regrets_ = [None] * len(self.positive_cumulative_regrets)
-		cumulative_regrets = [None] * len(self.cumulative_regrets)
-		node_to_infoset_ = [None] * len(self.node_to_infoset)
-		node_types_ = [None] * len(self.node_types)
-		utilities_ = [None] * len(self.utilities)
-		infoset_acting_players_ = [None] * len(self.infoset_acting_players)
-
-		for level in range(self.number_of_levels):
-			current_infoset_strategies_[level] = tf.Variable(
-					self.current_infoset_strategies[level],
-					name='current_infoset_strategies_lvl{}'.format(level),
-					dtype=tf.float32
-			)
-			initial_infoset_strategies_[level] = tf.placeholder_with_default(
-					self.initial_infoset_strategies[level],
-					shape=self.initial_infoset_strategies[level].shape,
-					name='initial_infoset_strategies_lvl{}'.format(level)
-			)
-			positive_cumulative_regrets_[level] = tf.Variable(
-					self.positive_cumulative_regrets[level],
-					name='positive_cumulative_regrets_lvl{}'.format(level),
-					dtype=tf.float32
-			)
-			cumulative_regrets[level] = tf.Variable(
-					self.cumulative_regrets[level],
-					name='cumulative_regrets_lvl{}'.format(level),
-					dtype=tf.float32
-			)
-			node_to_infoset_[level] = tf.Variable(
-					self.node_to_infoset[level],
-					name='node_to_infoset_lvl{}'.format(level),
-					dtype=tf.int32
-			)
-			infoset_acting_players_[level] = tf.Variable(
-					self.infoset_acting_players[level],
-					name='infoset_acting_players_lvl{}'.format(level),
-					dtype=tf.int32
-			)
-
-		for level in range(self.number_of_levels + 1):
-			node_types_[level] = tf.Variable(self.node_types[level], name='node_types_lvl{}'.format(level), dtype=tf.int32)
-			utilities_[level] = tf.Variable(self.utilities[level], name='utilities_lvl{}'.format(level), dtype=tf.float32)
-
-		return_dict = {
-			'current_infoset_strategies' : current_infoset_strategies_,
-			'initial_infoset_strategies' : initial_infoset_strategies_,
-			'positive_cumulative_regrets': positive_cumulative_regrets_,
-			'node_to_infoset'            : node_to_infoset_,
-			'node_types'                 : node_types_,
-			'utilities'                  : utilities_,
-			'infoset_acting_players'     : infoset_acting_players_
-		}
-
-		return return_dict
+		# for level in range(1, self.number_of_levels):
+		# 	self.node_to_infoset[level] = self.infoset_managers[level].make_node_to_infoset(self.node_to_infoset[level])
+		#
+		# for level in range(self.number_of_levels):
+		# 	[infoset_acting_players_, infoset_strategies] = self.infoset_managers[level].make_infoset_acting_players(
+		# 			self.actions_per_levels[level], self.node_types)
+		# 	self.infoset_acting_players[level] = infoset_acting_players_
+		# 	self.current_infoset_strategies[level] = infoset_strategies
+		# 	self.initial_infoset_strategies[level] = np.array(copy.deepcopy(self.current_infoset_strategies[level]))
+		# 	self.cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
+		# 	self.positive_cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
 
 
 if __name__ == '__main__':

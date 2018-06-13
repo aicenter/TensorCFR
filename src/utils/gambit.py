@@ -125,7 +125,7 @@ class Parser:
 			'outcome': parse_line.group('outcome'),
 			'outcome_name': parse_line.group('outcome_name'),
 			'payoffs': payoffs,
-			'tensorcfr_id': int(parse_line.group('player_number')),
+			'tensorcfr_id': int(parse_line.group('player_number')), # TODO smazat, player_number vypada stejne
 			'infoset_id': infoset_id
 		}
 

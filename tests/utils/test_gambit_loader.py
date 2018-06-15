@@ -8,6 +8,7 @@ from src.utils.gambit_loader import GambitLoader
 class TestGambitLoaderDomain01(unittest.TestCase):
 	def setUp(self):
 		domain01 = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc','domain01_via_gambit.efg')
+
 		self.domain = GambitLoader(domain01)
 
 
@@ -38,3 +39,15 @@ class TestGambitLoaderDomain01(unittest.TestCase):
 	def test_utilities_level_3(self):
 		expected_output = [10, 20, 30, 40, 70, 80, 90, 100, 130, 140, 150, 160, 190, 200, 210, 220, 270, 280, 290, 300]
 		np.testing.assert_array_equal(self.domain.utilities[3], expected_output)
+
+	def test_infoset_acting_players_level_0(self):
+		expected_output = [0]
+		np.testing.assert_array_equal(self.domain.infoset_acting_players[0], expected_output)
+
+	def test_infoset_acting_players_level_1(self):
+		expected_output = [1, 2, 2, 0]
+		np.testing.assert_array_equal(self.domain.infoset_acting_players[1], expected_output)
+
+	def test_infoset_acting_players_level_2(self):
+		expected_output = [1, 2, 1, 2, 0, 1, 2]
+		np.testing.assert_array_equal(self.domain.infoset_acting_players[2], expected_output)

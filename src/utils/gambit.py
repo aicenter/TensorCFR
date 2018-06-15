@@ -125,7 +125,7 @@ class Parser:
 			'outcome': parse_line.group('outcome'),
 			'outcome_name': parse_line.group('outcome_name'),
 			'payoffs': payoffs,
-			'tensorcfr_id': int(parse_line.group('player_number')), # TODO smazat, player_number vypada stejne
+			'tensorcfr_id': int(parse_line.group('player_number')), # TODO smazat, v terminalu se pouziva misto player number
 			'infoset_id': infoset_id
 		}
 
@@ -143,6 +143,7 @@ class Parser:
 		return {
 			'type': parse_line.group('type'),
 			'name': parse_line.group('name'),
+			'actions': [],
 			'outcome': parse_line.group('outcome'),
 			'outcome_name': parse_line.group('outcome_name_optional'),
 			'payoffs': payoffs,

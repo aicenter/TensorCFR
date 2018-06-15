@@ -11,19 +11,6 @@ class TestGambitLoaderDomain01(unittest.TestCase):
 
 		self.domain = GambitLoader(domain01)
 
-
-	def test_node_to_infoset_level_0(self):
-		expected_output = [0]
-		np.testing.assert_array_equal(self.domain.node_to_infoset[0], expected_output)
-
-	def test_node_to_infoset_level_1(self):
-		expected_output = [3, 2, 1, 1, 0]
-		np.testing.assert_array_equal(self.domain.node_to_infoset[1], expected_output)
-
-	def test_node_to_infoset_level_2(self):
-		expected_output = [6, 5, 7, 4, 4, 3, 2, 3, 2, 7, 1, 0]
-		np.testing.assert_array_equal(self.domain.node_to_infoset[2], expected_output)
-
 	def test_utilities_level_0(self):
 		expected_output = [0]
 		np.testing.assert_array_equal(self.domain.utilities[0], expected_output)
@@ -73,3 +60,15 @@ class TestGambitLoaderDomain01(unittest.TestCase):
 						   [0.5, 0.5],
 						   [0.,  0.]]
 		np.testing.assert_array_equal(self.domain.initial_infoset_strategies[2], expected_output)
+
+	def test_node_to_infoset_level_0(self):
+		expected_output = [0]
+		np.testing.assert_array_equal(self.domain.node_to_infoset[0], expected_output)
+
+	def test_node_to_infoset_level_1(self):
+		expected_output = [3, 2, 1, 1, 0]
+		np.testing.assert_array_equal(self.domain.node_to_infoset[1], expected_output)
+
+	def test_node_to_infoset_level_2(self):
+		expected_output = [6, 5, 7, 4, 4, 3, 2, 3, 2, 7, 1, 0]
+		np.testing.assert_array_equal(self.domain.node_to_infoset[2], expected_output)

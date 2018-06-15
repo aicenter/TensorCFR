@@ -158,7 +158,7 @@ class InformationSetManager:
 	# 	return tensor
 
 
-class GambitEFGLoader:
+class GambitLoader:
 
 	def __init__(self, efg_file):
 		# check if there is a terminal node in any level
@@ -361,7 +361,7 @@ if __name__ == '__main__':
 		# poker_gbt,
 	]
 
-	domain = GambitEFGLoader(domain01_efg)
+	domain = GambitLoader(domain01_efg)
 
 	for level in [0,1,2,3]:
 		print("LEVEL {}".format(level))

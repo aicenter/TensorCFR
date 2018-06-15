@@ -24,59 +24,52 @@ class InformationSetManager:
 		else:
 			self.__terminal_node_information_set_index = None
 
-		self.infoset_dict = {}
-		self.infoset_node_to_infoset = []
+		self.information_sets = {}
 		self.infoset_acting_players_list = []
-
-		self.cnt_player_nodes = 0
-
-		self.flag_set = False
-		self.flag_imaginary_node_present = False
-		self.flag_terminal_node_present = False
 
 	def add_node(self, node):
 		if node['type'] == constants.GAMBIT_NODE_TYPE_TERMINAL:
 			return self.__terminal_node_information_set_index
 
-		if node['infoset_id'] not in self.infoset_dict:
-			infoset_index = len(self.infoset_dict)
-			self.infoset_dict[node['infoset_id']] = [infoset_index, node['type'], node['tensorcfr_id'],
+		if node['infoset_id'] not in self.information_sets:
+			infoset_index = len(self.information_sets)
+			self.information_sets[node['infoset_id']] = [infoset_index, node['type'], node['tensorcfr_id'],
 													 node, len(node['actions'])] # TODO upravit
 			self.infoset_acting_players_list.insert(0, node['infoset_id'])
 			return infoset_index
 		else:
-			return self.infoset_dict[node['infoset_id']][0]
+			return self.information_sets[node['infoset_id']][0]
 
 	def get_tensors(self, next_level_max_no_actions):
-		infoset_acting_players_ = []
-		current_infoset_strategies_ = []
+		infoset_acting_players = []
+		initial_infoset_strategies = []
 
 		for infoset_id in reversed(self.infoset_acting_players_list):
-			infoset_acting_players_.insert(0, self.infoset_dict[infoset_id][2])
+			infoset_acting_players.insert(0, self.information_sets[infoset_id][2])
 
-			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
+			if self.information_sets[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
 				current_infoset_strategy = [np.nan] * next_level_max_no_actions
 
-				action = [float(1 / (self.infoset_dict[infoset_id][4]))] * len(self.infoset_dict[infoset_id][3]['actions'])
+				action = [float(1 / (self.information_sets[infoset_id][4]))] * len(self.information_sets[infoset_id][3]['actions'])
 
 				for index, action in enumerate(action):
 					current_infoset_strategy[index] = action
 
-				current_infoset_strategies_.append(current_infoset_strategy)
-			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
-				current_infoset_strategy = [np.nan] * next_level_max_no_actions
+				initial_infoset_strategies.append(current_infoset_strategy)
+			elif self.information_sets[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
+				initial_infoset_strategy = [np.nan] * next_level_max_no_actions
 
-				for index, action in enumerate(reversed(self.infoset_dict[infoset_id][3]['actions'])):
-					current_infoset_strategy[index] = action['probability']
+				for index, action in enumerate(reversed(self.information_sets[infoset_id][3]['actions'])):
+					initial_infoset_strategy[index] = action['probability']
 
-				current_infoset_strategies_.append(current_infoset_strategy)
+				initial_infoset_strategies.append(initial_infoset_strategy)
 
 		if self.is_terminal_node_present:
-			current_infoset_strategies_.append([0] * next_level_max_no_actions)
+			initial_infoset_strategies.append([0] * next_level_max_no_actions)
 
 		return [
-			np.asarray(infoset_acting_players_, dtype=constants.INT_DTYPE_NUMPY),
-			np.asarray(current_infoset_strategies_)
+			np.asarray(infoset_acting_players, dtype=constants.INT_DTYPE_NUMPY),
+			np.asarray(initial_infoset_strategies)
 		]
 
 
@@ -115,7 +108,7 @@ class GambitLoader:
 		# init the list of node_to_infoset vectors
 		self.node_to_infoset = [None] * self.number_of_levels
 		# init a list of vectors with number of actions per node
-		self.number_of_actions_of_nodes = [None] * self.number_of_levels
+		self.number_of_nodes_actions = [None] * self.number_of_levels
 
 		self.initial_infoset_strategies = [None] * self.number_of_levels
 
@@ -127,7 +120,7 @@ class GambitLoader:
 			# set initial values for node_to_infoset
 			self.node_to_infoset[level] = [None] * number_of_nodes
 			# set initial values for zeros
-			self.number_of_actions_of_nodes = [0] * number_of_nodes
+			self.number_of_nodes_actions[level] = [0] * number_of_nodes
 
 		self.__infoset_managers = [
 			InformationSetManager(
@@ -185,6 +178,9 @@ class GambitLoader:
 	def __update_node_to_infoset(self, level, action_index, value):
 		self.node_to_infoset[level][self.placement_indices[level] + action_index] = value
 
+	def __update_number_of_nodes_actions(self, level, action_index, value):
+		self.number_of_nodes_actions[level][self.placement_indices[level] + action_index] = value
+
 	def __generate_tensors(self):
 		# a vector of indices to filling vectors
 		self.placement_indices = copy.deepcopy(self.nodes_per_levels)
@@ -206,6 +202,8 @@ class GambitLoader:
 					# update the index of placement for the next level
 					self.placement_indices[current_tree_node.level+1] -= actions_count
 
+					self.__update_number_of_nodes_actions(current_tree_node.level, current_tree_node.action_index, actions_count)
+
 					for action_index, action in enumerate(reversed(current_node['actions'])):
 						nodes_stack.append(TreeNode(level=current_tree_node.level+1, action_index=action_index))
 				else:
@@ -214,7 +212,6 @@ class GambitLoader:
 
 		for level, max_number_of_actions in enumerate(self.max_actions_per_levels):
 			[infoset_acting_players, initial_infoset_strategy] = self.__infoset_managers[level].get_tensors(max_number_of_actions)
-
 			self.infoset_acting_players[level] = infoset_acting_players
 			self.initial_infoset_strategies[level] = initial_infoset_strategy
 
@@ -245,6 +242,12 @@ if __name__ == '__main__':
 	]
 
 	domain = GambitLoader(domain01_efg)
+
+	print("number of actions")
+	print(domain.number_of_nodes_actions[0])
+	print(domain.number_of_nodes_actions[1])
+	print(domain.number_of_nodes_actions[2])
+	print(domain.number_of_nodes_actions[3])
 	#
 	# for level in [0,1,2,3]:
 	# 	print("LEVEL {}".format(level))

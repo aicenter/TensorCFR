@@ -196,7 +196,7 @@ class GambitLoader:
 
 		#
 		# self.node_to_infoset = [None] * self.number_of_levels
-		self.current_infoset_strategies = [None] * self.number_of_levels
+		self.initial_infoset_strategies = [None] * self.number_of_levels
 		# self.initial_infoset_strategies = [None] * self.number_of_levels  # TODO temporary because of TensorCFR.py
 		self.infoset_acting_players = [None] * self.number_of_levels
 
@@ -299,7 +299,7 @@ class GambitLoader:
 			[infoset_acting_players_, infoset_strategies] = self.infoset_managers[level].make_infoset_acting_players(
 				max_action)
 			self.infoset_acting_players[level] = infoset_acting_players_
-			self.current_infoset_strategies[level] = infoset_strategies
+			self.initial_infoset_strategies[level] = infoset_strategies
 		# 	self.initial_infoset_strategies[level] = np.array(copy.deepcopy(self.current_infoset_strategies[level]))
 		# 	self.cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
 		# 	self.positive_cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
@@ -339,16 +339,16 @@ if __name__ == '__main__':
 		if level == 3:
 			print("node_to_infoset")
 			print(domain.node_to_infoset[level])
-			print("current_infoset_strategies")
-			print(domain.current_infoset_strategies[level])
+			print("initial_infoset_strategies")
+			print(domain.initial_infoset_strategies[level])
 		else:
 			print("node_to_infoset")
 			print(domain.node_to_infoset[level])
 			print("infoset_acting_players")
 			print(domain.infoset_acting_players[level])
 			# print(domain.initial_infoset_strategies[level])
-			print("current_infoset_strategies")
-			print(domain.current_infoset_strategies[level])
+			print("initial_infoset_strategies")
+			print(domain.initial_infoset_strategies[level])
 
 	# for gbt_file in gbt_files:
 	# 	domain = GambitEFGLoader(gbt_file)

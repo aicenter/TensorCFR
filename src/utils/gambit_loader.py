@@ -132,20 +132,27 @@ class GambitLoader:
 			self.load()
 
 		self.number_of_levels = len(self.nodes_per_levels)
-		self.nodes_indexes = copy.deepcopy(self.nodes_per_levels)
 
-		# self.nodes_placement = [None] * self.number_of_levels
+		# init the list of utilities
 		self.utilities = [None] * self.number_of_levels
+		# init the list of node_to_infoset vectors
 		self.node_to_infoset = [None] * self.number_of_levels
+		# init a list of vectors with number of actions per node
+		self.number_of_actions_of_nodes = [None] * self.number_of_levels
+
+		self.initial_infoset_strategies = [None] * self.number_of_levels
+
+		self.infoset_acting_players = [None] * self.number_of_levels
 
 		for level, number_of_nodes in enumerate(self.nodes_per_levels):
 			# set initial  utilities to zeros, will  be filled later
 			self.utilities[level] = [0] * number_of_nodes
 			# set initial values for node_to_infoset
 			self.node_to_infoset[level] = [None] * number_of_nodes
+			# set initial values for zeros
+			self.number_of_actions_of_nodes = [0] * number_of_nodes
 
-
-		self.infoset_managers = [
+		self.__infoset_managers = [
 			InformationSetManager(
 				level=level,
 				number_of_information_sets=self.__number_of_information_sets_per_level[level],
@@ -153,13 +160,6 @@ class GambitLoader:
 			)
 			for level in range(len(self.actions_per_levels) + 1)
 		]
-
-		self.initial_infoset_strategies = [None] * self.number_of_levels
-
-		self.infoset_acting_players = [None] * self.number_of_levels
-
-		self.node_types = [None] * (self.number_of_levels + 1)
-
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
@@ -205,12 +205,6 @@ class GambitLoader:
 	def update_utilities(self, level, action_index, value):
 		self.utilities[level][self.placement_indices[level] + action_index] = value
 
-	def update_node_types(self, level, coordinates, value):
-		if level == 0:
-			self.node_types[level] = value
-		else:
-			self.node_types[level][tuple(coordinates)] = value
-
 	def update_node_to_infoset(self, level, action_index, value):
 		self.node_to_infoset[level][self.placement_indices[level] + action_index] = value
 
@@ -226,7 +220,7 @@ class GambitLoader:
 				current_node = Parser.parse_node(line)
 				current_tree_node = nodes_stack.pop()
 
-				node_to_infoset_value = self.infoset_managers[current_tree_node.level].add(current_node)
+				node_to_infoset_value = self.__infoset_managers[current_tree_node.level].add(current_node)
 				self.update_node_to_infoset(current_tree_node.level, current_tree_node.action_index, node_to_infoset_value)
 
 				if current_node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
@@ -242,7 +236,7 @@ class GambitLoader:
 					self.update_utilities(current_tree_node.level, current_tree_node.action_index, current_node['payoffs'][0])
 
 		for level, max_action in enumerate(self.max_actions_per_levels):
-			[infoset_acting_players_, infoset_strategies] = self.infoset_managers[level].make_infoset_acting_players(
+			[infoset_acting_players_, infoset_strategies] = self.__infoset_managers[level].make_infoset_acting_players(
 				max_action)
 			self.infoset_acting_players[level] = infoset_acting_players_
 			self.initial_infoset_strategies[level] = infoset_strategies

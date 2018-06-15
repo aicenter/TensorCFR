@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
-
 import copy
-import os
-import re
-
 import numpy as np
 
 from src.commons import constants
 
 from src.utils.gambit import Parser
 
-
-TMP_NODE_TO_INFOSET_IMAGINARY_NODE = -1
 
 
 class NotAcceptableFormatException(Exception):
@@ -57,24 +51,6 @@ class InformationSetManager:
 		self.flag_set = False
 		self.flag_imaginary_node_present = False
 		self.flag_terminal_node_present = False
-
-	# @staticmethod
-	# def _is_imaginary_node_present(level, node_types_):
-	# 	tensor = node_types_[level]
-	# 	result = tensor[np.where(tensor == constants.IMAGINARY_NODE)]
-	#
-	# 	if result.shape == (0,):
-	# 		return False
-	# 	return True
-	#
-	# @staticmethod
-	# def _is_terminal_node_present(level, node_types_):
-	# 	tensor = node_types_[level]
-	# 	result = tensor[np.where(tensor == constants.TERMINAL_NODE)]
-	#
-	# 	if result.shape == (0,):
-	# 		return False
-	# 	return True
 
 	def add(self, node):
 		if node['type'] == constants.GAMBIT_NODE_TYPE_TERMINAL:
@@ -151,12 +127,6 @@ class InformationSetManager:
 		return [np.asarray(infoset_acting_players_, dtype=constants.INT_DTYPE_NUMPY),
 		        np.asarray(current_infoset_strategies_)]
 
-	# def make_node_to_infoset(self, tensor):
-	# 	tensor[np.where(tensor == TMP_NODE_TO_INFOSET_IMAGINARY_NODE)] = -self.infoset_cnt
-	# 	tensor[np.where(tensor >= 0)] += -(self.infoset_cnt - 1)
-	# 	tensor[np.where(tensor != 0)] *= -1
-	# 	return tensor
-
 
 class GambitLoader:
 
@@ -209,9 +179,11 @@ class GambitLoader:
 		self.node_to_infoset = [None] * self.number_of_levels
 
 		for level, number_of_nodes in enumerate(self.nodes_per_levels):
-			# self.nodes_placement[level] = [None] * number_of_nodes
+			# set initial  utilities to zeros, will  be filled later
 			self.utilities[level] = [0] * number_of_nodes
+			# set initial values for node_to_infoset
 			self.node_to_infoset[level] = [None] * number_of_nodes
+
 
 		self.infoset_managers = [
 			InformationSetManager(
@@ -227,7 +199,8 @@ class GambitLoader:
 		self.current_infoset_strategies = [None] * self.number_of_levels
 		# self.initial_infoset_strategies = [None] * self.number_of_levels  # TODO temporary because of TensorCFR.py
 		self.infoset_acting_players = [None] * self.number_of_levels
-		# self.cumulative_regrets = [None] * self.number_of_levels
+
+
 		# self.positive_cumulative_regrets = [None] * self.number_of_levels
 		#
 		self.node_types = [None] * (self.number_of_levels + 1)
@@ -241,9 +214,6 @@ class GambitLoader:
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
-
-		import pprint
-		pprint.pprint(self.utilities)
 
 	def load(self):
 		lists_of_information_sets_ids_per_level = [dict()]
@@ -299,7 +269,6 @@ class GambitLoader:
 		# a vector of indices to filling vectors
 		self.placement_indices = copy.deepcopy(self.nodes_per_levels)
 		self.placement_indices[0] = 0
-		print(self.placement_indices)
 		# stack to safe nodes to visit, init with the root node
 		nodes_stack = [TreeNode(level=0, action_index=0)]
 
@@ -337,6 +306,7 @@ class GambitLoader:
 
 
 if __name__ == '__main__':
+	import os
 	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
 	mini_goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'mini_goofspiel',
 	                                  'mini_goofspiel_via_gtlibrary.gbt')

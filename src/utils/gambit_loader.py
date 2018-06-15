@@ -63,45 +63,16 @@ class InformationSetManager:
 			self.infoset_acting_players_list.insert(0, node['infoset_id'])
 			return infoset_index
 		else:
-			# self.infoset_dict[node['infoset_id']][4] += len(node['actions'])
 			return self.infoset_dict[node['infoset_id']][0]
-		# # node type due to _is_imaginary_node_present
-		# self.infoset_node_to_infoset.append(node['infoset_id'])
-		#
-		# if node['infoset_id'] not in self.infoset_dict:
-		# 	return_node_to_infoset_value = self.infoset_cnt
-		# 	self.infoset_dict[node['infoset_id']] = [return_node_to_infoset_value, node['type'], node['tensorcfr_id'], node]
-		# 	self.infoset_acting_players_list.insert(0, node['infoset_id'])
-		# 	self.infoset_cnt += 1
-		# 	return return_node_to_infoset_value
-		# else:
-		# 	return_node_to_infoset_value = self.infoset_dict[node['infoset_id']][0]
-		# 	return return_node_to_infoset_value
 
 	def make_infoset_acting_players(self, next_level_max_no_actions):
-		# if self.flag_set is False and self.level > 0:
-		# 	self.flag_imaginary_node_present = self._is_imaginary_node_present(self.level, node_types_)
-		# 	self.flag_set = True
-
 		infoset_acting_players_ = []
 		current_infoset_strategies_ = []
-
-		# if self.flag_imaginary_node_present:
-		# 	self.infoset_dict['imaginary-node'] = [self.infoset_cnt, 'tnode', -1]  # last element - imaginary
-		# 	self.infoset_acting_players_list.append('imaginary-node')
 
 		for infoset_id in reversed(self.infoset_acting_players_list):
 			infoset_acting_players_.insert(0, self.infoset_dict[infoset_id][2])
 
 			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
-				# TODO: @janrudolf Fix here
-				#  This is not the correct way to compute uniform strategies. Normalization is not over all nodes in the next
-				#  level. It is over number of children from the information set (alternatively number of children at each node
-				#  of the information set). But one also needs to keep in mind imaginary node which should not be counted
-				#  towards the normalization sum.
-				#
-				#  Check out the method `get_infoset_uniform_strategies()` located at line 266 of
-				#  `algorithms.tensorcfr.TensorCFR.py`.
 				current_infoset_strategy = [np.nan] * next_level_max_no_actions
 
 				action = [float(1 / (self.infoset_dict[infoset_id][4]))] * len(self.infoset_dict[infoset_id][3]['actions'])
@@ -110,9 +81,6 @@ class InformationSetManager:
 					current_infoset_strategy[index] = action
 
 				current_infoset_strategies_.append(current_infoset_strategy)
-
-			# [np.nan] * next_level_max_no_actions  # TODO This is a hotfix.
-
 			elif self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
 				current_infoset_strategy = [np.nan] * next_level_max_no_actions
 
@@ -124,8 +92,10 @@ class InformationSetManager:
 		if self.is_terminal_node_present:
 			current_infoset_strategies_.append([0] * next_level_max_no_actions)
 
-		return [np.asarray(infoset_acting_players_, dtype=constants.INT_DTYPE_NUMPY),
-		        np.asarray(current_infoset_strategies_)]
+		return [
+			np.asarray(infoset_acting_players_, dtype=constants.INT_DTYPE_NUMPY),
+			np.asarray(current_infoset_strategies_)
+		]
 
 
 class GambitLoader:
@@ -158,18 +128,8 @@ class GambitLoader:
 				raise NotImplementedFormatException
 
 			self.domain_name = game_header['name']
-			print(game_header)
 
 			self.load()
-
-		print(self.actions_per_levels)
-		print(self.nodes_per_levels)
-		print(self.max_actions_per_levels)
-
-		print("Is terminal per level")
-		print(self.__is_terminal_per_level)
-		print("Number of information sets per level")
-		print(self.__number_of_information_sets_per_level)
 
 		self.number_of_levels = len(self.nodes_per_levels)
 		self.nodes_indexes = copy.deepcopy(self.nodes_per_levels)
@@ -194,23 +154,12 @@ class GambitLoader:
 			for level in range(len(self.actions_per_levels) + 1)
 		]
 
-		#
-		# self.node_to_infoset = [None] * self.number_of_levels
 		self.initial_infoset_strategies = [None] * self.number_of_levels
-		# self.initial_infoset_strategies = [None] * self.number_of_levels  # TODO temporary because of TensorCFR.py
+
 		self.infoset_acting_players = [None] * self.number_of_levels
 
-
-		# self.positive_cumulative_regrets = [None] * self.number_of_levels
-		#
 		self.node_types = [None] * (self.number_of_levels + 1)
-		# self.utilities = [None] * (self.number_of_levels + 1)
-		# self.node_to_infoset = [None] * (self.number_of_levels + 1)
-		#
-		# for idx in range(len(self.actions_per_levels) + 1):
-		# 	self.utilities[idx] = np.ones(self.actions_per_levels[:idx]) * constants.NON_TERMINAL_UTILITY
-		# 	self.node_types[idx] = np.ones(self.actions_per_levels[:idx], dtype=np.int) * constants.IMAGINARY_NODE
-		# 	self.node_to_infoset[idx] = np.ones(self.actions_per_levels[:idx], dtype=np.int) * TMP_NODE_TO_INFOSET_IMAGINARY_NODE
+
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
@@ -292,18 +241,11 @@ class GambitLoader:
 					# update utilities for a terminal node
 					self.update_utilities(current_tree_node.level, current_tree_node.action_index, current_node['payoffs'][0])
 
-		# for level in range(1, self.number_of_levels):
-		# 	self.node_to_infoset[level] = self.infoset_managers[level].make_node_to_infoset(self.node_to_infoset[level])
-		print("Number of levels", self.number_of_levels)
 		for level, max_action in enumerate(self.max_actions_per_levels):
 			[infoset_acting_players_, infoset_strategies] = self.infoset_managers[level].make_infoset_acting_players(
 				max_action)
 			self.infoset_acting_players[level] = infoset_acting_players_
 			self.initial_infoset_strategies[level] = infoset_strategies
-		# 	self.initial_infoset_strategies[level] = np.array(copy.deepcopy(self.current_infoset_strategies[level]))
-		# 	self.cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
-		# 	self.positive_cumulative_regrets[level] = np.zeros(infoset_strategies.shape)
-
 
 if __name__ == '__main__':
 	import os

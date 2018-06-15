@@ -51,3 +51,25 @@ class TestGambitLoaderDomain01(unittest.TestCase):
 	def test_infoset_acting_players_level_2(self):
 		expected_output = [1, 2, 1, 2, 0, 1, 2]
 		np.testing.assert_array_equal(self.domain.infoset_acting_players[2], expected_output)
+
+	def test_current_infoset_strategies_level_0(self):
+		expected_output = [[0.5, 0.25, 0.1, 0.1, 0.05]]
+		np.testing.assert_array_equal(self.domain.current_infoset_strategies[0], expected_output)
+
+	def test_current_infoset_strategies_level_1(self):
+		expected_output = [[0.33333333, 0.33333333, 0.33333333],
+						   [0.5, 0.5, np.nan],
+						   [0.5, 0.5, np.nan],
+						   [0.33333333, 0.33333333, 0.33333333]]
+		np.testing.assert_array_almost_equal(self.domain.current_infoset_strategies[1], expected_output, 0.005)
+
+	def test_current_infoset_strategies_level_2(self):
+		expected_output = [[0.5, 0.5],
+						   [0.5, 0.5],
+						   [0.1, 0.9],
+						   [0.5, 0.5],
+						   [0.5, 0.5],
+						   [0.5, 0.5],
+						   [0.5, 0.5],
+						   [0.,  0.]]
+		np.testing.assert_array_equal(self.domain.current_infoset_strategies[2], expected_output)

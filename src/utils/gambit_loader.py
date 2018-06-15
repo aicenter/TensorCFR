@@ -37,8 +37,16 @@ class TreeNode:
 
 
 class InformationSetManager:
-	def __init__(self, level):
+	def __init__(self, level, number_of_information_sets, is_terminal_node_present=False):
 		self.level = level
+		self.number_of_information_sets = number_of_information_sets
+		self.is_terminal_node_present = is_terminal_node_present
+
+		if self.is_terminal_node_present:
+			self.__terminal_node_information_set_index = self.number_of_information_sets
+		else:
+			self.__terminal_node_information_set_index = None
+
 		self.infoset_cnt = 0
 		self.infoset_dict = {}
 		self.infoset_node_to_infoset = []
@@ -70,13 +78,12 @@ class InformationSetManager:
 
 	def add(self, node):
 		if node['type'] == constants.GAMBIT_NODE_TYPE_TERMINAL:
-			self.flag_imaginary_node_present = True
-			return None
+			return self.__terminal_node_information_set_index
 
 		if node['infoset_id'] not in self.infoset_dict:
 			infoset_index = len(self.infoset_dict)
 			self.infoset_dict[node['infoset_id']] = [infoset_index, node['type'], node['tensorcfr_id'],
-													 node, len(node['actions'])]
+													 node, len(node['actions'])] # TODO upravit
 			self.infoset_acting_players_list.insert(0, node['infoset_id'])
 			return infoset_index
 		else:
@@ -107,12 +114,8 @@ class InformationSetManager:
 		# 	self.infoset_dict['imaginary-node'] = [self.infoset_cnt, 'tnode', -1]  # last element - imaginary
 		# 	self.infoset_acting_players_list.append('imaginary-node')
 
-		if self.flag_terminal_node_present:
-			self.infoset_dict['terminal-node'] = [len(self.infoset_cnt), 'tnode', -1]
-			self.infoset_acting_players_list.append('terminal-node')
-
-		for idx, infoset_id in enumerate(reversed(self.infoset_acting_players_list)):
-			infoset_acting_players_.append(self.infoset_dict[infoset_id][2])
+		for infoset_id in reversed(self.infoset_acting_players_list):
+			infoset_acting_players_.insert(0, self.infoset_dict[infoset_id][2])
 
 			if self.infoset_dict[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
 				# TODO: @janrudolf Fix here
@@ -142,6 +145,9 @@ class InformationSetManager:
 
 				current_infoset_strategies_.append(current_infoset_strategy)
 
+		if self.is_terminal_node_present:
+			current_infoset_strategies_.append([0] * next_level_max_no_actions)
+
 		return [np.asarray(infoset_acting_players_, dtype=constants.INT_DTYPE_NUMPY),
 		        np.asarray(current_infoset_strategies_)]
 
@@ -155,6 +161,11 @@ class InformationSetManager:
 class GambitEFGLoader:
 
 	def __init__(self, efg_file):
+		# check if there is a terminal node in any level
+		self.__is_terminal_per_level = [False]
+		# number of information sets per level
+		self.__number_of_information_sets_per_level = [dict()]
+
 		self.gambit_filename = efg_file
 		self.nodes = list()
 		self.number_of_players = 2
@@ -162,6 +173,7 @@ class GambitEFGLoader:
 		self.domain_name = ""
 		self.actions_per_levels = []
 		self.max_actions_per_levels = []
+
 		# number of nodes per level starting from level 0
 		self.nodes_per_levels = [1]  # level 0 has always one node
 		self.number_of_levels = 0
@@ -184,6 +196,11 @@ class GambitEFGLoader:
 		print(self.nodes_per_levels)
 		print(self.max_actions_per_levels)
 
+		print("Is terminal per level")
+		print(self.__is_terminal_per_level)
+		print("Number of information sets per level")
+		print(self.__number_of_information_sets_per_level)
+
 		self.number_of_levels = len(self.nodes_per_levels)
 		self.nodes_indexes = copy.deepcopy(self.nodes_per_levels)
 
@@ -196,7 +213,15 @@ class GambitEFGLoader:
 			self.utilities[level] = [0] * number_of_nodes
 			self.node_to_infoset[level] = [None] * number_of_nodes
 
-		self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.actions_per_levels) + 1)]
+		self.infoset_managers = [
+			InformationSetManager(
+				level=level,
+				number_of_information_sets=self.__number_of_information_sets_per_level[level],
+				is_terminal_node_present=self.__is_terminal_per_level[level]
+			)
+			for level in range(len(self.actions_per_levels) + 1)
+		]
+
 		#
 		# self.node_to_infoset = [None] * self.number_of_levels
 		self.current_infoset_strategies = [None] * self.number_of_levels
@@ -221,6 +246,7 @@ class GambitEFGLoader:
 		pprint.pprint(self.utilities)
 
 	def load(self):
+		lists_of_information_sets_ids_per_level = [dict()]
 		# determines the maximum number of actions per level
 		stack_nodes_lvl = [TreeNode(level=0)]
 
@@ -232,9 +258,13 @@ class GambitEFGLoader:
 				level = tree_node.level
 
 				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
+					lists_of_information_sets_ids_per_level[level][node['infoset_id']] = True
+
 					if len(self.actions_per_levels) < (level + 1):
 						self.actions_per_levels.append(0)
 						self.max_actions_per_levels.append(0)
+						self.__is_terminal_per_level.append(False)
+						lists_of_information_sets_ids_per_level.append(dict())
 
 					for action in node['actions']:
 						new_level = level + 1
@@ -246,9 +276,12 @@ class GambitEFGLoader:
 
 					self.actions_per_levels[level] += len(node['actions'])
 					self.max_actions_per_levels[level] = max(len(node['actions']), self.max_actions_per_levels[level])
+				else:
+					self.__is_terminal_per_level[level] = True
 			self.number_of_levels = len(self.actions_per_levels)
 
 		self.nodes_per_levels.extend(self.actions_per_levels)
+		self.__number_of_information_sets_per_level = [len(information_sets) for information_sets in lists_of_information_sets_ids_per_level]
 
 	def update_utilities(self, level, action_index, value):
 		self.utilities[level][self.placement_indices[level] + action_index] = value
@@ -266,6 +299,7 @@ class GambitEFGLoader:
 		# a vector of indices to filling vectors
 		self.placement_indices = copy.deepcopy(self.nodes_per_levels)
 		self.placement_indices[0] = 0
+		print(self.placement_indices)
 		# stack to safe nodes to visit, init with the root node
 		nodes_stack = [TreeNode(level=0, action_index=0)]
 
@@ -329,15 +363,22 @@ if __name__ == '__main__':
 
 	domain = GambitEFGLoader(domain01_efg)
 
-	for level in [0,1,2]:
+	for level in [0,1,2,3]:
 		print("LEVEL {}".format(level))
-		print("node_to_infoset")
-		print(domain.node_to_infoset[level])
-		print("infoset_acting_players")
-		print(domain.infoset_acting_players[level])
-		# print(domain.initial_infoset_strategies[level])
-		print("current_infoset_strategies")
-		print(domain.current_infoset_strategies[level])
+
+		if level == 3:
+			print("node_to_infoset")
+			print(domain.node_to_infoset[level])
+			print("current_infoset_strategies")
+			print(domain.current_infoset_strategies[level])
+		else:
+			print("node_to_infoset")
+			print(domain.node_to_infoset[level])
+			print("infoset_acting_players")
+			print(domain.infoset_acting_players[level])
+			# print(domain.initial_infoset_strategies[level])
+			print("current_infoset_strategies")
+			print(domain.current_infoset_strategies[level])
 
 	# for gbt_file in gbt_files:
 	# 	domain = GambitEFGLoader(gbt_file)

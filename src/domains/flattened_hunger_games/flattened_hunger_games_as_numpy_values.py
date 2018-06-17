@@ -39,7 +39,7 @@ utilities[1] = [NON_TERMINAL_UTILITY] * 2
 infoset_acting_players[1] = [PLAYER2, PLAYER2]
 initial_infoset_strategies[1] = [
 	[1.0, IMAGINARY_PROBABILITIES, IMAGINARY_PROBABILITIES, IMAGINARY_PROBABILITIES, IMAGINARY_PROBABILITIES,
-	 IMAGINARY_PROBABILITIES],
+	 IMAGINARY_PROBABILITIES],  # TODO assign infoset strategies by action counts
 	[0.1, 0.1, 0.1, 0.0, 0.2, 0.5]
 ]
 
@@ -50,11 +50,9 @@ node_types[2] = [
 	[TERMINAL_NODE, TERMINAL_NODE, TERMINAL_NODE, TERMINAL_NODE, TERMINAL_NODE, TERMINAL_NODE]
 ]
 utilities[2] = [NON_TERMINAL_UTILITY, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]
-infoset_acting_players[2] = [PLAYER1, NO_ACTING_PLAYER, NO_ACTING_PLAYER]
+infoset_acting_players[2] = [PLAYER1]
 initial_infoset_strategies[2] = [
-	[0.1, 0.2, 0.0, 0.7],
-	[np.nan] * 4,
-	[np.nan] * 4
+	[0.1, 0.2, 0.0, 0.7]
 ]
 
 ########## Level 3 ##########
@@ -78,11 +76,10 @@ node_types[3] = [
 	]
 ]
 utilities[3] = [NON_TERMINAL_UTILITY] * 4
-infoset_acting_players[3] = [PLAYER2, PLAYER2, NO_ACTING_PLAYER]
+infoset_acting_players[3] = [PLAYER2, PLAYER2]
 initial_infoset_strategies[3] = [
 	[0.1, 0.0, 0.9],
-	[0.2, 0.8, IMAGINARY_PROBABILITIES],
-	[np.nan] * 3
+	[0.2, 0.8, IMAGINARY_PROBABILITIES]  # TODO assign infoset strategies by action counts
 ]
 
 ########## Level 4 ##########
@@ -176,8 +173,7 @@ infoset_acting_players[4] = [
 	PLAYER1,
 	PLAYER1,
 	PLAYER1,
-	PLAYER1,
-	NO_ACTING_PLAYER,
+	PLAYER1
 ]
 initial_infoset_strategies[4] = [
 	[0.1, 0.9],
@@ -189,8 +185,7 @@ initial_infoset_strategies[4] = [
 	[0.7, 0.3],
 	[0.8, 0.2],
 	[0.9, 0.1],
-	[1.0, 0.0],
-	[np.nan] * 2,
+	[1.0, 0.0]
 ]
 
 ########## Level 5 ##########

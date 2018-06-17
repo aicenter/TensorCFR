@@ -83,7 +83,7 @@ initial_infoset_strategies[3] = [
 ]
 
 ########## Level 4 ##########
-node_to_infoset[4] = [0, 1,  2, 3, 4,  5, 6, 7, 8, 9]
+node_to_infoset[4] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 node_types[4] = [
 	[
 		[

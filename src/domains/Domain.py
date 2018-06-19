@@ -22,7 +22,7 @@ class Domain:
 			self.node_to_infoset = [
 				tf.get_variable(
 						"node_to_infoset_lvl{}".format(level),
-						initializer=node_to_infoset[level],
+						initializer=tf.cast(node_to_infoset[level], dtype=INT_DTYPE),
 						dtype=INT_DTYPE,
 				)
 				for level in range(self.acting_depth)
@@ -30,7 +30,7 @@ class Domain:
 			self.node_types = [
 				tf.get_variable(
 						"node_types_lvl{}".format(level),
-						initializer=node_types[level],
+						initializer=tf.cast(node_types[level], dtype=INT_DTYPE),
 						dtype=INT_DTYPE,
 				)
 				for level in range(self.levels)
@@ -45,7 +45,7 @@ class Domain:
 			self.infoset_acting_players = [
 				tf.get_variable(
 						"infoset_acting_players_lvl{}".format(level),
-						initializer=infoset_acting_players[level],
+						initializer=tf.cast(infoset_acting_players[level], dtype=INT_DTYPE),
 						dtype=INT_DTYPE,
 				)
 				for level in range(self.acting_depth)

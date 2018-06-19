@@ -143,20 +143,3 @@ class Parser:
 			0] == constants.GAMBIT_NODE_TYPE_TERMINAL:
 			return True
 		return False
-
-if __name__ == "__main__":
-	import os
-
-
-	domain01_path = os.path.join(
-		os.path.dirname(os.path.abspath(__file__)),
-		'..',
-		'..',
-		'doc',
-		'domain01_via_gambit.efg'
-	)
-
-	with open(domain01_path) as f:
-		for line_number, line in enumerate(f):
-			print(Parser.parse_node(line))
-

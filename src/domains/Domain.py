@@ -11,7 +11,7 @@ class Domain:
 	def __init__(self, domain_name, actions_per_levels, node_to_infoset, node_types, utilities, infoset_acting_players,
 	             initial_infoset_strategies, reach_probability_of_root_node=None):
 		self.domain_name = domain_name
-		with tf.variable_scope(self.domain_name) as self.domain_scope:
+		with tf.variable_scope(self.domain_name, reuse=tf.AUTO_REUSE) as self.domain_scope:
 			# tensors on tree dimensions
 			self.actions_per_levels = actions_per_levels    # maximum number of actions per each level
 			self.levels = len(self.actions_per_levels) + 1  # accounting for 0th level

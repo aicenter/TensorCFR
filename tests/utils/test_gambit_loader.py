@@ -2,7 +2,7 @@ import unittest
 import os
 import numpy as np
 
-from src.utils.gambit_loader import GambitLoader
+from src.utils.gambit import GambitLoader
 
 
 class TestGambitLoaderDomain01(unittest.TestCase):

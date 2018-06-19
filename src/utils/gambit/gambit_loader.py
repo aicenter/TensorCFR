@@ -2,11 +2,10 @@
 import os
 import copy
 import numpy as np
-import tracemalloc
 
 from src.commons import constants
 
-from src.utils.gambit import Parser
+from .gambit import Parser
 
 
 class TreeNode:
@@ -173,6 +172,8 @@ class GambitLoader:
 		self.nodes_per_levels.extend(self.actions_per_levels)
 		self.__number_of_information_sets_per_level = [len(information_sets) for information_sets in lists_of_information_sets_ids_per_level]
 
+		file.seek(0)
+
 	def __update_utilities(self, level, action_index, value):
 		self.utilities[level][self.__placement_indices[level] + action_index] = value
 
@@ -217,17 +218,19 @@ class GambitLoader:
 			self.initial_infoset_strategies[level] = initial_infoset_strategy
 
 if __name__ == '__main__':
-	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
-	mini_goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'mini_goofspiel',
+	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'domain01_via_gambit.efg')
+
+	mini_goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'mini_goofspiel',
 	                                  'mini_goofspiel_via_gtlibrary.gbt')
 	# noinspection SpellCheckingInspection
-	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'goofspiel',
+	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'goofspiel',
 	                             'IIGS5_s1_bf_ft.gbt')
 	poker_gbt = os.path.join(
 		os.path.dirname(
 			os.path.abspath(
 				__file__)
 		),
+		'..',
 		'..',
 		'..',
 		'doc',
@@ -242,6 +245,7 @@ if __name__ == '__main__':
 		),
 		'..',
 		'..',
+		'..',
 		'doc',
 		'phantom_ttt',
 		'phantom_ttt.efg'
@@ -254,22 +258,17 @@ if __name__ == '__main__':
 		# poker_gbt,
 	]
 
-	tracemalloc.start()
 
-	domain = GambitLoader(phantom_ttt_efg)
+
+	domain = GambitLoader(domain01_efg)
+
+	print("utilities")
+	print(domain.utilities[0])
+	print(domain.utilities[1])
+	print(domain.utilities[2])
+	print(domain.utilities[3])
 
 	print(domain.number_of_levels)
-
-	snapshot = tracemalloc.take_snapshot()
-	top_stats = snapshot.statistics('traceback')
-
-	# pick the biggest memory block
-	stat = top_stats[0]
-	print("%s memory blocks: %.1f KiB" % (stat.count, stat.size / 1024))
-	for line in stat.traceback.format():
-		print(line)
-
-
 
 	#
 	# for level in [0,1,2,3]:

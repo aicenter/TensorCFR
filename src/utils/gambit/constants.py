@@ -1,0 +1,12 @@
+import tensorflow as tf
+import numpy as np
+
+
+GAMBIT_NODE_TYPE_TERMINAL = 't'
+GAMBIT_NODE_TYPE_CHANCE = 'c'
+GAMBIT_NODE_TYPE_PLAYER = 'p'
+
+INT_DTYPE_NUMPY = np.int32
+INT_DTYPE = tf.as_dtype(INT_DTYPE_NUMPY)
+FLOAT_DTYPE = tf.float32
+IMAGINARY_PROBABILITIES = 0.0

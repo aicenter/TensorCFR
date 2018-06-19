@@ -2,21 +2,7 @@ import re
 
 from src.commons import constants
 
-
-class NotAcceptableFormatException(Exception):
-	pass
-
-
-class NotRecognizedPlayersException(Exception):
-	pass
-
-
-class NotRecognizedTreeNodeException(Exception):
-	pass
-
-
-class NotImplementedFormatException(Exception):
-	pass
+from .exceptions import NotAcceptableFormatException, NotRecognizedPlayersException, NotRecognizedTreeNodeException, NotImplementedFormatException
 
 
 class Parser:

@@ -2,6 +2,7 @@
 import os
 import copy
 import numpy as np
+import tracemalloc
 
 from src.commons import constants
 
@@ -77,8 +78,7 @@ class InformationSetManager:
 class GambitLoader:
 
 	def __init__(self, file):
-		if not os.path.isfile(file):
-			return -1
+		# if not os.path.isfile(file
 
 		# check if there is a terminal node in any level
 		self.__is_terminal_per_level = [False]
@@ -101,7 +101,7 @@ class GambitLoader:
 
 			self.domain_name = game_header['name']
 
-			self.__load_meta_information()
+			self.__load_meta_information(f)
 
 			self.number_of_levels = len(self.nodes_per_levels)
 
@@ -232,8 +232,21 @@ if __name__ == '__main__':
 		'..',
 		'doc',
 		'poker',
-		'GP_cards2x2_122.gbt'
+		'GP_cards4x3_224.gbt'
 	)
+
+	phantom_ttt_efg = os.path.join(
+		os.path.dirname(
+			os.path.abspath(
+				__file__)
+		),
+		'..',
+		'..',
+		'doc',
+		'phantom_ttt',
+		'phantom_ttt.efg'
+	)
+
 	gbt_files = [
 		domain01_efg,
 		# mini_goofspiel_gbt,
@@ -241,13 +254,23 @@ if __name__ == '__main__':
 		# poker_gbt,
 	]
 
-	domain = GambitLoader(domain01_efg)
+	tracemalloc.start()
 
-	print("number of actions")
-	print(domain.number_of_nodes_actions[0])
-	print(domain.number_of_nodes_actions[1])
-	print(domain.number_of_nodes_actions[2])
-	print(domain.number_of_nodes_actions[3])
+	domain = GambitLoader(phantom_ttt_efg)
+
+	print(domain.number_of_levels)
+
+	snapshot = tracemalloc.take_snapshot()
+	top_stats = snapshot.statistics('traceback')
+
+	# pick the biggest memory block
+	stat = top_stats[0]
+	print("%s memory blocks: %.1f KiB" % (stat.count, stat.size / 1024))
+	for line in stat.traceback.format():
+		print(line)
+
+
+
 	#
 	# for level in [0,1,2,3]:
 	# 	print("LEVEL {}".format(level))

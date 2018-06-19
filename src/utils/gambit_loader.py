@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import copy
 import numpy as np
 
@@ -75,13 +76,15 @@ class InformationSetManager:
 
 class GambitLoader:
 
-	def __init__(self, efg_file):
+	def __init__(self, file):
+		if not os.path.isfile(file):
+			return -1
+
 		# check if there is a terminal node in any level
 		self.__is_terminal_per_level = [False]
 		# number of information sets per level
 		self.__number_of_information_sets_per_level = [dict()]
 
-		self.gambit_filename = efg_file
 		self.number_of_players = 2
 
 		self.domain_name = ""
@@ -93,53 +96,51 @@ class GambitLoader:
 		self.number_of_levels = 0
 
 
-		with open(efg_file) as self.gambit_file:
-			game_header_line = self.gambit_file.readline()
-			game_header = Parser.parse_header(game_header_line)
+		with open(file) as f:
+			game_header = Parser.parse_header(f.readline())
 
 			self.domain_name = game_header['name']
 
 			self.__load_meta_information()
 
-		self.number_of_levels = len(self.nodes_per_levels)
+			self.number_of_levels = len(self.nodes_per_levels)
 
-		# init the list of utilities
-		self.utilities = [None] * self.number_of_levels
-		# init the list of node_to_infoset vectors
-		self.node_to_infoset = [None] * self.number_of_levels
-		# init a list of vectors with number of actions per node
-		self.number_of_nodes_actions = [None] * self.number_of_levels
+			# init the list of utilities
+			self.utilities = [None] * self.number_of_levels
+			# init the list of node_to_infoset vectors
+			self.node_to_infoset = [None] * self.number_of_levels
+			# init a list of vectors with number of actions per node
+			self.number_of_nodes_actions = [None] * self.number_of_levels
 
-		self.initial_infoset_strategies = [None] * self.number_of_levels
+			self.initial_infoset_strategies = [None] * self.number_of_levels
 
-		self.infoset_acting_players = [None] * self.number_of_levels
+			self.infoset_acting_players = [None] * self.number_of_levels
 
-		for level, number_of_nodes in enumerate(self.nodes_per_levels):
-			# set initial  utilities to zeros, will  be filled later
-			self.utilities[level] = [0] * number_of_nodes
-			# set initial values for node_to_infoset
-			self.node_to_infoset[level] = [None] * number_of_nodes
-			# set initial values for zeros
-			self.number_of_nodes_actions[level] = [0] * number_of_nodes
+			for level, number_of_nodes in enumerate(self.nodes_per_levels):
+				# set initial  utilities to zeros, will  be filled later
+				self.utilities[level] = [0] * number_of_nodes
+				# set initial values for node_to_infoset
+				self.node_to_infoset[level] = [None] * number_of_nodes
+				# set initial values for zeros
+				self.number_of_nodes_actions[level] = [0] * number_of_nodes
 
-		self.__infoset_managers = [
-			InformationSetManager(
-				level=level,
-				number_of_information_sets=self.__number_of_information_sets_per_level[level],
-				is_terminal_node_present=self.__is_terminal_per_level[level]
-			)
-			for level in range(len(self.actions_per_levels) + 1)
-		]
+			self.__infoset_managers = [
+				InformationSetManager(
+					level=level,
+					number_of_information_sets=self.__number_of_information_sets_per_level[level],
+					is_terminal_node_present=self.__is_terminal_per_level[level]
+				)
+				for level in range(len(self.actions_per_levels) + 1)
+			]
 
-		with open(efg_file) as self.gambit_file:
-			self.__generate_tensors()
+			self.__generate_tensors(f)
 
-	def __load_meta_information(self):
+	def __load_meta_information(self, file):
 		lists_of_information_sets_ids_per_level = [dict()]
 		# determines the maximum number of actions per level
 		stack_nodes_lvl = [TreeNode(level=0)]
 
-		for cnt, line in enumerate(self.gambit_file):
+		for line in file:
 			if Parser.is_gambit_node(line):
 				node = Parser.parse_node(line)
 				tree_node = stack_nodes_lvl.pop()
@@ -155,7 +156,7 @@ class GambitLoader:
 						self.__is_terminal_per_level.append(False)
 						lists_of_information_sets_ids_per_level.append(dict())
 
-					for action in node['actions']:
+					for dummy in node['actions']:
 						new_level = level + 1
 						stack_nodes_lvl.append(
 							TreeNode(
@@ -173,22 +174,22 @@ class GambitLoader:
 		self.__number_of_information_sets_per_level = [len(information_sets) for information_sets in lists_of_information_sets_ids_per_level]
 
 	def __update_utilities(self, level, action_index, value):
-		self.utilities[level][self.placement_indices[level] + action_index] = value
+		self.utilities[level][self.__placement_indices[level] + action_index] = value
 
 	def __update_node_to_infoset(self, level, action_index, value):
-		self.node_to_infoset[level][self.placement_indices[level] + action_index] = value
+		self.node_to_infoset[level][self.__placement_indices[level] + action_index] = value
 
 	def __update_number_of_nodes_actions(self, level, action_index, value):
-		self.number_of_nodes_actions[level][self.placement_indices[level] + action_index] = value
+		self.number_of_nodes_actions[level][self.__placement_indices[level] + action_index] = value
 
-	def __generate_tensors(self):
+	def __generate_tensors(self, file):
 		# a vector of indices to filling vectors
-		self.placement_indices = copy.deepcopy(self.nodes_per_levels)
-		self.placement_indices[0] = 0
+		self.__placement_indices = copy.deepcopy(self.nodes_per_levels)
+		self.__placement_indices[0] = 0
 		# stack to safe nodes to visit, init with the root node
 		nodes_stack = [TreeNode(level=0, action_index=0)]
 
-		for line in self.gambit_file:
+		for line in file:
 			if Parser.is_gambit_node(line):  # TODO try use yield and get rid of this condition
 				current_node = Parser.parse_node(line)
 				current_tree_node = nodes_stack.pop()
@@ -200,7 +201,7 @@ class GambitLoader:
 					# count the number of actions of the current node
 					actions_count = len(current_node['actions'])
 					# update the index of placement for the next level
-					self.placement_indices[current_tree_node.level+1] -= actions_count
+					self.__placement_indices[current_tree_node.level+1] -= actions_count
 
 					self.__update_number_of_nodes_actions(current_tree_node.level, current_tree_node.action_index, actions_count)
 
@@ -216,7 +217,6 @@ class GambitLoader:
 			self.initial_infoset_strategies[level] = initial_infoset_strategy
 
 if __name__ == '__main__':
-	import os
 	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'domain01_via_gambit.efg')
 	mini_goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc', 'mini_goofspiel',
 	                                  'mini_goofspiel_via_gtlibrary.gbt')

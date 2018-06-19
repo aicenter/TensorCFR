@@ -20,11 +20,19 @@ class Domain:
 
 			# tensors on tree definition
 			self.node_to_infoset = [
-				tf.get_variable("node_to_infoset_lvl{}".format(level), initializer=node_to_infoset[level])
+				tf.get_variable(
+						"node_to_infoset_lvl{}".format(level),
+						initializer=node_to_infoset[level],
+						dtype=INT_DTYPE,
+				)
 				for level in range(self.acting_depth)
 			]
 			self.node_types = [
-				tf.get_variable("node_types_lvl{}".format(level), initializer=node_types[level])
+				tf.get_variable(
+						"node_types_lvl{}".format(level),
+						initializer=node_types[level],
+						dtype=INT_DTYPE,
+				)
 				for level in range(self.levels)
 			]
 			self.utilities = [
@@ -35,7 +43,11 @@ class Domain:
 				for level in range(self.levels)
 			]
 			self.infoset_acting_players = [
-				tf.get_variable("infoset_acting_players_lvl{}".format(level), initializer=infoset_acting_players[level])
+				tf.get_variable(
+						"infoset_acting_players_lvl{}".format(level),
+						initializer=infoset_acting_players[level],
+						dtype=INT_DTYPE,
+				)
 				for level in range(self.acting_depth)
 			]
 

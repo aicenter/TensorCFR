@@ -33,7 +33,7 @@ def get_parents_from_action_counts(action_counts):
 	leftmost_child = [
 		tf.cumsum(
 				action_counts[level],
-				exclusive=True,
+				exclusive=False,
 				name="leftmost_child_lvl{}".format(level)
 		)
 		for level in range(len(action_counts))

@@ -38,9 +38,9 @@ def get_parents_from_action_counts(action_counts):
 		)
 		for level in range(len(action_counts))
 	]
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		print_tensors(sess, leftmost_child)
+	with tf.Session() as tmp_sess:
+		tmp_sess.run(tf.global_variables_initializer())
+		print_tensors(tmp_sess, leftmost_child)
 
 	return parents
 

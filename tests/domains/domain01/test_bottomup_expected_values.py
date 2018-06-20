@@ -63,3 +63,7 @@ class TestBottomUpExpectedValues(tf.test.TestCase):
 			tensorcfr = TensorCFR(self.domain01)
 			expected_values = sess.run(tensorcfr.get_expected_values())
 			self.assertNDArrayNear(expected_values[3], expected_output, SMALL_ERROR_TOLERANCE)
+
+
+if __name__ == "__main__":
+	tf.test.main()

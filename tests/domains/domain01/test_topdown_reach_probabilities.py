@@ -65,5 +65,6 @@ class TestTopDownReachProbabilities(tf.test.TestCase):
 			reach_probabilities = sess.run(tensorcfr.get_nodal_reach_probabilities())
 			self.assertNDArrayNear(reach_probabilities[3], expected_output, self.error_tolerance)
 
+
 if __name__ == "__main__":
 	tf.test.main()

@@ -5,21 +5,9 @@ import tensorflow as tf
 import numpy as np
 
 from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE
+from src.utils.parents_from_action_counts import get_parents_from_action_counts
 from src.utils.tensor_utils import print_tensors
 from src.utils.gambit_efg_loader import GambitEFGLoader
-
-
-# TODO move to `utils`
-def get_parents_from_action_counts(action_counts):
-	# TODO add final level!
-	parents = [
-		tf.zeros_like(
-				action_counts[level],
-				name="parents_lvl{}".format(level)
-		)
-		for level in range(len(action_counts))
-	]
-	return parents
 
 
 class FlattenedDomain:

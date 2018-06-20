@@ -19,13 +19,12 @@ def get_parents_from_action_counts(action_counts):
 	from pprint import pprint
 	print("sizes:")
 	pprint(sizes, indent=1, width=50)
-	# TODO add final level!
 	parents = [
-		tf.zeros_like(
-				action_counts[level],
-				name="parents_lvl{}".format(level)
+		tf.zeros(
+				shape=[sizes[level]],
+				name="parents_lvl{}".format(level),
 		)
-		for level in range(len(action_counts))
+		for level in range(len(sizes))
 	]
 	return parents
 

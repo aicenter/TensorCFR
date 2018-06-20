@@ -15,10 +15,13 @@ def get_parents_from_action_counts(action_counts):
     A corresponding TensorFlow operation (from the computation graph) that contain the index to each node's parent
      (in the level above).
   """
-	sizes = [1] + list(map(np.sum, action_counts))   # the 1st size is `1` because there's only 1 root
 	from pprint import pprint
+	from src.utils.tensor_utils import print_tensors
+
+	sizes = [1] + list(map(np.sum, action_counts))   # the 1st size is `1` because there's only 1 root
 	print("sizes:")
 	pprint(sizes, indent=1, width=50)
+
 	parents = [
 		tf.zeros(
 				shape=[sizes[level]],
@@ -26,6 +29,19 @@ def get_parents_from_action_counts(action_counts):
 		)
 		for level in range(len(sizes))
 	]
+
+	leftmost_child = [
+		tf.cumsum(
+				action_counts[level],
+				exclusive=True,
+				name="leftmost_child_lvl{}".format(level)
+		)
+		for level in range(len(action_counts))
+	]
+	with tf.Session() as sess:
+		sess.run(tf.global_variables_initializer())
+		print_tensors(sess, leftmost_child)
+
 	return parents
 
 

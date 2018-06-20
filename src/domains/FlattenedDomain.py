@@ -9,6 +9,19 @@ from src.utils.tensor_utils import print_tensors
 from src.utils.gambit_efg_loader import GambitEFGLoader
 
 
+# TODO move to `utils`
+def get_parents_from_action_counts(action_counts):
+	# TODO add final level!
+	parents = [
+		tf.zeros_like(
+				action_counts[level],
+				name="parents_lvl{}".format(level)
+		)
+		for level in range(len(action_counts))
+	]
+	return parents
+
+
 class FlattenedDomain:
 	def __init__(self, domain_name, action_counts, node_to_infoset, node_types, utilities, infoset_acting_players,
 	             initial_infoset_strategies, reach_probability_of_root_node=None):
@@ -23,6 +36,7 @@ class FlattenedDomain:
 				for level in range(self.acting_depth)
 			]    # maximum number of actions per each level
 			self.shape = [self.max_actions_per_levels[:i] for i in range(self.levels)]
+			self.parents = get_parents_from_action_counts(self.action_counts)
 
 			# tensors on tree definition
 			self.node_to_infoset = [
@@ -159,6 +173,8 @@ class FlattenedDomain:
 		pprint(self.action_counts, indent=1, width=50)
 		print("max_actions_per_level:")
 		pprint(self.max_actions_per_levels, indent=1, width=4)
+		print("parents:")
+		print_tensors(session, self.parents)
 		print("levels: ", self.levels)
 		print("acting_depth: ", self.acting_depth)
 		print("shape:")

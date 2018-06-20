@@ -24,3 +24,7 @@ def get_parents_from_action_counts(action_counts):
 		for level in range(len(action_counts))
 	]
 	return parents
+
+
+if __name__ == '__main__':
+	pass

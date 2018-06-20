@@ -143,3 +143,63 @@ class Parser:
 			0] == constants.GAMBIT_NODE_TYPE_TERMINAL:
 			return True
 		return False
+
+
+class Parser2:
+	def __init__(self, file):
+		print("__init__")
+		self.__gambit_file = open(file)
+
+		print("Parser2 hello world")
+		line = self.__gambit_file.readline()
+
+		if line.startswith('<'):
+			flag_is_efg_file = False
+			for line in self.__gambit_file:
+				if line.strip() == "<efgfile>":
+					flag_is_efg_file = True
+					break
+			if not flag_is_efg_file:
+				raise NotImplementedFormatException()
+		elif len(line) > 3 and line[0:3] == "EFG":
+			pass
+		elif len(line) > 3 and 	line[0:3] == "NFG":
+			raise NotImplementedFormatException()
+		else:
+			raise NotImplementedError()
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_val, exc_tb):
+		self.__gambit_file.close()
+		return False
+
+	def __parse_header(self, header):
+		print("parse_header")
+		print(header)
+
+	def next_node(self):
+		for line in self.__gambit_file:
+			if line.strip() == "</efgfile>":
+				break
+			elif not (line.startswith('t') or line.startswith('p') or line.startswith('c')):
+				continue
+			else:
+				yield Parser.parse_node(line.strip())
+
+
+if __name__ == "__main__":
+	# p = Parser2("/home/ruda/Desktop/pokus_gambit.gbt")
+	# print("next_node")
+	#
+	# for line in p.next_node():
+	# 	print(line)
+
+	gbt_desktop = "/home/ruda/Desktop/pokus_gambit.gbt"
+	efg_domain01 = "/home/ruda/Documents/Projects/tensorcfr/TensorCFR/doc/domain01_via_gambit.efg"
+
+	with Parser2(efg_domain01) as p:
+		for line in p.next_node():
+			print("in for line ")
+			print(line)

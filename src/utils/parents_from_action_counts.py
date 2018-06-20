@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import numpy as np
 import tensorflow as tf
 
 
@@ -14,6 +15,10 @@ def get_parents_from_action_counts(action_counts):
     A corresponding TensorFlow operation (from the computation graph) that contain the index to each node's parent
      (in the level above).
   """
+	sizes = [1] + list(map(np.sum, action_counts))   # the 1st size is `1` because there's only 1 root
+	from pprint import pprint
+	print("sizes:")
+	pprint(sizes, indent=1, width=50)
 	# TODO add final level!
 	parents = [
 		tf.zeros_like(

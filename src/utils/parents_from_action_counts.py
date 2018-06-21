@@ -99,7 +99,7 @@ if __name__ == '__main__':
 	from pprint import pprint
 	from src.utils.tensor_utils import print_tensors
 	print("action_counts:")
-	pprint(action_counts, indent=1, width=50)
+	pprint(action_counts, indent=1, width=80)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print_tensors(sess, parents_)

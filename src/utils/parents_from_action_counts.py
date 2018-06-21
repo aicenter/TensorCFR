@@ -3,8 +3,9 @@ import numpy as np
 import tensorflow as tf
 
 
-# TODO move to `utils`
 from src.commons.constants import INT_DTYPE
+from pprint import pprint
+from src.utils.tensor_utils import print_tensors, print_tensor, scatter_nd_sum
 
 
 def get_parents_from_action_counts(action_counts):
@@ -18,8 +19,6 @@ def get_parents_from_action_counts(action_counts):
     A corresponding TensorFlow operation (from the computation graph) that contain the index to each node's parent
      (in the level above).
   """
-	from pprint import pprint
-	from src.utils.tensor_utils import print_tensors
 
 	sizes = [1] + list(map(np.sum, action_counts))   # the 1st size is `1` because there's only 1 root
 	print("sizes:")
@@ -71,8 +70,6 @@ if __name__ == '__main__':
 	]
 	parents_ = get_parents_from_action_counts(action_counts_)
 
-	from pprint import pprint
-	from src.utils.tensor_utils import print_tensors
 	print("action_counts:")
 	pprint(action_counts_, indent=1, width=80)
 	with tf.Session() as sess:

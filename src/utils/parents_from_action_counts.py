@@ -20,7 +20,8 @@ def get_parents_from_action_counts(action_counts):
      (in the level above).
   """
 
-	sizes = [1] + list(map(np.sum, action_counts))   # the 1st size is `1` because there's only 1 root
+	# the 1st size is `1` as there's only 1 root, the last `action_count` is skipped as there are only terminal nodes
+	sizes = [1] + list(map(np.sum, action_counts[:-1]))
 	print("sizes:")
 	pprint(sizes, indent=1, width=50)
 

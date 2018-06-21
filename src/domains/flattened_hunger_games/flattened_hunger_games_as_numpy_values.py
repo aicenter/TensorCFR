@@ -11,9 +11,10 @@ from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NOD
 action_counts = [
 	[2],
 	[1, 6],
-	[4],
+	[4, 0, 0, 0, 0, 0, 0],
 	[3, 3, 2, 2],
-	[2] * 10
+	[2] * 10,
+	[0] * 20,
 ]
 levels = len(action_counts) + 1  # accounting for 0th level
 acting_depth = len(action_counts)

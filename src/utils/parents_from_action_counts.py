@@ -79,9 +79,10 @@ if __name__ == '__main__':
 	action_counts = [
 		[2],
 		[1, 6],
-		[4],
+		[4, 0, 0, 0, 0, 0, 0],
 		[3, 3, 2, 2],
-		[2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+		[2] * 10,
+		[0] * 20
 	]
 	parents_ = get_parents_from_action_counts(action_counts)
 

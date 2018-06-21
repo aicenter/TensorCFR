@@ -36,6 +36,18 @@ def get_parents_from_action_counts(action_counts):
 		)
 		for level in range(len(action_counts))
 	]
+
+	parents = [
+		tf.sparse_to_dense(
+				sparse_indices=tf.cast(leftmost_child[level - 1] if level > 0 else [], dtype=INT_DTYPE),
+				output_shape=[sizes[level]],
+				sparse_values=1,
+				default_value=0,
+				name="parents_lvl{}".format(level),
+		)
+		for level in range(len(sizes))
+	]
+
 	with tf.Session() as tmp_sess:
 		tmp_sess.run(tf.global_variables_initializer())
 		print_tensors(tmp_sess, leftmost_child)

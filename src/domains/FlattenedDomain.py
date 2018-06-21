@@ -158,7 +158,7 @@ class FlattenedDomain:
 			self.player_owning_the_utilities,
 		])
 		print("action_counts:")
-		pprint(self.action_counts, indent=1, width=50)
+		pprint(self.action_counts, indent=1, width=80)
 		print("max_actions_per_level:")
 		pprint(self.max_actions_per_levels, indent=1, width=4)
 		# print("parents:")

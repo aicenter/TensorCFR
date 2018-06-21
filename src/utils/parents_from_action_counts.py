@@ -17,9 +17,19 @@ def get_parents_from_action_counts_alternative(action_counts):
 		)
 		for level in range(levels)
 	]
+	expanded_ranges = [
+		tf.range(
+				start=0,
+				limit=len(action_counts[level]),
+				dtype=INT_DTYPE,
+				name="expanded_range_lvl{}".format(level),
+		)
+		for level in range(levels)
+	]
 	with tf.Session() as tmp_sess:
 		tmp_sess.run(tf.global_variables_initializer())
 		print_tensors(tmp_sess, mask_children)
+		print_tensors(tmp_sess, expanded_ranges)
 
 
 def get_parents_from_action_counts(action_counts):

@@ -58,32 +58,7 @@ def get_parents_from_action_counts(action_counts):
 if __name__ == '__main__':
 	""" Demonstrate on `domains.hunger_games`:
 	
-	```
-	action_counts:
-	[[2],
-	 [1, 6],
-	 [4],
-	 [3, 3, 2, 2],
-	 [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]]
-	```
-	 
-	expected `parents`:
-	```
-	"hunger_games/parents_lvl0:0"
-	[0]
-
-	"hunger_games/parents_lvl1:0"
-	[0 0]
-
-	"hunger_games/parents_lvl2:0"
-	[0]
-
-	"hunger_games/parents_lvl3:0"
-	[0 0 0 0]
-
-	"hunger_games/parents_lvl4:0"
-	[0 0 0 0 0 0 0 0 0 0]
-	```
+	TODO
 	"""
 
 	action_counts_ = [

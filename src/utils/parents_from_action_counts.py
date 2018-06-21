@@ -86,7 +86,7 @@ if __name__ == '__main__':
 	```
 	"""
 
-	action_counts = [
+	action_counts_ = [
 		[2],
 		[1, 6],
 		[4, 0, 0, 0, 0, 0, 0],
@@ -94,12 +94,12 @@ if __name__ == '__main__':
 		[2] * 10,
 		[0] * 20
 	]
-	parents_ = get_parents_from_action_counts(action_counts)
+	parents_ = get_parents_from_action_counts(action_counts_)
 
 	from pprint import pprint
 	from src.utils.tensor_utils import print_tensors
 	print("action_counts:")
-	pprint(action_counts, indent=1, width=80)
+	pprint(action_counts_, indent=1, width=80)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print_tensors(sess, parents_)

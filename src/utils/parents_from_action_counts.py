@@ -4,6 +4,9 @@ import tensorflow as tf
 
 
 # TODO move to `utils`
+from src.commons.constants import INT_DTYPE
+
+
 def get_parents_from_action_counts(action_counts):
 	"""
 	Compute tensor `parents` containing the indices to each node's parent in the previous level.
@@ -22,19 +25,14 @@ def get_parents_from_action_counts(action_counts):
 	print("sizes:")
 	pprint(sizes, indent=1, width=50)
 
-	parents = [
-		tf.zeros(
-				shape=[sizes[level]],
-				name="parents_lvl{}".format(level),
-		)
-		for level in range(len(sizes))
-	]
-
-	leftmost_child = [
-		tf.cumsum(
-				action_counts[level],
-				exclusive=False,
-				name="leftmost_child_lvl{}".format(level)
+	leftmost_child = [    # indices of each node's leftmost child
+		tf.cast(
+				tf.cumsum(
+						action_counts[level],
+						exclusive=False,
+						name="leftmost_child_lvl{}".format(level)
+				),
+				dtype=INT_DTYPE,
 		)
 		for level in range(len(action_counts))
 	]

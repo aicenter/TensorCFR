@@ -24,7 +24,7 @@ class FlattenedDomain:
 				for level in range(self.acting_depth)
 			]    # maximum number of actions per each level
 			self.shape = [self.max_actions_per_levels[:i] for i in range(self.levels)]
-			self.parents = get_parents_from_action_counts(self.action_counts)
+			# self.parents = get_parents_from_action_counts(self.action_counts)
 
 			# tensors on tree definition
 			self.node_to_infoset = [
@@ -161,8 +161,8 @@ class FlattenedDomain:
 		pprint(self.action_counts, indent=1, width=50)
 		print("max_actions_per_level:")
 		pprint(self.max_actions_per_levels, indent=1, width=4)
-		print("parents:")
-		print_tensors(session, self.parents)
+		# print("parents:")
+		# print_tensors(session, self.parents)
 		print("levels: ", self.levels)
 		print("acting_depth: ", self.acting_depth)
 		print("shape:")

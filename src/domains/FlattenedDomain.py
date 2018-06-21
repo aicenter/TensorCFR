@@ -17,8 +17,8 @@ class FlattenedDomain:
 		with tf.variable_scope(self.domain_name) as self.domain_scope:
 			# tensors on tree dimensions
 			self.action_counts = action_counts    # count of (nodal) actions at each levels
-			self.levels = len(self.action_counts) + 1  # accounting for 0th level
-			self.acting_depth = len(self.action_counts)
+			self.levels = len(self.action_counts)
+			self.acting_depth = len(self.action_counts) - 1   # the last level has only terminal nodes
 			self.max_actions_per_levels = [
 				np.amax(self.action_counts[level])
 				for level in range(self.acting_depth)

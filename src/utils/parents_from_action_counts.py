@@ -21,11 +21,6 @@ def get_parents_from_action_counts(action_counts):
   """
 	levels = len(action_counts)
 	max_actions = list(map(np.amax, action_counts))
-	print("levels:")
-	pprint(levels, indent=1, width=80)
-	print("max_actions:")
-	pprint(max_actions, indent=1, width=80)
-
 	mask_children = [
 		tf.Variable(
 				[True],
@@ -60,11 +55,6 @@ def get_parents_from_action_counts(action_counts):
 		)
 		for level in range(levels)
 	]
-	with tf.Session() as tmp_sess:
-		tmp_sess.run(tf.global_variables_initializer())
-		print_tensors(tmp_sess, mask_children)
-		print_tensors(tmp_sess, broadcast_ranges)
-		print_tensors(tmp_sess, parents)
 	return parents
 
 

@@ -18,7 +18,7 @@ def get_parents_from_action_counts_alternative(action_counts):
 
 	mask_children = [
 		tf.Variable(
-				[False],
+				[True],
 				name="mask_children_lvl0"
 		) if level == 0
 		else tf.sequence_mask(
@@ -42,10 +42,19 @@ def get_parents_from_action_counts_alternative(action_counts):
 		)
 		for level in range(levels)
 	]
+	parents = [
+		tf.boolean_mask(
+				broadcast_ranges[level],
+				mask=mask_children[level],
+				name="parents_lvl{}".format(level),
+		)
+		for level in range(levels)
+	]
 	with tf.Session() as tmp_sess:
 		tmp_sess.run(tf.global_variables_initializer())
 		print_tensors(tmp_sess, mask_children)
 		print_tensors(tmp_sess, broadcast_ranges)
+		print_tensors(tmp_sess, parents)
 
 
 def get_parents_from_action_counts(action_counts):

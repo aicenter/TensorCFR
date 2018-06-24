@@ -10,6 +10,12 @@ from src.utils.tensor_utils import print_tensors, print_tensor, scatter_nd_sum
 
 def get_parents_from_action_counts_alternative(action_counts):
 	levels = len(action_counts)
+	max_actions = list(map(np.amax, action_counts))
+	print("levels:")
+	pprint(levels, indent=1, width=80)
+	print("max_actions:")
+	pprint(max_actions, indent=1, width=80)
+
 	mask_children = [
 		tf.sequence_mask(
 				action_counts[level],

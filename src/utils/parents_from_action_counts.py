@@ -8,7 +8,7 @@ from pprint import pprint
 from src.utils.tensor_utils import print_tensors, print_tensor, scatter_nd_sum
 
 
-def get_parents_from_action_counts_alternative(action_counts):
+def get_parents_from_action_counts(action_counts):
 	"""
 	Compute tensor `parents` containing the indices to each node's parent in the previous level.
 
@@ -85,10 +85,7 @@ if __name__ == '__main__':
 	print("action_counts:")
 	pprint(action_counts_, indent=1, width=80)
 
-	get_parents_from_action_counts_alternative(action_counts_)
-
-	# parents_ = get_parents_from_action_counts(action_counts_)
-	#
-	# with tf.Session() as sess:
-	# 	sess.run(tf.global_variables_initializer())
-	# 	print_tensors(sess, parents_)
+	parents_ = get_parents_from_action_counts(action_counts_)
+	with tf.Session() as sess:
+		sess.run(tf.global_variables_initializer())
+		print_tensors(sess, parents_)

@@ -27,28 +27,25 @@ def get_parents_from_action_counts_alternative(action_counts):
 		)
 		for level in range(levels)
 	]
-	expanded_ranges = [
+	broadcast_ranges = [
 		tf.Variable(
 				[np.nan],
-				name="expanded_range_lvl0"
+				name="broadcast_ranges_lvl0"
 		) if level == 0
-		else tf.stack(
-				[
-					tf.range(
-							start=0,
-							limit=len(action_counts[level - 1]),
-							dtype=INT_DTYPE,
-					)
-				] * max_actions[level - 1],
-				axis=-1,
-				name="expanded_range_lvl{}".format(level)
+		else tf.cumsum(
+				tf.ones(
+						shape=(len(action_counts[level - 1]), max_actions[level - 1]),
+						dtype=INT_DTYPE,
+				),
+				exclusive=True,
+				name="broadcast_ranges_lvl{}".format(level)
 		)
 		for level in range(levels)
 	]
 	with tf.Session() as tmp_sess:
 		tmp_sess.run(tf.global_variables_initializer())
 		print_tensors(tmp_sess, mask_children)
-		print_tensors(tmp_sess, expanded_ranges)
+		print_tensors(tmp_sess, broadcast_ranges)
 
 
 def get_parents_from_action_counts(action_counts):

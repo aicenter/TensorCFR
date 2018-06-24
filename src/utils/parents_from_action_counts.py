@@ -17,8 +17,12 @@ def get_parents_from_action_counts_alternative(action_counts):
 	pprint(max_actions, indent=1, width=80)
 
 	mask_children = [
-		tf.sequence_mask(
-				action_counts[level],
+		tf.Variable(
+				[False],
+				name="mask_children_lvl0"
+		) if level == 0
+		else tf.sequence_mask(
+				action_counts[level - 1],
 				name="mask_children_lvl{}".format(level)
 		)
 		for level in range(levels)

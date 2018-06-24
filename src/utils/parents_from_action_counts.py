@@ -24,11 +24,20 @@ def get_parents_from_action_counts_alternative(action_counts):
 		for level in range(levels)
 	]
 	expanded_ranges = [
-		tf.range(
-				start=0,
-				limit=len(action_counts[level]),
-				dtype=INT_DTYPE,
-				name="expanded_range_lvl{}".format(level),
+		tf.Variable(
+				[np.nan],
+				name="expanded_range_lvl0"
+		) if level == 0
+		else tf.stack(
+				[
+					tf.range(
+							start=0,
+							limit=len(action_counts[level - 1]),
+							dtype=INT_DTYPE,
+					)
+				] * max_actions[level - 1],
+				axis=-1,
+				name="expanded_range_lvl{}".format(level)
 		)
 		for level in range(levels)
 	]

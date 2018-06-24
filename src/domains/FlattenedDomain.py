@@ -14,7 +14,7 @@ class FlattenedDomain:
 	def __init__(self, domain_name, action_counts, node_to_infoset, node_types, utilities, infoset_acting_players,
 	             initial_infoset_strategies, reach_probability_of_root_node=None):
 		self.domain_name = domain_name
-		with tf.variable_scope(self.domain_name) as self.domain_scope:
+		with tf.variable_scope(self.domain_name, reuse=tf.AUTO_REUSE) as self.domain_scope:
 			# tensors on tree dimensions
 			self.action_counts = action_counts    # count of (nodal) actions at each levels
 			self.levels = len(self.action_counts)

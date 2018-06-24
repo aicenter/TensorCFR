@@ -22,22 +22,14 @@ def get_parents_from_action_counts(action_counts):
 	levels = len(action_counts)
 	max_actions = list(map(np.amax, action_counts))
 	mask_children = [
-		tf.Variable(
-				[True],
-				name="mask_children_lvl0"
-		) if level == 0
-		else tf.sequence_mask(
+		tf.sequence_mask(
 				action_counts[level - 1],
 				name="mask_children_lvl{}".format(level)
 		)
-		for level in range(levels)
+		for level in range(1, levels)
 	]
 	broadcast_ranges = [
-		tf.Variable(
-				[np.nan],
-				name="broadcast_ranges_lvl0"
-		) if level == 0
-		else tf.cumsum(
+		tf.cumsum(
 				tf.ones(
 						shape=(len(action_counts[level - 1]), max_actions[level - 1]),
 						dtype=INT_DTYPE,
@@ -45,12 +37,16 @@ def get_parents_from_action_counts(action_counts):
 				exclusive=True,
 				name="broadcast_ranges_lvl{}".format(level)
 		)
-		for level in range(levels)
+		for level in range(1, levels)
 	]
 	parents = [
-		tf.boolean_mask(
-				broadcast_ranges[level],
-				mask=mask_children[level],
+		tf.Variable(
+				[np.nan],
+				name="parents_lvl0",
+		) if level == 0
+		else tf.boolean_mask(
+				broadcast_ranges[level - 1],
+				mask=mask_children[level - 1],
 				name="parents_lvl{}".format(level),
 		)
 		for level in range(levels)

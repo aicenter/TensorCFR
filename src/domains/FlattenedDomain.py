@@ -4,14 +4,15 @@ from pprint import pprint
 import tensorflow as tf
 import numpy as np
 
-from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE
+from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE, \
+	INNER_NODE, TERMINAL_NODE
 from src.utils.cfr_utils import get_parents_from_action_counts
 from src.utils.tensor_utils import print_tensors
 from src.utils.gambit_efg_loader import GambitEFGLoader
 
 
 class FlattenedDomain:
-	def __init__(self, domain_name, action_counts, node_to_infoset, node_types, utilities, infoset_acting_players,
+	def __init__(self, domain_name, action_counts, node_to_infoset, utilities, infoset_acting_players,
 	             initial_infoset_strategies, reach_probability_of_root_node=None):
 		self.domain_name = domain_name
 		with tf.variable_scope(self.domain_name, reuse=tf.AUTO_REUSE) as self.domain_scope:
@@ -36,10 +37,14 @@ class FlattenedDomain:
 				for level in range(self.acting_depth)
 			]
 			self.node_types = [
-				tf.get_variable(
-						"node_types_lvl{}".format(level),
-						initializer=tf.cast(node_types[level], dtype=INT_DTYPE),
-						dtype=INT_DTYPE,
+				tf.where(
+						tf.equal(
+								action_counts[level],
+								0,
+						),
+						x=[TERMINAL_NODE] * len(action_counts[level]),
+						y=[INNER_NODE] * len(action_counts[level]),
+						name="node_types_lvl{}".format(level),
 				)
 				for level in range(self.levels)
 			]
@@ -205,7 +210,6 @@ if __name__ == '__main__':
 			domain_name="hunger_games",
 			action_counts=hg.action_counts,
 			node_to_infoset=hg.node_to_infoset,
-			node_types=hg.node_types,
 			utilities=hg.utilities,
 			infoset_acting_players=hg.infoset_acting_players,
 			initial_infoset_strategies=hg.initial_infoset_strategies,

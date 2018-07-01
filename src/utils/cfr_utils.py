@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 
-from src.commons.constants import INT_DTYPE
+from src.commons.constants import INT_DTYPE, TERMINAL_NODE, INNER_NODE
 from pprint import pprint
 from src.utils.tensor_utils import print_tensors, print_tensor, scatter_nd_sum
 
@@ -88,6 +88,22 @@ def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, up
 	else:
 		strategies = infoset_strategies
 	return tf.gather(params=strategies, indices=node_to_infoset, name=name)
+
+
+def get_node_types_from_action_counts(action_counts):
+	levels = len(action_counts)
+	return [
+		tf.where(
+				tf.equal(
+						action_counts[level],
+						0,
+				),
+				x=[TERMINAL_NODE] * len(action_counts[level]),
+				y=[INNER_NODE] * len(action_counts[level]),
+				name="node_types_lvl{}".format(level),
+		)
+		for level in range(levels)
+	]
 
 
 if __name__ == '__main__':

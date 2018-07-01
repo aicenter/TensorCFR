@@ -4,9 +4,8 @@ from pprint import pprint
 import tensorflow as tf
 import numpy as np
 
-from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE, \
-	INNER_NODE, TERMINAL_NODE
-from src.utils.cfr_utils import get_parents_from_action_counts
+from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE
+from src.utils.cfr_utils import get_parents_from_action_counts, get_node_types_from_action_counts
 from src.utils.tensor_utils import print_tensors
 from src.utils.gambit_efg_loader import GambitEFGLoader
 
@@ -36,18 +35,7 @@ class FlattenedDomain:
 				)
 				for level in range(self.acting_depth)
 			]
-			self.node_types = [
-				tf.where(
-						tf.equal(
-								action_counts[level],
-								0,
-						),
-						x=[TERMINAL_NODE] * len(action_counts[level]),
-						y=[INNER_NODE] * len(action_counts[level]),
-						name="node_types_lvl{}".format(level),
-				)
-				for level in range(self.levels)
-			]
+			self.node_types = get_node_types_from_action_counts(action_counts)
 			self.utilities = [
 				tf.get_variable(
 						"utilities_lvl{}".format(level),

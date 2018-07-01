@@ -5,7 +5,7 @@ from src.utils.cfr_utils import get_parents_from_action_counts
 
 
 class TestCFRUtils(tf.test.TestCase):
-	def setUp(self):
+	def test_get_parents_from_action_counts(self):
 		"""
 		Test on `domains.hunger_games`
 		"""
@@ -26,8 +26,6 @@ class TestCFRUtils(tf.test.TestCase):
 			[0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9],
 		]
 		self.parents = get_parents_from_action_counts(self.action_counts)
-
-	def test_get_parents_from_action_counts(self):
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
 			self.assertEquals(len(self.parents), len(self.expected_parents))

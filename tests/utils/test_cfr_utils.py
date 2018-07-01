@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from src.utils.cfr_utils import get_parents_from_action_counts
+from src.utils.cfr_utils import get_parents_from_action_counts, get_node_types_from_action_counts
 
 
 class TestCFRUtils(tf.test.TestCase):
@@ -9,7 +9,7 @@ class TestCFRUtils(tf.test.TestCase):
 		"""
 		Test on `domains.hunger_games`
 		"""
-		self.action_counts = [
+		action_counts = [
 			[2],
 			[1, 6],
 			[4, 0, 0, 0, 0, 0, 0],
@@ -17,7 +17,7 @@ class TestCFRUtils(tf.test.TestCase):
 			[2] * 10,
 			[0] * 20
 		]
-		self.expected_parents = [
+		expected_node_types = [
 			[np.nan],
 			[0, 0],
 			[0, 1, 1, 1, 1, 1, 1],
@@ -25,9 +25,36 @@ class TestCFRUtils(tf.test.TestCase):
 			[0, 0, 0, 1, 1, 1, 2, 2, 3, 3],
 			[0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9],
 		]
-		self.parents = get_parents_from_action_counts(self.action_counts)
+		parents = get_parents_from_action_counts(action_counts)
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
-			self.assertEquals(len(self.parents), len(self.expected_parents))
-			for i in range(len(self.parents)):
-				tf.assert_equal(self.parents[i], self.expected_parents[i])
+			self.assertEquals(len(parents), len(expected_node_types))
+			for i in range(len(parents)):
+				tf.assert_equal(parents[i], expected_node_types[i])
+
+	def test_get_node_types_from_action_counts(self):
+		"""
+		Test on `domains.hunger_games`
+		"""
+		action_counts = [
+			[2],
+			[1, 6],
+			[4, 0, 0, 0, 0, 0, 0],
+			[3, 3, 2, 2],
+			[2] * 10,
+			[0] * 20
+		]
+		expected_node_types = [
+			[0],
+			[0, 0],
+			[0, 1, 1, 1, 1, 1, 1],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+		]
+		node_types = get_node_types_from_action_counts(action_counts)
+		with self.test_session() as sess:
+			sess.run(tf.global_variables_initializer())
+			self.assertEquals(len(node_types), len(expected_node_types))
+			for i in range(len(node_types)):
+				tf.assert_equal(node_types[i], expected_node_types[i])

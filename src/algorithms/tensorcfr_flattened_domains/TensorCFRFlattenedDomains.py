@@ -14,7 +14,7 @@ from src.utils.cfr_utils import distribute_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
-class TensorCFR:
+class TensorCFRFlattenedDomains:
 	def __init__(self, domain: Domain):
 		self.domain = domain
 		with tf.variable_scope("increment_step"):
@@ -40,13 +40,13 @@ class TensorCFR:
 			with tf.variable_scope("new_updating_player"):
 				assign_new_updating_player = tf.assign(
 						ref=self.domain.current_updating_player,
-						value=TensorCFR.get_the_other_player_of(self.domain.current_updating_player),
+						value=TensorCFRFlattenedDomains.get_the_other_player_of(self.domain.current_updating_player),
 						name="assign_new_updating_player",
 				)
 			with tf.variable_scope("new_opponent"):
 				assign_opponent = tf.assign(
 						ref=self.domain.current_opponent,
-						value=TensorCFR.get_the_other_player_of(self.domain.current_opponent),
+						value=TensorCFRFlattenedDomains.get_the_other_player_of(self.domain.current_opponent),
 						name="assign_new_opponent",
 				)
 			return tf.tuple(
@@ -581,7 +581,7 @@ def set_up_cfr(tensorcfr_instance):
 
 
 def log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, averaging_delay):
-	print("TensorCFR\n")
+	print("TensorCFRFlattenedDomains\n")
 	print(setup_messages)
 	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
 	print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay))
@@ -638,8 +638,8 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		)
 
 
-def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY,
-            profiling=False):
+def run_cfr(tensorcfr_instance: TensorCFRFlattenedDomains, total_steps=DEFAULT_TOTAL_STEPS, quiet=False,
+            delay=DEFAULT_AVERAGING_DELAY, profiling=False):
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
 		assign_averaging_delay_op = tf.assign(
@@ -709,7 +709,7 @@ if __name__ == '__main__':
 	domain = get_domain_by_name("domain01")
 	# domain = get_domain_by_name("matching_pennies")
 	# domain = get_domain_by_name("invalid domain name test")
-	tensorcfr = TensorCFR(domain)
+	tensorcfr = TensorCFRFlattenedDomains(domain)
 	run_cfr(
 			# total_steps=10,
 			tensorcfr_instance=tensorcfr,

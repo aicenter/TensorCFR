@@ -193,15 +193,15 @@ class FlattenedDomain:
 
 
 if __name__ == '__main__':
-	import src.domains.flattened_hunger_games.flattened_hunger_games_as_numpy_values as hg
-	hunger_games = FlattenedDomain(
-			domain_name="hunger_games",
-			action_counts=hg.action_counts,
-			node_to_infoset=hg.node_to_infoset,
-			utilities=hg.utilities,
-			infoset_acting_players=hg.infoset_acting_players,
-			initial_infoset_strategies=hg.initial_infoset_strategies,
+	import src.domains.flattened_hunger_games.flattened_hunger_games_as_numpy_values as fhg
+	flattened_hunger_games = FlattenedDomain(
+			domain_name="flattened_hunger_games",
+			action_counts=fhg.action_counts,
+			node_to_infoset=fhg.node_to_infoset,
+			utilities=fhg.utilities,
+			infoset_acting_players=fhg.infoset_acting_players,
+			initial_infoset_strategies=fhg.initial_infoset_strategies,
 	)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		hunger_games.print_domain(sess)
+		flattened_hunger_games.print_domain(sess)

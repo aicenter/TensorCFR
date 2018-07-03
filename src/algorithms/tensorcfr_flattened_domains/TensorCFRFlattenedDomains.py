@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY
+	DEFAULT_AVERAGING_DELAY, REACH_PROBABILITY_OF_ROOT
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import distribute_strategies_to_nodes
@@ -59,13 +59,27 @@ class TensorCFRFlattenedDomains:
 
 	def get_node_strategies(self):
 		with tf.variable_scope("node_strategies"):
-			return [
+			node_strategies = [
 				distribute_strategies_to_nodes(
 						self.domain.current_infoset_strategies[level],
 						self.domain.node_to_infoset[level],
 						name="node_strategies_lvl{}".format(level)
 				) for level in range(self.domain.acting_depth)
 			]
+			flattened_node_strategies = [
+				tf.constant(
+						REACH_PROBABILITY_OF_ROOT,
+						name="flattened_node_strategies_lvl0"
+				) if level == 0
+				else tf.boolean_mask(
+						tf.expand_dims(node_strategies[0], axis=0) if level == 1
+						else node_strategies[level - 1],
+						mask=tf.sequence_mask(self.domain.action_counts[level - 1]),
+						name="flattened_node_strategies_lvl{}".format(level),
+				)
+				for level in range(self.domain.levels)
+			]
+			return flattened_node_strategies
 
 	def get_node_cf_strategies(self, updating_player=None):
 		if updating_player is None:
@@ -92,7 +106,7 @@ class TensorCFRFlattenedDomains:
 				self.domain.current_infoset_strategies[level],
 				node_strategies[level],
 				self.domain.infoset_acting_players[level],
-				node_cf_strategies[level],
+				# node_cf_strategies[level],
 			])
 
 	def get_expected_values(self):

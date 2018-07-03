@@ -714,7 +714,8 @@ if __name__ == '__main__':
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		tensorcfr.domain.print_domain(sess)
+		# tensorcfr.domain.print_domain(sess)
+		tensorcfr.show_strategies(sess)
 		# tensorcfr.show_expected_values(sess)
 
 	# run_cfr(

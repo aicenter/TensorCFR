@@ -8,14 +8,14 @@ import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
 	DEFAULT_AVERAGING_DELAY
-from src.domains.Domain import Domain
+from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import distribute_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
 class TensorCFRFlattenedDomains:
-	def __init__(self, domain: Domain):
+	def __init__(self, domain: FlattenedDomain):
 		self.domain = domain
 		with tf.variable_scope("increment_step"):
 			self.increment_cfr_step = tf.assign_add(

@@ -706,14 +706,16 @@ def run_cfr(tensorcfr_instance: TensorCFRFlattenedDomains, total_steps=DEFAULT_T
 
 
 if __name__ == '__main__':
-	domain = get_domain_by_name("domain01")
+	# domain = get_domain_by_name("domain01")
 	# domain = get_domain_by_name("matching_pennies")
 	# domain = get_domain_by_name("invalid domain name test")
+	domain = get_domain_by_name("flattened_hunger_games")
 	tensorcfr = TensorCFRFlattenedDomains(domain)
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		tensorcfr.show_expected_values(sess)
+		tensorcfr.domain.print_domain(sess)
+		# tensorcfr.show_expected_values(sess)
 
 	# run_cfr(
 	# 		# total_steps=10,

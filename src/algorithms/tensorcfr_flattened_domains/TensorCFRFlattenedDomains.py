@@ -2,8 +2,8 @@
 import datetime
 import os
 import re
-import numpy as np
 
+import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
@@ -710,10 +710,15 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("matching_pennies")
 	# domain = get_domain_by_name("invalid domain name test")
 	tensorcfr = TensorCFRFlattenedDomains(domain)
-	run_cfr(
-			# total_steps=10,
-			tensorcfr_instance=tensorcfr,
-			quiet=True,
-			# profiling=True,
-			# delay=0
-	)
+
+	with tf.Session() as sess:
+		sess.run(tf.global_variables_initializer())
+		tensorcfr.show_expected_values(sess)
+
+	# run_cfr(
+	# 		# total_steps=10,
+	# 		tensorcfr_instance=tensorcfr,
+	# 		quiet=True,
+	# 		# profiling=True,
+	# 		# delay=0
+	# )

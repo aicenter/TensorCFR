@@ -106,7 +106,7 @@ def get_node_types_from_action_counts(action_counts):
 	]
 
 
-def flatten_via_action_counts(node_strategies, action_counts):
+def flatten_via_action_counts(node_strategies, action_counts, basename="node_strategies"):
 	levels = len(action_counts)
 	return [
 		tf.constant(
@@ -117,7 +117,7 @@ def flatten_via_action_counts(node_strategies, action_counts):
 				tf.expand_dims(node_strategies[0], axis=0) if level == 1
 				else node_strategies[level - 1],
 				mask=tf.sequence_mask(action_counts[level - 1]),
-				name="flattened_node_strategies_lvl{}".format(level),
+				name="flattened_{}_lvl{}".format(basename, level),
 		)
 		for level in range(levels)
 	]

@@ -74,7 +74,7 @@ class TensorCFRFlattenedDomains:
 			updating_player = self.domain.current_updating_player
 		with tf.variable_scope("node_cf_strategies"):
 			# TODO generate node_cf_strategies_* with tf.where on node_strategies
-			return [
+			node_cf_strategies = [
 				distribute_strategies_to_nodes(
 						self.domain.current_infoset_strategies[level],
 						self.domain.node_to_infoset[level],
@@ -83,6 +83,12 @@ class TensorCFRFlattenedDomains:
 						name="node_cf_strategies_lvl{}".format(level)
 				) for level in range(self.domain.acting_depth)
 			]
+			flattened_node_cf_strategies = flatten_via_action_counts(
+					node_cf_strategies,
+					self.domain.action_counts,
+					basename="node_cf_strategies"
+			)
+			return flattened_node_cf_strategies
 
 	def show_strategies(self, session):
 		node_strategies = self.get_node_strategies()
@@ -94,7 +100,7 @@ class TensorCFRFlattenedDomains:
 				self.domain.current_infoset_strategies[level],
 				node_strategies[level],
 				self.domain.infoset_acting_players[level],
-				# node_cf_strategies[level],
+				node_cf_strategies[level],
 			])
 
 	def get_expected_values(self):

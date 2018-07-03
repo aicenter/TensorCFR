@@ -5,7 +5,7 @@ import numpy as np
 
 from src.commons import constants
 
-from .gambit import Parser, Parser2
+from .gambit import Parser2
 
 
 class TreeNode:
@@ -34,8 +34,6 @@ class InformationSetManager:
 
 		if node.information_set_id not in self.information_sets:
 			information_set_index = len(self.information_sets)
-			# self.information_sets[node.information_set_id] = [infoset_index, node.type, node.tensorcfr_id,
-			# 										 node, len(node.actions)] # TODO upravit
 			self.information_sets[node.information_set_id] = [information_set_index, node]
 			self.infotmation_set_acting_players_list.insert(0, node.information_set_id)
 			return information_set_index

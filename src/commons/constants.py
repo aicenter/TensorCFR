@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import os
-import tensorflow as tf
+
 import numpy as np
+import tensorflow as tf
 
 # utilities
 NON_TERMINAL_UTILITY = 0.0
@@ -35,6 +36,7 @@ INT_DTYPE_NUMPY = np.int32
 INT_DTYPE = tf.as_dtype(INT_DTYPE_NUMPY)
 FLOAT_DTYPE = tf.float32
 IMAGINARY_PROBABILITIES = 0.0
+REACH_PROBABILITY_OF_ROOT = 1.0
 
 # absolute path to the root of the project source code
 PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))

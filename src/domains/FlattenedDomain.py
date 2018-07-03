@@ -4,7 +4,8 @@ from pprint import pprint
 import numpy as np
 import tensorflow as tf
 
-from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE
+from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE, \
+	REACH_PROBABILITY_OF_ROOT
 from src.utils.cfr_utils import get_parents_from_action_counts, get_node_types_from_action_counts
 from src.utils.gambit.gambit_efg_loader import GambitEFGLoader
 from src.utils.tensor_utils import print_tensors
@@ -56,7 +57,7 @@ class FlattenedDomain:
 			if reach_probability_of_root_node is None:
 				self.reach_probability_of_root_node = tf.get_variable(
 						"reach_probability_of_root_node",
-						initializer=tf.cast(1.0, dtype=FLOAT_DTYPE),
+						initializer=tf.cast(REACH_PROBABILITY_OF_ROOT, dtype=FLOAT_DTYPE),
 				)
 			else:
 				self.reach_probability_of_root_node = tf.cast(reach_probability_of_root_node, dtype=FLOAT_DTYPE)

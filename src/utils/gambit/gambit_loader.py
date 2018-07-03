@@ -29,17 +29,17 @@ class InformationSetManager:
 		self.infoset_acting_players_list = []
 
 	def add_node(self, node):
-		if node['type'] == constants.GAMBIT_NODE_TYPE_TERMINAL:
+		if node.type == constants.GAMBIT_NODE_TYPE_TERMINAL:
 			return self.__terminal_node_information_set_index
 
-		if node['infoset_id'] not in self.information_sets:
+		if node.information_set_id not in self.information_sets:
 			infoset_index = len(self.information_sets)
-			self.information_sets[node['infoset_id']] = [infoset_index, node['type'], node['tensorcfr_id'],
-													 node, len(node['actions'])] # TODO upravit
-			self.infoset_acting_players_list.insert(0, node['infoset_id'])
+			self.information_sets[node.information_set_id] = [infoset_index, node.type, node.tensorcfr_id,
+													 node, len(node.actions)] # TODO upravit
+			self.infoset_acting_players_list.insert(0, node.information_set_id)
 			return infoset_index
 		else:
-			return self.information_sets[node['infoset_id']][0]
+			return self.information_sets[node.information_set_id][0]
 
 	def get_tensors(self, next_level_max_no_actions):
 		infoset_acting_players = []
@@ -51,7 +51,7 @@ class InformationSetManager:
 			if self.information_sets[infoset_id][1] == constants.GAMBIT_NODE_TYPE_PLAYER:
 				current_infoset_strategy = [np.nan] * next_level_max_no_actions
 
-				action = [float(1 / (self.information_sets[infoset_id][4]))] * len(self.information_sets[infoset_id][3]['actions'])
+				action = [float(1 / (self.information_sets[infoset_id][4]))] * len(self.information_sets[infoset_id][3].actions)
 
 				for index, action in enumerate(action):
 					current_infoset_strategy[index] = action
@@ -60,7 +60,7 @@ class InformationSetManager:
 			elif self.information_sets[infoset_id][1] == constants.GAMBIT_NODE_TYPE_CHANCE:
 				initial_infoset_strategy = [np.nan] * next_level_max_no_actions
 
-				for index, action in enumerate(reversed(self.information_sets[infoset_id][3]['actions'])):
+				for index, action in enumerate(reversed(self.information_sets[infoset_id][3].actions)):
 					initial_infoset_strategy[index] = action['probability']
 
 				initial_infoset_strategies.append(initial_infoset_strategy)
@@ -132,8 +132,7 @@ class GambitLoader:
 			for level in range(len(self.actions_per_levels) + 1)
 		]
 
-		with open(file) as f:
-			self.__generate_tensors(f)
+		self.__generate_tensors(file)
 
 	def __load_meta_information(self, file):
 		lists_of_information_sets_ids_per_level = [dict()]
@@ -188,27 +187,26 @@ class GambitLoader:
 		# stack to safe nodes to visit, init with the root node
 		nodes_stack = [TreeNode(level=0, action_index=0)]
 
-		for line in file:
-			if Parser.is_gambit_node(line):  # TODO try use yield and get rid of this condition
-				current_node = Parser.parse_node(line)
-				current_tree_node = nodes_stack.pop()
+		with Parser2(file) as parser:
+			for node in parser.next_node():
+				tree_node = nodes_stack.pop()
 
-				node_to_infoset_value = self.__infoset_managers[current_tree_node.level].add_node(current_node)
-				self.__update_node_to_infoset(current_tree_node.level, current_tree_node.action_index, node_to_infoset_value)
+				node_to_infoset_value = self.__infoset_managers[tree_node.level].add_node(node)
+				self.__update_node_to_infoset(tree_node.level, tree_node.action_index, node_to_infoset_value)
 
-				if current_node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
+				if node.type != constants.GAMBIT_NODE_TYPE_TERMINAL:
 					# count the number of actions of the current node
-					actions_count = len(current_node['actions'])
+					actions_count = len(node.actions)
 					# update the index of placement for the next level
-					self.__placement_indices[current_tree_node.level+1] -= actions_count
+					self.__placement_indices[tree_node.level+1] -= actions_count
 
-					self.__update_number_of_nodes_actions(current_tree_node.level, current_tree_node.action_index, actions_count)
+					self.__update_number_of_nodes_actions(tree_node.level, tree_node.action_index, actions_count)
 
-					for action_index, action in enumerate(reversed(current_node['actions'])):
-						nodes_stack.append(TreeNode(level=current_tree_node.level+1, action_index=action_index))
+					for action_index, action in enumerate(reversed(node.actions)):
+						nodes_stack.append(TreeNode(level=tree_node.level+1, action_index=action_index))
 				else:
 					# update utilities for a terminal node
-					self.__update_utilities(current_tree_node.level, current_tree_node.action_index, current_node['payoffs'][0])
+					self.__update_utilities(tree_node.level, tree_node.action_index, node.payoffs[0])
 
 		for level, max_number_of_actions in enumerate(self.max_actions_per_levels):
 			[infoset_acting_players, initial_infoset_strategy] = self.__infoset_managers[level].get_tensors(max_number_of_actions)

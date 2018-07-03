@@ -7,10 +7,10 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY, REACH_PROBABILITY_OF_ROOT
+	DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
-from src.utils.cfr_utils import distribute_strategies_to_nodes
+from src.utils.cfr_utils import distribute_strategies_to_nodes, flatten_via_action_counts
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
@@ -66,19 +66,7 @@ class TensorCFRFlattenedDomains:
 						name="node_strategies_lvl{}".format(level)
 				) for level in range(self.domain.acting_depth)
 			]
-			flattened_node_strategies = [
-				tf.constant(
-						REACH_PROBABILITY_OF_ROOT,
-						name="flattened_node_strategies_lvl0"
-				) if level == 0
-				else tf.boolean_mask(
-						tf.expand_dims(node_strategies[0], axis=0) if level == 1
-						else node_strategies[level - 1],
-						mask=tf.sequence_mask(self.domain.action_counts[level - 1]),
-						name="flattened_node_strategies_lvl{}".format(level),
-				)
-				for level in range(self.domain.levels)
-			]
+			flattened_node_strategies = flatten_via_action_counts(node_strategies, self.domain.action_counts)
 			return flattened_node_strategies
 
 	def get_node_cf_strategies(self, updating_player=None):

@@ -4,7 +4,7 @@ from pprint import pprint
 import numpy as np
 import tensorflow as tf
 
-from src.commons.constants import INT_DTYPE, TERMINAL_NODE, INNER_NODE
+from src.commons.constants import INT_DTYPE, TERMINAL_NODE, INNER_NODE, REACH_PROBABILITY_OF_ROOT
 from src.utils.tensor_utils import print_tensors
 
 
@@ -101,6 +101,23 @@ def get_node_types_from_action_counts(action_counts):
 				x=[TERMINAL_NODE] * len(action_counts[level]),
 				y=[INNER_NODE] * len(action_counts[level]),
 				name="node_types_lvl{}".format(level),
+		)
+		for level in range(levels)
+	]
+
+
+def flatten_via_action_counts(node_strategies, action_counts):
+	levels = len(action_counts)
+	return [
+		tf.constant(
+				REACH_PROBABILITY_OF_ROOT,
+				name="flattened_node_strategies_lvl0"
+		) if level == 0
+		else tf.boolean_mask(
+				tf.expand_dims(node_strategies[0], axis=0) if level == 1
+				else node_strategies[level - 1],
+				mask=tf.sequence_mask(action_counts[level - 1]),
+				name="flattened_node_strategies_lvl{}".format(level),
 		)
 		for level in range(levels)
 	]

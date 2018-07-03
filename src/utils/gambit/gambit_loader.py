@@ -5,7 +5,7 @@ import numpy as np
 
 from src.commons import constants
 
-from .gambit import Parser
+from .gambit import Parser, Parser2
 
 
 class TreeNode:
@@ -95,43 +95,44 @@ class GambitLoader:
 		self.number_of_levels = 0
 
 
+
+		# game_header = Parser.parse_header(f.readline())
+		#
+		# self.domain_name = game_header['name']
+
+		self.__load_meta_information(file)
+
+		self.number_of_levels = len(self.nodes_per_levels)
+
+		# init the list of utilities
+		self.utilities = [None] * self.number_of_levels
+		# init the list of node_to_infoset vectors
+		self.node_to_infoset = [None] * self.number_of_levels
+		# init a list of vectors with number of actions per node
+		self.number_of_nodes_actions = [None] * self.number_of_levels
+
+		self.initial_infoset_strategies = [None] * self.number_of_levels
+
+		self.infoset_acting_players = [None] * self.number_of_levels
+
+		for level, number_of_nodes in enumerate(self.nodes_per_levels):
+			# set initial  utilities to zeros, will  be filled later
+			self.utilities[level] = [0] * number_of_nodes
+			# set initial values for node_to_infoset
+			self.node_to_infoset[level] = [None] * number_of_nodes
+			# set initial values for zeros
+			self.number_of_nodes_actions[level] = [0] * number_of_nodes
+
+		self.__infoset_managers = [
+			InformationSetManager(
+				level=level,
+				number_of_information_sets=self.__number_of_information_sets_per_level[level],
+				is_terminal_node_present=self.__is_terminal_per_level[level]
+			)
+			for level in range(len(self.actions_per_levels) + 1)
+		]
+
 		with open(file) as f:
-			game_header = Parser.parse_header(f.readline())
-
-			self.domain_name = game_header['name']
-
-			self.__load_meta_information(f)
-
-			self.number_of_levels = len(self.nodes_per_levels)
-
-			# init the list of utilities
-			self.utilities = [None] * self.number_of_levels
-			# init the list of node_to_infoset vectors
-			self.node_to_infoset = [None] * self.number_of_levels
-			# init a list of vectors with number of actions per node
-			self.number_of_nodes_actions = [None] * self.number_of_levels
-
-			self.initial_infoset_strategies = [None] * self.number_of_levels
-
-			self.infoset_acting_players = [None] * self.number_of_levels
-
-			for level, number_of_nodes in enumerate(self.nodes_per_levels):
-				# set initial  utilities to zeros, will  be filled later
-				self.utilities[level] = [0] * number_of_nodes
-				# set initial values for node_to_infoset
-				self.node_to_infoset[level] = [None] * number_of_nodes
-				# set initial values for zeros
-				self.number_of_nodes_actions[level] = [0] * number_of_nodes
-
-			self.__infoset_managers = [
-				InformationSetManager(
-					level=level,
-					number_of_information_sets=self.__number_of_information_sets_per_level[level],
-					is_terminal_node_present=self.__is_terminal_per_level[level]
-				)
-				for level in range(len(self.actions_per_levels) + 1)
-			]
-
 			self.__generate_tensors(f)
 
 	def __load_meta_information(self, file):
@@ -139,15 +140,14 @@ class GambitLoader:
 		# determines the maximum number of actions per level
 		stack_nodes_lvl = [TreeNode(level=0)]
 
-		for line in file:
-			if Parser.is_gambit_node(line):
-				node = Parser.parse_node(line)
+		with Parser2(file) as parser:
+			for node in parser.next_node():
 				tree_node = stack_nodes_lvl.pop()
 
 				level = tree_node.level
 
-				if node['type'] != constants.GAMBIT_NODE_TYPE_TERMINAL:
-					lists_of_information_sets_ids_per_level[level][node['infoset_id']] = True
+				if not node.is_terminal():
+					lists_of_information_sets_ids_per_level[level][node.information_set_id] = True
 
 					if len(self.actions_per_levels) < (level + 1):
 						self.actions_per_levels.append(0)
@@ -155,7 +155,7 @@ class GambitLoader:
 						self.__is_terminal_per_level.append(False)
 						lists_of_information_sets_ids_per_level.append(dict())
 
-					for dummy in node['actions']:
+					for dummy in node.actions:
 						new_level = level + 1
 						stack_nodes_lvl.append(
 							TreeNode(
@@ -163,16 +163,14 @@ class GambitLoader:
 							)
 						)
 
-					self.actions_per_levels[level] += len(node['actions'])
-					self.max_actions_per_levels[level] = max(len(node['actions']), self.max_actions_per_levels[level])
+					self.actions_per_levels[level] += len(node.actions)
+					self.max_actions_per_levels[level] = max(len(node.actions), self.max_actions_per_levels[level])
 				else:
 					self.__is_terminal_per_level[level] = True
-			self.number_of_levels = len(self.actions_per_levels)
+				self.number_of_levels = len(self.actions_per_levels)
 
-		self.nodes_per_levels.extend(self.actions_per_levels)
-		self.__number_of_information_sets_per_level = [len(information_sets) for information_sets in lists_of_information_sets_ids_per_level]
-
-		file.seek(0)
+			self.nodes_per_levels.extend(self.actions_per_levels)
+			self.__number_of_information_sets_per_level = [len(information_sets) for information_sets in lists_of_information_sets_ids_per_level]
 
 	def __update_utilities(self, level, action_index, value):
 		self.utilities[level][self.__placement_indices[level] + action_index] = value
@@ -261,42 +259,3 @@ if __name__ == '__main__':
 
 
 	domain = GambitLoader(domain01_efg)
-
-	print("utilities")
-	print(domain.utilities[0])
-	print(domain.utilities[1])
-	print(domain.utilities[2])
-	print(domain.utilities[3])
-
-	print(domain.number_of_levels)
-
-	#
-	# for level in [0,1,2,3]:
-	# 	print("LEVEL {}".format(level))
-	#
-	# 	if level == 3:
-	# 		print("node_to_infoset")
-	# 		print(domain.node_to_infoset[level])
-	# 		print("initial_infoset_strategies")
-	# 		print(domain.initial_infoset_strategies[level])
-	# 	else:
-	# 		print("node_to_infoset")
-	# 		print(domain.node_to_infoset[level])
-	# 		print("infoset_acting_players")
-	# 		print(domain.infoset_acting_players[level])
-	# 		# print(domain.initial_infoset_strategies[level])
-	# 		print("initial_infoset_strategies")
-	# 		print(domain.initial_infoset_strategies[level])
-
-	# for gbt_file in gbt_files:
-	# 	domain = GambitEFGLoader(gbt_file)
-	# 	print("\n>>>>>>>>>> {} <<<<<<<<<<".format(gbt_file))
-	# 	for level in range(len(domain.actions_per_levels) + 1):
-	# 		print("\n########## Level {} ##########".format(level))
-	# 		print(domain.node_types[level])
-	# 		print(domain.utilities[level])
-	# 		if level < len(domain.actions_per_levels):
-	# 			print(domain.node_to_infoset[level])
-	# 			print(domain.infoset_acting_players[level])
-	# 			print(domain.initial_infoset_strategies[level])
-	# 			print(domain.current_infoset_strategies[level])

@@ -2,8 +2,45 @@ import re
 
 from src.commons import constants
 
+from .constants import GAMBIT_NODE_TYPE_CHANCE, GAMBIT_NODE_TYPE_PLAYER, GAMBIT_NODE_TYPE_TERMINAL
 from .exceptions import NotAcceptableFormatException, NotRecognizedPlayersException, NotRecognizedTreeNodeException, NotImplementedFormatException
 
+
+class GambitNode:
+	def __init__(self, node):
+		self.type = self.__set_attr('type', node)
+		self.name = self.__set_attr('name', node)
+		self.information_set_number = self.__set_attr('information_set_number', node)
+		self.information_set_name = self.__set_attr('information_set_name', node)
+		self.actions = self.__set_attr('actions', node)
+		self.outcome = self.__set_attr('outcome', node)
+		self.outcome_name = self.__set_attr('outcome_name', node)
+		self.payoffs = self.__set_attr('payoffs', node)
+		self.tensorcfr_id = self.__set_attr('tensorcfr_id', node)
+		self.information_set_id = self.__set_attr('infoset_id', node)
+		self.player_number = self.__set_attr('player_number', node)
+
+	def __str__(self):
+		ret = ""
+		if self.is_chance():
+			ret = "Chance <{}, {}>".format(self.information_set_number, self.tensorcfr_id)
+		if self.is_player():
+			ret = "Player <{}, {}>".format(self.information_set_number, self.tensorcfr_id)
+		if self.is_terminal():
+			ret = "Terminal"
+		return ret
+
+	def __set_attr(self, key, dictionary):
+		return dictionary[key] if key in dictionary else None
+
+	def is_chance(self):
+		return self.type == GAMBIT_NODE_TYPE_CHANCE
+
+	def is_player(self):
+		return self.type == GAMBIT_NODE_TYPE_PLAYER
+
+	def is_terminal(self):
+		return self.type == GAMBIT_NODE_TYPE_TERMINAL
 
 class Parser:
 
@@ -147,10 +184,8 @@ class Parser:
 
 class Parser2:
 	def __init__(self, file):
-		print("__init__")
 		self.__gambit_file = open(file)
 
-		print("Parser2 hello world")
 		line = self.__gambit_file.readline()
 
 		if line.startswith('<'):
@@ -186,7 +221,7 @@ class Parser2:
 			elif not (line.startswith('t') or line.startswith('p') or line.startswith('c')):
 				continue
 			else:
-				yield Parser.parse_node(line.strip())
+				yield GambitNode(Parser.parse_node(line.strip()))
 
 
 if __name__ == "__main__":
@@ -199,7 +234,24 @@ if __name__ == "__main__":
 	gbt_desktop = "/home/ruda/Desktop/pokus_gambit.gbt"
 	efg_domain01 = "/home/ruda/Documents/Projects/tensorcfr/TensorCFR/doc/domain01_via_gambit.efg"
 
+	print("Parser2 with context:")
+
+	cnt = 1
+
 	with Parser2(efg_domain01) as p:
-		for line in p.next_node():
-			print("in for line ")
-			print(line)
+		for node in p.next_node():
+			print("-----------------------------")
+			print(cnt)
+			print(node)
+			print("type - " + node.type)
+			# print(node.name)
+			# print(node.information_set_number)
+			# print(node.information_set_name)
+			print("actions - " + str(node.actions))
+			# print(node.outcome)
+			# print(node.outcome_name)
+			# print(node.payoffs)
+			# print(node.tensorcfr_id)
+			print("information_set_id - " + str(node.information_set_id))
+			# print("player_number - " + node.player_number)
+			cnt += 1

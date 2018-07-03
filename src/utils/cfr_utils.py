@@ -11,8 +11,7 @@ from src.utils.tensor_utils import print_tensors
 def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updating_player=None,
                                    acting_players=None):
 	"""
-  TODO: use word "distribute" rather than transform
-  Translate 2-D tensor `infoset_strategies` of strategies per information sets to strategies per game states.
+  Distribute 2-D tensor `infoset_strategies` of strategies per information sets to strategies per game states.
   TODO: rename `states_to_infosets` to `node_to_infoset`
   The translation is done based on N-D tensor `states_to_infosets`: each state (indexed by N-D coordinate)
   stores the index of its information set.

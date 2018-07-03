@@ -215,27 +215,28 @@ if __name__ == "__main__":
 	# for line in p.next_node():
 	# 	print(line)
 
-	gbt_desktop = "/home/ruda/Desktop/pokus_gambit.gbt"
-	efg_domain01 = "/home/ruda/Documents/Projects/tensorcfr/TensorCFR/doc/domain01_via_gambit.efg"
-
-	print("Parser2 with context:")
-
-	cnt = 1
-
-	with Parser2(efg_domain01) as p:
-		for node in p.next_node():
-			print("-----------------------------")
-			print(cnt)
-			print(node)
-			print("type - " + node.type)
-			# print(node.name)
-			# print(node.information_set_number)
-			# print(node.information_set_name)
-			print("actions - " + str(node.actions))
-			# print(node.outcome)
-			# print(node.outcome_name)
-			# print(node.payoffs)
-			# print(node.tensorcfr_id)
-			print("information_set_id - " + str(node.information_set_id))
-			# print("player_number - " + node.player_number)
-			cnt += 1
+	# gbt_desktop = "/home/ruda/Desktop/pokus_gambit.gbt"
+	# efg_domain01 = "/home/ruda/Documents/Projects/tensorcfr/TensorCFR/doc/domain01_via_gambit.efg"
+	#
+	# print("Parser2 with context:")
+	#
+	# cnt = 1
+	#
+	# with Parser2(efg_domain01) as p:
+	# 	for node in p.next_node():
+	# 		print("-----------------------------")
+	# 		print(cnt)
+	# 		print(node)
+	# 		print("type - " + node.type)
+	# 		# print(node.name)
+	# 		# print(node.information_set_number)
+	# 		# print(node.information_set_name)
+	# 		print("actions - " + str(node.actions))
+	# 		# print(node.outcome)
+	# 		# print(node.outcome_name)
+	# 		# print(node.payoffs)
+	# 		# print(node.tensorcfr_id)
+	# 		print("information_set_id - " + str(node.information_set_id))
+	# 		# print("player_number - " + node.player_number)
+	# 		cnt += 1
+	pass

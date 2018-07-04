@@ -43,7 +43,7 @@ class GambitNode:
 		return self.type == GAMBIT_NODE_TYPE_TERMINAL
 
 
-class Parser2:
+class Parser:
 	def __init__(self, file):
 		self.__gambit_file = open(file)
 
@@ -209,34 +209,30 @@ class Parser2:
 
 
 if __name__ == "__main__":
-	# p = Parser2("/home/ruda/Desktop/pokus_gambit.gbt")
-	# print("next_node")
-	#
-	# for line in p.next_node():
-	# 	print(line)
+	import os
 
-	# gbt_desktop = "/home/ruda/Desktop/pokus_gambit.gbt"
-	# efg_domain01 = "/home/ruda/Documents/Projects/tensorcfr/TensorCFR/doc/domain01_via_gambit.efg"
-	#
-	# print("Parser2 with context:")
-	#
-	# cnt = 1
-	#
-	# with Parser2(efg_domain01) as p:
-	# 	for node in p.next_node():
-	# 		print("-----------------------------")
-	# 		print(cnt)
-	# 		print(node)
-	# 		print("type - " + node.type)
-	# 		# print(node.name)
-	# 		# print(node.information_set_number)
-	# 		# print(node.information_set_name)
-	# 		print("actions - " + str(node.actions))
-	# 		# print(node.outcome)
-	# 		# print(node.outcome_name)
-	# 		# print(node.payoffs)
-	# 		# print(node.tensorcfr_id)
-	# 		print("information_set_id - " + str(node.information_set_id))
-	# 		# print("player_number - " + node.player_number)
-	# 		cnt += 1
-	pass
+	domain01_gambit_efg = os.path.join(
+		os.path.dirname(os.path.abspath(__file__)),
+		"..", "..", "..",
+		"doc",
+		"domain01_via_gambit.efg"
+	)
+
+	cnt = 1
+	with Parser(domain01_gambit_efg) as p:
+		for node in p.next_node():
+			print("-----------------------------")
+			print(cnt)
+			print(node)
+			print("type: " + str(node.type)) # pouziva se vsude
+			print("name: " + str(node.name)) # nepouziva se v gambit_loader, v gambit.py se pouziva
+			print("information_set_number: " + str(node.information_set_number)) # nepouziva se v gambit_loader
+			print("information_set_name: " + str(node.information_set_name)) # nepouziva se nikde
+			print("actions: " + str(node.actions)) # pouziva se vsude
+			print("outcome: " + str(node.outcome)) #nepouziva se
+			print("outcome_name: " + str(node.outcome_name)) #nepouziva se
+			print("payoffs: " + str(node.payoffs)) # pouziva se
+			print("tensorcfr_id: " + str(node.tensorcfr_id)) # pouziva se v gambit_loader (?)
+			print("information_set_id: " + str(node.information_set_id)) # pouziva se
+			print("player_number: " + str(node.player_number)) # nepouziva se v gambit.py,
+			cnt += 1

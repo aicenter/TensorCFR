@@ -5,7 +5,7 @@ import numpy as np
 
 from src.commons import constants
 
-from .gambit import Parser2
+from .gambit import Parser
 
 
 class TreeNode:
@@ -136,7 +136,7 @@ class GambitLoader:
 		# determines the maximum number of actions per level
 		stack_nodes_lvl = [TreeNode(level=0)]
 
-		with Parser2(file) as parser:
+		with Parser(file) as parser:
 			for node in parser.next_node():
 				tree_node = stack_nodes_lvl.pop()
 
@@ -184,7 +184,7 @@ class GambitLoader:
 		# stack to safe nodes to visit, init with the root node
 		nodes_stack = [TreeNode(level=0, action_index=0)]
 
-		with Parser2(file) as parser:
+		with Parser(file) as parser:
 			for node in parser.next_node():
 				tree_node = nodes_stack.pop()
 

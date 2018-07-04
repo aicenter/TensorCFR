@@ -2,7 +2,6 @@ import re
 
 from src.commons import constants as common_constants
 
-from .exceptions import NotAcceptableFormatException, NotRecognizedPlayersException, NotRecognizedTreeNodeException, NotImplementedFormatException
 from ..gambit import constants
 from ..gambit import exceptions
 
@@ -57,11 +56,11 @@ class Parser:
 					flag_is_efg_file = True
 					break
 			if not flag_is_efg_file:
-				raise NotImplementedFormatException()
+				raise exceptions.NotImplementedFormatException()
 		elif len(line) > 3 and line[0:3] == "EFG":
 			pass
 		elif len(line) > 3 and 	line[0:3] == "NFG":
-			raise NotImplementedFormatException()
+			raise exceptions.NotImplementedFormatException()
 		else:
 			raise NotImplementedError()
 
@@ -84,7 +83,7 @@ class Parser:
 		if results:
 			results_players = re.findall(r'"([^"]+)"', results.group('players_dirty'))
 			if results_players is None:
-				raise NotRecognizedPlayersException
+				raise exceptions.NotRecognizedPlayersException()
 			return_dict = {
 				'format': results.group('format'),
 				'version': int(results.group('version')),
@@ -93,7 +92,7 @@ class Parser:
 			}
 			return return_dict
 		else:
-			raise NotAcceptableFormatException
+			raise exceptions.NotAcceptableFormatException()
 
 	def __parse_node(self, input_line):
 		# http://www.gambit-project.org/gambit13/formats.html

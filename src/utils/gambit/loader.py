@@ -3,6 +3,8 @@ import os
 import copy
 import numpy as np
 
+from src.commons import constants as common_constants
+
 from ..gambit import constants
 from ..gambit.parser import Parser
 
@@ -70,7 +72,7 @@ class InformationSetManager:
 			initial_information_set_strategies.append([0] * next_level_max_no_actions)
 
 		return [
-			np.asarray(information_set_acting_players, dtype=constants.INT_DTYPE_NUMPY),
+			np.asarray(information_set_acting_players, dtype=common_constants.INT_DTYPE_NUMPY),
 			np.asarray(initial_information_set_strategies)
 		]
 

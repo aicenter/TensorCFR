@@ -1,12 +1,6 @@
-import tensorflow as tf
-import numpy as np
-
+# the first character in a Gambit's file specifying node's type
+# more info on http://www.gambit-project.org/gambit14/formats.html
 
 TERMINAL_NODE = 't'
 CHANCE_NODE = 'c'
 PLAYER_NODE = 'p'
-
-INT_DTYPE_NUMPY = np.int32
-INT_DTYPE = tf.as_dtype(INT_DTYPE_NUMPY)
-FLOAT_DTYPE = tf.float32
-IMAGINARY_PROBABILITIES = 0.0

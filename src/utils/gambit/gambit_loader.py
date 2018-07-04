@@ -26,7 +26,7 @@ class InformationSetManager:
 			self.__terminal_node_information_set_index = None
 
 		self.information_sets = {}
-		self.infotmation_set_acting_players_list = []
+		self.information_set_acting_players_list = []
 
 	def add_node(self, node):
 		if node.type == constants.GAMBIT_NODE_TYPE_TERMINAL:
@@ -35,7 +35,7 @@ class InformationSetManager:
 		if node.information_set_id not in self.information_sets:
 			information_set_index = len(self.information_sets)
 			self.information_sets[node.information_set_id] = [information_set_index, node]
-			self.infotmation_set_acting_players_list.insert(0, node.information_set_id)
+			self.information_set_acting_players_list.insert(0, node.information_set_id)
 			return information_set_index
 		else:
 			return self.information_sets[node.information_set_id][0]
@@ -44,7 +44,7 @@ class InformationSetManager:
 		information_set_acting_players = []
 		initial_information_set_strategies = []
 
-		for information_set_id in reversed(self.infotmation_set_acting_players_list):
+		for information_set_id in reversed(self.information_set_acting_players_list):
 			node = self.information_sets[information_set_id][1]
 
 			information_set_acting_players.insert(0, node.tensorcfr_id)

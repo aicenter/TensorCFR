@@ -1,9 +1,10 @@
 import re
 
-from src.commons import constants
+from src.commons import constants as common_constants
 
-from .constants import GAMBIT_NODE_TYPE_CHANCE, GAMBIT_NODE_TYPE_PLAYER, GAMBIT_NODE_TYPE_TERMINAL
 from .exceptions import NotAcceptableFormatException, NotRecognizedPlayersException, NotRecognizedTreeNodeException, NotImplementedFormatException
+from ..gambit import constants
+from ..gambit import exceptions
 
 
 class GambitNode:
@@ -34,13 +35,13 @@ class GambitNode:
 		return dictionary[key] if key in dictionary else None
 
 	def is_chance(self):
-		return self.type == GAMBIT_NODE_TYPE_CHANCE
+		return self.type == constants.CHANCE_NODE
 
 	def is_player(self):
-		return self.type == GAMBIT_NODE_TYPE_PLAYER
+		return self.type == constants.PLAYER_NODE
 
 	def is_terminal(self):
-		return self.type == GAMBIT_NODE_TYPE_TERMINAL
+		return self.type == constants.TERMINAL_NODE
 
 
 class Parser:
@@ -101,11 +102,11 @@ class Parser:
 
 		node_type = input_line[0]
 
-		if node_type == constants.GAMBIT_NODE_TYPE_CHANCE:
+		if node_type == constants.CHANCE_NODE:
 			return self.__parse_chance_node(input_line)
-		elif node_type == constants.GAMBIT_NODE_TYPE_PLAYER:
+		elif node_type == constants.PLAYER_NODE:
 			return self.__parse_player_node(input_line)
-		elif node_type == constants.GAMBIT_NODE_TYPE_TERMINAL:
+		elif node_type == constants.TERMINAL_NODE:
 			return self.__parse_terminal_node(input_line)
 		else:
 			return False
@@ -131,7 +132,7 @@ class Parser:
 
 	def __parse_chance_node(self, input_line):
 		parse_line = re.search(
-			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_CHANCE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+)\ ?"?(?P<information_set_name_optional>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{?(?P<payoffs_optional>.*)\}?',
+			r'^(?P<type>' + constants.CHANCE_NODE + ') "(?P<name>[^"]*)" (?P<information_set_number>\d+)\ ?"?(?P<information_set_name_optional>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{?(?P<payoffs_optional>.*)\}?',
 			input_line
 		)
 
@@ -148,13 +149,13 @@ class Parser:
 			'outcome': parse_line.group('outcome'),
 			'outcome_name': parse_line.group('outcome_name_optional'),
 			'payoffs': payoffs,
-			'tensorcfr_id': constants.CHANCE_PLAYER,
+			'tensorcfr_id': common_constants.CHANCE_PLAYER,
 			'infoset_id': infoset_id
 		}
 
 	def __parse_player_node(self, input_line):
 		parse_line = re.search(
-			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_PLAYER + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+)\ ?"?(?P<information_set_name>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name>[^"]*)"?\ ?\{?(?P<payoffs_optional>[^\}]*)\}?',
+			r'^(?P<type>' + constants.PLAYER_NODE + ') "(?P<name>[^"]*)" (?P<player_number>\d+) (?P<information_set_number>\d+)\ ?"?(?P<information_set_name>[^"]*)"?\ ?\{?(?P<actions_optional>[^\}]*)\}?\ ?(?P<outcome>\d+)\ ?"?(?P<outcome_name>[^"]*)"?\ ?\{?(?P<payoffs_optional>[^\}]*)\}?',
 			input_line
 		)
 
@@ -179,7 +180,7 @@ class Parser:
 
 	def __parse_terminal_node(self, input_line):
 		parse_line = re.search(
-			r'^(?P<type>' + constants.GAMBIT_NODE_TYPE_TERMINAL + ') "(?P<name>[^"]*)" (?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{(?P<payoffs>.*)\}',
+			r'^(?P<type>' + constants.TERMINAL_NODE + ') "(?P<name>[^"]*)" (?P<outcome>\d+)\ ?"?(?P<outcome_name_optional>[^"]*)"?\ ?\{(?P<payoffs>.*)\}',
 			input_line
 		)
 
@@ -194,7 +195,7 @@ class Parser:
 			'outcome': parse_line.group('outcome'),
 			'outcome_name': parse_line.group('outcome_name_optional'),
 			'payoffs': payoffs,
-			'tensorcfr_id': constants.NO_ACTING_PLAYER,
+			'tensorcfr_id': common_constants.NO_ACTING_PLAYER,
 			'infoset_id': infoset_id
 		}
 

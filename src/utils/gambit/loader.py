@@ -28,7 +28,7 @@ class InformationSetManager:
 		self.information_set_acting_players_list = []
 
 	def add_node(self, node):
-		if node.type == constants.GAMBIT_NODE_TYPE_TERMINAL:
+		if node.type == constants.TERMINAL_NODE:
 			return self.__terminal_node_information_set_index
 
 		if node.information_set_id not in self.information_sets:
@@ -190,7 +190,7 @@ class GambitLoader:
 				node_to_infoset_value = self.__infoset_managers[tree_node.level].add_node(node)
 				self.__update_node_to_infoset(tree_node.level, tree_node.action_index, node_to_infoset_value)
 
-				if node.type != constants.GAMBIT_NODE_TYPE_TERMINAL:
+				if node.type != constants.TERMINAL_NODE:
 					# count the number of actions of the current node
 					actions_count = len(node.actions)
 					# update the index of placement for the next level

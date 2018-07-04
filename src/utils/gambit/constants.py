@@ -2,9 +2,9 @@ import tensorflow as tf
 import numpy as np
 
 
-GAMBIT_NODE_TYPE_TERMINAL = 't'
-GAMBIT_NODE_TYPE_CHANCE = 'c'
-GAMBIT_NODE_TYPE_PLAYER = 'p'
+TERMINAL_NODE = 't'
+CHANCE_NODE = 'c'
+PLAYER_NODE = 'p'
 
 INT_DTYPE_NUMPY = np.int32
 INT_DTYPE = tf.as_dtype(INT_DTYPE_NUMPY)

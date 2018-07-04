@@ -3,9 +3,8 @@ import os
 import copy
 import numpy as np
 
-from src.commons import constants
-
-from .gambit import Parser
+from ..gambit import constants
+from ..gambit.parser import Parser
 
 
 class TreeNode:

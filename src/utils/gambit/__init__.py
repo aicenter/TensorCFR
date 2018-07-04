@@ -1,1 +1,4 @@
-from .gambit_loader import GambitLoader
+from .loader import GambitLoader as Loader
+from .parser import Parser
+
+

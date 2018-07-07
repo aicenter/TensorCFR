@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 from typing import List
 
-import numpy as np
-
-from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, PLAYER1, PLAYER2, \
-	IMAGINARY_PROBABILITIES, IMAGINARY_NODE, NO_ACTING_PLAYER
+from src.commons.constants import NON_TERMINAL_UTILITY, PLAYER1, PLAYER2, \
+	IMAGINARY_PROBABILITIES
 
 # domain `hunger_games`: see doc/hunger_games_via_drawing.png
 
@@ -27,7 +25,7 @@ initial_infoset_strategies: List[int] = [None] * acting_depth
 
 ########## Level 0 ##########
 node_to_infoset[0] = 0
-utilities[0] = NON_TERMINAL_UTILITY
+utilities[0] = [NON_TERMINAL_UTILITY]   # TODO to make bottom-up work but this needs to be discussed
 infoset_acting_players[0] = [PLAYER1]
 initial_infoset_strategies[0] = [[0.1, 0.9]]
 

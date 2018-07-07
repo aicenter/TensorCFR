@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY
+	DEFAULT_AVERAGING_DELAY, INT_DTYPE
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import distribute_strategies_to_nodes, flatten_via_action_counts
@@ -115,15 +115,32 @@ class TensorCFRFlattenedDomains:
 				)
 			for level in reversed(range(self.domain.levels - 1)):
 				with tf.variable_scope("level{}".format(level)):
-					weighted_sum_of_values = tf.reduce_sum(
-							input_tensor=node_strategies[level] * expected_values[level + 1],
-							axis=-1,
+					weighted_sum_of_values = tf.segment_sum(
+							data=node_strategies[level + 1] * expected_values[level + 1],
+							segment_ids=self.domain.parents[level + 1],
 							name="weighted_sum_of_values_lvl{}".format(level),
+					)
+					scatter_copy_indices = tf.expand_dims(
+							tf.cumsum(
+									tf.ones_like(weighted_sum_of_values, dtype=INT_DTYPE),
+									exclusive=True,
+							),
+							axis=-1,
+							name="scatter_copy_indices_lvl{}".format(level)
+					)
+					extended_weighted_sum = tf.scatter_nd(
+							indices=scatter_copy_indices,
+							updates=weighted_sum_of_values,
+							shape=self.domain.node_types[level].shape,
+							name="extended_weighted_sum_lvl{}".format(level)
 					)
 					expected_values[level] = tf.where(
 							condition=tf.equal(self.domain.node_types[level], TERMINAL_NODE),
-							x=self.domain.signum_of_current_player * self.domain.utilities[level],
-							y=weighted_sum_of_values,
+							x=self.domain.signum_of_current_player * tf.reshape(
+									self.domain.utilities[level],
+									shape=[self.domain.utilities[level].shape[-1]],
+							),
+							y=extended_weighted_sum,
 							name="expected_values_lvl{}".format(level)
 					)
 		return expected_values

@@ -1,0 +1,301 @@
+Flattened Hunger Games with "utilities[5]":
+[5, 1, 2, 6, 15, 13, 3, 17, 18, 12, 9, 14, 4, 10, 19, 20, 7, 8, 11, 16.0]
+
+"expected_values/level5/expected_values_lvl5:0"
+ [ 5.  1.
+   2.  6.
+  15. 13.
+   3. 17.
+  18. 12.
+   9. 14.
+   4. 10.
+  19. 20.
+   7.  8.
+   11. 16.]
+
+____________________
+"node_strategies_1/flattened_node_strategies_lvl5/Gather:0"
+ [0.1 0.9
+  0.2 0.8
+  0.3 0.7
+  0.4 0.6
+  0.5 0.5
+  0.6 0.4
+  0.7 0.3
+  0.8 0.2
+  0.9 0.1
+  1.  0. ]
+
+"expected_values/level4/mul_1:0"
+ [ 0.5        0.9
+   0.4        4.8
+   4.5        9.099999
+   1.2       10.200001
+   9.         6.
+   5.4        5.6
+   2.8        3.
+  15.2        4.
+   6.2999997  0.8
+  11.         0.       ]
+
+
+NEXT TO EACH OTHER:
+ [ 5.  1.     [0.1 0.9 [ 0.5        0.9
+   2.  6.      0.2 0.8   0.4        4.8
+  15. 13.      0.3 0.7   4.5        9.099999
+   3. 17.      0.4 0.6   1.2       10.200001
+  18. 12.      0.5 0.5   9.         6.
+   9. 14.      0.6 0.4   5.4        5.6
+   4. 10.      0.7 0.3   2.8        3.
+  19. 20.      0.8 0.2  15.2        4.
+   7.  8.      0.9 0.1   6.2999997  0.8
+   11. 16.]    1.  0. ] 11.         0.       ]
+
+
+#################
+
+"flattened_hunger_games/parents_lvl5/Gather:0"
+ [0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 8 9 9]
+
+"expected_values/level4/weighted_sum_of_values_lvl4:0"
+ [ 1.4        5.2000003 13.599999  11.400001  15.        11.
+  5.8       19.2        7.1       11.       ]
+
+"flattened_hunger_games/node_types_lvl4:0"
+ [0 0 0 0 0 0 0 0 0 0]
+
+"expected_values/level4/Equal_1:0"
+ [False False False False False False False False False False]
+
+"expected_values/level4/scatter_copy_indices_lvl4:0"
+ [[0]
+ [1]
+ [2]
+ [3]
+ [4]
+ [5]
+ [6]
+ [7]
+ [8]
+ [9]]
+
+"expected_values/level4/extended_weighted_sum_lvl4:0"
+ [ 1.4        5.2000003 13.599999  11.400001  15.        11.
+  5.8       19.2        7.1       11.       ]
+
+"expected_values/level4/expected_values_lvl4:0"
+ [ 1.4        5.2000003 13.599999  11.400001  15.        11.
+  5.8       19.2        7.1       11.       ]
+
+____________________
+"node_strategies_1/flattened_node_strategies_lvl4/Gather:0"
+ [0.1 0.  0.9 0.1 0.  0.9 0.2 0.8 0.2 0.8]
+
+"expected_values/level3/mul_1:0"
+ [ 0.14       0.        12.239999   1.1400001  0.         9.9
+  1.1600001 15.360001   1.42       8.8      ]
+
+"flattened_hunger_games/parents_lvl4/Gather:0"
+ [0 0 0 1 1 1 2 2 3 3]
+
+"expected_values/level3/weighted_sum_of_values_lvl3:0"
+ [12.379999 11.04     16.52     10.22    ]
+
+"flattened_hunger_games/node_types_lvl3:0"
+ [0 0 0 0]
+
+"expected_values/level3/Equal_1:0"
+ [False False False False]
+
+"expected_values/level3/scatter_copy_indices_lvl3:0"
+ [[0]
+ [1]
+ [2]
+ [3]]
+
+"expected_values/level3/extended_weighted_sum_lvl3:0"
+ [12.379999 11.04     16.52     10.22    ]
+
+"expected_values/level3/expected_values_lvl3:0"
+ [12.379999 11.04     16.52     10.22    ]
+
+____________________
+"node_strategies_1/flattened_node_strategies_lvl3/Gather:0"
+ [0.1 0.2 0.  0.7]
+
+"expected_values/level2/mul_1:0"
+ [1.2379999 2.208     0.        7.1540003]
+
+"flattened_hunger_games/parents_lvl3/Gather:0"
+ [0 0 0 0]
+
+"expected_values/level2/weighted_sum_of_values_lvl2:0"
+ [10.6]
+
+"flattened_hunger_games/node_types_lvl2:0"
+ [0 1 1 1 1 1 1]
+
+"expected_values/level2/Equal_1:0"
+ [False  True  True  True  True  True  True]
+
+"expected_values/level2/scatter_copy_indices_lvl2:0"
+ [[0]]
+
+"expected_values/level2/extended_weighted_sum_lvl2:0"
+ [10.6  0.   0.   0.   0.   0.   0. ]
+
+"expected_values/level2/expected_values_lvl2:0"
+ [10.6 -1.  -1.  -1.  -1.  -1.  -1. ]
+
+____________________
+"node_strategies_1/flattened_node_strategies_lvl2/Gather:0"
+ [1.  0.1 0.1 0.1 0.  0.2 0.5]
+
+"expected_values/level1/mul_1:0"
+ [10.6 -0.1 -0.1 -0.1 -0.  -0.2 -0.5]
+
+"flattened_hunger_games/parents_lvl2/Gather:0"
+ [0 1 1 1 1 1 1]
+
+"expected_values/level1/weighted_sum_of_values_lvl1:0"
+ [10.6 -1. ]
+
+"flattened_hunger_games/node_types_lvl1:0"
+ [0 0]
+
+"expected_values/level1/Equal_1:0"
+ [False False]
+
+"expected_values/level1/scatter_copy_indices_lvl1:0"
+ [[0]
+ [1]]
+
+"expected_values/level1/extended_weighted_sum_lvl1:0"
+ [10.6 -1. ]
+
+"expected_values/level1/expected_values_lvl1:0"
+ [10.6 -1. ]
+
+____________________
+"node_strategies_1/flattened_node_strategies_lvl1/Gather:0"
+ [0.1 0.9]
+
+"expected_values/level0/mul_1:0"
+ [ 1.0600001 -0.9      ]
+
+"flattened_hunger_games/parents_lvl1/Gather:0"
+ [0 0]
+
+"expected_values/level0/weighted_sum_of_values_lvl0:0"
+ [0.16000009]
+
+"flattened_hunger_games/node_types_lvl0:0"
+ [0]
+
+"expected_values/level0/Equal_1:0"
+ [False]
+
+"expected_values/level0/scatter_copy_indices_lvl0:0"
+ [[0]]
+
+"expected_values/level0/extended_weighted_sum_lvl0:0"
+ [0.16000009]
+
+"expected_values/level0/expected_values_lvl0:0"
+ [0.16000009]
+
+____________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########## Level 5 ##########
+"node_strategies/flattened_node_strategies_lvl5/Gather:0"
+ [0.1 0.9 0.2 0.8 0.3 0.7 0.4 0.6 0.5 0.5 0.6 0.4 0.7 0.3 0.8 0.2 0.9 0.1
+ 1.  0. ]
+
+"signum_utilities_lvl5:0"
+ [ 5.  1.  2.  6. 15. 13.  3. 17. 18. 12.  9. 14.  4. 10. 19. 20.  7.  8.
+ 11. 16.]
+
+"expected_values/level5/expected_values_lvl5:0"
+ [ 5.  1.  2.  6. 15. 13.  3. 17. 18. 12.  9. 14.  4. 10. 19. 20.  7.  8.
+ 11. 16.]
+
+########## Level 4 ##########
+"node_strategies/flattened_node_strategies_lvl4/Gather:0"
+ [0.1 0.  0.9 0.1 0.  0.9 0.2 0.8 0.2 0.8]
+
+"signum_utilities_lvl4:0"
+ [[0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+
+"expected_values/level4/expected_values_lvl4:0"
+ [ 1.4        5.2000003 13.599999  11.400001  15.        11.
+  5.8       19.2        7.1       11.       ]
+
+########## Level 3 ##########
+"node_strategies/flattened_node_strategies_lvl3/Gather:0"
+ [0.1 0.2 0.  0.7]
+
+"signum_utilities_lvl3:0"
+ [0. 0. 0. 0.]
+
+"expected_values/level3/expected_values_lvl3:0"
+ [12.379999 11.04     16.52     10.22    ]
+
+########## Level 2 ##########
+"node_strategies/flattened_node_strategies_lvl2/Gather:0"
+ [1.  0.1 0.1 0.1 0.  0.2 0.5]
+
+"signum_utilities_lvl2:0"
+ [ 0. -1. -1. -1. -1. -1. -1.]
+
+"expected_values/level2/expected_values_lvl2:0"
+ [10.6 -1.  -1.  -1.  -1.  -1.  -1. ]
+
+########## Level 1 ##########
+"node_strategies/flattened_node_strategies_lvl1/Gather:0"
+ [0.1 0.9]
+
+"signum_utilities_lvl1:0"
+ [0. 0.]
+
+"expected_values/level1/expected_values_lvl1:0"
+ [10.6 -1. ]
+
+########## Level 0 ##########
+"node_strategies/flattened_node_strategies_lvl0:0"
+ 1.0
+
+"signum_utilities_lvl0:0"
+ [0.]
+
+"expected_values/level0/expected_values_lvl0:0"
+ [0.16000009]
+

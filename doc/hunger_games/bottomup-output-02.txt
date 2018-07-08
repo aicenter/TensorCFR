@@ -1,0 +1,61 @@
+########## Level 5 ##########
+"node_strategies/flattened_node_strategies_lvl5/Gather:0"
+ [0.1 0.9 0.2 0.8 0.3 0.7 0.4 0.6 0.5 0.5 0.6 0.4 0.7 0.3 0.8 0.2 0.9 0.1
+ 1.  0. ]
+
+"signum_utilities_lvl5:0"
+ [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+
+"expected_values/level5/expected_values_lvl5:0"
+ [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+
+########## Level 4 ##########
+"node_strategies/flattened_node_strategies_lvl4/Gather:0"
+ [0.1 0.  0.9 0.1 0.  0.9 0.2 0.8 0.2 0.8]
+
+"signum_utilities_lvl4:0"
+ [[0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+
+"expected_values/level4/expected_values_lvl4:0"
+ [1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+
+########## Level 3 ##########
+"node_strategies/flattened_node_strategies_lvl3/Gather:0"
+ [0.1 0.2 0.  0.7]
+
+"signum_utilities_lvl3:0"
+ [0. 0. 0. 0.]
+
+"expected_values/level3/expected_values_lvl3:0"
+ [1. 1. 1. 1.]
+
+########## Level 2 ##########
+"node_strategies/flattened_node_strategies_lvl2/Gather:0"
+ [1.  0.1 0.1 0.1 0.  0.2 0.5]
+
+"signum_utilities_lvl2:0"
+ [ 0. -1. -1. -1. -1. -1. -1.]
+
+"expected_values/level2/expected_values_lvl2:0"
+ [ 1. -1. -1. -1. -1. -1. -1.]
+
+########## Level 1 ##########
+"node_strategies/flattened_node_strategies_lvl1/Gather:0"
+ [0.1 0.9]
+
+"signum_utilities_lvl1:0"
+ [0. 0.]
+
+"expected_values/level1/expected_values_lvl1:0"
+ [ 1. -1.]
+
+########## Level 0 ##########
+"node_strategies/flattened_node_strategies_lvl0:0"
+ 1.0
+
+"signum_utilities_lvl0:0"
+ [0.]
+
+"expected_values/level0/expected_values_lvl0:0"
+ [-0.79999995]
+

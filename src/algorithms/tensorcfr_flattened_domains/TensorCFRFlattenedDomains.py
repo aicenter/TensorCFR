@@ -743,6 +743,8 @@ if __name__ == '__main__':
 		# tensorcfr.domain.print_domain(sess)
 		# tensorcfr.show_strategies(sess)
 		# tensorcfr.show_expected_values(sess)
+		# tensorcfr.show_reach_probabilities(sess)
+		sess.run(tensorcfr.swap_players())
 		tensorcfr.show_reach_probabilities(sess)
 
 	# run_cfr(

@@ -42,8 +42,8 @@ infoset_acting_players[1] = [
 ]
 initial_infoset_strategies[1] = [
 	[0.5, 0.4, 0.1],                      # of I1,0
-	[0.1, 0.9, IMAGINARY_PROBABILITIES],  # of I1,1, `nan` for probabilities of imaginary nodes
-	[0.2, 0.8, IMAGINARY_PROBABILITIES],  # of I1,2, `nan` for probabilities of imaginary nodes
+	[0.1, 0.9, IMAGINARY_PROBABILITIES],  # of I1,1, `0` for probabilities of imaginary nodes
+	[0.2, 0.8, IMAGINARY_PROBABILITIES],  # of I1,2, `0` for probabilities of imaginary nodes
 	[0.3, 0.3, 0.3]                       # of I1,3
 ]
 

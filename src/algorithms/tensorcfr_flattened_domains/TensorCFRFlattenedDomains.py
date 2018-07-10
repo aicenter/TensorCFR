@@ -218,14 +218,14 @@ class TensorCFRFlattenedDomains:
 	def show_reach_probabilities(self, session):
 		node_cf_strategies = self.get_node_cf_strategies()
 		nodal_reach_probabilities = self.get_nodal_reach_probabilities()
-		infoset_reach_probabilities = self.get_infoset_reach_probabilities()
+		# infoset_reach_probabilities = self.get_infoset_reach_probabilities()
 		for level in range(self.domain.levels):
 			print("########## Level {} ##########".format(level))
 			print_tensors(session, [nodal_reach_probabilities[level]])
 			if level < self.domain.levels - 1:
 				print_tensors(session, [
 					self.domain.node_to_infoset[level],
-					infoset_reach_probabilities[level],
+					# infoset_reach_probabilities[level],
 					self.domain.current_infoset_strategies[level],
 					node_cf_strategies[level],
 				])
@@ -741,7 +741,8 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		# tensorcfr.domain.print_domain(sess)
 		# tensorcfr.show_strategies(sess)
-		tensorcfr.show_expected_values(sess)
+		# tensorcfr.show_expected_values(sess)
+		tensorcfr.show_reach_probabilities(sess)
 
 	# run_cfr(
 	# 		# total_steps=10,

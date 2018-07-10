@@ -176,11 +176,18 @@ class TensorCFRFlattenedDomains:
 		node_cf_strategies = self.get_node_cf_strategies(updating_player=for_player)
 		with tf.variable_scope("nodal_reach_probabilities"):
 			nodal_reach_probabilities = [None] * self.domain.levels
-			nodal_reach_probabilities[0] = self.domain.reach_probability_of_root_node
+			nodal_reach_probabilities[0] = tf.expand_dims(
+					self.domain.reach_probability_of_root_node,
+					axis=0
+			)
 			for level in range(1, self.domain.levels):
-				nodal_reach_probabilities[level] = expanded_multiply(
-						expandable_tensor=nodal_reach_probabilities[level - 1],
-						expanded_tensor=node_cf_strategies[level - 1],
+				nodal_reach_probabilities[level] = tf.multiply(
+						tf.gather(
+								nodal_reach_probabilities[level - 1],
+								indices=self.domain.parents[level],
+								name="children_reach_probabilities_lvl{}".format(level)
+						),
+						node_cf_strategies[level],
 						name="nodal_reach_probabilities_lvl{}".format(level)
 				)
 			return nodal_reach_probabilities

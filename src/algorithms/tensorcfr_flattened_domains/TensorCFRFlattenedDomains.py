@@ -164,6 +164,8 @@ class TensorCFRFlattenedDomains:
 
 	def get_nodal_reach_probabilities(self, for_player=None):
 		"""
+		Compute reach probabilities of nodes using the top-down tree traversal.
+
 		:param for_player: The player for which the reach probabilities are computed. These probabilities are usually
 		 computed for the updating player when counterfactual values are computed. Therefore, `for_player` is set to
 			`current_updating_player` by default.
@@ -171,7 +173,6 @@ class TensorCFRFlattenedDomains:
 		"""
 		if for_player is None:
 			for_player = self.domain.current_updating_player
-		# TODO continue here
 		node_cf_strategies = self.get_node_cf_strategies(updating_player=for_player)
 		with tf.variable_scope("nodal_reach_probabilities"):
 			nodal_reach_probabilities = [None] * self.domain.levels

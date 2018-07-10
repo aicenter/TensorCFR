@@ -16,6 +16,7 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		for tensorcfr in map(TensorCFR, domains):
 			print(">>>>>>>>>> {} <<<<<<<<<<".format(tensorcfr.domain.domain_name))
+			# sess.run(tensorcfr.swap_players())
 			nodal_reach_probabilities = tensorcfr.get_nodal_reach_probabilities()
 			expected_values = tensorcfr.get_expected_values()
 			cf_values_nodes = tensorcfr.get_nodal_cf_values()

@@ -751,8 +751,9 @@ if __name__ == '__main__':
 		# tensorcfr.show_strategies(sess)
 		# tensorcfr.show_expected_values(sess)
 		# tensorcfr.show_reach_probabilities(sess)
-		sess.run(tensorcfr.swap_players())
-		tensorcfr.show_reach_probabilities(sess)
+		# sess.run(tensorcfr.swap_players())
+		# tensorcfr.show_reach_probabilities(sess)
+		print_tensors(sess, tensorcfr.get_nodal_cf_values())
 
 	# run_cfr(
 	# 		# total_steps=10,

@@ -213,34 +213,35 @@ class GambitLoader:
 
 
 if __name__ == '__main__':
-	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'domain01_via_gambit.efg')
+	domain01_efg = os.path.join(
+		common_constants.PROJECT_ROOT,
+		'doc',
+		'domain01_via_gambit.efg'
+	)
 
-	mini_goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'mini_goofspiel',
-	                                  'mini_goofspiel_via_gtlibrary.gbt')
-	# noinspection SpellCheckingInspection
-	goofspiel_gbt = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'goofspiel',
-	                             'IIGS5_s1_bf_ft.gbt')
+	mini_goofspiel_gbt = os.path.join(
+		common_constants.PROJECT_ROOT,
+		'doc',
+		'mini_goofspiel',
+		'mini_goofspiel_via_gtlibrary.gbt'
+	)
+
+	goofspiel_gbt = os.path.join(
+		common_constants.PROJECT_ROOT,
+		'doc',
+		'goofspiel',
+		'IIGS5_s1_bf_ft.gbt'
+	)
+
 	poker_gbt = os.path.join(
-		os.path.dirname(
-			os.path.abspath(
-				__file__)
-		),
-		'..',
-		'..',
-		'..',
+		common_constants.PROJECT_ROOT,
 		'doc',
 		'poker',
 		'GP_cards4x3_224.gbt'
 	)
 
 	phantom_ttt_efg = os.path.join(
-		os.path.dirname(
-			os.path.abspath(
-				__file__)
-		),
-		'..',
-		'..',
-		'..',
+		common_constants.PROJECT_ROOT,
 		'doc',
 		'phantom_ttt',
 		'phantom_ttt.efg'

@@ -47,22 +47,7 @@ class Parser:
 	def __init__(self, file):
 		self.__gambit_file = open(file)
 
-		line = self.__gambit_file.readline()
-
-		if line.startswith('<'):
-			flag_is_efg_file = False
-			for line in self.__gambit_file:
-				if line.strip() == "<efgfile>":
-					flag_is_efg_file = True
-					break
-			if not flag_is_efg_file:
-				raise exceptions.NotImplementedFormatException()
-		elif len(line) > 3 and line[0:3] == "EFG":
-			pass
-		elif len(line) > 3 and 	line[0:3] == "NFG":
-			raise exceptions.NotImplementedFormatException()
-		else:
-			raise NotImplementedError()
+		self.__parse_header()
 
 	def __enter__(self):
 		return self
@@ -71,11 +56,25 @@ class Parser:
 		self.__gambit_file.close()
 		return False
 
-	def __parse_header(self, header):
-		print("parse_header")
-		print(header)
+	def __parse_header(self):
+		line = self.__gambit_file.readline()
 
-	def __parse_header(self, input_line):
+		if line.startswith('<'):
+			flag_is_efg_file = False
+			for line in self.__gambit_file:
+				if line.strip() == "<efgfile>":
+					flag_is_efg_file = True
+					self.__parse_header_line(line)
+			if not flag_is_efg_file:
+				raise exceptions.NotImplementedFormatException()
+		elif len(line) > 3 and line[0:3] == "EFG":
+			self.__parse_header_line(line)
+		elif len(line) > 3 and line[0:3] == "NFG":
+			raise exceptions.NotImplementedFormatException()
+		else:
+			raise exceptions.NotImplementedError()
+
+	def __parse_header_line(self, input_line):
 		results = re.search(
 			r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" {(?P<players_dirty>.*)}',
 			input_line
@@ -173,7 +172,6 @@ class Parser:
 			'outcome_name': parse_line.group('outcome_name'),
 			'payoffs': payoffs,
 			'tensorcfr_id': int(parse_line.group('player_number')),
-		# TODO smazat, v terminalu se pouziva misto player number - BACHA mozna ne
 			'infoset_id': infoset_id
 		}
 
@@ -212,8 +210,7 @@ if __name__ == "__main__":
 	import os
 
 	domain01_gambit_efg = os.path.join(
-		os.path.dirname(os.path.abspath(__file__)),
-		"..", "..", "..",
+		common_constants.PROJECT_ROOT,
 		"doc",
 		"domain01_via_gambit.efg"
 	)

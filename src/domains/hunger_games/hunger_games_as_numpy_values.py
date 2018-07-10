@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from typing import List
 
-import numpy as np
-
 from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, PLAYER1, PLAYER2, \
 	IMAGINARY_PROBABILITIES, IMAGINARY_NODE, NO_ACTING_PLAYER
 
@@ -53,8 +51,8 @@ utilities[2] = [
 infoset_acting_players[2] = [PLAYER1, NO_ACTING_PLAYER, NO_ACTING_PLAYER]
 initial_infoset_strategies[2] = [
 	[0.1, 0.2, 0.0, 0.7],
-	[np.nan] * 4,
-	[np.nan] * 4
+	[IMAGINARY_PROBABILITIES] * 4,
+	[IMAGINARY_PROBABILITIES] * 4
 ]
 
 ########## Level 3 ##########
@@ -116,7 +114,7 @@ infoset_acting_players[3] = [PLAYER2, PLAYER2, NO_ACTING_PLAYER]
 initial_infoset_strategies[3] = [
 	[0.1, 0.0, 0.9],
 	[0.2, 0.8, IMAGINARY_PROBABILITIES],
-	[np.nan] * 3
+	[IMAGINARY_PROBABILITIES] * 3
 ]
 
 ########## Level 4 ##########
@@ -378,7 +376,7 @@ initial_infoset_strategies[4] = [
 	[0.8, 0.2],
 	[0.9, 0.1],
 	[1.0, 0.0],
-	[np.nan] * 2,
+	[IMAGINARY_PROBABILITIES] * 2,
 ]
 
 ########## Level 5 ##########

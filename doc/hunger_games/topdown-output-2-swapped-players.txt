@@ -1,0 +1,132 @@
+"flattened_hunger_games/parents_lvl1/Gather:0"
+ [0 0]
+
+"node_cf_strategies_1/flattened_node_cf_strategies_lvl1/Gather:0"
+ [1. 1.]
+
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl1:0"
+ [1. 1.]
+
+__________
+"flattened_hunger_games/parents_lvl2/Gather:0"
+ [0 1 1 1 1 1 1]
+
+"node_cf_strategies_1/flattened_node_cf_strategies_lvl2/Gather:0"
+ [1.  0.1 0.1 0.1 0.  0.2 0.5]
+
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl2:0"
+ [1.  0.1 0.1 0.1 0.  0.2 0.5]
+
+__________
+"flattened_hunger_games/parents_lvl3/Gather:0"
+ [0 0 0 0]
+
+"node_cf_strategies_1/flattened_node_cf_strategies_lvl3/Gather:0"
+ [1. 1. 1. 1.]
+
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl3:0"
+ [1. 1. 1. 1.]
+
+__________
+"flattened_hunger_games/parents_lvl4/Gather:0"
+ [0 0 0 1 1 1 2 2 3 3]
+
+"node_cf_strategies_1/flattened_node_cf_strategies_lvl4/Gather:0"
+ [0.1 0.  0.9 0.1 0.  0.9 0.2 0.8 0.2 0.8]
+
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl4:0"
+ [0.1 0.  0.9 0.1 0.  0.9 0.2 0.8 0.2 0.8]
+
+__________
+"flattened_hunger_games/parents_lvl5/Gather:0"
+ [0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 8 9 9]
+
+"node_cf_strategies_1/flattened_node_cf_strategies_lvl5/Gather:0"
+ [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl5:0"
+ [0.1 0.1 0.  0.  0.9 0.9 0.1 0.1 0.  0.  0.9 0.9 0.2 0.2 0.8 0.8 0.2 0.2
+ 0.8 0.8]
+
+__________
+########## Level 0 ##########
+"nodal_reach_probabilities/ExpandDims:0"
+ [1.]
+
+"flattened_hunger_games/node_to_infoset_lvl0:0"
+ 0
+
+"flattened_hunger_games/current_infoset_strategies_lvl0:0"
+ [[0.1 0.9]]
+
+"node_cf_strategies/flattened_node_strategies_lvl0:0"
+ 1.0
+
+########## Level 1 ##########
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl1:0"
+ [0.1 0.9]
+
+"flattened_hunger_games/node_to_infoset_lvl1:0"
+ [0 1]
+
+"flattened_hunger_games/current_infoset_strategies_lvl1:0"
+ [[1.  0.  0.  0.  0.  0. ]
+ [0.1 0.1 0.1 0.  0.2 0.5]]
+
+"node_cf_strategies/flattened_node_cf_strategies_lvl1/Gather:0"
+ [0.1 0.9]
+
+########## Level 2 ##########
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl2:0"
+ [0.1 0.9 0.9 0.9 0.9 0.9 0.9]
+
+"flattened_hunger_games/node_to_infoset_lvl2:0"
+ [0 1 1 1 1 1 1]
+
+"flattened_hunger_games/current_infoset_strategies_lvl2:0"
+ [[0.1 0.2 0.  0.7]]
+
+"node_cf_strategies/flattened_node_cf_strategies_lvl2/Gather:0"
+ [1. 1. 1. 1. 1. 1. 1.]
+
+########## Level 3 ##########
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl3:0"
+ [0.01 0.02 0.   0.07]
+
+"flattened_hunger_games/node_to_infoset_lvl3:0"
+ [0 0 1 1]
+
+"flattened_hunger_games/current_infoset_strategies_lvl3:0"
+ [[0.1 0.  0.9]
+ [0.2 0.8 0. ]]
+
+"node_cf_strategies/flattened_node_cf_strategies_lvl3/Gather:0"
+ [0.1 0.2 0.  0.7]
+
+########## Level 4 ##########
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl4:0"
+ [0.01 0.01 0.01 0.02 0.02 0.02 0.   0.   0.07 0.07]
+
+"flattened_hunger_games/node_to_infoset_lvl4:0"
+ [0 1 2 3 4 5 6 7 8 9]
+
+"flattened_hunger_games/current_infoset_strategies_lvl4:0"
+ [[0.1 0.9]
+ [0.2 0.8]
+ [0.3 0.7]
+ [0.4 0.6]
+ [0.5 0.5]
+ [0.6 0.4]
+ [0.7 0.3]
+ [0.8 0.2]
+ [0.9 0.1]
+ [1.  0. ]]
+
+"node_cf_strategies/flattened_node_cf_strategies_lvl4/Gather:0"
+ [1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+
+########## Level 5 ##########
+"nodal_reach_probabilities/nodal_reach_probabilities_lvl5:0"
+ [0.001 0.009 0.002 0.008 0.003 0.007 0.008 0.012 0.01  0.01  0.012 0.008
+ 0.    0.    0.    0.    0.063 0.007 0.07  0.   ]
+

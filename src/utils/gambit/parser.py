@@ -72,7 +72,7 @@ class Parser:
 		elif len(line) > 3 and line[0:3] == "NFG":
 			raise exceptions.NotImplementedFormatException()
 		else:
-			raise exceptions.NotImplementedError()
+			raise NotImplementedError()
 
 	def __parse_header_line(self, input_line):
 		results = re.search(

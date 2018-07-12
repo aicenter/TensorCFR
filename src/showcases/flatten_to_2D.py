@@ -10,20 +10,6 @@ INT_DTYPE = tf.as_dtype(INT_DTYPE_NUMPY)
 FLOAT_DTYPE = tf.float32
 
 
-action_counts_ = [
-	[2],
-	[1, 6],
-	[4, 0, 0, 0, 0, 0, 0],
-	[3, 3, 2, 2],
-	[2] * 10,
-	[0] * 20
-]
-
-l3children = [31.1, 32, 33, 34, 35, 36, 37, 38, 39, 40]
-parent_IS_map = [0, 0, 1, 1]
-strategy = [[0.1, 0.3, 0.6], [.2, .8, .0]]
-
-
 def get_parent_x_actions_from_action_counts(action_counts, children, name="reshape_CFVs"):
 	"""
   Reshape data related to children (e.g., CFVs) to a 2D tensor of shape (parent x action).
@@ -91,9 +77,21 @@ def get_action_and_IS_cfvs(children_values, action_counts, parent_IS_map, strate
 	return cfvs_IS_action, tf.expand_dims(cfvs_IS, dim=1)
 
 
-print("action_counts:")
-pprint(action_counts_, indent=1, width=80)
-out = get_action_and_IS_cfvs(l3children, action_counts_[3], parent_IS_map, tf.Variable(strategy))
-with tf.Session() as sess:
-	sess.run(tf.global_variables_initializer())
-	print_tensors(sess, out)
+if __name__ == '__main__':
+	action_counts_ = [
+		[2],
+		[1, 6],
+		[4, 0, 0, 0, 0, 0, 0],
+		[3, 3, 2, 2],
+		[2] * 10,
+		[0] * 20
+	]
+	print("action_counts:")
+	pprint(action_counts_, indent=1, width=80)
+	l3children = [31.1, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+	parent_IS_map = [0, 0, 1, 1]
+	strategy = [[0.1, 0.3, 0.6], [.2, .8, .0]]
+	out = get_action_and_IS_cfvs(l3children, action_counts_[3], parent_IS_map, tf.Variable(strategy))
+	with tf.Session() as sess:
+		sess.run(tf.global_variables_initializer())
+		print_tensors(sess, out)

@@ -221,39 +221,8 @@ if __name__ == '__main__':
 			'domain01_via_gambit.efg'
 	)
 
-	mini_goofspiel_gbt = os.path.join(
-		common_constants.PROJECT_ROOT,
-		'doc',
-		'mini_goofspiel',
-		'mini_goofspiel_via_gtlibrary.gbt'
-	)
-
-	goofspiel_gbt = os.path.join(
-		common_constants.PROJECT_ROOT,
-		'doc',
-		'goofspiel',
-		'IIGS5_s1_bf_ft.gbt'
-	)
-
-	poker_gbt = os.path.join(
-		common_constants.PROJECT_ROOT,
-		'doc',
-		'poker',
-		'GP_cards4x3_224.gbt'
-	)
-
-	phantom_ttt_efg = os.path.join(
-		common_constants.PROJECT_ROOT,
-		'doc',
-		'phantom_ttt',
-		'phantom_ttt.efg'
-	)
-
 	gbt_files = [
 		domain01_efg,
-		# mini_goofspiel_gbt,
-		# goofspiel_gbt,
-		# poker_gbt,
 	]
 
 	domain = GambitLoader(domain01_efg)

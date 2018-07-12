@@ -3,15 +3,11 @@ from pprint import pprint
 import numpy as np
 import tensorflow as tf
 
+from src.utils.tensor_utils import scatter_nd_sum
+
 INT_DTYPE_NUMPY = np.int32
 INT_DTYPE = tf.as_dtype(INT_DTYPE_NUMPY)
 FLOAT_DTYPE = tf.float32
-
-
-def scatter_nd_sum(indices, updates, shape, name="scatter_nd_sum"):
-	# TODO unittest
-	# TODO write a docstring
-	return tf.scatter_nd(indices=indices, updates=updates, shape=shape, name=name)
 
 
 action_counts_ = [

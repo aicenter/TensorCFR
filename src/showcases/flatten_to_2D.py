@@ -26,14 +26,14 @@ strategy = [[0.1, 0.3, 0.6], [.2, .8, .0]]
 
 def get_parent_x_actions_from_action_counts(action_counts, children, name="reshape_CFVs"):
 	"""
-  Reshapes data related to children (e.g., CFVs) to a 2D tensor of shape (parent x action).
+  Reshape data related to children (e.g., CFVs) to a 2D tensor of shape (parent x action).
 
   Args:
     :param action_counts: A 1-D array containing number of actions of each node.
     :param children: Data for the children to reshape.
 
-  Returns:
-    A corresponding TensorFlow operation (from the computation graph) that computes the (parent x action) tensor with the provided data distributed to the correct positions.
+  Returns: A corresponding TensorFlow operation (from the computation graph) that computes the (parent x action)
+  tensor with the provided data distributed to the correct positions.
 	"""
 	mask_children = tf.sequence_mask(
 			action_counts,
@@ -64,7 +64,7 @@ def get_parent_x_actions_from_action_counts(action_counts, children, name="resha
 
 def get_action_and_IS_cfvs(children_values, action_counts, parent_IS_map, strategy):
 	"""
-  Computes counterfactual values of actions and information sets for one level.
+  Compute counterfactual values of actions and information sets for one level.
 
   Args:
     :param children_values: A 1-D tensor of counterfactual values for the children.
@@ -72,8 +72,8 @@ def get_action_and_IS_cfvs(children_values, action_counts, parent_IS_map, strate
     :param parent_IS_map: A 1-D array indicating the index if the IS for each parent of the children.
     :param strategy: A 2-D representation of probability of playing an action in an IS.
 
-  Returns:
-    A pair of counterfactual values for all actions in ISs (2-D) and the cfvs of ISs expanded to (2-D) to be able to subtract for the first return value.
+  Returns: A pair of counterfactual values for all actions in ISs (2-D) and the cfvs of ISs expanded to (2-D) to be
+  able to subtract for the first return value.
 	"""
 	parent_x_action = get_parent_x_actions_from_action_counts(action_counts, children_values)
 	cfvs_IS_action = scatter_nd_sum(

@@ -3,7 +3,7 @@ from pprint import pprint
 import numpy as np
 import tensorflow as tf
 
-from src.utils.tensor_utils import scatter_nd_sum
+from src.utils.tensor_utils import scatter_nd_sum, print_tensors
 
 INT_DTYPE_NUMPY = np.int32
 INT_DTYPE = tf.as_dtype(INT_DTYPE_NUMPY)
@@ -22,15 +22,6 @@ action_counts_ = [
 l3children = [31.1, 32, 33, 34, 35, 36, 37, 38, 39, 40]
 parent_IS_map = [0, 0, 1, 1]
 strategy = [[0.1, 0.3, 0.6], [.2, .8, .0]]
-
-
-def print_tensors(sess, tensors_to_print):
-	for tensor_to_print in tensors_to_print:
-		print_tensor(sess, tensor_to_print)
-
-
-def print_tensor(sess, tensor):
-	print('"{}"\n {}\n'.format(tensor.name, sess.run(tensor)))
 
 
 def get_parent_x_actions_from_action_counts(action_counts, children, name="reshape_CFVs"):

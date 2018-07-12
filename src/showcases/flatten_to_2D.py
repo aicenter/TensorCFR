@@ -31,6 +31,7 @@ def get_parent_x_actions_from_action_counts(action_counts, children, name="resha
   Args:
     :param action_counts: A 1-D array containing number of actions of each node.
     :param children: Data for the children to reshape.
+		:param name: A string to name the resulting tensor operation.
 
   Returns: A corresponding TensorFlow operation (from the computation graph) that computes the (parent x action)
   tensor with the provided data distributed to the correct positions.

@@ -87,7 +87,7 @@ def get_action_and_IS_cfvs(children_values, action_counts, parent_IS_map, strate
 			axis=1,
 			name="IS_cfvs_from_action_cfvs"
 	)
-	return (cfvs_IS_action, tf.expand_dims(cfvs_IS, dim=1))
+	return cfvs_IS_action, tf.expand_dims(cfvs_IS, dim=1)
 
 
 print("action_counts:")

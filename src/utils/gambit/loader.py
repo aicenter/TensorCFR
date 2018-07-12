@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-import os
 import copy
+import os
+
 import numpy as np
 
 from src.commons import constants as common_constants
-
 from ..gambit import constants
 from ..gambit.parser import Parser
 
@@ -123,9 +123,9 @@ class GambitLoader:
 
 		self.__infoset_managers = [
 			InformationSetManager(
-				level=level,
-				number_of_information_sets=self.__number_of_information_sets_per_level[level],
-				is_terminal_node_present=self.__is_terminal_per_level[level]
+					level=level,
+					number_of_information_sets=self.__number_of_information_sets_per_level[level],
+					is_terminal_node_present=self.__is_terminal_per_level[level]
 			)
 			for level in range(len(self.actions_per_levels) + 1)
 		]
@@ -155,9 +155,9 @@ class GambitLoader:
 					for dummy in node.actions:
 						new_level = level + 1
 						stack_nodes_lvl.append(
-							TreeNode(
-								level=new_level,
-							)
+								TreeNode(
+										level=new_level,
+								)
 						)
 
 					self.actions_per_levels[level] += len(node.actions)
@@ -167,7 +167,8 @@ class GambitLoader:
 				self.number_of_levels = len(self.actions_per_levels)
 
 			self.nodes_per_levels.extend(self.actions_per_levels)
-			self.__number_of_information_sets_per_level = [len(information_sets) for information_sets in lists_of_information_sets_ids_per_level]
+			self.__number_of_information_sets_per_level = [len(information_sets) for information_sets in
+			                                               lists_of_information_sets_ids_per_level]
 
 	def __update_utilities(self, level, action_index, value):
 		self.utilities[level][self.__placement_indices[level] + action_index] = value
@@ -196,27 +197,28 @@ class GambitLoader:
 					# count the number of actions of the current node
 					actions_count = len(node.actions)
 					# update the index of placement for the next level
-					self.__placement_indices[tree_node.level+1] -= actions_count
+					self.__placement_indices[tree_node.level + 1] -= actions_count
 
 					self.__update_number_of_nodes_actions(tree_node.level, tree_node.action_index, actions_count)
 
 					for action_index, action in enumerate(reversed(node.actions)):
-						nodes_stack.append(TreeNode(level=tree_node.level+1, action_index=action_index))
+						nodes_stack.append(TreeNode(level=tree_node.level + 1, action_index=action_index))
 				else:
 					# update utilities for a terminal node
 					self.__update_utilities(tree_node.level, tree_node.action_index, node.payoffs[0])
 
 		for level, max_number_of_actions in enumerate(self.max_actions_per_levels):
-			[infoset_acting_players, initial_infoset_strategy] = self.__infoset_managers[level].get_tensors(max_number_of_actions)
+			[infoset_acting_players, initial_infoset_strategy] = self.__infoset_managers[level].get_tensors(
+				max_number_of_actions)
 			self.infoset_acting_players[level] = infoset_acting_players
 			self.initial_infoset_strategies[level] = initial_infoset_strategy
 
 
 if __name__ == '__main__':
 	domain01_efg = os.path.join(
-		common_constants.PROJECT_ROOT,
-		'doc',
-		'domain01_via_gambit.efg'
+			common_constants.PROJECT_ROOT,
+			'doc',
+			'domain01_via_gambit.efg'
 	)
 
 	mini_goofspiel_gbt = os.path.join(
@@ -253,7 +255,5 @@ if __name__ == '__main__':
 		# goofspiel_gbt,
 		# poker_gbt,
 	]
-
-
 
 	domain = GambitLoader(domain01_efg)

@@ -152,7 +152,7 @@ class GambitLoader:
 						self.__is_terminal_per_level.append(False)
 						lists_of_information_sets_ids_per_level.append(dict())
 
-					for dummy in node.actions:
+					for _ in node.actions:
 						new_level = level + 1
 						stack_nodes_lvl.append(
 								TreeNode(

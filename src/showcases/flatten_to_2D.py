@@ -78,6 +78,7 @@ def get_action_and_IS_cfvs(children_values, action_counts, parent_IS_map, strate
 
 
 if __name__ == '__main__':
+	# showcase using the domain `hunger_games`
 	action_counts_ = [
 		[2],
 		[1, 6],

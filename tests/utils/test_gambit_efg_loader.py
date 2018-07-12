@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 
-from src.utils.gambit_efg_loader import GambitEFGLoader
+from src.utils.gambit.gambit_efg_loader import GambitEFGLoader
 
 
 class TestGambitEFGLoaderParse(unittest.TestCase):

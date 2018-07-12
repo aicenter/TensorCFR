@@ -6,13 +6,13 @@ from src.commons.constants import INT_DTYPE, FLOAT_DTYPE
 from src.utils.tensor_utils import scatter_nd_sum, print_tensors
 
 
-def get_parent_x_actions_from_action_counts(action_counts, children, name="reshape_CFVs"):
+def get_parent_x_actions_from_action_counts(action_counts, values_in_children, name="reshape_CFVs"):
 	"""
   Reshape data related to children (e.g., CFVs) to a 2D tensor of shape (parent x action).
 
   Args:
     :param action_counts: A 1-D array containing number of actions of each node.
-    :param children: Data for the children to reshape.
+    :param values_in_children: Data for the children to reshape.
 		:param name: A string to name the resulting tensor operation.
 
   Returns: A corresponding TensorFlow operation (from the computation graph) that computes the (parent x action)
@@ -29,17 +29,27 @@ def get_parent_x_actions_from_action_counts(action_counts, children, name="resha
 			          name="first_column_indices_in_{}".format(name)),
 			dim=1
 	)
-	replaced = tf.concat(
+	mask_with_replaced_first_column = tf.concat(
 			[first_column, mask_children[:, 1:]], 1,
 			name="replacing_col0_in_{}".format(name)
 	)
-	summed = tf.expand_dims(
-			tf.cumsum(replaced, axis=1, name="computing_indices_in_{}".format(name)),
-			dim=2
+	indices_2D_into_1D = tf.expand_dims(
+			tf.cumsum(
+					mask_with_replaced_first_column,
+					axis=1
+			),
+			dim=2,
+			name="computing_indices_in_{}".format(name)
 	)
 	final = tf.multiply(
-			tf.cast(mask_children, dtype=FLOAT_DTYPE),
-			tf.gather_nd(children, summed),
+			tf.cast(
+					mask_children,
+					dtype=FLOAT_DTYPE
+			),
+			tf.gather_nd(
+					values_in_children,
+					indices_2D_into_1D
+			),
 			name="cleaned_up_result_in_{}".format(name)
 	)
 	return final

@@ -146,7 +146,7 @@ if __name__ == '__main__':
 		print_tensors(sess, parents_)
 
 
-def get_parent_x_actions_from_action_counts(action_counts, values_in_children, name="reshape_CFVs"):
+def expand_to_2D_via_action_counts(action_counts, values_in_children, name="reshape_CFVs"):
 	"""
   Reshape data related to children (e.g., CFVs) to a 2D tensor of shape (parent x action).
 
@@ -208,7 +208,7 @@ def get_action_and_IS_cfvs(children_values, action_counts, parent_IS_map, strate
   Returns: A pair of counterfactual values for all actions in ISs (2-D) and the cfvs of ISs expanded to (2-D) to be
   able to subtract for the first return value.
 	"""
-	parent_x_action = get_parent_x_actions_from_action_counts(action_counts, children_values)
+	parent_x_action = expand_to_2D_via_action_counts(action_counts, children_values)
 	cfvs_IS_action = scatter_nd_sum(
 			tf.expand_dims(parent_IS_map, axis=1),
 			parent_x_action,

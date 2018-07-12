@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
+from pprint import pprint
+
 import numpy as np
 import tensorflow as tf
-
+from src.utils.tensor_utils import print_tensors
 
 from src.commons.constants import INT_DTYPE, TERMINAL_NODE, INNER_NODE
-from pprint import pprint
-from src.utils.tensor_utils import print_tensors, print_tensor, scatter_nd_sum
 
 
 def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updating_player=None,

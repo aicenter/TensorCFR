@@ -1,13 +1,9 @@
 from pprint import pprint
 
-import numpy as np
 import tensorflow as tf
 
+from src.commons.constants import INT_DTYPE, FLOAT_DTYPE
 from src.utils.tensor_utils import scatter_nd_sum, print_tensors
-
-INT_DTYPE_NUMPY = np.int32
-INT_DTYPE = tf.as_dtype(INT_DTYPE_NUMPY)
-FLOAT_DTYPE = tf.float32
 
 
 def get_parent_x_actions_from_action_counts(action_counts, children, name="reshape_CFVs"):

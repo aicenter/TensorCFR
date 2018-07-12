@@ -1,9 +1,8 @@
 import re
 
 from src.commons import constants as common_constants
-
-from ..gambit import constants
-from ..gambit import exceptions
+from ..gambit_flattened_domains import constants
+from ..gambit_flattened_domains import exceptions
 
 
 class GambitNode:

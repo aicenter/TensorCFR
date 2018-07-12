@@ -1,15 +1,16 @@
-import unittest
 import os
+import unittest
+
 import numpy as np
 
-from src.utils import gambit
+from src.utils import gambit_flattened_domains
 
 
 class TestGambitLoaderDomain01(unittest.TestCase):
 	def setUp(self):
 		domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'doc','domain01_via_gambit.efg')
 
-		self.domain = gambit.Loader(domain01_efg)
+		self.domain = gambit_flattened_domains.Loader(domain01_efg)
 
 	def test_utilities_level_0(self):
 		expected_output = [0]

@@ -176,7 +176,7 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="resh
 	)
 
 
-def get_action_and_infoset_cf_values(values_in_children, action_counts, node_to_parental_infoset, strategy):
+def get_action_and_infoset_values(values_in_children, action_counts, node_to_parental_infoset, strategy):
 	"""
   Compute counterfactual values of actions and information sets for one level.
 

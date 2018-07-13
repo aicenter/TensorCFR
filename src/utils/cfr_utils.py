@@ -123,29 +123,6 @@ def flatten_via_action_counts(node_strategies, action_counts, basename="node_str
 	]
 
 
-if __name__ == '__main__':
-	""" Demonstrate on `domains.hunger_games`:
-	
-	TODO
-	"""
-
-	action_counts_ = [
-		[2],
-		[1, 6],
-		[4, 0, 0, 0, 0, 0, 0],
-		[3, 3, 2, 2],
-		[2] * 10,
-		[0] * 20
-	]
-	print("action_counts:")
-	pprint(action_counts_, indent=1, width=80)
-
-	parents_ = get_parents_from_action_counts(action_counts_)
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		print_tensors(sess, parents_)
-
-
 def expand_to_2D_via_action_counts(action_counts, values_in_children, name="reshape_CFVs"):
 	"""
   Reshape data related to children (e.g., CFVs) to a 2D tensor of shape (parent x action).
@@ -225,3 +202,26 @@ def get_action_and_infoset_cf_values(children_values, action_counts, parent_IS_m
 			name="IS_cfvs_from_action_cfvs"
 	)
 	return cfvs_IS_action, tf.expand_dims(cfvs_IS, dim=1)
+
+
+if __name__ == '__main__':
+	""" Demonstrate on `domains.hunger_games`:
+	
+	TODO
+	"""
+
+	action_counts_ = [
+		[2],
+		[1, 6],
+		[4, 0, 0, 0, 0, 0, 0],
+		[3, 3, 2, 2],
+		[2] * 10,
+		[0] * 20
+	]
+	print("action_counts:")
+	pprint(action_counts_, indent=1, width=80)
+
+	parents_ = get_parents_from_action_counts(action_counts_)
+	with tf.Session() as sess:
+		sess.run(tf.global_variables_initializer())
+		print_tensors(sess, parents_)

@@ -199,9 +199,10 @@ def get_action_and_infoset_cf_values(values_in_children, action_counts, parent_i
 	cfvs_infoset = tf.reduce_sum(
 			tf.multiply(cfvs_infoset_action, strategy),
 			axis=1,
+			keepdims=True,
 			name="infoset_cfvs_from_action_cfvs"
 	)
-	return cfvs_infoset_action, tf.expand_dims(cfvs_infoset, dim=1)
+	return cfvs_infoset_action, cfvs_infoset
 
 
 if __name__ == '__main__':

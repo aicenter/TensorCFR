@@ -205,7 +205,8 @@ def get_action_and_infoset_cf_values(children_values, action_counts, parent_IS_m
 
 
 if __name__ == '__main__':
-	""" Demonstrate on `domains.hunger_games`:
+	"""
+	Demonstrate on `domains.hunger_games`:
 	
 	TODO
 	"""

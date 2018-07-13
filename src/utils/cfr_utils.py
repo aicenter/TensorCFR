@@ -160,8 +160,12 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="resh
 	"""
 	mask_children = tf.sequence_mask(
 			action_counts,
+			name="initial_boolean_mask_in_{}".format(name)
+	)
+	mask_children_int_dtype = tf.cast(
+			mask_children,
 			dtype=INT_DTYPE,
-			name="initial_mask_in_{}".format(name)
+			name="initial_integer_mask_in_{}".format(name)
 	)
 	first_column = tf.expand_dims(
 			tf.cumsum(action_counts,
@@ -170,7 +174,7 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="resh
 			dim=1
 	)
 	mask_with_replaced_first_column = tf.concat(
-			[first_column, mask_children[:, 1:]], 1,
+			[first_column, mask_children_int_dtype[:, 1:]], 1,
 			name="replacing_col0_in_{}".format(name)
 	)
 	indices_2D_into_1D = tf.expand_dims(
@@ -181,18 +185,18 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="resh
 			dim=2,
 			name="computing_indices_in_{}".format(name)
 	)
-	final = tf.multiply(
-			tf.cast(
-					mask_children,
-					dtype=FLOAT_DTYPE
-			),
-			tf.gather_nd(
+	return tf.where(
+			condition=mask_children,
+			x=tf.gather_nd(
 					values_in_children,
 					indices_2D_into_1D
 			),
+			y=tf.zeros_like(
+					mask_children,
+					dtype=FLOAT_DTYPE
+			),
 			name="cleaned_up_result_in_{}".format(name)
 	)
-	return final
 
 
 def get_action_and_IS_cfvs(children_values, action_counts, parent_IS_map, strategy):

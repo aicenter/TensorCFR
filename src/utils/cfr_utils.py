@@ -176,32 +176,32 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="resh
 	)
 
 
-def get_action_and_infoset_cf_values(children_values, action_counts, parent_IS_map, strategy):
+def get_action_and_infoset_cf_values(values_in_children, action_counts, parent_infoset_map, strategy):
 	"""
   Compute counterfactual values of actions and information sets for one level.
 
   Args:
-    :param children_values: A 1-D tensor of counterfactual values for the children.
+    :param values_in_children: A 1-D tensor of counterfactual values for the children.
     :param action_counts: A 1-D array containing number of actions of each node.
-    :param parent_IS_map: A 1-D array indicating the index if the IS for each parent of the children.
-    :param strategy: A 2-D representation of probability of playing an action in an IS.
+    :param parent_infoset_map: A 1-D array indicating the index of the infoset for each parent of the children.
+    :param strategy: A 2-D representation of probability of playing an action in an infoset.
 
-  Returns: A pair of counterfactual values for all actions in ISs (2-D) and the cfvs of ISs expanded to (2-D) to be
-  able to subtract for the first return value.
+  Returns: A pair of counterfactual values for all actions in infosets (2-D) and the cfvs of infosets expanded to (2-D)
+  to be able to subtract for the first return value.
 	"""
-	parent_x_action = expand_to_2D_via_action_counts(action_counts, children_values)
-	cfvs_IS_action = scatter_nd_sum(
-			tf.expand_dims(parent_IS_map, axis=1),
+	parent_x_action = expand_to_2D_via_action_counts(action_counts, values_in_children)
+	cfvs_infoset_action = scatter_nd_sum(
+			tf.expand_dims(parent_infoset_map, axis=1),
 			parent_x_action,
 			tf.shape(strategy),
-			name="sums_cfvs_over_IS"
+			name="sums_cfvs_over_infoset"
 	)
-	cfvs_IS = tf.reduce_sum(
-			tf.multiply(cfvs_IS_action, strategy),
+	cfvs_infoset = tf.reduce_sum(
+			tf.multiply(cfvs_infoset_action, strategy),
 			axis=1,
-			name="IS_cfvs_from_action_cfvs"
+			name="infoset_cfvs_from_action_cfvs"
 	)
-	return cfvs_IS_action, tf.expand_dims(cfvs_IS, dim=1)
+	return cfvs_infoset_action, tf.expand_dims(cfvs_infoset, dim=1)
 
 
 if __name__ == '__main__':

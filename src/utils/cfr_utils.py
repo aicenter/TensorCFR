@@ -176,7 +176,8 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="resh
 	)
 
 
-def get_action_and_infoset_values(values_in_children, action_counts, node_to_parental_infoset, infoset_strategy):
+def get_action_and_infoset_values(values_in_children, action_counts, node_to_parental_infoset, infoset_strategy,
+                                  name="cf_values"):
 	"""
   Compute counterfactual values of actions and information sets for one level.
 
@@ -185,24 +186,25 @@ def get_action_and_infoset_values(values_in_children, action_counts, node_to_par
     :param action_counts: A 1-D array containing number of actions of each node.
     :param node_to_parental_infoset: A 1-D array indicating the index of the infoset for each parent of the children.
     :param infoset_strategy: A 2-D representation of probability of playing an action in an infoset.
+		:param name: A string to name the resulting tensor operation.
 
   Returns: A pair of counterfactual values for all actions in infosets (2-D) and the cfvs of infosets expanded to (2-D)
   to be able to subtract for the first return value.
 	"""
 	values_in_parent_x_action = expand_to_2D_via_action_counts(action_counts, values_in_children)
-	cfvs_infoset_action = scatter_nd_sum(
+	cfvs_infoset_x_action = scatter_nd_sum(
 			tf.expand_dims(node_to_parental_infoset, axis=1),
 			values_in_parent_x_action,
 			tf.shape(infoset_strategy),
-			name="sums_cfvs_over_infoset"
+			name="infoset_x_action_{}".format(name)
 	)
 	cfvs_infoset = tf.reduce_sum(
-			tf.multiply(cfvs_infoset_action, infoset_strategy),
+			tf.multiply(cfvs_infoset_x_action, infoset_strategy),
 			axis=1,
 			keepdims=True,
-			name="infoset_cfvs_from_action_cfvs"
+			name="infoset_{}".format(name)
 	)
-	return cfvs_infoset_action, cfvs_infoset
+	return cfvs_infoset_x_action, cfvs_infoset
 
 
 if __name__ == '__main__':

@@ -190,7 +190,12 @@ def get_action_and_infoset_values(values_in_children, action_counts, node_to_par
   Returns: A pair of counterfactual values for all actions in infosets (2-D) and the cfvs of infosets expanded to (2-D)
   to be able to subtract for the first return value.
 	"""
-	values_in_parent_x_action = expand_to_2D_via_action_counts(action_counts, values_in_children)
+	values_in_parent_x_action = expand_to_2D_via_action_counts(
+			action_counts,
+			values_in_children,
+			name="parent_x_action_{}".format(name)
+	)
+
 	cfvs_infoset_x_action = scatter_nd_sum(
 			tf.expand_dims(node_to_parental_infoset, axis=1),
 			values_in_parent_x_action,

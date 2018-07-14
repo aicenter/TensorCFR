@@ -87,7 +87,7 @@ class TensorCFRFlattenedDomains:
 			flattened_node_cf_strategies = flatten_strategies_via_action_counts(
 					node_cf_strategies,
 					self.domain.action_counts,
-					basename="node_cf_strategies"
+					basename="nodal_cf_strategies"
 			)
 			return flattened_node_cf_strategies
 

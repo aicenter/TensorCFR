@@ -10,7 +10,8 @@ from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NOD
 	DEFAULT_AVERAGING_DELAY, INT_DTYPE
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
-from src.utils.cfr_utils import distribute_strategies_to_nodes, flatten_via_action_counts
+from src.utils.cfr_utils import distribute_strategies_to_nodes, flatten_strategies_via_action_counts, \
+	get_action_and_infoset_values
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
@@ -66,7 +67,7 @@ class TensorCFRFlattenedDomains:
 						name="node_strategies_lvl{}".format(level)
 				) for level in range(self.domain.acting_depth)
 			]
-			flattened_node_strategies = flatten_via_action_counts(node_strategies, self.domain.action_counts)
+			flattened_node_strategies = flatten_strategies_via_action_counts(node_strategies, self.domain.action_counts)
 			return flattened_node_strategies
 
 	def get_node_cf_strategies(self, updating_player=None):
@@ -83,7 +84,7 @@ class TensorCFRFlattenedDomains:
 						name="node_cf_strategies_lvl{}".format(level)
 				) for level in range(self.domain.acting_depth)
 			]
-			flattened_node_cf_strategies = flatten_via_action_counts(
+			flattened_node_cf_strategies = flatten_strategies_via_action_counts(
 					node_cf_strategies,
 					self.domain.action_counts,
 					basename="node_cf_strategies"

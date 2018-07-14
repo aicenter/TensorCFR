@@ -122,7 +122,7 @@ def flatten_strategies_via_action_counts(node_strategies, action_counts, basenam
 	]
 
 
-def expand_to_2D_via_action_counts(action_counts, values_in_children, name="reshape_CFVs"):
+def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_cf_values"):
 	"""
   Reshape data related to children (e.g., CFVs) to a 2D tensor of shape (parent x action).
 
@@ -171,7 +171,7 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="resh
 					mask_children,
 					dtype=FLOAT_DTYPE
 			),
-			name="cleaned_up_result_in_{}".format(name)
+			name="final_expanded_{}".format(name)
 	)
 
 

@@ -243,8 +243,13 @@ class TensorCFRFlattenedDomains:
 		expected_values = self.get_expected_values()
 		reach_probabilities = self.get_nodal_reach_probabilities()
 		with tf.variable_scope("nodal_counterfactual_values"):
-			return [tf.multiply(reach_probabilities[level], expected_values[level],
-			                    name="nodal_cf_value_lvl{}".format(level)) for level in range(self.domain.levels)]
+			return [
+				tf.multiply(
+						reach_probabilities[level],
+						expected_values[level],
+						name="nodal_cf_value_lvl{}".format(level)
+				) for level in range(self.domain.levels)
+			]
 
 	def get_infoset_cf_values_per_actions(self):  # TODO verify and write a unittest
 		node_cf_values = self.get_nodal_cf_values()

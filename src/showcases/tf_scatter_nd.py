@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from pprint import pprint
 
 import tensorflow as tf
 
@@ -47,15 +48,19 @@ action_counts_of_inner_nodes = [
 	)
 	for level, action_count in enumerate(action_counts)
 ]
-# infoset_action_counts = [
-# 	tf.scatter_nd(
-# 		indices=inner_node_to_infoset[level],
-# 		updates=tf.constant(action_counts[level]),
-# 		shape=tf.shape(infoset_acting_players[level]),
-# 		name="infoset_action_counts_lvl{}".format(level),
-# 	)
-# 	for level in range(len(infoset_acting_players))
-# ]
+infoset_action_counts = [
+	tf.scatter_nd_update(
+		ref=tf.Variable(
+			tf.zeros_like(
+				infoset_acting_players[level]
+			)
+		),
+		indices=inner_node_to_infoset[level],
+		updates=action_counts_of_inner_nodes[level],
+		name="infoset_action_counts_lvl{}".format(level),
+	)
+	for level in range(len(infoset_acting_players))
+]
 
 
 if __name__ == '__main__':
@@ -71,26 +76,20 @@ if __name__ == '__main__':
 		for level in range(len(infoset_acting_players)):
 			print("########## Level {} ##########".format(level))
 			print_tensors(sess, [
-				tf.expand_dims(
-					node_to_infoset[level],
-					axis=-1,
-					name="expanded_node_to_infoset_indices_lvl{}".format(level)
-				),
-				tf.constant(
-					action_counts[level],
-					name="action_counts_lvl{}".format(level)
-				),
+				mask_of_inner_nodes[level],
+				inner_node_to_infoset[level],
+				action_counts_of_inner_nodes[level],
 				tf.shape(
 					infoset_acting_players[level],
 					name="infoset_acting_players_lvl{}".format(level)
 				),
-				mask_of_inner_nodes[level]
+				infoset_action_counts[level]
 			])
-		# 	print_tensors(sess, [infoset_action_counts[level]])
+			print("##############################")
+		print("Check for multiple calls of `scatter_nd_update`")
 		print("##############################")
-		print_tensors(sess, mask_of_inner_nodes)
-		print("______________________________")
-		print_tensors(sess, inner_node_to_infoset)
-		print("______________________________")
-		print_tensors(sess, action_counts_of_inner_nodes)
-		# print_tensors(sess, infoset_action_counts)
+		print_tensors(sess, infoset_action_counts)
+		print("##############################")
+		print_tensors(sess, infoset_action_counts)
+		print("##############################")
+		print_tensors(sess, infoset_action_counts)

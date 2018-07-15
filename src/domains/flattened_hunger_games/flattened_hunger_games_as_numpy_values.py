@@ -14,8 +14,8 @@ action_counts = [
 	[2] * 10,
 	[0] * 20,
 ]
-levels = len(action_counts) + 1  # accounting for 0th level
-acting_depth = len(action_counts)
+levels = len(action_counts)
+acting_depth = len(action_counts) - 1  # the last level has only (non-acting) terminal nodes
 
 # allocate Python arrays
 node_to_infoset: List[int] = [None] * acting_depth

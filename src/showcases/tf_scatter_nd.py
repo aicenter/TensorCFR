@@ -28,18 +28,26 @@ mask_of_inner_nodes = [
 	)
 	for level, action_count in enumerate(action_counts)
 ]
-infoset_action_counts = [
-	tf.scatter_nd(
-		indices=tf.expand_dims(
-			node_to_infoset[level],
-			axis=-1
+inner_node_to_infoset = [
+	tf.expand_dims(
+		tf.boolean_mask(
+			node_to_infoset_level,
+			mask=mask_of_inner_nodes[level]
 		),
-		updates=tf.constant(action_counts[level]),
-		shape=tf.shape(infoset_acting_players[level]),
-		name="infoset_action_counts_lvl{}".format(level),
+		axis=-1,
+		name="inner_node_to_infoset_lvl{}".format(level),
 	)
-	for level in range(len(infoset_acting_players))
+	for level, node_to_infoset_level in enumerate(node_to_infoset)
 ]
+# infoset_action_counts = [
+# 	tf.scatter_nd(
+# 		indices=inner_node_to_infoset[level],
+# 		updates=tf.constant(action_counts[level]),
+# 		shape=tf.shape(infoset_acting_players[level]),
+# 		name="infoset_action_counts_lvl{}".format(level),
+# 	)
+# 	for level in range(len(infoset_acting_players))
+# ]
 
 
 if __name__ == '__main__':
@@ -73,4 +81,6 @@ if __name__ == '__main__':
 		# 	print_tensors(sess, [infoset_action_counts[level]])
 		print("##############################")
 		print_tensors(sess, mask_of_inner_nodes)
+		print("______________________________")
+		print_tensors(sess, inner_node_to_infoset)
 		# print_tensors(sess, infoset_action_counts)

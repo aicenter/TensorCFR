@@ -754,6 +754,12 @@ if __name__ == '__main__':
 	domain = get_domain_by_name("flattened_hunger_games")
 	tensorcfr = TensorCFRFlattenedDomains(domain)
 
+	infoset_cf_values_per_actions, infoset_cf_values = tensorcfr.get_infoset_cf_values()
+	alternating_cf_values = [
+		value
+		for pair_of_values in zip(infoset_cf_values_per_actions, infoset_cf_values)
+		for value in pair_of_values
+	]
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		# tensorcfr.domain.print_domain(sess)
@@ -762,7 +768,12 @@ if __name__ == '__main__':
 		# tensorcfr.show_reach_probabilities(sess)
 		# sess.run(tensorcfr.swap_players())
 		# tensorcfr.show_reach_probabilities(sess)
-		print_tensors(sess, tensorcfr.get_nodal_cf_values())
+		# print_tensors(sess, tensorcfr.get_nodal_cf_values())
+		# print_tensors(sess, infoset_cf_values_per_actions + infoset_cf_values)
+		print_tensors(sess, alternating_cf_values)
+		sess.run(tensorcfr.swap_players())
+		print_tensors(sess, alternating_cf_values)
+		# print_tensors(sess, tensorcfr.get_regrets())
 
 	# run_cfr(
 	# 		# total_steps=10,

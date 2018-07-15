@@ -39,6 +39,14 @@ inner_node_to_infoset = [
 	)
 	for level, node_to_infoset_level in enumerate(node_to_infoset)
 ]
+action_counts_of_inner_nodes = [
+	tf.boolean_mask(
+		action_count,
+		mask=mask_of_inner_nodes[level],
+		name="action_counts_of_inner_nodes_lvl{}".format(level)
+	)
+	for level, action_count in enumerate(action_counts)
+]
 # infoset_action_counts = [
 # 	tf.scatter_nd(
 # 		indices=inner_node_to_infoset[level],
@@ -83,4 +91,6 @@ if __name__ == '__main__':
 		print_tensors(sess, mask_of_inner_nodes)
 		print("______________________________")
 		print_tensors(sess, inner_node_to_infoset)
+		print("______________________________")
+		print_tensors(sess, action_counts_of_inner_nodes)
 		# print_tensors(sess, infoset_action_counts)

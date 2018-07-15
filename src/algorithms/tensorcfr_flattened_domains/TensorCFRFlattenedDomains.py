@@ -251,30 +251,29 @@ class TensorCFRFlattenedDomains:
 				) for level in range(self.domain.levels)
 			]
 
-	def get_infoset_cf_values_per_actions(self):  # TODO verify and write a unittest
+	def get_infoset_action_cf_values(self):  # TODO verify and write a unittest
 		node_cf_values = self.get_nodal_cf_values()
-		with tf.variable_scope("infoset_cf_values_per_actions"):
+		with tf.variable_scope("infoset_action_cf_values"):
 			cf_values_infoset_actions = [None] * (self.domain.levels - 1)
 			cf_values_infoset_actions[0] = tf.expand_dims(
 					node_cf_values[1],
 					axis=0,
-					name="infoset_cf_values_per_actions_lvl0"
+					name="infoset_action_cf_values_lvl0"
 			)
 			for level in range(1, self.domain.levels - 1):  # TODO replace for-loop with parallel_map on TensorArray?
 				cf_values_infoset_actions[level] = scatter_nd_sum(
 						indices=tf.expand_dims(self.domain.node_to_infoset[level], axis=-1),
 						updates=node_cf_values[level + 1],
 						shape=self.domain.current_infoset_strategies[level].shape,
-						name="infoset_cf_values_per_actions_lvl{}".format(level),
+						name="infoset_action_cf_values_lvl{}".format(level),
 				)
 			return cf_values_infoset_actions
 
 	def get_infoset_cf_values(self):  # TODO verify and write a unittest
 		nodal_cf_values = self.get_nodal_cf_values()
-		# TODO rename to `infoset_action_cf_values`
-		infoset_cf_values_per_actions, infoset_cf_values = [], []
+		infoset_actions_cf_values, infoset_cf_values = [], []
 		for level in range(self.domain.acting_depth):
-			infoset_cf_value_per_action, infoset_cf_value = get_action_and_infoset_values(
+			infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
 					values_in_children=nodal_cf_values[level + 1],
 					action_counts=self.domain.action_counts[level],
 					parental_node_to_infoset=self.domain.node_to_infoset[level],
@@ -282,8 +281,8 @@ class TensorCFRFlattenedDomains:
 					name="cf_values_lvl{}".format(level)
 			)
 			infoset_cf_values.append(infoset_cf_value)
-			infoset_cf_values_per_actions.append(infoset_cf_value_per_action)
-		return infoset_cf_values_per_actions, infoset_cf_values
+			infoset_actions_cf_values.append(infoset_action_cf_value)
+		return infoset_actions_cf_values, infoset_cf_values
 
 	def get_infoset_children_types(self):  # TODO unittest
 		with tf.variable_scope("infoset_children_types"):
@@ -350,7 +349,7 @@ class TensorCFRFlattenedDomains:
 		return infoset_uniform_strategies
 
 	def get_regrets(self):  # TODO verify and write a unittest
-		infoset_cf_values, infoset_cf_values_per_actions = self.get_infoset_cf_values()
+		infoset_cf_values, infoset_action_cf_values = self.get_infoset_cf_values()
 		infoset_children_types = self.get_infoset_children_types()
 		with tf.variable_scope("regrets"):
 			regrets = [None] * self.domain.acting_depth
@@ -363,10 +362,10 @@ class TensorCFRFlattenedDomains:
 									name="non_imaginary_children_lvl{}".format(level)
 							),
 							x=tf.zeros_like(
-									infoset_cf_values_per_actions[level],
+									infoset_action_cf_values[level],
 									name="zero_regrets_of_imaginary_children_lvl{}".format(level),
 							),
-							y=infoset_cf_values_per_actions[level] - infoset_cf_values[level],
+							y=infoset_action_cf_values[level] - infoset_cf_values[level],
 							name="regrets_lvl{}".format(level),
 					)
 		return regrets
@@ -629,7 +628,7 @@ def log_before_all_steps(tensorcfr_instance, session, setup_messages, total_step
 	print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay))
 
 
-def log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_cf_values_per_actions,
+def log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_action_cf_values,
                           nodal_cf_values, expected_values, reach_probabilities, regrets):
 	print("########## CFR+ step #{} ##########".format(tensorcfr_instance.domain.cfr_step.eval()))
 	print_tensors(session, reach_probabilities)
@@ -638,13 +637,13 @@ def log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infose
 	print("___________________________________\n")
 	print_tensors(session, nodal_cf_values)
 	print("___________________________________\n")
-	print_tensors(session, infoset_cf_values_per_actions)
+	print_tensors(session, infoset_action_cf_values)
 	print("___________________________________\n")
 	print_tensors(session, infoset_cf_values)
 	print("___________________________________\n")
 	print_tensors(session, regrets)
 	print("___________________________________\n")
-	print_tensors(session, infoset_cf_values_per_actions)
+	print_tensors(session, infoset_action_cf_values)
 	print("___________________________________\n")
 	print_tensors(session, infoset_cf_values)
 	print("___________________________________\n")
@@ -695,7 +694,7 @@ def run_cfr(tensorcfr_instance: TensorCFRFlattenedDomains, total_steps=DEFAULT_T
 	reach_probabilities = tensorcfr_instance.get_nodal_reach_probabilities() if not quiet else None
 	expected_values = tensorcfr_instance.get_expected_values() if not quiet else None
 	nodal_cf_values = tensorcfr_instance.get_nodal_cf_values() if not quiet else None
-	infoset_cf_values, infoset_cf_values_per_actions = tensorcfr_instance.get_infoset_cf_values() if not quiet \
+	infoset_cf_values, infoset_action_cf_values = tensorcfr_instance.get_infoset_cf_values() if not quiet \
 		else (None, None)
 	regrets = tensorcfr_instance.get_regrets() if not quiet else None
 	strategies_matched_to_regrets = tensorcfr_instance.get_strategy_matched_to_regrets() if not quiet else None
@@ -718,7 +717,7 @@ def run_cfr(tensorcfr_instance: TensorCFRFlattenedDomains, total_steps=DEFAULT_T
 		with tf.summary.FileWriter(log_dir_path, tf.get_default_graph()) as writer:
 			for i in range(total_steps):
 				if quiet is False:
-					log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_cf_values_per_actions,
+					log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_action_cf_values,
 					                      nodal_cf_values, expected_values, reach_probabilities, regrets)
 
 				"""
@@ -754,10 +753,10 @@ if __name__ == '__main__':
 	domain = get_domain_by_name("flattened_hunger_games")
 	tensorcfr = TensorCFRFlattenedDomains(domain)
 
-	infoset_cf_values_per_actions, infoset_cf_values = tensorcfr.get_infoset_cf_values()
+	infoset_action_cf_values, infoset_cf_values = tensorcfr.get_infoset_cf_values()
 	alternating_cf_values = [
 		value
-		for pair_of_values in zip(infoset_cf_values_per_actions, infoset_cf_values)
+		for pair_of_values in zip(infoset_action_cf_values, infoset_cf_values)
 		for value in pair_of_values
 	]
 	with tf.Session() as sess:
@@ -769,7 +768,7 @@ if __name__ == '__main__':
 		# sess.run(tensorcfr.swap_players())
 		# tensorcfr.show_reach_probabilities(sess)
 		# print_tensors(sess, tensorcfr.get_nodal_cf_values())
-		# print_tensors(sess, infoset_cf_values_per_actions + infoset_cf_values)
+		# print_tensors(sess, infoset_action_cf_values + infoset_cf_values)
 		print_tensors(sess, alternating_cf_values)
 		sess.run(tensorcfr.swap_players())
 		print_tensors(sess, alternating_cf_values)

@@ -21,7 +21,11 @@ if __name__ == '__main__':
 			sess.run(tf.global_variables_initializer())
 			for level in range(tensorcfr.domain.acting_depth):
 				print("########## Level {} ##########".format(level))
-				print_tensors(sess, [infoset_cf_values_per_actions[level], infoset_cf_values[level], regrets[level]])
+				print_tensors(sess, [
+					infoset_cf_values_per_actions[level],
+					infoset_cf_values[level],
+					regrets[level]
+				])
 				print("___________________________________\n")
 				# TODO create a unit out of the following `print_tensors()`
 				print_tensors(sess, [

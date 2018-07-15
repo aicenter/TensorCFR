@@ -64,12 +64,13 @@ infoset_action_counts = [
 
 
 if __name__ == '__main__':
-	# print("action_counts:")
-	# pprint(action_counts, indent=1, width=80)
-	# print("node_to_infoset:")
-	# pprint(node_to_infoset, indent=1, width=80)
-	# print("infoset_acting_players:")
-	# pprint(infoset_acting_players, indent=1, width=40)
+	print("action_counts:")
+	pprint(action_counts, indent=1, width=80)
+	print("node_to_infoset:")
+	pprint(node_to_infoset, indent=1, width=80)
+	print("infoset_acting_players:")
+	pprint(infoset_acting_players, indent=1, width=40)
+	print("##############################")
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 

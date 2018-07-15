@@ -175,7 +175,7 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_c
 	)
 
 
-def get_action_and_infoset_values(values_in_children, action_counts, node_to_parental_infoset, infoset_strategy,
+def get_action_and_infoset_values(values_in_children, action_counts, parental_node_to_infoset, infoset_strategy,
                                   name="cf_values"):
 	"""
   Compute counterfactual values of actions and information sets for one level.
@@ -183,7 +183,8 @@ def get_action_and_infoset_values(values_in_children, action_counts, node_to_par
   Args:
     :param values_in_children: A 1-D tensor of counterfactual values for the children.
     :param action_counts: A 1-D array containing number of actions of each node.
-    :param node_to_parental_infoset: A 1-D array indicating the index of the infoset for each parent of the children.
+    :param parental_node_to_infoset: A 1-D array indicating the index of the infoset for each parent of the children.
+     This array is for the parental level, i.e. it is the same as `node_to_infoset[parental_level]`.
     :param infoset_strategy: A 2-D representation of probability of playing an action in an infoset.
 		:param name: A string to name the resulting tensor operation.
 
@@ -197,7 +198,7 @@ def get_action_and_infoset_values(values_in_children, action_counts, node_to_par
 	)
 
 	cfvs_infoset_x_action = scatter_nd_sum(
-			indices=tf.expand_dims(node_to_parental_infoset, axis=1),
+			indices=tf.expand_dims(parental_node_to_infoset, axis=1),
 			updates=values_in_parent_x_action,
 			shape=tf.shape(infoset_strategy),
 			name="infoset_x_action_{}".format(name)

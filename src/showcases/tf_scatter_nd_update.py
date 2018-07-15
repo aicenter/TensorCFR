@@ -21,6 +21,7 @@ node_to_infoset = [
 	[0, 0, 1, 1],
 	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 ]
+section_delimiter = "##############################"
 mask_of_inner_nodes = [
 	tf.not_equal(
 		action_count,
@@ -70,7 +71,7 @@ if __name__ == '__main__':
 	pprint(node_to_infoset, indent=1, width=80)
 	print("infoset_acting_players:")
 	pprint(infoset_acting_players, indent=1, width=40)
-	print("##############################")
+	print(section_delimiter)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 
@@ -86,11 +87,11 @@ if __name__ == '__main__':
 				),
 				infoset_action_counts[level]
 			])
-			print("##############################")
+			print(section_delimiter)
 		print("Check for multiple calls of `scatter_nd_update`")
-		print("##############################")
+		print(section_delimiter)
 		print_tensors(sess, infoset_action_counts)
-		print("##############################")
+		print(section_delimiter)
 		print_tensors(sess, infoset_action_counts)
-		print("##############################")
+		print(section_delimiter)
 		print_tensors(sess, infoset_action_counts)

@@ -349,7 +349,7 @@ class TensorCFRFlattenedDomains:
 		return infoset_uniform_strategies
 
 	def get_regrets(self):  # TODO verify and write a unittest
-		infoset_cf_values, infoset_action_cf_values = self.get_infoset_cf_values()
+		infoset_action_cf_values, infoset_cf_values = self.get_infoset_cf_values()
 		infoset_children_types = self.get_infoset_children_types()
 		with tf.variable_scope("regrets"):
 			regrets = [None] * self.domain.acting_depth

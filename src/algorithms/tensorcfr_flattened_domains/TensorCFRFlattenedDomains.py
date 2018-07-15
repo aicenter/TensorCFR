@@ -270,17 +270,20 @@ class TensorCFRFlattenedDomains:
 			return cf_values_infoset_actions
 
 	def get_infoset_cf_values(self):  # TODO verify and write a unittest
-		infoset_cf_values_per_actions = self.get_infoset_cf_values_per_actions()
-		with tf.variable_scope("infoset_cf_values"):
-			infoset_cf_values = [
-				tf.reduce_sum(
-						self.domain.current_infoset_strategies[level] * infoset_cf_values_per_actions[level],
-						axis=-1,
-						keepdims=True,
-						name="infoset_cf_values_lvl{}".format(level),
-				) for level in range(self.domain.levels - 1)
-			]
-		return infoset_cf_values, infoset_cf_values_per_actions
+		nodal_cf_values = self.get_nodal_cf_values()
+		# TODO rename to `infoset_action_cf_values`
+		infoset_cf_values_per_actions, infoset_cf_values = [], []
+		for level in range(self.domain.acting_depth):
+			infoset_cf_value_per_action, infoset_cf_value = get_action_and_infoset_values(
+					values_in_children=nodal_cf_values[level + 1],
+					action_counts=self.domain.action_counts[level],
+					parental_node_to_infoset=self.domain.node_to_infoset[level],
+					infoset_strategy=self.domain.current_infoset_strategies[level],
+					name="cf_values_lvl{}".format(level)
+			)
+			infoset_cf_values.append(infoset_cf_value)
+			infoset_cf_values_per_actions.append(infoset_cf_value_per_action)
+		return infoset_cf_values_per_actions, infoset_cf_values
 
 	def get_infoset_children_types(self):  # TODO unittest
 		with tf.variable_scope("infoset_children_types"):

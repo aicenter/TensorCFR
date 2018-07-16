@@ -301,14 +301,14 @@ class TensorCFRFlattenedDomains:
 			infoset_uniform_strategies = [None] * self.domain.acting_depth
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
-					infoset_uniform_strategies[level] = tf.cast(
+					infoset_mask_non_imaginary_children_float_dtype = tf.cast(
 							infoset_mask_non_imaginary_children[level],
 							dtype=FLOAT_DTYPE,
 					)
 					# Note: An all-0's row cannot be normalized. This is caused when an infoset has only imaginary children. As of
 					#       now, an all-0's row is kept without normalizing.
 					count_of_actions = tf.reduce_sum(
-							infoset_uniform_strategies[level],
+							infoset_mask_non_imaginary_children_float_dtype,
 							axis=-1,
 							keepdims=True,
 							name="count_of_actions_lvl{}".format(level),
@@ -317,18 +317,19 @@ class TensorCFRFlattenedDomains:
 							tf.equal(count_of_actions, 0.0),
 							name="rows_summing_to_zero_lvl{}".format(level)
 					)
-					infoset_uniform_strategies[level] = tf.where(
+					reciprocals = tf.where(
 							condition=infosets_with_no_actions,
-							x=infoset_uniform_strategies[level],
+							x=infoset_mask_non_imaginary_children_float_dtype,
+							# TODO use /
 							y=tf.divide(
-									infoset_uniform_strategies[level],
+									infoset_mask_non_imaginary_children_float_dtype,
 									count_of_actions,
 							),
 							name="normalize_where_nonzero_sum_lvl{}".format(level),
 					)
 					infoset_uniform_strategies[level] = tf.where(
 							condition=self.domain.infosets_of_non_chance_player[level],
-							x=infoset_uniform_strategies[level],
+							x=reciprocals,
 							y=self.domain.current_infoset_strategies[level],
 							name="infoset_uniform_strategies_lvl{}".format(level),
 					)

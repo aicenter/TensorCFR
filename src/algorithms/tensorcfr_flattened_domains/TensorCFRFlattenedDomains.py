@@ -284,7 +284,8 @@ class TensorCFRFlattenedDomains:
 			infoset_actions_cf_values.append(infoset_action_cf_value)
 		return infoset_actions_cf_values, infoset_cf_values
 
-	def get_infoset_children_types(self):  # TODO unittest
+	# TODO update implementation here
+	def get_infoset_children_mask_of_imaginary_actions(self):  # TODO unittest
 		with tf.variable_scope("infoset_children_types"):
 			infoset_children_types = [None] * (self.domain.levels - 1)
 			for level in range(self.domain.levels - 1):
@@ -311,7 +312,7 @@ class TensorCFRFlattenedDomains:
 
 	def get_infoset_uniform_strategies(self):  # TODO unittest
 		with tf.variable_scope("infoset_uniform_strategies"):
-			infoset_children_types = self.get_infoset_children_types()
+			infoset_children_types = self.get_infoset_children_mask_of_imaginary_actions()
 			infoset_uniform_strategies = [None] * (self.domain.levels - 1)
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
@@ -350,7 +351,7 @@ class TensorCFRFlattenedDomains:
 
 	def get_regrets(self):  # TODO verify and write a unittest
 		infoset_action_cf_values, infoset_cf_values = self.get_infoset_cf_values()
-		infoset_children_types = self.get_infoset_children_types()
+		infoset_children_types = self.get_infoset_children_mask_of_imaginary_actions()
 		with tf.variable_scope("regrets"):
 			regrets = [None] * self.domain.acting_depth
 			for level in range(self.domain.acting_depth):

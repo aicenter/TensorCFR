@@ -284,31 +284,16 @@ class TensorCFRFlattenedDomains:
 			infoset_actions_cf_values.append(infoset_action_cf_value)
 		return infoset_actions_cf_values, infoset_cf_values
 
-	# TODO update implementation here
 	def get_infoset_children_mask_of_imaginary_actions(self):  # TODO unittest
 		with tf.variable_scope("infoset_children_mask_of_imaginary_actions"):
-			infoset_children_mask_of_imaginary_actions = [None] * (self.domain.levels - 1)
-			for level in range(self.domain.levels - 1):
+			infoset_children_mask_of_imaginary_actions = [None] * self.domain.acting_depth
+			for level, infoset_action_count in enumerate(self.domain.infoset_action_counts):
 				with tf.variable_scope("level{}".format(level)):
-					if level == 0:
-						infoset_children_mask_of_imaginary_actions[0] = tf.expand_dims(
-								self.domain.node_types[1],
-								axis=0,
-								name="infoset_children_mask_of_imaginary_actions_lvl0"
-						)
-					else:
-						infoset_children_mask_of_imaginary_actions[level] = tf.scatter_nd_update(
-								ref=tf.Variable(
-										tf.zeros_like(
-												self.domain.current_infoset_strategies[level],
-												dtype=self.domain.node_types[level + 1].dtype
-										)
-								),
-								indices=tf.expand_dims(self.domain.node_to_infoset[level], axis=-1),
-								updates=self.domain.node_types[level + 1],
-								name="infoset_children_mask_of_imaginary_actions_lvl{}".format(level)
-						)
-			return infoset_children_mask_of_imaginary_actions
+					infoset_children_mask_of_imaginary_actions[level] = tf.sequence_mask(
+						lengths=infoset_action_count,
+						name="infoset_children_mask_of_imaginary_actions_lvl{}".format(level)
+					)
+		return infoset_children_mask_of_imaginary_actions
 
 	def get_infoset_uniform_strategies(self):  # TODO unittest
 		with tf.variable_scope("infoset_uniform_strategies"):
@@ -772,7 +757,8 @@ if __name__ == '__main__':
 		# print_tensors(sess, alternating_cf_values)
 		# sess.run(tensorcfr.swap_players())
 		# print_tensors(sess, alternating_cf_values)
-		print_tensors(sess, tensorcfr.get_regrets())
+		print_tensors(sess, tensorcfr.domain.infoset_action_counts + tensorcfr.get_infoset_children_mask_of_imaginary_actions())
+		# print_tensors(sess, tensorcfr.get_regrets())
 
 	# run_cfr(
 	# 		# total_steps=10,

@@ -286,18 +286,18 @@ class TensorCFRFlattenedDomains:
 
 	# TODO update implementation here
 	def get_infoset_children_mask_of_imaginary_actions(self):  # TODO unittest
-		with tf.variable_scope("infoset_children_types"):
-			infoset_children_types = [None] * (self.domain.levels - 1)
+		with tf.variable_scope("infoset_children_mask_of_imaginary_actions"):
+			infoset_children_mask_of_imaginary_actions = [None] * (self.domain.levels - 1)
 			for level in range(self.domain.levels - 1):
 				with tf.variable_scope("level{}".format(level)):
 					if level == 0:
-						infoset_children_types[0] = tf.expand_dims(
+						infoset_children_mask_of_imaginary_actions[0] = tf.expand_dims(
 								self.domain.node_types[1],
 								axis=0,
-								name="infoset_children_types_lvl0"
+								name="infoset_children_mask_of_imaginary_actions_lvl0"
 						)
 					else:
-						infoset_children_types[level] = tf.scatter_nd_update(
+						infoset_children_mask_of_imaginary_actions[level] = tf.scatter_nd_update(
 								ref=tf.Variable(
 										tf.zeros_like(
 												self.domain.current_infoset_strategies[level],
@@ -306,18 +306,18 @@ class TensorCFRFlattenedDomains:
 								),
 								indices=tf.expand_dims(self.domain.node_to_infoset[level], axis=-1),
 								updates=self.domain.node_types[level + 1],
-								name="infoset_children_types_lvl{}".format(level)
+								name="infoset_children_mask_of_imaginary_actions_lvl{}".format(level)
 						)
-			return infoset_children_types
+			return infoset_children_mask_of_imaginary_actions
 
 	def get_infoset_uniform_strategies(self):  # TODO unittest
 		with tf.variable_scope("infoset_uniform_strategies"):
-			infoset_children_types = self.get_infoset_children_mask_of_imaginary_actions()
+			infoset_children_mask_of_imaginary_actions = self.get_infoset_children_mask_of_imaginary_actions()
 			infoset_uniform_strategies = [None] * (self.domain.levels - 1)
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infoset_uniform_strategies[level] = tf.cast(
-							tf.not_equal(infoset_children_types[level], IMAGINARY_NODE),
+							tf.not_equal(infoset_children_mask_of_imaginary_actions[level], IMAGINARY_NODE),
 							dtype=FLOAT_DTYPE,
 					)
 					# Note: An all-0's row cannot be normalized. This is caused when an infoset has only imaginary children. As of
@@ -351,14 +351,14 @@ class TensorCFRFlattenedDomains:
 
 	def get_regrets(self):  # TODO verify and write a unittest
 		infoset_action_cf_values, infoset_cf_values = self.get_infoset_cf_values()
-		infoset_children_types = self.get_infoset_children_mask_of_imaginary_actions()
+		infoset_children_mask_of_imaginary_actions = self.get_infoset_children_mask_of_imaginary_actions()
 		with tf.variable_scope("regrets"):
 			regrets = [None] * self.domain.acting_depth
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					regrets[level] = tf.where(
 							condition=tf.equal(
-									infoset_children_types[level],
+									infoset_children_mask_of_imaginary_actions[level],
 									IMAGINARY_NODE,
 									name="non_imaginary_children_lvl{}".format(level)
 							),

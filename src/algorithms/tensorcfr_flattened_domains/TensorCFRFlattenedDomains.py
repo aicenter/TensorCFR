@@ -320,11 +320,7 @@ class TensorCFRFlattenedDomains:
 					reciprocals = tf.where(
 							condition=infosets_with_no_actions,
 							x=infoset_mask_non_imaginary_children_float_dtype,
-							# TODO use /
-							y=tf.divide(
-									infoset_mask_non_imaginary_children_float_dtype,
-									count_of_actions,
-							),
+							y=infoset_mask_non_imaginary_children_float_dtype / count_of_actions,
 							name="normalize_where_nonzero_sum_lvl{}".format(level),
 					)
 					infoset_uniform_strategies[level] = tf.where(

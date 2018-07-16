@@ -299,10 +299,10 @@ class TensorCFRFlattenedDomains:
 		with tf.variable_scope("infoset_uniform_strategies"):
 			infoset_mask_non_imaginary_children = self.get_infoset_mask_non_imaginary_children()
 			infoset_uniform_strategies = [None] * self.domain.acting_depth
-			for level in range(self.domain.acting_depth):
+			for level, infoset_mask_of_1_level in enumerate(infoset_mask_non_imaginary_children):
 				with tf.variable_scope("level{}".format(level)):
 					infoset_mask_non_imaginary_children_float_dtype = tf.cast(
-							infoset_mask_non_imaginary_children[level],
+							infoset_mask_of_1_level,
 							dtype=FLOAT_DTYPE,
 					)
 					# Note: An all-0's row cannot be normalized. This is caused when an infoset has only imaginary children. As of

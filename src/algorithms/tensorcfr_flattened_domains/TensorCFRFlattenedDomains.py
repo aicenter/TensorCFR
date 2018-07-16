@@ -298,11 +298,11 @@ class TensorCFRFlattenedDomains:
 	def get_infoset_uniform_strategies(self):  # TODO unittest
 		with tf.variable_scope("infoset_uniform_strategies"):
 			infoset_mask_non_imaginary_children = self.get_infoset_mask_non_imaginary_children()
-			infoset_uniform_strategies = [None] * (self.domain.levels - 1)
+			infoset_uniform_strategies = [None] * self.domain.acting_depth
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infoset_uniform_strategies[level] = tf.cast(
-							tf.not_equal(infoset_mask_non_imaginary_children[level], IMAGINARY_NODE),
+							infoset_mask_non_imaginary_children[level],
 							dtype=FLOAT_DTYPE,
 					)
 					# Note: An all-0's row cannot be normalized. This is caused when an infoset has only imaginary children. As of
@@ -757,7 +757,8 @@ if __name__ == '__main__':
 		# print_tensors(sess, alternating_cf_values)
 		# sess.run(tensorcfr.swap_players())
 		# print_tensors(sess, alternating_cf_values)
-		print_tensors(sess, tensorcfr.domain.infoset_action_counts + tensorcfr.get_infoset_mask_non_imaginary_children())
+		# print_tensors(sess, tensorcfr.domain.infoset_action_counts + tensorcfr.get_infoset_mask_non_imaginary_children())
+		print_tensors(sess, tensorcfr.get_infoset_uniform_strategies())
 		# print_tensors(sess, tensorcfr.get_regrets())
 
 	# run_cfr(

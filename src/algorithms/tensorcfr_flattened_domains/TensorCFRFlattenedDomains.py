@@ -284,25 +284,25 @@ class TensorCFRFlattenedDomains:
 			infoset_actions_cf_values.append(infoset_action_cf_value)
 		return infoset_actions_cf_values, infoset_cf_values
 
-	def get_infoset_children_mask_of_imaginary_actions(self):  # TODO unittest
-		with tf.variable_scope("infoset_children_mask_of_imaginary_actions"):
-			infoset_children_mask_of_imaginary_actions = [None] * self.domain.acting_depth
+	def get_infoset_mask_non_imaginary_children(self):  # TODO unittest
+		with tf.variable_scope("infoset_mask_non_imaginary_children"):
+			infoset_mask_non_imaginary_children = [None] * self.domain.acting_depth
 			for level, infoset_action_count in enumerate(self.domain.infoset_action_counts):
 				with tf.variable_scope("level{}".format(level)):
-					infoset_children_mask_of_imaginary_actions[level] = tf.sequence_mask(
+					infoset_mask_non_imaginary_children[level] = tf.sequence_mask(
 						lengths=infoset_action_count,
-						name="infoset_children_mask_of_imaginary_actions_lvl{}".format(level)
+						name="infoset_mask_non_imaginary_children_lvl{}".format(level)
 					)
-		return infoset_children_mask_of_imaginary_actions
+		return infoset_mask_non_imaginary_children
 
 	def get_infoset_uniform_strategies(self):  # TODO unittest
 		with tf.variable_scope("infoset_uniform_strategies"):
-			infoset_children_mask_of_imaginary_actions = self.get_infoset_children_mask_of_imaginary_actions()
+			infoset_mask_non_imaginary_children = self.get_infoset_mask_non_imaginary_children()
 			infoset_uniform_strategies = [None] * (self.domain.levels - 1)
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infoset_uniform_strategies[level] = tf.cast(
-							tf.not_equal(infoset_children_mask_of_imaginary_actions[level], IMAGINARY_NODE),
+							tf.not_equal(infoset_mask_non_imaginary_children[level], IMAGINARY_NODE),
 							dtype=FLOAT_DTYPE,
 					)
 					# Note: An all-0's row cannot be normalized. This is caused when an infoset has only imaginary children. As of
@@ -336,14 +336,14 @@ class TensorCFRFlattenedDomains:
 
 	def get_regrets(self):  # TODO verify and write a unittest
 		infoset_action_cf_values, infoset_cf_values = self.get_infoset_cf_values()
-		infoset_children_mask_of_imaginary_actions = self.get_infoset_children_mask_of_imaginary_actions()
+		infoset_mask_non_imaginary_children = self.get_infoset_mask_non_imaginary_children()
 		with tf.variable_scope("regrets"):
 			regrets = [None] * self.domain.acting_depth
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					regrets[level] = tf.where(
 							condition=tf.equal(
-									infoset_children_mask_of_imaginary_actions[level],
+									infoset_mask_non_imaginary_children[level],
 									IMAGINARY_NODE,
 									name="non_imaginary_children_lvl{}".format(level)
 							),
@@ -757,7 +757,7 @@ if __name__ == '__main__':
 		# print_tensors(sess, alternating_cf_values)
 		# sess.run(tensorcfr.swap_players())
 		# print_tensors(sess, alternating_cf_values)
-		print_tensors(sess, tensorcfr.domain.infoset_action_counts + tensorcfr.get_infoset_children_mask_of_imaginary_actions())
+		print_tensors(sess, tensorcfr.domain.infoset_action_counts + tensorcfr.get_infoset_mask_non_imaginary_children())
 		# print_tensors(sess, tensorcfr.get_regrets())
 
 	# run_cfr(

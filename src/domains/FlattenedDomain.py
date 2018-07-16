@@ -52,6 +52,7 @@ class FlattenedDomain:
 				)
 				for level in range(self.acting_depth)
 			]
+			self.__init_infoset_action_counts__()
 
 			# tensors on strategies
 			if reach_probability_of_root_node is None:
@@ -137,6 +138,48 @@ class FlattenedDomain:
 				) for level in range(self.acting_depth)
 			]
 
+	def __init_infoset_action_counts__(self):
+		self.mask_of_inner_nodes = [
+			tf.not_equal(
+				action_count,
+				0,
+				name="mask_of_inner_nodes_lvl{}".format(level)
+			)
+			for level, action_count in enumerate(self.action_counts)
+		]
+		inner_node_to_infoset = [
+			tf.expand_dims(
+				tf.boolean_mask(
+					node_to_infoset_level,
+					mask=self.mask_of_inner_nodes[level]
+				),
+				axis=-1,
+				name="inner_node_to_infoset_lvl{}".format(level),
+			)
+			for level, node_to_infoset_level in enumerate(self.node_to_infoset)
+		]
+		action_counts_of_inner_nodes = [
+			tf.boolean_mask(
+				action_count,
+				mask=self.mask_of_inner_nodes[level],
+				name="action_counts_of_inner_nodes_lvl{}".format(level)
+			)
+			for level, action_count in enumerate(self.action_counts)
+		]
+		self.infoset_action_counts = [
+			tf.scatter_nd_update(
+				ref=tf.Variable(
+					tf.zeros_like(
+						self.infoset_acting_players[level]
+					)
+				),
+				indices=inner_node_to_infoset[level],
+				updates=action_counts_of_inner_nodes[level],
+				name="infoset_action_counts_lvl{}".format(level),
+			)
+			for level in range(len(self.infoset_acting_players))
+		]
+
 	@classmethod
 	def init_from_gambit_file(cls, path_to_gambitfile, domain_name="from_gambit"):
 		domain_numpy_tensors = GambitEFGLoader(path_to_gambitfile)
@@ -185,6 +228,8 @@ class FlattenedDomain:
 				print_tensors(session, [
 					self.node_to_infoset[level],
 					self.infoset_acting_players[level],
+					self.mask_of_inner_nodes[level],
+					self.infoset_action_counts[level],
 					self.initial_infoset_strategies[level],
 					self.current_infoset_strategies[level],
 					self.positive_cumulative_regrets[level],

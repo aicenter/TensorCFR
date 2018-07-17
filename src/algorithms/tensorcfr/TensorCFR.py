@@ -15,7 +15,7 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 
 
 class TensorCFR:
-	def __init__(self, domain: Domain):
+	def  __init__(self, domain: Domain):
 		self.domain = domain
 		with tf.variable_scope("increment_step"):
 			self.increment_cfr_step = tf.assign_add(
@@ -703,6 +703,8 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
 			log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)
+
+			return [session.run(x) for x in average_infoset_strategies]
 
 
 if __name__ == '__main__':

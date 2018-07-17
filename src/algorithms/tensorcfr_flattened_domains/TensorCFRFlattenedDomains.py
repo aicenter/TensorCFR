@@ -132,11 +132,11 @@ class TensorCFRFlattenedDomains:
 					extended_weighted_sum = tf.scatter_nd(
 							indices=scatter_copy_indices,
 							updates=weighted_sum_of_values,
-							shape=self.domain.node_types[level].shape,
+							shape=self.domain.node_types[level].shape,  # TODO replace with `utilities.shape`
 							name="extended_weighted_sum_lvl{}".format(level)
 					)
 					expected_values[level] = tf.where(
-							condition=tf.equal(self.domain.node_types[level], TERMINAL_NODE),
+							condition=tf.equal(self.domain.node_types[level], TERMINAL_NODE),  # TODO replace with `action_counts[level]`
 							x=self.domain.signum_of_current_player * tf.reshape(
 									self.domain.utilities[level],
 									shape=[self.domain.utilities[level].shape[-1]],
@@ -738,26 +738,26 @@ if __name__ == '__main__':
 	# 	for pair_of_values in zip(infoset_action_cf_values_, infoset_cf_values_)
 	# 	for value in pair_of_values
 	# ]
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		# tensorcfr.domain.print_domain(sess)
-		# tensorcfr.show_strategies(sess)
-		# tensorcfr.show_expected_values(sess)
-		# tensorcfr.show_reach_probabilities(sess)
-		# sess.run(tensorcfr.swap_players())
-		# tensorcfr.show_reach_probabilities(sess)
-		# print_tensors(sess, tensorcfr.get_nodal_cf_values())
-		# print_tensors(sess, alternating_cf_values)
-		# sess.run(tensorcfr.swap_players())
-		# print_tensors(sess, alternating_cf_values)
-		# print_tensors(sess, tensorcfr.domain.infoset_action_counts + tensorcfr.get_infoset_mask_non_imaginary_children())
-		# print_tensors(sess, tensorcfr.get_infoset_uniform_strategies())
-		print_tensors(sess, tensorcfr.get_regrets())
+	# with tf.Session() as sess:
+	# 	sess.run(tf.global_variables_initializer())
+	# 	tensorcfr.domain.print_domain(sess)
+	# 	tensorcfr.show_strategies(sess)
+	# 	tensorcfr.show_expected_values(sess)
+	# 	tensorcfr.show_reach_probabilities(sess)
+	# 	sess.run(tensorcfr.swap_players())
+	# 	tensorcfr.show_reach_probabilities(sess)
+	# 	print_tensors(sess, tensorcfr.get_nodal_cf_values())
+	# 	print_tensors(sess, alternating_cf_values)
+	# 	sess.run(tensorcfr.swap_players())
+	# 	print_tensors(sess, alternating_cf_values)
+	# 	print_tensors(sess, tensorcfr.domain.infoset_action_counts + tensorcfr.get_infoset_mask_non_imaginary_children())
+	# 	print_tensors(sess, tensorcfr.get_infoset_uniform_strategies())
+	# 	print_tensors(sess, tensorcfr.get_regrets())
 
-	# run_cfr(
-	# 		# total_steps=10,
-	# 		tensorcfr_instance=tensorcfr,
-	# 		quiet=True,
-	# 		# profiling=True,
-	# 		# delay=0
-	# )
+	run_cfr(
+			total_steps=10,
+			tensorcfr_instance=tensorcfr,
+			quiet=True,
+			# profiling=True,
+			delay=0
+	)

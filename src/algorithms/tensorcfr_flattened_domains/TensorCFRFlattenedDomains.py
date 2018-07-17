@@ -6,7 +6,7 @@ import re
 import numpy as np
 import tensorflow as tf
 
-from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
+from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
 	DEFAULT_AVERAGING_DELAY, INT_DTYPE
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
@@ -339,16 +339,12 @@ class TensorCFRFlattenedDomains:
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					regrets[level] = tf.where(
-							condition=tf.equal(
-									infoset_mask_non_imaginary_children[level],
-									IMAGINARY_NODE,
-									name="non_imaginary_children_lvl{}".format(level)
+							condition=infoset_mask_non_imaginary_children[level],
+							x=infoset_action_cf_values[level] - infoset_cf_values[level],
+							y=tf.zeros_like(
+								infoset_action_cf_values[level],
+								name="zero_regrets_of_imaginary_children_lvl{}".format(level),
 							),
-							x=tf.zeros_like(
-									infoset_action_cf_values[level],
-									name="zero_regrets_of_imaginary_children_lvl{}".format(level),
-							),
-							y=infoset_action_cf_values[level] - infoset_cf_values[level],
 							name="regrets_lvl{}".format(level),
 					)
 		return regrets
@@ -755,8 +751,8 @@ if __name__ == '__main__':
 		# sess.run(tensorcfr.swap_players())
 		# print_tensors(sess, alternating_cf_values)
 		# print_tensors(sess, tensorcfr.domain.infoset_action_counts + tensorcfr.get_infoset_mask_non_imaginary_children())
-		print_tensors(sess, tensorcfr.get_infoset_uniform_strategies())
-		# print_tensors(sess, tensorcfr.get_regrets())
+		# print_tensors(sess, tensorcfr.get_infoset_uniform_strategies())
+		print_tensors(sess, tensorcfr.get_regrets())
 
 	# run_cfr(
 	# 		# total_steps=10,

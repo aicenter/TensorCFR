@@ -6,6 +6,7 @@ MATCHING_PENNIES = "matching_pennies"
 MATCHING_PENNIES_GAMBIT = "matching_pennies_via_gambit"
 HUNGER_GAMES = "hunger_games"
 FLATTENED_HUNGER_GAMES = "flattened_hunger_games"
+FLATTENED_HUNGER_GAMES_2 = "flattened_hunger_games_2"
 GOOFSPIEL2_GAMBIT = "II-GS2_via_gambit"
 GOOFSPIEL3_GAMBIT = "II-GS3_via_gambit"
 GOOFSPIEL5_GAMBIT = "IIGS5_s1_bf_ft_via_gambit"
@@ -21,6 +22,7 @@ AVAILABLE_DOMAINS = [
 	MATCHING_PENNIES_GAMBIT,
 	HUNGER_GAMES,
 	FLATTENED_HUNGER_GAMES,
+	FLATTENED_HUNGER_GAMES_2,
 	GOOFSPIEL2_GAMBIT,
 	GOOFSPIEL3_GAMBIT,
 ]
@@ -54,6 +56,9 @@ def get_domain_by_name(name):
 	elif name == FLATTENED_HUNGER_GAMES:
 		from src.domains.flattened_hunger_games.FlattenedHungerGames import get_flattened_domain_hunger_games
 		return get_flattened_domain_hunger_games()
+	elif name == FLATTENED_HUNGER_GAMES_2:
+		from src.domains.flattened_hunger_games_2.FlattenedHungerGames_2 import get_flattened_domain_hunger_games_2
+		return get_flattened_domain_hunger_games_2()
 	elif name == GOOFSPIEL2_GAMBIT:
 		from src.domains.goofspiel2.domain_from_gambit_loader import get_domain_goofspiel2
 		return get_domain_goofspiel2()

@@ -41,7 +41,7 @@ initial_infoset_strategies[1] = [
 
 ########## Level 2 ##########
 node_to_infoset[2] = [0, 1, 1, 1, 1, 1, 1]    # `1` for the infoset of terminal nodes
-utilities[2] = [NON_TERMINAL_UTILITY, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]
+utilities[2] = [NON_TERMINAL_UTILITY, -6, -8, -5, -10, -3, -1]
 infoset_acting_players[2] = [PLAYER1]
 initial_infoset_strategies[2] = [
 	[0.1, 0.2, 0.0, 0.7]
@@ -86,7 +86,7 @@ initial_infoset_strategies[4] = [
 
 ########## Level 5 ##########
 # There are never any infosets in the final layer, only terminal / imaginary nodes.
-utilities[5] = [1.0] * 20
+utilities[5] = [86, 5, 31, 30, 1, 1, 10, 10, 99, 100, 45, 4, 16, 25, 77, 80, 78, 0, 9, 1]
 
 if __name__ == '__main__':
 	from pprint import pprint

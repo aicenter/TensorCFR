@@ -729,7 +729,8 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("domain01")
 	# domain = get_domain_by_name("matching_pennies")
 	# domain = get_domain_by_name("invalid domain name test")
-	domain = get_domain_by_name("flattened_hunger_games")
+	# domain = get_domain_by_name("flattened_hunger_games")
+	domain = get_domain_by_name("flattened_hunger_games_2")
 	tensorcfr = TensorCFRFlattenedDomains(domain)
 
 	# infoset_action_cf_values_, infoset_cf_values_ = tensorcfr.get_infoset_cf_values()

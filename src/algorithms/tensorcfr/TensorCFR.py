@@ -2,8 +2,8 @@
 import datetime
 import os
 import re
-import numpy as np
 
+import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
@@ -706,9 +706,10 @@ def run_cfr(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quie
 
 
 if __name__ == '__main__':
-	domain = get_domain_by_name("domain01")
+	# domain = get_domain_by_name("domain01")
 	# domain = get_domain_by_name("matching_pennies")
 	# domain = get_domain_by_name("invalid domain name test")
+	domain = get_domain_by_name("hunger_games")
 	tensorcfr = TensorCFR(domain)
 	run_cfr(
 			# total_steps=10,

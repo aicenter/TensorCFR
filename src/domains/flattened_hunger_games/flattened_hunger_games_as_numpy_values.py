@@ -4,7 +4,7 @@ from typing import List
 from src.commons.constants import NON_TERMINAL_UTILITY, PLAYER1, PLAYER2, \
 	IMAGINARY_PROBABILITIES
 
-# domain `hunger_games`: see doc/hunger_games_via_drawing.png
+# flattened domain `hunger_games`: see `doc/hunger_games_via_drawing.png` and `doc/hunger_games/`
 
 action_counts = [
 	[2],

@@ -6,7 +6,8 @@ import src.domains.flattened_hunger_games.flattened_hunger_games_as_numpy_values
 from src.domains.FlattenedDomain import FlattenedDomain
 
 
-# flattened domain `hunger_games`: see doc/hunger_games_via_drawing.png
+# flattened domain `hunger_games`: see `doc/hunger_games_via_drawing.png` and `doc/hunger_games/`
+
 def get_flattened_domain_hunger_games():
 	return FlattenedDomain(
 			domain_name="flattened_hunger_games",

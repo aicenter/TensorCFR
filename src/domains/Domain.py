@@ -9,8 +9,12 @@ from src.utils.tensor_utils import print_tensors
 
 class Domain:
 	def __init__(self, domain_name, actions_per_levels, node_to_infoset, node_types, utilities, infoset_acting_players,
-	             initial_infoset_strategies, reach_probability_of_root_node=None):
+	             initial_infoset_strategies, reach_probability_of_root_node=None, information_set_mapping_to_gtlibrary=None):
 		self.domain_name = domain_name
+
+		# information set mapping to GTLibrary information sets
+		self.information_set_mapping_to_gtlibrary = information_set_mapping_to_gtlibrary
+
 		with tf.variable_scope(self.domain_name, reuse=tf.AUTO_REUSE) as self.domain_scope:
 			# tensors on tree dimensions
 			self.actions_per_levels = actions_per_levels    # maximum number of actions per each level
@@ -145,7 +149,8 @@ class Domain:
 			domain_numpy_tensors.node_types,
 			domain_numpy_tensors.utilities,
 			domain_numpy_tensors.infoset_acting_players,
-			domain_numpy_tensors.initial_infoset_strategies
+			domain_numpy_tensors.initial_infoset_strategies,
+			information_set_mapping_to_gtlibrary=domain_numpy_tensors.information_set_mapping_to_gtlibrary
 		)
 
 	def get_infoset_acting_players(self):

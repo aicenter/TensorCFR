@@ -148,6 +148,11 @@ class GambitEFGLoader:
 
 		self.terminal_nodes_cnt = 0
 
+		# for best response
+		self.information_set_strategy_index = 0
+		self.information_set_mapping_to_gtlibrary = dict()
+		# end: for best response
+
 		with open(efg_file) as self.gambit_file:
 			game_header_line = self.gambit_file.readline()
 			game_header = self.parse_gambit_header(game_header_line)
@@ -158,6 +163,9 @@ class GambitEFGLoader:
 			self.domain_name = game_header['name']
 
 			self.load()
+
+		print("Information set index")
+		print(self.information_set_mapping_to_gtlibrary)
 
 		self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.actions_per_levels) + 1)]
 
@@ -181,6 +189,8 @@ class GambitEFGLoader:
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
+
+			print(self.information_set_mapping_to_gtlibrary)
 
 	@staticmethod
 	def parse_gambit_header(input_line):
@@ -324,6 +334,15 @@ class GambitEFGLoader:
 
 				tree_node = stack_nodes_lvl.pop()
 
+				# best response
+				if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER and node['infoset_id'] not in self.information_set_mapping_to_gtlibrary.keys():
+					self.information_set_mapping_to_gtlibrary[node['infoset_id']] = {
+						"gtlibrary_index": self.information_set_strategy_index,
+						"tensorcfr_strategy_coordination": None
+					}
+					self.information_set_strategy_index += 1
+				# end: best response
+
 				level = tree_node.level
 				coordinates = tree_node.coordinates
 
@@ -358,6 +377,11 @@ class GambitEFGLoader:
 		else:
 			self.node_to_infoset[level][tuple(coordinates)] = value
 
+	def update_information_set_mapping_to_gtlibrary(self, node, level, node_to_infoset_value):
+		# coordination = (level, index in the matrix)
+		if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
+			self.information_set_mapping_to_gtlibrary[node['infoset_id']]['tensorcfr_strategy_coordination'] = (level, node_to_infoset_value,)
+
 	def load_post(self):
 		stack_nodes_lvl = [TreeNode(level=0)]
 
@@ -371,6 +395,7 @@ class GambitEFGLoader:
 				coordinates = tree_node.coordinates
 
 				node_to_infoset_value = self.infoset_managers[level].add(node)
+				self.update_information_set_mapping_to_gtlibrary(node, level, node_to_infoset_value)
 				self.update_node_to_infoset(level, coordinates, node_to_infoset_value)
 
 				if node['type'] == constants.GAMBIT_NODE_TYPE_CHANCE or node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
@@ -458,8 +483,18 @@ class GambitEFGLoader:
 
 if __name__ == '__main__':
 	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'domain01_via_gambit.efg')
+	goofspiel2_efg = os.path.join(
+		os.path.dirname(os.path.abspath(__file__)),
+		'..',
+		'..',
+		'..',
+		'doc',
+		'goofspiel',
+		'II-GS2.gbt'
+	)
+
 	gbt_files = [
-		domain01_efg,
+		goofspiel2_efg
 	]
 
 	for gbt_file in gbt_files:

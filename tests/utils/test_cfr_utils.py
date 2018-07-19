@@ -7,11 +7,8 @@ from src.utils.tensor_utils import print_tensors
 
 
 class TestCFRUtils(tf.test.TestCase):
-	def test_get_parents_from_action_counts(self):
-		"""
-		Test on `domains.hunger_games`
-		"""
-		action_counts = [
+	def setUp(self):
+		self.action_counts = [
 			[2],
 			[1, 6],
 			[4, 0, 0, 0, 0, 0, 0],
@@ -19,6 +16,11 @@ class TestCFRUtils(tf.test.TestCase):
 			[2] * 10,
 			[0] * 20
 		]
+
+	def test_get_parents_from_action_counts(self):
+		"""
+		Test on `domains.hunger_games`
+		"""
 		expected_node_types = [
 			[np.nan],
 			[0, 0],
@@ -27,7 +29,7 @@ class TestCFRUtils(tf.test.TestCase):
 			[0, 0, 0, 1, 1, 1, 2, 2, 3, 3],
 			[0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9],
 		]
-		parents = get_parents_from_action_counts(action_counts)
+		parents = get_parents_from_action_counts(self.action_counts)
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
 			self.assertEquals(len(parents), len(expected_node_types))
@@ -38,14 +40,6 @@ class TestCFRUtils(tf.test.TestCase):
 		"""
 		Test on `domains.hunger_games`
 		"""
-		action_counts = [
-			[2],
-			[1, 6],
-			[4, 0, 0, 0, 0, 0, 0],
-			[3, 3, 2, 2],
-			[2] * 10,
-			[0] * 20
-		]
 		expected_node_types = [
 			[0],
 			[0, 0],
@@ -54,7 +48,7 @@ class TestCFRUtils(tf.test.TestCase):
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 		]
-		node_types = get_node_types_from_action_counts(action_counts)
+		node_types = get_node_types_from_action_counts(self.action_counts)
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
 			self.assertEquals(len(node_types), len(expected_node_types))
@@ -77,14 +71,6 @@ class TestCFRUtils(tf.test.TestCase):
 		from pprint import pprint
 
 		# taken from hunger_games.initial_infoset_strategies, see `doc/hunger_games/hunger_games_via_gambit.png`
-		action_counts = [
-			[2],
-			[1, 6],
-			[4, 0, 0, 0, 0, 0, 0],
-			[3, 3, 2, 2],
-			[2] * 10,
-			[0] * 20,
-		]
 		infoset_strategies = [
 			tf.Variable([[0.1, 0.9]],
 			            name="infoset_strategies_lvl0"),
@@ -128,7 +114,7 @@ class TestCFRUtils(tf.test.TestCase):
 				0,
 				name="mask_of_inner_nodes_lvl{}".format(level)
 			)
-			for level, action_count in enumerate(action_counts)
+			for level, action_count in enumerate(self.action_counts)
 		]
 		inner_node_to_infoset = [
 			tf.boolean_mask(

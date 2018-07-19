@@ -35,8 +35,13 @@ GAMBIT_NODE_TYPE_PLAYER = 'p'
 INT_DTYPE_NUMPY = np.int32
 INT_DTYPE = tf.as_dtype(INT_DTYPE_NUMPY)
 FLOAT_DTYPE = tf.float32
+
+# constants for probabilities
 IMAGINARY_PROBABILITIES = 0.0
 REACH_PROBABILITY_OF_ROOT = 1.0
+
+# constants for indices
+INFOSET_FOR_TERMINAL_NODES = -1
 
 # absolute path to the root of the project source code
 PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))

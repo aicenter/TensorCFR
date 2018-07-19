@@ -196,7 +196,6 @@ def get_action_and_infoset_values(values_in_children, action_counts, parental_no
 			values_in_children,
 			name="parent_x_action_{}".format(name)
 	)
-
 	cfvs_infoset_x_action = scatter_nd_sum(
 			indices=tf.expand_dims(parental_node_to_infoset, axis=1),
 			updates=values_in_parent_x_action,

@@ -1,6 +1,9 @@
+from pprint import pprint
+
 import numpy as np
 import tensorflow as tf
 
+from src.commons.constants import INFOSET_FOR_TERMINAL_NODES
 from src.utils.cfr_utils import get_parents_from_action_counts, get_node_types_from_action_counts, \
 	distribute_strategies_to_nodes
 from src.utils.tensor_utils import print_tensors
@@ -8,6 +11,7 @@ from src.utils.tensor_utils import print_tensors
 
 class TestCFRUtils(tf.test.TestCase):
 	def setUp(self):
+		# taken from hunger_games.initial_infoset_strategies, see `doc/hunger_games/hunger_games_via_gambit.png`
 		self.action_counts = [
 			[2],
 			[1, 6],
@@ -15,6 +19,42 @@ class TestCFRUtils(tf.test.TestCase):
 			[3, 3, 2, 2],
 			[2] * 10,
 			[0] * 20
+		]
+		self.infoset_strategies = [
+			tf.Variable([[0.1, 0.9]],
+			            name="infoset_strategies_lvl0"),
+			tf.Variable([[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+			             [0.1, 0.1, 0.1, 0.0, 0.2, 0.5]],
+			            name="infoset_strategies_lvl1"),
+			tf.Variable([[0.1, 0.2, 0.0, 0.7]],
+			            name="infoset_strategies_lvl2"),
+			tf.Variable([[0.1, 0.0, 0.9],
+			             [0.2, 0.8, 0.0]],
+			            name="infoset_strategies_lvl3"),
+			tf.Variable([[0.1, 0.9],
+			             [0.2, 0.8],
+			             [0.3, 0.7],
+			             [0.4, 0.6],
+			             [0.5, 0.5],
+			             [0.6, 0.4],
+			             [0.7, 0.3],
+			             [0.8, 0.2],
+			             [0.9, 0.1],
+			             [1.0, 0.0]],
+			            name="infoset_strategies_lvl4")
+		]
+		self.node_to_infoset = [
+			tf.Variable([0],
+			            name="node_to_infoset_lvl0"),
+			tf.Variable([0, 1],
+			            name="node_to_infoset_lvl1"),
+			tf.Variable([0, INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES,
+			             INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES],
+			            name="node_to_infoset_lvl2"),
+			tf.Variable([0, 0, 1, 1],
+			            name="node_to_infoset_lvl3"),
+			tf.Variable([0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+			            name="node_to_infoset_lvl4")
 		]
 
 	def test_get_parents_from_action_counts(self):
@@ -67,47 +107,6 @@ class TestCFRUtils(tf.test.TestCase):
 
 		(quoted from https://www.tensorflow.org/api_docs/python/tf/gather)
 		"""
-		from src.commons.constants import INFOSET_FOR_TERMINAL_NODES
-		from pprint import pprint
-
-		# taken from hunger_games.initial_infoset_strategies, see `doc/hunger_games/hunger_games_via_gambit.png`
-		infoset_strategies = [
-			tf.Variable([[0.1, 0.9]],
-			            name="infoset_strategies_lvl0"),
-			tf.Variable([[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-			             [0.1, 0.1, 0.1, 0.0, 0.2, 0.5]],
-			            name="infoset_strategies_lvl1"),
-			tf.Variable([[0.1, 0.2, 0.0, 0.7]],
-			            name="infoset_strategies_lvl2"),
-			tf.Variable([[0.1, 0.0, 0.9],
-			             [0.2, 0.8, 0.0]],
-			            name="infoset_strategies_lvl3"),
-			tf.Variable([[0.1, 0.9],
-			             [0.2, 0.8],
-			             [0.3, 0.7],
-			             [0.4, 0.6],
-			             [0.5, 0.5],
-			             [0.6, 0.4],
-			             [0.7, 0.3],
-			             [0.8, 0.2],
-			             [0.9, 0.1],
-			             [1.0, 0.0]],
-			            name="infoset_strategies_lvl4")
-		]
-		node_to_infoset = [
-			tf.Variable([0],
-			            name="node_to_infoset_lvl0"),
-			tf.Variable([0, 1],
-			            name="node_to_infoset_lvl1"),
-			tf.Variable([0, INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES,
-			             INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES],
-			            name="node_to_infoset_lvl2"),
-			tf.Variable([0, 0, 1, 1],
-			            name="node_to_infoset_lvl3"),
-			tf.Variable([0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-			            name="node_to_infoset_lvl4")
-		]
-
 		mask_of_inner_nodes = [
 			tf.greater(
 				action_count,
@@ -122,15 +121,15 @@ class TestCFRUtils(tf.test.TestCase):
 				mask=mask_of_inner_nodes[level],
 				name="non_terminal_infoset_strategies_lvl{}".format(level)
 			)
-			for level, indices in enumerate(node_to_infoset)
+			for level, indices in enumerate(self.node_to_infoset)
 		]
 		nodal_strategies = [
 			distribute_strategies_to_nodes(
-					infoset_strategies[level],
-					inner_node_to_infoset[level],
-					"nodal_strategies_lvl{}".format(level)
+				self.infoset_strategies[level],
+				inner_node_to_infoset[level],
+				"nodal_strategies_lvl{}".format(level)
 			)
-			for level in range(len(infoset_strategies))
+			for level in range(len(self.infoset_strategies))
 		]
 		expected_nodal_strategies = [
 			[[0.1, 0.9]],   # level 0
@@ -165,9 +164,9 @@ class TestCFRUtils(tf.test.TestCase):
 			for level, nodal_strategy in enumerate(nodal_strategies):
 				print("\n>>>>>>>>>>>>>>>>>>Level {}<<<<<<<<<<<<<<<<<<".format(level))
 				print_tensors(sess, [
-					infoset_strategies[level],
+					self.infoset_strategies[level],
 					mask_of_inner_nodes[level],
-					node_to_infoset[level],
+					self.node_to_infoset[level],
 					inner_node_to_infoset[level],
 					nodal_strategy
 				])

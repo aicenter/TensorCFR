@@ -76,6 +76,12 @@ with self.test_session(config=tf.ConfigProto(device_count={'GPU': 0})) as sess:
 
 		"""
 		Test on `domains.hunger_games`
+
+		The test `test_distribute_strategies_to_nodes` failed work on the CPU version of TensorFlow due to different behavior of `tf.gather` on GPU and CPU:
+
+		> Note that on CPU, if an out of bound index is found, an error is returned. On GPU, if an out of bound index is found, a 0 is stored in the corresponding output value.
+
+		(quoted from https://www.tensorflow.org/api_docs/python/tf/gather)
 		"""
 		# taken from hunger_games.initial_infoset_strategies, see `doc/hunger_games/hunger_games_via_gambit.png`
 		infoset_strategies = [

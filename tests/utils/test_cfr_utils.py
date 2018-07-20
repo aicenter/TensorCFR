@@ -56,6 +56,26 @@ class TestCFRUtils(tf.test.TestCase):
 			tf.Variable([0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 			            name="node_to_infoset_lvl4")
 		]
+		self.expected_nodal_strategies = [
+			[[0.1, 0.9]],   # level 0
+			[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],   # level 1
+			 [0.1, 0.1, 0.1, 0.0, 0.2, 0.5]],
+			[[0.1, 0.2, 0.,  0.7]],   # level 2
+			[[0.1, 0.,  0.9],   # level 3
+			 [0.1, 0.,  0.9],
+			 [0.2, 0.8, 0.],
+			 [0.2, 0.8, 0.]],
+			[[0.1, 0.9],   # level 4
+			 [0.2, 0.8],
+			 [0.3, 0.7],
+			 [0.4, 0.6],
+			 [0.5, 0.5],
+			 [0.6, 0.4],
+			 [0.7, 0.3],
+			 [0.8, 0.2],
+			 [0.9, 0.1],
+			 [1.,  0.]]
+		]
 
 	def test_get_parents_from_action_counts(self):
 		"""
@@ -131,26 +151,6 @@ class TestCFRUtils(tf.test.TestCase):
 			)
 			for level in range(len(self.infoset_strategies))
 		]
-		expected_nodal_strategies = [
-			[[0.1, 0.9]],   # level 0
-			[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],   # level 1
-			 [0.1, 0.1, 0.1, 0.0, 0.2, 0.5]],
-			[[0.1, 0.2, 0.,  0.7]],   # level 2
-			[[0.1, 0.,  0.9],   # level 3
-			 [0.1, 0.,  0.9],
-			 [0.2, 0.8, 0.],
-			 [0.2, 0.8, 0.]],
-			[[0.1, 0.9],   # level 4
-			 [0.2, 0.8],
-			 [0.3, 0.7],
-			 [0.4, 0.6],
-			 [0.5, 0.5],
-			 [0.6, 0.4],
-			 [0.7, 0.3],
-			 [0.8, 0.2],
-			 [0.9, 0.1],
-			 [1.,  0.]]
-		]
 
 		# TODO here
 		# updating_player =
@@ -160,7 +160,7 @@ class TestCFRUtils(tf.test.TestCase):
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to test on CPUs
 		) as sess:
 			sess.run(tf.global_variables_initializer())
-			self.assertEquals(len(nodal_strategies), len(expected_nodal_strategies))
+			self.assertEquals(len(nodal_strategies), len(self.expected_nodal_strategies))
 			for level, nodal_strategy in enumerate(nodal_strategies):
 				print("\n>>>>>>>>>>>>>>>>>>Level {}<<<<<<<<<<<<<<<<<<".format(level))
 				print_tensors(sess, [
@@ -171,10 +171,10 @@ class TestCFRUtils(tf.test.TestCase):
 					nodal_strategy
 				])
 				print("\nexpected_nodal_strategies[{}]:".format(level))
-				pprint(expected_nodal_strategies[level], width=50)
+				pprint(self.expected_nodal_strategies[level], width=50)
 				np.testing.assert_array_almost_equal(
 					sess.run(nodal_strategy),
-					expected_nodal_strategies[level],
+					self.expected_nodal_strategies[level],
 					err_msg="Nodal strategies differ at level {}!".format(level)
 				)
 
@@ -207,26 +207,6 @@ class TestCFRUtils(tf.test.TestCase):
 			)
 			for level in range(len(self.infoset_strategies))
 		]
-		expected_nodal_strategies = [
-			[[0.1, 0.9]],   # level 0
-			[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],   # level 1
-			 [0.1, 0.1, 0.1, 0.0, 0.2, 0.5]],
-			[[0.1, 0.2, 0.,  0.7]],   # level 2
-			[[0.1, 0.,  0.9],   # level 3
-			 [0.1, 0.,  0.9],
-			 [0.2, 0.8, 0.],
-			 [0.2, 0.8, 0.]],
-			[[0.1, 0.9],   # level 4
-			 [0.2, 0.8],
-			 [0.3, 0.7],
-			 [0.4, 0.6],
-			 [0.5, 0.5],
-			 [0.6, 0.4],
-			 [0.7, 0.3],
-			 [0.8, 0.2],
-			 [0.9, 0.1],
-			 [1.,  0.]]
-		]
 
 		# TODO here
 		# updating_player =
@@ -236,7 +216,7 @@ class TestCFRUtils(tf.test.TestCase):
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to test on CPUs
 		) as sess:
 			sess.run(tf.global_variables_initializer())
-			self.assertEquals(len(nodal_strategies), len(expected_nodal_strategies))
+			self.assertEquals(len(nodal_strategies), len(self.expected_nodal_strategies))
 			for level, nodal_strategy in enumerate(nodal_strategies):
 				print("\n>>>>>>>>>>>>>>>>>>Level {}<<<<<<<<<<<<<<<<<<".format(level))
 				print_tensors(sess, [
@@ -246,9 +226,9 @@ class TestCFRUtils(tf.test.TestCase):
 					nodal_strategy
 				])
 				print("\nexpected_nodal_strategies[{}]:".format(level))
-				pprint(expected_nodal_strategies[level], width=50)
+				pprint(self.expected_nodal_strategies[level], width=50)
 				np.testing.assert_array_almost_equal(
 					sess.run(nodal_strategy),
-					expected_nodal_strategies[level],
+					self.expected_nodal_strategies[level],
 					err_msg="Nodal strategies differ at level {}!".format(level)
 				)

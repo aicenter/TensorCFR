@@ -2,7 +2,7 @@
 from typing import List
 
 from src.commons.constants import NON_TERMINAL_UTILITY, PLAYER1, PLAYER2, \
-	IMAGINARY_PROBABILITIES
+	IMAGINARY_PROBABILITIES, INFOSET_FOR_TERMINAL_NODES
 
 # flattened domain `hunger_games`: see `doc/hunger_games_via_drawing.png` and `doc/hunger_games_2/`
 
@@ -40,7 +40,8 @@ initial_infoset_strategies[1] = [
 ]
 
 ########## Level 2 ##########
-node_to_infoset[2] = [0, 1, 1, 1, 1, 1, 1]    # `1` for the infoset of terminal nodes
+node_to_infoset[2] = [0, INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES,
+                      INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES, INFOSET_FOR_TERMINAL_NODES]
 utilities[2] = [NON_TERMINAL_UTILITY, -6, -8, -5, -10, -3, -1]
 infoset_acting_players[2] = [PLAYER1]
 initial_infoset_strategies[2] = [

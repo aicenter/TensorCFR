@@ -37,6 +37,14 @@ class FlattenedDomain:
 				for level in range(self.acting_depth)
 			]
 			self.node_types = get_node_types_from_action_counts(action_counts)
+			self.mask_of_inner_nodes = [
+				tf.not_equal(
+					action_count,
+					0,
+					name="mask_of_inner_nodes_lvl{}".format(level)
+				)
+				for level, action_count in enumerate(self.action_counts)
+			]
 			self.utilities = [
 				tf.get_variable(
 						"utilities_lvl{}".format(level),
@@ -149,15 +157,6 @@ class FlattenedDomain:
 		]
 
 	def __init_infoset_action_counts__(self):
-		# TODO make as a member
-		self.mask_of_inner_nodes = [
-			tf.not_equal(
-				action_count,
-				0,
-				name="mask_of_inner_nodes_lvl{}".format(level)
-			)
-			for level, action_count in enumerate(self.action_counts)
-		]
 		self.inner_node_to_infoset = self.mask_out_values_in_terminal_nodes(
 			self.node_to_infoset,
 			name="node_to_infoset"

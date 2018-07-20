@@ -213,10 +213,14 @@ class TensorCFRFlattenedDomains:
 			for level in range(1, self.domain.levels - 1):
 				with tf.variable_scope("level{}".format(level)):
 					scatter_nd_sum_indices = tf.expand_dims(
-							self.domain.node_to_infoset[level],
-							axis=-1,
-							name="expanded_node_to_infoset_lvl{}".format(level))
-					scatter_nd_sum_updates = nodal_reach_probabilities[level]
+						self.domain.inner_node_to_infoset[level],
+						axis=-1,
+						name="expanded_node_to_infoset_lvl{}".format(level))
+					scatter_nd_sum_updates = tf.boolean_mask(   # TODO here
+						nodal_reach_probabilities[level],
+						mask=self.domain.mask_of_inner_nodes[level],
+						name="inner_nodal_reach_probabilities_lvl{}".format(level)
+					)
 					scatter_nd_sum_shape = self.domain.infoset_acting_players[level].shape
 					infoset_reach_probabilities[level] = scatter_nd_sum(
 						indices=scatter_nd_sum_indices,

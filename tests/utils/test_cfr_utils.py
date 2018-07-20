@@ -81,7 +81,7 @@ class TestCFRUtils(tf.test.TestCase):
 		"""
 		Test on `domains.hunger_games`
 		"""
-		expected_node_types = [
+		expected_parents = [
 			[np.nan],
 			[0, 0],
 			[0, 1, 1, 1, 1, 1, 1],
@@ -92,9 +92,9 @@ class TestCFRUtils(tf.test.TestCase):
 		parents = get_parents_from_action_counts(self.action_counts)
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
-			self.assertEquals(len(parents), len(expected_node_types))
+			self.assertEquals(len(parents), len(expected_parents))
 			for i in range(len(parents)):
-				tf.assert_equal(parents[i], expected_node_types[i])
+				tf.assert_equal(parents[i], expected_parents[i])
 
 	def test_get_node_types_from_action_counts(self):
 		"""

@@ -57,15 +57,15 @@ class TestCFRUtils(tf.test.TestCase):
 			            name="node_to_infoset_lvl4")
 		]
 		self.expected_nodal_strategies = [
-			[[0.1, 0.9]],   # level 0
-			[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],   # level 1
+			[[0.1, 0.9]],  # level 0
+			[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],  # level 1
 			 [0.1, 0.1, 0.1, 0.0, 0.2, 0.5]],
-			[[0.1, 0.2, 0.,  0.7]],   # level 2
-			[[0.1, 0.,  0.9],   # level 3
-			 [0.1, 0.,  0.9],
+			[[0.1, 0.2, 0., 0.7]],  # level 2
+			[[0.1, 0., 0.9],  # level 3
+			 [0.1, 0., 0.9],
 			 [0.2, 0.8, 0.],
 			 [0.2, 0.8, 0.]],
-			[[0.1, 0.9],   # level 4
+			[[0.1, 0.9],  # level 4
 			 [0.2, 0.8],
 			 [0.3, 0.7],
 			 [0.4, 0.6],
@@ -74,7 +74,7 @@ class TestCFRUtils(tf.test.TestCase):
 			 [0.7, 0.3],
 			 [0.8, 0.2],
 			 [0.9, 0.1],
-			 [1.,  0.]]
+			 [1., 0.]]
 		]
 		self.mask_of_inner_nodes = [
 			tf.greater(

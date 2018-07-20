@@ -138,6 +138,16 @@ class FlattenedDomain:
 				) for level in range(self.acting_depth)
 			]
 
+	def mask_out_values_in_terminal_nodes(self, list_of_1D_tensors, name):
+		return [
+			tf.boolean_mask(
+				tensor,
+				mask=self.mask_of_inner_nodes[level],
+				name="{}_masked_out_in_terminal_nodes_lvl{}".format(name, level)
+			)
+			for level, tensor in enumerate(list_of_1D_tensors)
+		]
+
 	def __init_infoset_action_counts__(self):
 		# TODO make as a member
 		self.mask_of_inner_nodes = [
@@ -192,16 +202,6 @@ class FlattenedDomain:
 
 	def get_infoset_acting_players(self):
 		return self.infoset_acting_players
-
-	def mask_out_values_in_terminal_nodes(self, list_of_1D_tensors, name):
-		return [
-			tf.boolean_mask(
-				tensor,
-				mask=self.mask_of_inner_nodes[level],
-				name="{}_masked_out_in_terminal_nodes_lvl{}".format(name, level)
-			)
-			for level, tensor in enumerate(list_of_1D_tensors)
-		]
 
 	def print_misc_variables(self, session):
 		print("########## Misc ##########")

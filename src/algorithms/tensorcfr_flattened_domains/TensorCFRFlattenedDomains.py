@@ -208,8 +208,10 @@ class TensorCFRFlattenedDomains:
 		with tf.variable_scope("infoset_reach_probabilities"):
 			infoset_reach_probabilities = [None] * self.domain.levels
 			with tf.variable_scope("level0"):
-				infoset_reach_probabilities[0] = tf.identity(nodal_reach_probabilities[0],
-				                                             name="infoset_reach_probabilities_lvl0")
+				infoset_reach_probabilities[0] = tf.identity(
+					nodal_reach_probabilities[0],
+					name="infoset_reach_probabilities_lvl0"
+				)
 			for level in range(1, self.domain.levels - 1):
 				with tf.variable_scope("level{}".format(level)):
 					scatter_nd_sum_indices = tf.expand_dims(

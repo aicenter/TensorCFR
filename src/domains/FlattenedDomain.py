@@ -64,7 +64,26 @@ class FlattenedDomain:
 				)
 				for level in range(self.acting_depth)
 			]
-			self.__init_infoset_action_counts__()
+			action_counts_of_inner_nodes = self.mask_out_values_in_terminal_nodes(
+				self.action_counts,
+				name="action_counts"
+			)
+			self.infoset_action_counts = [
+				tf.scatter_nd_update(
+					ref=tf.Variable(
+						tf.zeros_like(
+							self.infoset_acting_players[level]
+						)
+					),
+					indices=tf.expand_dims(
+						self.inner_node_to_infoset[level],
+						axis=-1
+					),
+					updates=action_counts_of_inner_nodes[level],
+					name="infoset_action_counts_lvl{}".format(level),
+				)
+				for level in range(len(self.infoset_acting_players))
+			]
 
 			# tensors on strategies
 			if reach_probability_of_root_node is None:
@@ -158,28 +177,6 @@ class FlattenedDomain:
 				name="{}_masked_out_in_terminal_nodes_lvl{}".format(name, level)
 			)
 			for level, tensor in enumerate(list_of_1D_tensors)
-		]
-
-	def __init_infoset_action_counts__(self):
-		action_counts_of_inner_nodes = self.mask_out_values_in_terminal_nodes(
-			self.action_counts,
-			name="action_counts"
-		)
-		self.infoset_action_counts = [
-			tf.scatter_nd_update(
-				ref=tf.Variable(
-					tf.zeros_like(
-						self.infoset_acting_players[level]
-					)
-				),
-				indices=tf.expand_dims(
-					self.inner_node_to_infoset[level],
-					axis=-1
-				),
-				updates=action_counts_of_inner_nodes[level],
-				name="infoset_action_counts_lvl{}".format(level),
-			)
-			for level in range(len(self.infoset_acting_players))
 		]
 
 	@classmethod

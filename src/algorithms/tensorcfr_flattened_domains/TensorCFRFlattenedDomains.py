@@ -234,14 +234,14 @@ class TensorCFRFlattenedDomains:
 	def show_reach_probabilities(self, session):
 		node_cf_strategies = self.get_node_cf_strategies()
 		nodal_reach_probabilities = self.get_nodal_reach_probabilities()
-		# infoset_reach_probabilities = self.get_infoset_reach_probabilities()
+		infoset_reach_probabilities = self.get_infoset_reach_probabilities()
 		for level in range(self.domain.levels):
 			print("########## Level {} ##########".format(level))
 			print_tensors(session, [nodal_reach_probabilities[level]])
 			if level < self.domain.levels - 1:
 				print_tensors(session, [
 					self.domain.node_to_infoset[level],
-					# infoset_reach_probabilities[level],
+					infoset_reach_probabilities[level],
 					self.domain.current_infoset_strategies[level],
 					node_cf_strategies[level],
 				])

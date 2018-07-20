@@ -76,6 +76,14 @@ class TestCFRUtils(tf.test.TestCase):
 			 [0.9, 0.1],
 			 [1.,  0.]]
 		]
+		self.mask_of_inner_nodes = [
+			tf.greater(
+				action_count,
+				0,
+				name="mask_of_inner_nodes_lvl{}".format(level)
+			)
+			for level, action_count in enumerate(self.action_counts)
+		]
 
 	def test_get_parents_from_action_counts(self):
 		"""
@@ -127,18 +135,10 @@ class TestCFRUtils(tf.test.TestCase):
 
 		(quoted from https://www.tensorflow.org/api_docs/python/tf/gather)
 		"""
-		mask_of_inner_nodes = [
-			tf.greater(
-				action_count,
-				0,
-				name="mask_of_inner_nodes_lvl{}".format(level)
-			)
-			for level, action_count in enumerate(self.action_counts)
-		]
 		inner_node_to_infoset = [
 			tf.boolean_mask(
 				indices,
-				mask=mask_of_inner_nodes[level],
+				mask=self.mask_of_inner_nodes[level],
 				name="non_terminal_infoset_strategies_lvl{}".format(level)
 			)
 			for level, indices in enumerate(self.node_to_infoset)
@@ -165,7 +165,7 @@ class TestCFRUtils(tf.test.TestCase):
 				print("\n>>>>>>>>>>>>>>>>>>Level {}<<<<<<<<<<<<<<<<<<".format(level))
 				print_tensors(sess, [
 					self.infoset_strategies[level],
-					mask_of_inner_nodes[level],
+					self.mask_of_inner_nodes[level],
 					self.node_to_infoset[level],
 					inner_node_to_infoset[level],
 					nodal_strategy
@@ -190,19 +190,11 @@ class TestCFRUtils(tf.test.TestCase):
 
 		(quoted from https://www.tensorflow.org/api_docs/python/tf/gather)
 		"""
-		mask_of_inner_nodes = [
-			tf.greater(
-				action_count,
-				0,
-				name="mask_of_inner_nodes_lvl{}".format(level)
-			)
-			for level, action_count in enumerate(self.action_counts)
-		]
 		nodal_strategies = [
 			distribute_strategies_to_inner_nodes(
 				self.infoset_strategies[level],
 				self.node_to_infoset[level],
-				mask_of_inner_nodes[level],
+				self.mask_of_inner_nodes[level],
 				"nodal_strategies_lvl{}".format(level)
 			)
 			for level in range(len(self.infoset_strategies))
@@ -221,7 +213,7 @@ class TestCFRUtils(tf.test.TestCase):
 				print("\n>>>>>>>>>>>>>>>>>>Level {}<<<<<<<<<<<<<<<<<<".format(level))
 				print_tensors(sess, [
 					self.infoset_strategies[level],
-					mask_of_inner_nodes[level],
+					self.mask_of_inner_nodes[level],
 					self.node_to_infoset[level],
 					nodal_strategy
 				])

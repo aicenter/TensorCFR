@@ -134,6 +134,8 @@ class TestCFRUtils(tf.test.TestCase):
 		 found, a 0 is stored in the corresponding output value.
 
 		(quoted from https://www.tensorflow.org/api_docs/python/tf/gather)
+
+		TODO test also for different values of `updating_player` and `acting_players`
 		"""
 		inner_node_to_infoset = [
 			tf.boolean_mask(
@@ -151,10 +153,6 @@ class TestCFRUtils(tf.test.TestCase):
 			)
 			for level in range(len(self.infoset_strategies))
 		]
-
-		# TODO here
-		# updating_player =
-		# acting_players =
 
 		with self.test_session(
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to test on CPUs
@@ -189,6 +187,8 @@ class TestCFRUtils(tf.test.TestCase):
 		 found, a 0 is stored in the corresponding output value.
 
 		(quoted from https://www.tensorflow.org/api_docs/python/tf/gather)
+
+		TODO test also for different values of `updating_player` and `acting_players`
 		"""
 		nodal_strategies = [
 			distribute_strategies_to_inner_nodes(
@@ -199,10 +199,6 @@ class TestCFRUtils(tf.test.TestCase):
 			)
 			for level in range(len(self.infoset_strategies))
 		]
-
-		# TODO here
-		# updating_player =
-		# acting_players =
 
 		with self.test_session(
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to test on CPUs

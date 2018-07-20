@@ -211,6 +211,37 @@ def get_action_and_infoset_values(values_in_children, action_counts, parental_no
 	return cfvs_infoset_x_action, cfvs_infoset
 
 
+def distribute_strategies_to_inner_nodes(infoset_strategies, node_to_infoset, mask_of_inner_nodes, name,
+                                         updating_player=None, acting_players=None):
+	"""
+	The same as the function `distribute_strategies_to_inner_nodes()` with the only difference that strategies are
+	 distributed just to inner nodes, not to terminal nodes.
+
+  Args:
+    :param infoset_strategies: A 2-D tensor of floats.
+    :param node_to_infoset: An N-D tensor of ints.
+    :param mask_of_inner_nodes: A boolean mask whether the inner node at the corresponding position is an inner node.
+    :param name: A string to name the resulting tensor operation.
+    :param updating_player: The index of the updating player to create for counterfactual probabilities.
+    :param acting_players: A tensor of the same shape as `node_to_infoset`, representing acting players per infosets.
+
+  Returns:
+    A corresponding TensorFlow operation (from the computation graph).
+  """
+	inner_node_to_infoset = tf.boolean_mask(
+		node_to_infoset,
+		mask=mask_of_inner_nodes,
+		name="inner_node_to_infoset_for_{}".format(name)
+	)
+	return distribute_strategies_to_nodes(
+		infoset_strategies=infoset_strategies,
+		node_to_infoset=inner_node_to_infoset,
+		name=name,
+		updating_player=updating_player,
+		acting_players=acting_players
+	)
+
+
 if __name__ == '__main__':
 	"""
 	Demonstrate on `domains.hunger_games`:

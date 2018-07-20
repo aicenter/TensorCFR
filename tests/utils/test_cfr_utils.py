@@ -5,7 +5,7 @@ import tensorflow as tf
 
 from src.commons.constants import INFOSET_FOR_TERMINAL_NODES
 from src.utils.cfr_utils import get_parents_from_action_counts, get_node_types_from_action_counts, \
-	distribute_strategies_to_nodes, distribute_strategies_to_inner_nodes
+	distribute_strategies_to_nodes, distribute_strategies_to_inner_nodes, expand_to_2D_via_action_counts
 from src.utils.tensor_utils import print_tensors
 
 
@@ -220,3 +220,45 @@ class TestCFRUtils(tf.test.TestCase):
 					self.expected_nodal_strategies[level],
 					err_msg="Nodal strategies differ at level {}!".format(level)
 				)
+
+	def test_expand_to_2D_via_action_counts(self):
+		"""
+		Test on `domains.hunger_games`
+
+		This can fail on the CPU version of TensorFlow due to different
+		 behavior of `tf.gather` on GPU and CPU:
+
+		> Note that on CPU, if an out of bound index is found, an error is returned. On GPU, if an out of bound index is
+		 found, a 0 is stored in the corresponding output value.
+
+		(quoted from https://www.tensorflow.org/api_docs/python/tf/gather)
+		"""
+		action_counts = [4, 0, 1, 0, 0, 2, 0, 2]
+		values_in_children = tf.Variable(
+			[
+				2.21, 26.740002, 65.82001, 21.24,
+
+				-.1,
+
+
+				-.2, -.3,
+
+				-.4, -.5
+			],
+			name="values_in_children"
+		)
+		# TODO:
+		# - expected_values_in_children (skip parents that are terminal nodes)
+		# - np.testing.assert_array_almost_equal()
+
+		values_in_parent_x_action = expand_to_2D_via_action_counts(
+			action_counts,
+			values_in_children,
+		)
+		with self.test_session(
+			config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to test on CPUs
+		) as sess:
+			sess.run(tf.global_variables_initializer())
+			print_tensors(sess, [
+				values_in_parent_x_action
+			])

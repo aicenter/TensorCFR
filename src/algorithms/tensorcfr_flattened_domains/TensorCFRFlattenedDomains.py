@@ -217,10 +217,10 @@ class TensorCFRFlattenedDomains:
 					scatter_nd_sum_updates = nodal_reach_probabilities[level]
 					scatter_nd_sum_shape = self.domain.infoset_acting_players[level].shape
 					infoset_reach_probabilities[level] = scatter_nd_sum(
-							indices=scatter_nd_sum_indices,
-							updates=scatter_nd_sum_updates,
-							shape=scatter_nd_sum_shape,
-							name="infoset_reach_probabilities_lvl{}".format(level)
+						indices=scatter_nd_sum_indices,
+						updates=scatter_nd_sum_updates,
+						shape=scatter_nd_sum_shape,
+						name="infoset_reach_probabilities_lvl{}".format(level)
 					)
 		return infoset_reach_probabilities
 

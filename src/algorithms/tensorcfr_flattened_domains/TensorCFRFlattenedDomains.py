@@ -10,8 +10,8 @@ from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, DEFAULT_TOTAL
 	DEFAULT_AVERAGING_DELAY, INT_DTYPE
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
-from src.utils.cfr_utils import distribute_strategies_to_nodes, flatten_strategies_via_action_counts, \
-	get_action_and_infoset_values
+from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
+	distribute_strategies_to_inner_nodes
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
@@ -61,10 +61,11 @@ class TensorCFRFlattenedDomains:
 	def get_node_strategies(self):
 		with tf.variable_scope("node_strategies"):
 			node_strategies = [
-				distribute_strategies_to_nodes(
-						self.domain.current_infoset_strategies[level],
-						self.domain.node_to_infoset[level],
-						name="node_strategies_lvl{}".format(level)
+				distribute_strategies_to_inner_nodes(
+					self.domain.current_infoset_strategies[level],
+					self.domain.node_to_infoset[level],
+					self.domain.mask_of_inner_nodes[level],
+					name="node_strategies_lvl{}".format(level)
 				) for level in range(self.domain.acting_depth)
 			]
 			flattened_node_strategies = flatten_strategies_via_action_counts(node_strategies, self.domain.action_counts)
@@ -76,12 +77,13 @@ class TensorCFRFlattenedDomains:
 		with tf.variable_scope("node_cf_strategies"):
 			# TODO generate node_cf_strategies_* with tf.where on node_strategies
 			node_cf_strategies = [
-				distribute_strategies_to_nodes(
-						self.domain.current_infoset_strategies[level],
-						self.domain.node_to_infoset[level],
-						updating_player=updating_player,
-						acting_players=self.domain.infoset_acting_players[level],
-						name="node_cf_strategies_lvl{}".format(level)
+				distribute_strategies_to_inner_nodes(
+					self.domain.current_infoset_strategies[level],
+					self.domain.node_to_infoset[level],
+					self.domain.mask_of_inner_nodes[level],
+					updating_player=updating_player,
+					acting_players=self.domain.infoset_acting_players[level],
+					name="node_cf_strategies_lvl{}".format(level)
 				) for level in range(self.domain.acting_depth)
 			]
 			flattened_node_cf_strategies = flatten_strategies_via_action_counts(

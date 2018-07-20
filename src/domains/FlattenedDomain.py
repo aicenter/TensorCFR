@@ -158,17 +158,10 @@ class FlattenedDomain:
 			)
 			for level, action_count in enumerate(self.action_counts)
 		]
-		inner_node_to_infoset = [
-			tf.expand_dims(
-				tf.boolean_mask(
-					node_to_infoset_level,
-					mask=self.mask_of_inner_nodes[level]
-				),
-				axis=-1,
-				name="inner_node_to_infoset_lvl{}".format(level),
-			)
-			for level, node_to_infoset_level in enumerate(self.node_to_infoset)
-		]
+		self.inner_node_to_infoset = self.mask_out_values_in_terminal_nodes(
+			self.node_to_infoset,
+			name="node_to_infoset"
+		)
 		action_counts_of_inner_nodes = self.mask_out_values_in_terminal_nodes(
 			self.action_counts,
 			name="action_counts"
@@ -180,7 +173,10 @@ class FlattenedDomain:
 						self.infoset_acting_players[level]
 					)
 				),
-				indices=inner_node_to_infoset[level],
+				indices=tf.expand_dims(
+					self.inner_node_to_infoset[level],
+					axis=-1
+				),
 				updates=action_counts_of_inner_nodes[level],
 				name="infoset_action_counts_lvl{}".format(level),
 			)

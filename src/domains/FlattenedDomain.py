@@ -139,7 +139,8 @@ class FlattenedDomain:
 			]
 
 	def __init_infoset_action_counts__(self):
-		mask_of_inner_nodes = [
+		# TODO make as a member
+		self.mask_of_inner_nodes = [
 			tf.not_equal(
 				action_count,
 				0,
@@ -151,7 +152,7 @@ class FlattenedDomain:
 			tf.expand_dims(
 				tf.boolean_mask(
 					node_to_infoset_level,
-					mask=mask_of_inner_nodes[level]
+					mask=self.mask_of_inner_nodes[level]
 				),
 				axis=-1,
 				name="inner_node_to_infoset_lvl{}".format(level),
@@ -161,7 +162,7 @@ class FlattenedDomain:
 		action_counts_of_inner_nodes = [
 			tf.boolean_mask(
 				action_count,
-				mask=mask_of_inner_nodes[level],
+				mask=self.mask_of_inner_nodes[level],
 				name="action_counts_of_inner_nodes_lvl{}".format(level)
 			)
 			for level, action_count in enumerate(self.action_counts)

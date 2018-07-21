@@ -144,9 +144,11 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_c
 		name="initial_integer_mask_in_{}".format(name)
 	)
 	first_column = tf.expand_dims(
-		tf.cumsum(action_counts,
-		          exclusive=True,
-		          name="first_column_indices_in_{}".format(name)),
+		tf.cumsum(
+			action_counts,
+			exclusive=True,
+			name="first_column_indices_in_{}".format(name)
+		),
 		dim=1
 	)
 	mask_with_replaced_first_column = tf.concat(
@@ -161,6 +163,16 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_c
 		dim=2,
 		name="computing_indices_in_{}".format(name)
 	)
+	# with tf.Session() as tmp_sess:
+	# 	tmp_sess.run(tf.global_variables_initializer())
+	# 	print_tensors(tmp_sess, [
+	# 		values_in_children,
+	# 		mask_children,
+	# 		indices_2D_into_1D
+	# 	])
+	# print("values_in_children.name == {}".format(values_in_children.name))
+	# print("indices_2D_into_1D.name == {}".format(indices_2D_into_1D.name))
+	# pprint(action_counts)
 	return tf.where(
 		condition=mask_children,
 		x=tf.gather_nd(

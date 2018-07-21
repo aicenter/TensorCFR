@@ -276,3 +276,44 @@ class TestCFRUtils(tf.test.TestCase):
 				expected_values_in_children,
 				decimal=5
 			)
+
+	def test_2_expand_to_2D_via_action_counts(self):
+		"""
+		Test on `domains.hunger_games`
+
+		This can fail on the CPU version of TensorFlow due to different
+		 behavior of `tf.gather` on GPU and CPU:
+
+		> Note that on CPU, if an out of bound index is found, an error is returned. On GPU, if an out of bound index is
+		 found, a 0 is stored in the corresponding output value.
+
+		(quoted from https://www.tensorflow.org/api_docs/python/tf/gather)
+		"""
+		values_in_children = tf.Variable(
+			[
+				2.21, 26.740002, 65.82001, 21.24
+			],
+			name="values_in_children"
+		)
+		expected_values_in_children = [
+			[2.21, 26.740002, 65.82001, 21.24]
+		]
+		level = 2
+		values_in_parent_x_action = expand_to_2D_via_action_counts(
+			self.action_counts[level],
+			values_in_children
+		)
+		with self.test_session(
+			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to test on CPUs
+		) as sess:
+			sess.run(tf.global_variables_initializer())
+			print_tensors(sess, [
+				values_in_parent_x_action
+			])
+			print("expected_values_in_children")
+			pprint(expected_values_in_children)
+			np.testing.assert_array_almost_equal(
+				sess.run(values_in_parent_x_action),
+				expected_values_in_children,
+				decimal=5
+			)

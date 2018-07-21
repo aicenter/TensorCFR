@@ -221,7 +221,7 @@ class TestCFRUtils(tf.test.TestCase):
 					err_msg="Nodal strategies differ at level {}!".format(level)
 				)
 
-	def test_expand_to_2D_via_action_counts(self):
+	def test_1_expand_to_2D_via_action_counts(self):
 		"""
 		Test on `domains.hunger_games`
 

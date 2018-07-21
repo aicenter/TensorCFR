@@ -173,16 +173,6 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_c
 		dim=2,
 		name="indices_2D_into_1D_in_{}".format(name)
 	)
-	# with tf.Session() as tmp_sess:
-	# 	tmp_sess.run(tf.global_variables_initializer())
-	# 	print_tensors(tmp_sess, [
-	# 		values_in_children,
-	# 		mask_children,
-	# 		indices_2D_into_1D
-	# 	])
-	# print("values_in_children.name == {}".format(values_in_children.name))
-	# print("indices_2D_into_1D.name == {}".format(indices_2D_into_1D.name))
-	# pprint(action_counts)
 	return tf.where(
 		condition=mask_children,
 		x=tf.gather_nd(

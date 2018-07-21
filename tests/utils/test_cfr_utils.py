@@ -260,7 +260,7 @@ class TestCFRUtils(tf.test.TestCase):
 
 		values_in_parent_x_action = expand_to_2D_via_action_counts(
 			action_counts,
-			values_in_children,
+			values_in_children
 		)
 		with self.test_session(
 			config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to test on CPUs

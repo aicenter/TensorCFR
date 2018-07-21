@@ -59,7 +59,7 @@ initial_infoset_strategies[3] = [
 
 ########## Level 4 ##########
 node_to_infoset[4] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-utilities[4] = [NON_TERMINAL_UTILITY] * 10,
+utilities[4] = [NON_TERMINAL_UTILITY] * 10
 infoset_acting_players[4] = [
 	PLAYER1,
 	PLAYER1,

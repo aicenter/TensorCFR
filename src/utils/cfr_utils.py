@@ -135,43 +135,43 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_c
   tensor with the provided data distributed to the correct positions.
 	"""
 	mask_children = tf.sequence_mask(
-			action_counts,
-			name="initial_boolean_mask_in_{}".format(name)
+		action_counts_in_inner_nodes,
+		name="initial_boolean_mask_in_{}".format(name)
 	)
 	mask_children_int_dtype = tf.cast(
-			mask_children,
-			dtype=INT_DTYPE,
-			name="initial_integer_mask_in_{}".format(name)
+		mask_children,
+		dtype=INT_DTYPE,
+		name="initial_integer_mask_in_{}".format(name)
 	)
 	first_column = tf.expand_dims(
-			tf.cumsum(action_counts,
-			          exclusive=True,
-			          name="first_column_indices_in_{}".format(name)),
-			dim=1
+		tf.cumsum(action_counts,
+		          exclusive=True,
+		          name="first_column_indices_in_{}".format(name)),
+		dim=1
 	)
 	mask_with_replaced_first_column = tf.concat(
-			[first_column, mask_children_int_dtype[:, 1:]], 1,
-			name="replacing_col0_in_{}".format(name)
+		[first_column, mask_children_int_dtype[:, 1:]], 1,
+		name="replacing_col0_in_{}".format(name)
 	)
 	indices_2D_into_1D = tf.expand_dims(
-			tf.cumsum(
-					mask_with_replaced_first_column,
-					axis=1
-			),
-			dim=2,
-			name="computing_indices_in_{}".format(name)
+		tf.cumsum(
+			mask_with_replaced_first_column,
+			axis=1
+		),
+		dim=2,
+		name="computing_indices_in_{}".format(name)
 	)
 	return tf.where(
-			condition=mask_children,
-			x=tf.gather_nd(
-					values_in_children,
-					indices_2D_into_1D
-			),
-			y=tf.zeros_like(
-					mask_children,
-					dtype=FLOAT_DTYPE
-			),
-			name="final_expanded_{}".format(name)
+		condition=mask_children,
+		x=tf.gather_nd(
+			values_in_children,
+			indices_2D_into_1D
+		),
+		y=tf.zeros_like(
+			mask_children,
+			dtype=FLOAT_DTYPE
+		),
+		name="final_expanded_{}".format(name)
 	)
 
 
@@ -192,21 +192,21 @@ def get_action_and_infoset_values(values_in_children, action_counts, parental_no
   to be able to subtract for the first return value.
 	"""
 	values_in_parent_x_action = expand_to_2D_via_action_counts(
-			action_counts,
-			values_in_children,
-			name="parent_x_action_{}".format(name)
+		action_counts,
+		values_in_children,
+		name="parent_x_action_{}".format(name)
 	)
 	cfvs_infoset_x_action = scatter_nd_sum(
-			indices=tf.expand_dims(parental_node_to_infoset, axis=1),
-			updates=values_in_parent_x_action,
-			shape=tf.shape(infoset_strategy),
-			name="infoset_x_action_{}".format(name)
+		indices=tf.expand_dims(parental_node_to_infoset, axis=1),
+		updates=values_in_parent_x_action,
+		shape=tf.shape(infoset_strategy),
+		name="infoset_x_action_{}".format(name)
 	)
 	cfvs_infoset = tf.reduce_sum(
-			tf.multiply(cfvs_infoset_x_action, infoset_strategy),
-			axis=1,
-			keepdims=True,
-			name="infoset_{}".format(name)
+		tf.multiply(cfvs_infoset_x_action, infoset_strategy),
+		axis=1,
+		keepdims=True,
+		name="infoset_{}".format(name)
 	)
 	return cfvs_infoset_x_action, cfvs_infoset
 

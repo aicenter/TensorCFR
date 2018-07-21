@@ -134,7 +134,7 @@ class TensorCFRFlattenedDomains:
 					extended_weighted_sum = tf.scatter_nd(
 							indices=scatter_copy_indices,
 							updates=weighted_sum_of_values,
-							shape=self.domain.node_types[level].shape,  # TODO replace with `utilities.shape`
+							shape=self.domain.utilities[level].shape,
 							name="extended_weighted_sum_lvl{}".format(level)
 					)
 					expected_values[level] = tf.where(

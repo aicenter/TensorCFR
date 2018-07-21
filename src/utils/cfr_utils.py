@@ -161,7 +161,7 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_c
 			axis=1
 		),
 		dim=2,
-		name="computing_indices_in_{}".format(name)
+		name="indices_2D_into_1D_in_{}".format(name)
 	)
 	# with tf.Session() as tmp_sess:
 	# 	tmp_sess.run(tf.global_variables_initializer())

@@ -269,6 +269,8 @@ class TestCFRUtils(tf.test.TestCase):
 			print_tensors(sess, [
 				values_in_parent_x_action
 			])
+			print("expected_values_in_children")
+			pprint(expected_values_in_children)
 			np.testing.assert_array_almost_equal(
 				sess.run(values_in_parent_x_action),
 				expected_values_in_children,

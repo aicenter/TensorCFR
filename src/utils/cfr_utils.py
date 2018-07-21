@@ -134,6 +134,16 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_c
   Returns: A corresponding TensorFlow operation (from the computation graph) that computes the (parent x action)
   tensor with the provided data distributed to the correct positions.
 	"""
+	mask_of_inner_nodes = tf.greater(
+		action_counts,
+		0,
+		name="mask_of_inner_nodes_in_{}".format(name)
+	)
+	action_counts_in_inner_nodes = tf.boolean_mask(
+		action_counts,
+		mask_of_inner_nodes,
+		name="action_counts_in_inner_nodes_in_{}".format(name)
+	)
 	mask_children = tf.sequence_mask(
 		action_counts_in_inner_nodes,
 		name="initial_boolean_mask_in_{}".format(name)
@@ -145,7 +155,7 @@ def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_c
 	)
 	first_column = tf.expand_dims(
 		tf.cumsum(
-			action_counts,
+			action_counts_in_inner_nodes,
 			exclusive=True,
 			name="first_column_indices_in_{}".format(name)
 		),

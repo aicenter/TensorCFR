@@ -6,7 +6,7 @@ import re
 import numpy as np
 import tensorflow as tf
 
-from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
+from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
 	DEFAULT_AVERAGING_DELAY, INT_DTYPE
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
@@ -138,12 +138,12 @@ class TensorCFRFlattenedDomains:
 						name="extended_weighted_sum_lvl{}".format(level)
 					)
 					expected_values[level] = tf.where(
-						condition=tf.equal(self.domain.node_types[level], TERMINAL_NODE),  # TODO replace with `action_counts[level]`
-						x=self.domain.signum_of_current_player * tf.reshape(
+						condition=self.domain.mask_of_inner_nodes[level],
+						x=extended_weighted_sum,
+						y=self.domain.signum_of_current_player * tf.reshape(
 							self.domain.utilities[level],
 							shape=[self.domain.utilities[level].shape[-1]],
 						),
-						y=extended_weighted_sum,
 						name="expected_values_lvl{}".format(level)
 					)
 		return expected_values

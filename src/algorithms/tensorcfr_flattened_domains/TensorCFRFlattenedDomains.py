@@ -283,7 +283,7 @@ class TensorCFRFlattenedDomains:
 			infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
 					values_in_children=nodal_cf_values[level + 1],
 					action_counts=self.domain.action_counts[level],
-					parental_node_to_infoset=self.domain.node_to_infoset[level],
+					parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
 					infoset_strategy=self.domain.current_infoset_strategies[level],
 					name="cf_values_lvl{}".format(level)
 			)

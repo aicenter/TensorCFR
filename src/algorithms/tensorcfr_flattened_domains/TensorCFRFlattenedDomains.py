@@ -499,7 +499,6 @@ class TensorCFRFlattenedDomains:
 			norm_of_strategies = [None] * self.domain.acting_depth
 			infosets_with_nonzero_norm = [None] * self.domain.acting_depth
 			for level in range(self.domain.acting_depth):
-				# TODO add variable scope `level{}`
 				with tf.variable_scope("level{}".format(level)):
 					norm_of_strategies[level] = tf.reduce_sum(
 						self.domain.cumulative_infoset_strategies[level],

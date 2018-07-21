@@ -6,7 +6,7 @@ import tensorflow as tf
 
 from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE, \
 	REACH_PROBABILITY_OF_ROOT
-from src.utils.cfr_utils import get_parents_from_action_counts, get_node_types_from_action_counts
+from src.utils.cfr_utils import get_parents_from_action_counts
 from src.utils.gambit.gambit_efg_loader import GambitEFGLoader
 from src.utils.tensor_utils import print_tensors
 
@@ -36,7 +36,6 @@ class FlattenedDomain:
 				)
 				for level in range(self.acting_depth)
 			]
-			self.node_types = get_node_types_from_action_counts(action_counts)
 			self.mask_of_inner_nodes = [
 				# TODO replace with `tf.greater`
 				tf.not_equal(
@@ -223,7 +222,7 @@ class FlattenedDomain:
 			print("########## Level {} ##########".format(level))
 			if level == 0:
 				print_tensors(session, [self.reach_probability_of_root_node])
-			print_tensors(session, [self.node_types[level], self.utilities[level]])
+			print_tensors(session, [self.utilities[level]])
 			if level != range(self.levels)[-1]:
 				print_tensors(session, [
 					self.node_to_infoset[level],

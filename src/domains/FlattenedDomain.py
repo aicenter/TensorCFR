@@ -38,6 +38,7 @@ class FlattenedDomain:
 			]
 			self.node_types = get_node_types_from_action_counts(action_counts)
 			self.mask_of_inner_nodes = [
+				# TODO replace with `tf.greater`
 				tf.not_equal(
 					action_count,
 					0,

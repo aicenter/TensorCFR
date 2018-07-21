@@ -247,9 +247,16 @@ class TestCFRUtils(tf.test.TestCase):
 			],
 			name="values_in_children"
 		)
-		# TODO:
-		# - expected_values_in_children (skip parents that are terminal nodes)
-		# - np.testing.assert_array_almost_equal()
+		expected_values_in_children = [
+			[2.21, 26.740002, 65.82001, 21.24],
+
+			[-.1, 0, 0, 0],
+
+
+			[-.2, -.3, 0, 0],
+
+			[-.4, -.5, 0, 0]
+		]
 
 		values_in_parent_x_action = expand_to_2D_via_action_counts(
 			action_counts,

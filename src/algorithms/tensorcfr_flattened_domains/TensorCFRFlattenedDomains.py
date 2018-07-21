@@ -20,9 +20,9 @@ class TensorCFRFlattenedDomains:
 		self.domain = domain
 		with tf.variable_scope("increment_step"):
 			self.increment_cfr_step = tf.assign_add(
-					ref=self.domain.cfr_step,
-					value=1,
-					name="increment_cfr_step"
+				ref=self.domain.cfr_step,
+				value=1,
+				name="increment_cfr_step"
 			)
 		self.summary_writer = None
 
@@ -30,32 +30,32 @@ class TensorCFRFlattenedDomains:
 	def get_the_other_player_of(tensor_variable_of_player):
 		with tf.variable_scope("get_the_other_player"):
 			return tf.where(
-					condition=tf.equal(tensor_variable_of_player, PLAYER1),
-					x=PLAYER2,
-					y=PLAYER1,
-					name="get_the_other_player"
+				condition=tf.equal(tensor_variable_of_player, PLAYER1),
+				x=PLAYER2,
+				y=PLAYER1,
+				name="get_the_other_player"
 			)
 
 	def swap_players(self):
 		with tf.variable_scope("swap_players"):
 			with tf.variable_scope("new_updating_player"):
 				assign_new_updating_player = tf.assign(
-						ref=self.domain.current_updating_player,
-						value=TensorCFRFlattenedDomains.get_the_other_player_of(self.domain.current_updating_player),
-						name="assign_new_updating_player",
+					ref=self.domain.current_updating_player,
+					value=TensorCFRFlattenedDomains.get_the_other_player_of(self.domain.current_updating_player),
+					name="assign_new_updating_player",
 				)
 			with tf.variable_scope("new_opponent"):
 				assign_opponent = tf.assign(
-						ref=self.domain.current_opponent,
-						value=TensorCFRFlattenedDomains.get_the_other_player_of(self.domain.current_opponent),
-						name="assign_new_opponent",
+					ref=self.domain.current_opponent,
+					value=TensorCFRFlattenedDomains.get_the_other_player_of(self.domain.current_opponent),
+					name="assign_new_opponent",
 				)
 			return tf.tuple(
-					[
-						assign_new_updating_player,
-						assign_opponent,
-					],
-					name="swap",
+				[
+					assign_new_updating_player,
+					assign_opponent,
+				],
+				name="swap",
 			)
 
 	def get_node_strategies(self):
@@ -87,9 +87,9 @@ class TensorCFRFlattenedDomains:
 				) for level in range(self.domain.acting_depth)
 			]
 			flattened_node_cf_strategies = flatten_strategies_via_action_counts(
-					node_cf_strategies,
-					self.domain.action_counts,
-					basename="nodal_cf_strategies"
+				node_cf_strategies,
+				self.domain.action_counts,
+				basename="nodal_cf_strategies"
 			)
 			return flattened_node_cf_strategies
 
@@ -112,39 +112,39 @@ class TensorCFRFlattenedDomains:
 			expected_values = [None] * self.domain.levels
 			with tf.variable_scope("level{}".format(self.domain.levels - 1)):
 				expected_values[self.domain.levels - 1] = tf.multiply(
-						self.domain.signum_of_current_player,
-						self.domain.utilities[self.domain.levels - 1],
-						name="expected_values_lvl{}".format(self.domain.levels - 1),
+					self.domain.signum_of_current_player,
+					self.domain.utilities[self.domain.levels - 1],
+					name="expected_values_lvl{}".format(self.domain.levels - 1),
 				)
 			for level in reversed(range(self.domain.levels - 1)):
 				with tf.variable_scope("level{}".format(level)):
 					weighted_sum_of_values = tf.segment_sum(
-							data=node_strategies[level + 1] * expected_values[level + 1],
-							segment_ids=self.domain.parents[level + 1],
-							name="weighted_sum_of_values_lvl{}".format(level),
+						data=node_strategies[level + 1] * expected_values[level + 1],
+						segment_ids=self.domain.parents[level + 1],
+						name="weighted_sum_of_values_lvl{}".format(level),
 					)
 					scatter_copy_indices = tf.expand_dims(
-							tf.cumsum(
-									tf.ones_like(weighted_sum_of_values, dtype=INT_DTYPE),
-									exclusive=True,
-							),
-							axis=-1,
-							name="scatter_copy_indices_lvl{}".format(level)
+						tf.cumsum(
+							tf.ones_like(weighted_sum_of_values, dtype=INT_DTYPE),
+							exclusive=True,
+						),
+						axis=-1,
+						name="scatter_copy_indices_lvl{}".format(level)
 					)
 					extended_weighted_sum = tf.scatter_nd(
-							indices=scatter_copy_indices,
-							updates=weighted_sum_of_values,
-							shape=self.domain.utilities[level].shape,
-							name="extended_weighted_sum_lvl{}".format(level)
+						indices=scatter_copy_indices,
+						updates=weighted_sum_of_values,
+						shape=self.domain.utilities[level].shape,
+						name="extended_weighted_sum_lvl{}".format(level)
 					)
 					expected_values[level] = tf.where(
-							condition=tf.equal(self.domain.node_types[level], TERMINAL_NODE),  # TODO replace with `action_counts[level]`
-							x=self.domain.signum_of_current_player * tf.reshape(
-									self.domain.utilities[level],
-									shape=[self.domain.utilities[level].shape[-1]],
-							),
-							y=extended_weighted_sum,
-							name="expected_values_lvl{}".format(level)
+						condition=tf.equal(self.domain.node_types[level], TERMINAL_NODE),  # TODO replace with `action_counts[level]`
+						x=self.domain.signum_of_current_player * tf.reshape(
+							self.domain.utilities[level],
+							shape=[self.domain.utilities[level].shape[-1]],
+						),
+						y=extended_weighted_sum,
+						name="expected_values_lvl{}".format(level)
 					)
 		return expected_values
 
@@ -158,9 +158,9 @@ class TensorCFRFlattenedDomains:
 				print_tensors(session, [node_strategies[level]])
 			print_tensors(session, [
 				tf.multiply(
-						self.domain.signum_of_current_player,
-						self.domain.utilities[level],
-						name="signum_utilities_lvl{}".format(level)
+					self.domain.signum_of_current_player,
+					self.domain.utilities[level],
+					name="signum_utilities_lvl{}".format(level)
 				),
 				expected_values[level]
 			])
@@ -180,18 +180,18 @@ class TensorCFRFlattenedDomains:
 		with tf.variable_scope("nodal_reach_probabilities"):
 			nodal_reach_probabilities = [None] * self.domain.levels
 			nodal_reach_probabilities[0] = tf.expand_dims(
-					self.domain.reach_probability_of_root_node,
-					axis=0
+				self.domain.reach_probability_of_root_node,
+				axis=0
 			)
 			for level in range(1, self.domain.levels):
 				nodal_reach_probabilities[level] = tf.multiply(
-						tf.gather(
-								nodal_reach_probabilities[level - 1],
-								indices=self.domain.parents[level],
-								name="children_reach_probabilities_lvl{}".format(level)
-						),
-						node_cf_strategies[level],
-						name="nodal_reach_probabilities_lvl{}".format(level)
+					tf.gather(
+						nodal_reach_probabilities[level - 1],
+						indices=self.domain.parents[level],
+						name="children_reach_probabilities_lvl{}".format(level)
+					),
+					node_cf_strategies[level],
+					name="nodal_reach_probabilities_lvl{}".format(level)
 				)
 			return nodal_reach_probabilities
 
@@ -252,9 +252,9 @@ class TensorCFRFlattenedDomains:
 		with tf.variable_scope("nodal_counterfactual_values"):
 			return [
 				tf.multiply(
-						reach_probabilities[level],
-						expected_values[level],
-						name="nodal_cf_value_lvl{}".format(level)
+					reach_probabilities[level],
+					expected_values[level],
+					name="nodal_cf_value_lvl{}".format(level)
 				) for level in range(self.domain.levels)
 			]
 
@@ -263,16 +263,16 @@ class TensorCFRFlattenedDomains:
 		with tf.variable_scope("infoset_action_cf_values"):
 			cf_values_infoset_actions = [None] * (self.domain.levels - 1)
 			cf_values_infoset_actions[0] = tf.expand_dims(
-					node_cf_values[1],
-					axis=0,
-					name="infoset_action_cf_values_lvl0"
+				node_cf_values[1],
+				axis=0,
+				name="infoset_action_cf_values_lvl0"
 			)
 			for level in range(1, self.domain.levels - 1):  # TODO replace for-loop with parallel_map on TensorArray?
 				cf_values_infoset_actions[level] = scatter_nd_sum(
-						indices=tf.expand_dims(self.domain.node_to_infoset[level], axis=-1),
-						updates=node_cf_values[level + 1],
-						shape=self.domain.current_infoset_strategies[level].shape,
-						name="infoset_action_cf_values_lvl{}".format(level),
+					indices=tf.expand_dims(self.domain.node_to_infoset[level], axis=-1),
+					updates=node_cf_values[level + 1],
+					shape=self.domain.current_infoset_strategies[level].shape,
+					name="infoset_action_cf_values_lvl{}".format(level),
 				)
 			return cf_values_infoset_actions
 
@@ -281,11 +281,11 @@ class TensorCFRFlattenedDomains:
 		infoset_actions_cf_values, infoset_cf_values = [], []
 		for level in range(self.domain.acting_depth):
 			infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
-					values_in_children=nodal_cf_values[level + 1],
-					action_counts=self.domain.action_counts[level],
-					parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
-					infoset_strategy=self.domain.current_infoset_strategies[level],
-					name="cf_values_lvl{}".format(level)
+				values_in_children=nodal_cf_values[level + 1],
+				action_counts=self.domain.action_counts[level],
+				parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
+				infoset_strategy=self.domain.current_infoset_strategies[level],
+				name="cf_values_lvl{}".format(level)
 			)
 			infoset_cf_values.append(infoset_cf_value)
 			infoset_actions_cf_values.append(infoset_action_cf_value)
@@ -309,32 +309,32 @@ class TensorCFRFlattenedDomains:
 			for level, infoset_mask_of_1_level in enumerate(infoset_mask_non_imaginary_children):
 				with tf.variable_scope("level{}".format(level)):
 					infoset_mask_non_imaginary_children_float_dtype = tf.cast(
-							infoset_mask_of_1_level,
-							dtype=FLOAT_DTYPE,
+						infoset_mask_of_1_level,
+						dtype=FLOAT_DTYPE,
 					)
 					# Note: An all-0's row cannot be normalized. This is caused when an infoset has only imaginary children. As of
 					#       now, an all-0's row is kept without normalizing.
 					count_of_actions = tf.reduce_sum(
-							infoset_mask_non_imaginary_children_float_dtype,
-							axis=-1,
-							keepdims=True,
-							name="count_of_actions_lvl{}".format(level),
+						infoset_mask_non_imaginary_children_float_dtype,
+						axis=-1,
+						keepdims=True,
+						name="count_of_actions_lvl{}".format(level),
 					)
 					infosets_with_no_actions = tf.squeeze(
-							tf.equal(count_of_actions, 0.0),
-							name="rows_summing_to_zero_lvl{}".format(level)
+						tf.equal(count_of_actions, 0.0),
+						name="rows_summing_to_zero_lvl{}".format(level)
 					)
 					reciprocals = tf.where(
-							condition=infosets_with_no_actions,
-							x=infoset_mask_non_imaginary_children_float_dtype,
-							y=infoset_mask_non_imaginary_children_float_dtype / count_of_actions,
-							name="normalize_where_nonzero_sum_lvl{}".format(level),
+						condition=infosets_with_no_actions,
+						x=infoset_mask_non_imaginary_children_float_dtype,
+						y=infoset_mask_non_imaginary_children_float_dtype / count_of_actions,
+						name="normalize_where_nonzero_sum_lvl{}".format(level),
 					)
 					infoset_uniform_strategies[level] = tf.where(
-							condition=self.domain.infosets_of_non_chance_player[level],
-							x=reciprocals,
-							y=self.domain.current_infoset_strategies[level],
-							name="infoset_uniform_strategies_lvl{}".format(level),
+						condition=self.domain.infosets_of_non_chance_player[level],
+						x=reciprocals,
+						y=self.domain.current_infoset_strategies[level],
+						name="infoset_uniform_strategies_lvl{}".format(level),
 					)
 		return infoset_uniform_strategies
 
@@ -346,13 +346,13 @@ class TensorCFRFlattenedDomains:
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					regrets[level] = tf.where(
-							condition=infoset_mask_non_imaginary_children[level],
-							x=infoset_action_cf_values[level] - infoset_cf_values[level],
-							y=tf.zeros_like(
-								infoset_action_cf_values[level],
-								name="zero_regrets_of_imaginary_children_lvl{}".format(level),
-							),
-							name="regrets_lvl{}".format(level),
+						condition=infoset_mask_non_imaginary_children[level],
+						x=infoset_action_cf_values[level] - infoset_cf_values[level],
+						y=tf.zeros_like(
+							infoset_action_cf_values[level],
+							name="zero_regrets_of_imaginary_children_lvl{}".format(level),
+						),
+						name="regrets_lvl{}".format(level),
 					)
 		return regrets
 
@@ -366,19 +366,19 @@ class TensorCFRFlattenedDomains:
 					# TODO optimize by: pre-define `infosets_of_player1` and `infosets_of_player2` (in domain definitions) and
 					#  switch
 					infosets_of_updating_player = tf.reshape(
-							tf.equal(self.domain.infoset_acting_players[level], self.domain.current_updating_player),
-							shape=[self.domain.positive_cumulative_regrets[level].shape[0]],
-							name="infosets_of_updating_player_lvl{}".format(level),
+						tf.equal(self.domain.infoset_acting_players[level], self.domain.current_updating_player),
+						shape=[self.domain.positive_cumulative_regrets[level].shape[0]],
+						name="infosets_of_updating_player_lvl{}".format(level),
 					)
 					# TODO implement and use `masked_assign_add` here
 					update_regrets_ops[level] = masked_assign(
-							ref=self.domain.positive_cumulative_regrets[level],
-							mask=infosets_of_updating_player,
-							value=tf.maximum(
-									tf.cast(0.0, dtype=FLOAT_DTYPE),
-									self.domain.positive_cumulative_regrets[level] + regrets[level]
-							),
-							name="update_regrets_lvl{}".format(level)
+						ref=self.domain.positive_cumulative_regrets[level],
+						mask=infosets_of_updating_player,
+						value=tf.maximum(
+							tf.cast(0.0, dtype=FLOAT_DTYPE),
+							self.domain.positive_cumulative_regrets[level] + regrets[level]
+						),
+						name="update_regrets_lvl{}".format(level)
 					)
 			return update_regrets_ops
 
@@ -391,28 +391,28 @@ class TensorCFRFlattenedDomains:
 				for level in range(self.domain.acting_depth):
 					with tf.variable_scope("level{}".format(level)):
 						sums_of_regrets = tf.reduce_sum(
-								self.domain.positive_cumulative_regrets[level].read_value(),
-								axis=-1,
-								keepdims=True,
-								name="sums_of_regrets_lvl{}".format(level)
+							self.domain.positive_cumulative_regrets[level].read_value(),
+							axis=-1,
+							keepdims=True,
+							name="sums_of_regrets_lvl{}".format(level)
 						)
 						normalized_regrets = tf.divide(
-								self.domain.positive_cumulative_regrets[level].read_value(),
-								sums_of_regrets,
-								name="normalized_regrets_lvl{}".format(level)
+							self.domain.positive_cumulative_regrets[level].read_value(),
+							sums_of_regrets,
+							name="normalized_regrets_lvl{}".format(level)
 						)
 						zero_sum_rows = tf.squeeze(
-								tf.equal(sums_of_regrets, 0),
-								name="zero_sum_rows_lvl{}".format(level)
+							tf.equal(sums_of_regrets, 0),
+							name="zero_sum_rows_lvl{}".format(level)
 						)
 						# Note: An all-0's row cannot be normalized. Thus, when PCRegrets sum to 0, a uniform strategy is used
 						#  instead.
 						# TODO verify uniform strategy is created (mix of both tf.where branches)
 						strategies_matched_to_regrets[level] = tf.where(
-								condition=zero_sum_rows,
-								x=infoset_uniform_strategies[level],
-								y=normalized_regrets,
-								name="strategies_matched_to_regrets_lvl{}".format(level)
+							condition=zero_sum_rows,
+							x=infoset_uniform_strategies[level],
+							y=normalized_regrets,
+							name="strategies_matched_to_regrets_lvl{}".format(level)
 						)
 				return strategies_matched_to_regrets
 
@@ -426,16 +426,16 @@ class TensorCFRFlattenedDomains:
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_acting_player = tf.reshape(
-							# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
-							tf.equal(infoset_acting_players[level], acting_player),
-							shape=[self.domain.current_infoset_strategies[level].shape[0]],
-							name="infosets_of_updating_player_lvl{}".format(level)
+						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+						tf.equal(infoset_acting_players[level], acting_player),
+						shape=[self.domain.current_infoset_strategies[level].shape[0]],
+						name="infosets_of_updating_player_lvl{}".format(level)
 					)
 					ops_update_infoset_strategies[level] = masked_assign(
-							ref=self.domain.current_infoset_strategies[level],
-							mask=infosets_of_acting_player,
-							value=infoset_strategies_matched_to_regrets[level],
-							name="op_update_infoset_strategies_lvl{}".format(level)
+						ref=self.domain.current_infoset_strategies[level],
+						mask=infosets_of_acting_player,
+						value=infoset_strategies_matched_to_regrets[level],
+						name="op_update_infoset_strategies_lvl{}".format(level)
 					)
 			return ops_update_infoset_strategies
 
@@ -445,15 +445,15 @@ class TensorCFRFlattenedDomains:
 		with tf.variable_scope("weighted_averaging_factor"):
 			if delay is None:  # when `delay` is None, no weighted averaging is used
 				return tf.constant(
-						1.0,
-						dtype=FLOAT_DTYPE,
-						name="weighted_averaging_factor"
+					1.0,
+					dtype=FLOAT_DTYPE,
+					name="weighted_averaging_factor"
 				)
 			else:
 				return tf.cast(
-						tf.maximum(self.domain.cfr_step - delay, 0),
-						dtype=FLOAT_DTYPE,
-						name="weighted_averaging_factor",
+					tf.maximum(self.domain.cfr_step - delay, 0),
+					dtype=FLOAT_DTYPE,
+					name="weighted_averaging_factor",
 				)
 
 	def cumulate_strategy_of_opponent(self, opponent=None):  # TODO unittest
@@ -466,20 +466,20 @@ class TensorCFRFlattenedDomains:
 			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_opponent = tf.reshape(  # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
-							tf.equal(infoset_acting_players[level], opponent),
-							shape=[self.domain.current_infoset_strategies[level].shape[0]],
-							name="infosets_of_opponent_lvl{}".format(level)
+						tf.equal(infoset_acting_players[level], opponent),
+						shape=[self.domain.current_infoset_strategies[level].shape[0]],
+						name="infosets_of_opponent_lvl{}".format(level)
 					)
 					averaging_factor = self.get_weighted_averaging_factor()
 					cumulate_infoset_strategies_ops[level] = masked_assign(
-							# TODO implement and use `masked_assign_add` here
-							ref=self.domain.cumulative_infoset_strategies[level],
-							mask=infosets_of_opponent,
-							value=self.domain.cumulative_infoset_strategies[level] + averaging_factor * expanded_multiply(
-									expandable_tensor=infoset_reach_probabilities[level],
-									expanded_tensor=self.domain.current_infoset_strategies[level],
-							),
-							name="op_cumulate_infoset_strategies_lvl{}".format(level)
+						# TODO implement and use `masked_assign_add` here
+						ref=self.domain.cumulative_infoset_strategies[level],
+						mask=infosets_of_opponent,
+						value=self.domain.cumulative_infoset_strategies[level] + averaging_factor * expanded_multiply(
+							expandable_tensor=infoset_reach_probabilities[level],
+							expanded_tensor=self.domain.current_infoset_strategies[level],
+						),
+						name="op_cumulate_infoset_strategies_lvl{}".format(level)
 					)
 			return cumulate_infoset_strategies_ops
 
@@ -502,27 +502,27 @@ class TensorCFRFlattenedDomains:
 				# TODO add variable scope `level{}`
 				with tf.variable_scope("level{}".format(level)):
 					norm_of_strategies[level] = tf.reduce_sum(
-							self.domain.cumulative_infoset_strategies[level],
-							axis=-1,
-							keepdims=True,
-							name="norm_of_strategies_lvl{}".format(level),
+						self.domain.cumulative_infoset_strategies[level],
+						axis=-1,
+						keepdims=True,
+						name="norm_of_strategies_lvl{}".format(level),
 					)
 					infosets_with_nonzero_norm[level] = tf.squeeze(
-							tf.not_equal(norm_of_strategies[level], 0.0),
-							name="infosets_with_nonzero_norm_lvl{}".format(level)
+						tf.not_equal(norm_of_strategies[level], 0.0),
+						name="infosets_with_nonzero_norm_lvl{}".format(level)
 					)
 					average_infoset_strategies[level] = tf.where(
-							condition=tf.logical_and(
-									self.domain.infosets_of_non_chance_player[level],
-									infosets_with_nonzero_norm[level],
-									name="non_chance_infosets_with_nonzero_norm_lvl{}".format(level)
-							),
-							x=tf.cast(
-									normalize(self.domain.cumulative_infoset_strategies[level]),
-									dtype=FLOAT_DTYPE,
-							),
-							y=self.domain.current_infoset_strategies[level],
-							name="average_infoset_strategies_lvl{}".format(level),
+						condition=tf.logical_and(
+							self.domain.infosets_of_non_chance_player[level],
+							infosets_with_nonzero_norm[level],
+							name="non_chance_infosets_with_nonzero_norm_lvl{}".format(level)
+						),
+						x=tf.cast(
+							normalize(self.domain.cumulative_infoset_strategies[level]),
+							dtype=FLOAT_DTYPE,
+						),
+						y=self.domain.current_infoset_strategies[level],
+						name="average_infoset_strategies_lvl{}".format(level),
 					)
 		return average_infoset_strategies
 
@@ -532,8 +532,8 @@ class TensorCFRFlattenedDomains:
 			ops_swap_players = self.swap_players()
 			op_inc_step = self.increment_cfr_step
 		return tf.tuple(
-				ops_process_strategies + ops_swap_players + [op_inc_step],
-				name="cfr_step"
+			ops_process_strategies + ops_swap_players + [op_inc_step],
+			name="cfr_step"
 		)
 
 
@@ -557,9 +557,9 @@ def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strat
 			raise ValueError('No "initial_strategy_values" given.')
 		if len(initial_strategy_values) != len(tensorcfr_instance.domain.initial_infoset_strategies):
 			raise ValueError(
-					'Mismatched "len(initial_strategy_values) == {}" and "len(initial_infoset_strategies) == {}".'.format(
-							len(initial_strategy_values), len(tensorcfr_instance.domain.initial_infoset_strategies)
-					)
+				'Mismatched "len(initial_strategy_values) == {}" and "len(initial_infoset_strategies) == {}".'.format(
+					len(initial_strategy_values), len(tensorcfr_instance.domain.initial_infoset_strategies)
+				)
 			)
 		return "Initializing strategies to custom values defined by user...\n", {
 			tensorcfr_instance.domain.initial_infoset_strategies[level]: initial_strategy_values[level]
@@ -571,11 +571,11 @@ def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strat
 
 def get_log_dir_path(tensorcfr_instance, hyperparameters):
 	log_dir_path = "logs/{}-{}-{}".format(
-			tensorcfr_instance.domain.domain_name,
-			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
-			",".join(
-					("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
-					 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
+		tensorcfr_instance.domain.domain_name,
+		datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
+		",".join(
+			("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
+			 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
 	)
 	if not os.path.exists("logs"):
 		os.mkdir("logs")
@@ -659,9 +659,9 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 
 	for level in range(len(average_infoset_strategies)):
 		np.savetxt(
-				'{}/average_infoset_strategies_level_{}.csv'.format(log_dir_path, level),
-				session.run(average_infoset_strategies[level]),
-				delimiter=',',
+			'{}/average_infoset_strategies_level_{}.csv'.format(log_dir_path, level),
+			session.run(average_infoset_strategies[level]),
+			delimiter=',',
 		)
 
 
@@ -670,9 +670,9 @@ def run_cfr(tensorcfr_instance: TensorCFRFlattenedDomains, total_steps=DEFAULT_T
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
 		assign_averaging_delay_op = tf.assign(
-				ref=tensorcfr_instance.domain.averaging_delay,
-				value=delay,
-				name="assign_averaging_delay"
+			ref=tensorcfr_instance.domain.averaging_delay,
+			value=delay,
+			name="assign_averaging_delay"
 		)
 	cfr_step_op = tensorcfr_instance.do_cfr_step()
 
@@ -719,11 +719,11 @@ def run_cfr(tensorcfr_instance: TensorCFRFlattenedDomains, total_steps=DEFAULT_T
 					metadata = tf.RunMetadata()
 					session.run(cfr_step_op, options=run_options, run_metadata=metadata)
 					tf.profiler.profile(
-							session.graph,
-							run_meta=metadata,
-							# cmd='op',
-							cmd='scope',
-							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
+						session.graph,
+						run_meta=metadata,
+						# cmd='op',
+						cmd='scope',
+						options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 					)
 					writer.add_run_metadata(metadata, "step{}".format(i))  # save metadata about time and memory for tensorboard
 				else:
@@ -767,9 +767,9 @@ if __name__ == '__main__':
 	# 	print_tensors(sess, tensorcfr.get_regrets())
 
 	run_cfr(
-			total_steps=10,
-			tensorcfr_instance=tensorcfr,
-			quiet=True,
-			# profiling=True,
-			delay=0
+		total_steps=10,
+		tensorcfr_instance=tensorcfr,
+		quiet=True,
+		# profiling=True,
+		delay=0
 	)

@@ -37,8 +37,7 @@ class FlattenedDomain:
 				for level in range(self.acting_depth)
 			]
 			self.mask_of_inner_nodes = [
-				# TODO replace with `tf.greater`
-				tf.not_equal(
+				tf.greater(
 					action_count,
 					0,
 					name="mask_of_inner_nodes_lvl{}".format(level)

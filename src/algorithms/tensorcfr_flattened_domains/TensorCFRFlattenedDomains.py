@@ -686,7 +686,9 @@ def run_cfr(tensorcfr_instance: TensorCFRFlattenedDomains, total_steps=DEFAULT_T
 	strategies_matched_to_regrets = tensorcfr_instance.get_strategy_matched_to_regrets() if not quiet else None
 	average_infoset_strategies = tensorcfr_instance.get_average_infoset_strategies()
 
-	with tf.Session() as session:
+	with tf.Session(
+		# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+	) as session:
 		session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 		hyperparameters = {
 			"total_steps"    : total_steps,
@@ -746,7 +748,9 @@ if __name__ == '__main__':
 	# 	for pair_of_values in zip(infoset_action_cf_values_, infoset_cf_values_)
 	# 	for value in pair_of_values
 	# ]
-	# with tf.Session() as sess:
+	# with tf.Session(
+	# 	config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+	# ) as sess:
 	# 	sess.run(tf.global_variables_initializer())
 	# 	tensorcfr.domain.print_domain(sess)
 	# 	tensorcfr.show_strategies(sess)

@@ -5,9 +5,9 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE, \
-	REACH_PROBABILITY_OF_ROOT
+	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT
 from src.utils.cfr_utils import get_parents_from_action_counts
-from src.utils.gambit.gambit_efg_loader import GambitEFGLoader
+from src.utils.gambit_flattened_domains.loader import GambitLoader
 from src.utils.tensor_utils import print_tensors
 
 
@@ -183,9 +183,8 @@ class FlattenedDomain:
 		domain_numpy_tensors = GambitEFGLoader(path_to_gambitfile)
 		return cls(
 			domain_name,
-			domain_numpy_tensors.actions_per_levels,
+			domain_numpy_tensors.number_of_nodes_actions,
 			domain_numpy_tensors.node_to_infoset,
-			domain_numpy_tensors.node_types,
 			domain_numpy_tensors.utilities,
 			domain_numpy_tensors.infoset_acting_players,
 			domain_numpy_tensors.initial_infoset_strategies

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import copy
 import os
+from pprint import pprint
 
 import numpy as np
 
@@ -67,7 +68,7 @@ class InformationSetManager:
 
 class GambitLoader:
 
-	def __init__(self, file):
+	def __init__(self, file, domain_name="from_gambit"):
 		# if not os.path.isfile(file
 
 		# check if there is a terminal node in any level
@@ -77,7 +78,7 @@ class GambitLoader:
 
 		self.number_of_players = 2
 
-		self.domain_name = ""
+		self.domain_name = domain_name
 		self.actions_per_levels = []
 		self.max_actions_per_levels = []
 

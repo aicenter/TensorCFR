@@ -201,6 +201,30 @@ class GambitLoader:
 			self.infoset_acting_players[level] = infoset_acting_players
 			self.initial_infoset_strategies[level] = initial_infoset_strategy
 
+	def show(self):
+		print("domain_name: {}".format(self.domain_name))
+		print("number_of_players: {}".format(self.number_of_players))
+		print("number_of_levels: {}".format(self.number_of_levels))
+
+		print("actions_per_levels:")
+		pprint(self.actions_per_levels)
+		print("max_actions_per_levels:")
+		pprint(self.max_actions_per_levels)
+
+		print("nodes_per_levels:")
+		pprint(self.nodes_per_levels)
+		print("node_to_infoset:")
+		pprint(self.node_to_infoset, width=130)
+		print("number_of_nodes_actions:")
+		pprint(self.number_of_nodes_actions)
+		print("utilities:")
+		pprint(self.utilities, width=130)
+
+		print("infoset_acting_players:")
+		pprint(self.infoset_acting_players)
+		print("initial_infoset_strategies:")
+		pprint(self.initial_infoset_strategies)
+
 
 if __name__ == '__main__':
 	domain01_efg = os.path.join(
@@ -213,4 +237,5 @@ if __name__ == '__main__':
 		domain01_efg,
 	]
 
-	domain = GambitLoader(domain01_efg)
+	domain = GambitLoader(domain01_efg, domain_name="domain01")
+	domain.show()

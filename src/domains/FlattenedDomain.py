@@ -232,6 +232,7 @@ class FlattenedDomain:
 
 
 if __name__ == '__main__':
+	import os
 	import src.domains.flattened_hunger_games.flattened_hunger_games_as_numpy_values as fhg
 	flattened_hunger_games = FlattenedDomain(
 			domain_name="flattened_hunger_games",
@@ -241,6 +242,24 @@ if __name__ == '__main__':
 			infoset_acting_players=fhg.infoset_acting_players,
 			initial_infoset_strategies=fhg.initial_infoset_strategies,
 	)
+	handcoded_domains = [
+		flattened_hunger_games
+	]
+
+	domain01_efg = os.path.join(
+		PROJECT_ROOT,
+		'doc',
+		'domain01_via_gambit.efg'
+	)
+	efg_files = [
+		domain01_efg,
+	]
+	domains_from_gambit = [
+		FlattenedDomain.init_from_gambit_file(domain01_efg, domain_name="domain01_gambit")
+	]
+
+	domains = handcoded_domains + domains_from_gambit
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		flattened_hunger_games.print_domain(sess)
+		for domain in domains:
+			domain.print_domain(sess)

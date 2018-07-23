@@ -179,7 +179,7 @@ class FlattenedDomain:
 
 	@classmethod
 	def init_from_gambit_file(cls, path_to_gambitfile, domain_name="from_gambit"):
-		domain_numpy_tensors = GambitEFGLoader(path_to_gambitfile)
+		domain_numpy_tensors = GambitLoader(path_to_gambitfile)
 		return cls(
 			domain_name,
 			domain_numpy_tensors.number_of_nodes_actions,

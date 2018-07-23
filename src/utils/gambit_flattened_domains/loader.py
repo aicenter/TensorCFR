@@ -52,7 +52,7 @@ class InformationSetManager:
 			information_set_acting_players.insert(0, node.tensorcfr_id)
 
 			if node.is_player():
-				current_infoset_strategy = [np.nan] * next_level_max_no_actions
+				current_infoset_strategy = [common_constants.IMAGINARY_PROBABILITIES] * next_level_max_no_actions
 
 				actions = [float(1 / len(node.actions))] * len(node.actions)
 

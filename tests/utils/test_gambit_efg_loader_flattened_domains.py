@@ -59,8 +59,8 @@ class TestGambitLoaderDomain01(unittest.TestCase):
 
 	def test_initial_infoset_strategies_level_1(self):
 		expected_output = [[0.33333333, 0.33333333, 0.33333333],
-						   [0.5, 0.5, np.nan],
-						   [0.5, 0.5, np.nan],
+						   [0.5, 0.5, common_constants.IMAGINARY_PROBABILITIES],
+						   [0.5, 0.5, common_constants.IMAGINARY_PROBABILITIES],
 						   [0.33333333, 0.33333333, 0.33333333]]
 		np.testing.assert_array_almost_equal(self.domain.initial_infoset_strategies[1], expected_output, 0.005)
 

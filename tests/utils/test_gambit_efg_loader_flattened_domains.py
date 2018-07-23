@@ -3,6 +3,7 @@ import unittest
 
 import numpy as np
 
+from src.commons import constants as common_constants
 from src.utils import gambit_flattened_domains
 
 
@@ -13,15 +14,27 @@ class TestGambitLoaderDomain01(unittest.TestCase):
 		self.domain = gambit_flattened_domains.Loader(domain01_efg)
 
 	def test_utilities_level_0(self):
-		expected_output = [0]
+		expected_output = [common_constants.NON_TERMINAL_UTILITY]
 		np.testing.assert_array_equal(self.domain.utilities[0], expected_output)
 
 	def test_utilities_level_1(self):
-		expected_output = [0, 0, 0, 0, 0]
+		expected_output = [common_constants.NON_TERMINAL_UTILITY] * 5
 		np.testing.assert_array_equal(self.domain.utilities[1], expected_output)
 
 	def test_utilities_level_2(self):
-		expected_output = [0, 0, 30, 0, 0, 0, 0, 0, 0, 130, 0, 0]
+		expected_output = [
+			common_constants.NON_TERMINAL_UTILITY,
+			common_constants.NON_TERMINAL_UTILITY,
+			30,
+			common_constants.NON_TERMINAL_UTILITY,
+			common_constants.NON_TERMINAL_UTILITY,
+			common_constants.NON_TERMINAL_UTILITY,
+			common_constants.NON_TERMINAL_UTILITY,
+			common_constants.NON_TERMINAL_UTILITY,
+			common_constants.NON_TERMINAL_UTILITY,
+			130,
+			common_constants.NON_TERMINAL_UTILITY,
+			common_constants.NON_TERMINAL_UTILITY]
 		np.testing.assert_array_equal(self.domain.utilities[2], expected_output)
 
 	def test_utilities_level_3(self):

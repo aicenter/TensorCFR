@@ -5,6 +5,7 @@ import os
 import numpy as np
 
 from src.commons import constants as common_constants
+
 from ..gambit_flattened_domains import constants
 from ..gambit_flattened_domains.parser import Parser
 
@@ -115,7 +116,7 @@ class GambitLoader:
 
 		for level, number_of_nodes in enumerate(self.nodes_per_levels):
 			# set initial  utilities to zeros, will  be filled later
-			self.utilities[level] = [0] * number_of_nodes
+			self.utilities[level] = [common_constants.NON_TERMINAL_UTILITY] * number_of_nodes
 			# set initial values for node_to_infoset
 			self.node_to_infoset[level] = [None] * number_of_nodes
 			# set initial values for zeros

@@ -251,11 +251,11 @@ if __name__ == '__main__':
 		hunger_games_2_efg
 	]
 
-	# domain = GambitLoader(domain01_efg, domain_name="domain01")
-	# domain.show()
-	# print("___________________________________\n")
-	# domain = GambitLoader(hunger_games_efg, domain_name="hunger_games")
-	# domain.show()
-	# print("___________________________________\n")
+	domain = GambitLoader(domain01_efg, domain_name="domain01")
+	domain.show()
+	print("___________________________________\n")
+	domain = GambitLoader(hunger_games_efg, domain_name="hunger_games")
+	domain.show()
+	print("___________________________________\n")
 	domain = GambitLoader(hunger_games_2_efg, domain_name="hunger_games_2")
 	domain.show()

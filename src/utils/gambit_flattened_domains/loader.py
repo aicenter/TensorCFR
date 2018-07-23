@@ -20,19 +20,20 @@ class InformationSetManager:
 	def __init__(self, level, number_of_information_sets, is_terminal_node_present=False):
 		self.level = level
 		self.number_of_information_sets = number_of_information_sets
-		self.is_terminal_node_present = is_terminal_node_present
-
-		if self.is_terminal_node_present:
-			self.__terminal_node_information_set_index = self.number_of_information_sets
-		else:
-			self.__terminal_node_information_set_index = None
+		# self.is_terminal_node_present = is_terminal_node_present
+		#
+		# if self.is_terminal_node_present:
+		# 	self.__terminal_node_information_set_index = self.number_of_information_sets
+		# else:
+		# 	self.__terminal_node_information_set_index = None
 
 		self.information_sets = {}
 		self.information_set_acting_players_list = []
 
 	def add_node(self, node):
 		if node.type == constants.TERMINAL_NODE:
-			return self.__terminal_node_information_set_index
+			# return self.__terminal_node_information_set_index
+			return common_constants.INFOSET_FOR_TERMINAL_NODES
 
 		if node.information_set_id not in self.information_sets:
 			information_set_index = len(self.information_sets)
@@ -68,9 +69,9 @@ class InformationSetManager:
 
 				initial_information_set_strategies.append(initial_infoset_strategy)
 
-		if self.is_terminal_node_present:
-			# if is a terminal node present in information set, add null strategy
-			initial_information_set_strategies.append([0] * next_level_max_no_actions)
+		# if self.is_terminal_node_present:
+		# 	# if is a terminal node present in information set, add null strategy
+		# 	initial_information_set_strategies.append([0] * next_level_max_no_actions)
 
 		return [
 			np.asarray(information_set_acting_players, dtype=common_constants.INT_DTYPE_NUMPY),

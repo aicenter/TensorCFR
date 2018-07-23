@@ -16,7 +16,7 @@ class TreeNode:
 
 
 class InformationSetManager:
-	def __init__(self, level, number_of_information_sets, is_terminal_node_present=False):
+	def __init__(self, level, number_of_information_sets):
 		self.level = level
 		self.number_of_information_sets = number_of_information_sets
 		self.information_sets = {}
@@ -112,8 +112,7 @@ class GambitLoader:
 		self.__infoset_managers = [
 			InformationSetManager(
 					level=level,
-					number_of_information_sets=self.__number_of_information_sets_per_level[level],
-					is_terminal_node_present=self.__is_terminal_per_level[level]
+					number_of_information_sets=self.__number_of_information_sets_per_level[level]
 			)
 			for level in range(len(self.actions_per_levels) + 1)
 		]

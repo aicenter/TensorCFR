@@ -238,24 +238,24 @@ if __name__ == '__main__':
 		'hunger_games',
 		'hunger_games_via_gambit.efg'
 	)
-	# hunger_games_2_gbt = os.path.join(
-	# 	common_constants.PROJECT_ROOT,
-	# 	'doc',
-	# 	'hunger_games_2',
-	# 	'hunger_games_via_gambit.gbt'
-	# )
+	hunger_games_2_efg = os.path.join(
+		common_constants.PROJECT_ROOT,
+		'doc',
+		'hunger_games_2',
+		'hunger_games_via_gambit.efg'
+	)
 
 	efg_files = [
 		domain01_efg,
 		hunger_games_efg,
-		# hunger_games_2_gbt
+		hunger_games_2_efg
 	]
 
 	# domain = GambitLoader(domain01_efg, domain_name="domain01")
 	# domain.show()
 	# print("___________________________________\n")
-	domain = GambitLoader(hunger_games_efg, domain_name="hunger_games")
-	domain.show()
-	# print("___________________________________\n")
-	# domain = GambitLoader(hunger_games_2_gbt, domain_name="hunger_games_2")
+	# domain = GambitLoader(hunger_games_efg, domain_name="hunger_games")
 	# domain.show()
+	# print("___________________________________\n")
+	domain = GambitLoader(hunger_games_2_efg, domain_name="hunger_games_2")
+	domain.show()

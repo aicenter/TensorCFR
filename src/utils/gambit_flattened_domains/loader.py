@@ -5,8 +5,8 @@ import os
 import numpy as np
 
 from src.commons import constants as common_constants
-from ..gambit_flattened_domains import constants
-from ..gambit_flattened_domains.parser import Parser
+from src.utils.gambit_flattened_domains import constants
+from src.utils.gambit_flattened_domains.parser import Parser
 
 
 class TreeNode:

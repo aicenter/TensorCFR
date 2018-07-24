@@ -2,6 +2,7 @@
 
 DOMAIN01 = "domain01"
 DOMAIN01_GAMBIT = "domain01_via_gambit"
+FLATTENED_DOMAIN01_GAMBIT = "flattened_domain01_via_gambit"
 MATCHING_PENNIES = "matching_pennies"
 MATCHING_PENNIES_GAMBIT = "matching_pennies_via_gambit"
 HUNGER_GAMES = "hunger_games"
@@ -18,6 +19,7 @@ GP_CARDS4X3_224 = "GP_cards4x3_224_via_gambit"
 AVAILABLE_DOMAINS = [
 	DOMAIN01,
 	DOMAIN01_GAMBIT,
+	FLATTENED_DOMAIN01_GAMBIT,
 	MATCHING_PENNIES,
 	MATCHING_PENNIES_GAMBIT,
 	HUNGER_GAMES,
@@ -44,6 +46,9 @@ def get_domain_by_name(name):
 	elif name == DOMAIN01_GAMBIT:
 		from src.domains.domain01.domain_from_gambit_loader import get_domain01_from_gambit
 		return get_domain01_from_gambit()
+	elif name == FLATTENED_DOMAIN01_GAMBIT:
+		from src.domains.flattened_domain01_gambit.domain_from_gambit_loader import get_flattened_domain01_from_gambit
+		return get_flattened_domain01_from_gambit()
 	elif name == MATCHING_PENNIES:
 		from src.domains.matching_pennies.MatchingPennies import get_domain_matching_pennies
 		return get_domain_matching_pennies()

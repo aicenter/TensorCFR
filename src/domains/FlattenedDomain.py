@@ -222,11 +222,12 @@ class FlattenedDomain:
 				print_tensors(session, [
 					self.node_to_infoset[level],
 					self.infoset_acting_players[level],
+					self.infosets_of_non_chance_player[level],
 					self.infoset_action_counts[level],
 					self.initial_infoset_strategies[level],
 					self.current_infoset_strategies[level],
 					self.positive_cumulative_regrets[level],
-					self.cumulative_infoset_strategies[level],
+					self.cumulative_infoset_strategies[level]
 				])
 		self.print_misc_variables(session)
 

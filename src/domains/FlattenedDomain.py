@@ -251,11 +251,31 @@ if __name__ == '__main__':
 		'doc',
 		'domain01_via_gambit.efg'
 	)
+	hunger_games_efg = os.path.join(
+		PROJECT_ROOT,
+		'doc',
+		'hunger_games',
+		'hunger_games_via_gambit.efg'
+	)
+	hunger_games_2_efg = os.path.join(
+		PROJECT_ROOT,
+		'doc',
+		'hunger_games_2',
+		'hunger_games_via_gambit.efg'
+	)
 	efg_files = [
 		domain01_efg,
+		hunger_games_efg,
+		hunger_games_2_efg
+	]
+	domain_names = [
+		"domain01_gambit",
+		"hunger_games_gambit",
+		"hunger_games_2_gambit",
 	]
 	domains_from_gambit = [
-		FlattenedDomain.init_from_gambit_file(domain01_efg, domain_name="domain01_gambit")
+		FlattenedDomain.init_from_gambit_file(efg_file, domain_name)
+		for efg_file, domain_name in zip(efg_files, domain_names)
 	]
 
 	domains = handcoded_domains + domains_from_gambit

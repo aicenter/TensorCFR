@@ -45,21 +45,21 @@ class InformationSetManager:
 			information_set_acting_players.insert(0, node.tensorcfr_id)
 
 			if node.is_player():
-				current_infoset_strategy = [common_constants.IMAGINARY_PROBABILITIES] * next_level_max_no_actions
+				initial_player_infoset_strategy = [common_constants.IMAGINARY_PROBABILITIES] * next_level_max_no_actions
 
 				actions = [float(1 / len(node.actions))] * len(node.actions)
 
 				for index, action in enumerate(actions):
-					current_infoset_strategy[index] = action
+					initial_player_infoset_strategy[index] = action
 
-				initial_information_set_strategies.insert(0, current_infoset_strategy)
+				initial_information_set_strategies.insert(0, initial_player_infoset_strategy)
 			elif node.is_chance():
-				initial_infoset_strategy = [np.nan] * next_level_max_no_actions
+				initial_chance_infoset_strategy = [np.nan] * next_level_max_no_actions
 
 				for index, action in enumerate(reversed(node.actions)):
-					initial_infoset_strategy[index] = action['probability']
+					initial_chance_infoset_strategy[index] = action['probability']
 
-				initial_information_set_strategies.insert(0, initial_infoset_strategy)
+				initial_information_set_strategies.insert(0, initial_chance_infoset_strategy)
 		return [
 			np.asarray(information_set_acting_players, dtype=common_constants.INT_DTYPE_NUMPY),
 			np.asarray(initial_information_set_strategies)

@@ -52,14 +52,14 @@ class InformationSetManager:
 				for index, action in enumerate(actions):
 					current_infoset_strategy[index] = action
 
-				initial_information_set_strategies.append(current_infoset_strategy)
+				initial_information_set_strategies.insert(0, current_infoset_strategy)
 			elif node.is_chance():
 				initial_infoset_strategy = [np.nan] * next_level_max_no_actions
 
 				for index, action in enumerate(reversed(node.actions)):
 					initial_infoset_strategy[index] = action['probability']
 
-				initial_information_set_strategies.append(initial_infoset_strategy)
+				initial_information_set_strategies.insert(0, initial_infoset_strategy)
 		return [
 			np.asarray(information_set_acting_players, dtype=common_constants.INT_DTYPE_NUMPY),
 			np.asarray(initial_information_set_strategies)
@@ -247,13 +247,13 @@ if __name__ == '__main__':
 
 	efg_files = [
 		domain01_efg,
-		hunger_games_efg,
-		hunger_games_2_efg
+		# hunger_games_efg,
+		# hunger_games_2_efg
 	]
 	domain_names = [
 		"domain01",
-		"hunger_games",
-		"hunger_games_2",
+		# "hunger_games",
+		# "hunger_games_2",
 	]
 	for efg_file, domain_name in zip(efg_files, domain_names):
 		GambitLoader(efg_file, domain_name).show()

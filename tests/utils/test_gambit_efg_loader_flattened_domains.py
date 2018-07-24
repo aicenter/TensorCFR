@@ -79,11 +79,12 @@ class TestGambitLoaderDomain01(unittest.TestCase):
 		np.testing.assert_array_equal(self.domain.node_to_infoset[0], expected_output)
 
 	def test_node_to_infoset_level_1(self):
-		expected_output = [3, 2, 1, 1, 0]
+		expected_output = [0, 1, 2, 2, 3]
 		np.testing.assert_array_equal(self.domain.node_to_infoset[1], expected_output)
 
 	def test_node_to_infoset_level_2(self):
-		expected_output = [6, 5, common_constants.INFOSET_FOR_TERMINAL_NODES, 4, 4, 3, 2, 3, 2, common_constants.INFOSET_FOR_TERMINAL_NODES, 1, 0]
+		expected_output = [0, 1, common_constants.INFOSET_FOR_TERMINAL_NODES, 2, 2, 3, 4, 3, 4,
+		                   common_constants.INFOSET_FOR_TERMINAL_NODES, 5, 6]
 		np.testing.assert_array_equal(self.domain.node_to_infoset[2], expected_output)
 
 	def test_number_of_nodes_actions_level_0(self):

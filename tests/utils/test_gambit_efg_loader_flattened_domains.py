@@ -66,12 +66,12 @@ class TestGambitLoaderDomain01(unittest.TestCase):
 
 	def test_initial_infoset_strategies_level_2(self):
 		expected_output = [[0.5, 0.5],
-						   [0.5, 0.5],
-						   [0.1, 0.9],
-						   [0.5, 0.5],
-						   [0.5, 0.5],
-						   [0.5, 0.5],
-						   [0.5, 0.5]]
+		                   [0.5, 0.5],
+		                   [0.5, 0.5],
+		                   [0.5, 0.5],
+		                   [0.1, 0.9],
+		                   [0.5, 0.5],
+		                   [0.5, 0.5]]
 		np.testing.assert_array_equal(self.domain.initial_infoset_strategies[2], expected_output)
 
 	def test_node_to_infoset_level_0(self):

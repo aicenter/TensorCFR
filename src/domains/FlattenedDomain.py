@@ -163,7 +163,7 @@ class FlattenedDomain:
 				tf.reshape(
 						tf.not_equal(infoset_acting_players[level], CHANCE_PLAYER),
 						shape=[self.current_infoset_strategies[level].shape[0]],
-						name="infosets_of_acting_player_lvl{}".format(level)
+						name="infosets_of_non_chance_player_lvl{}".format(level)
 				) for level in range(self.acting_depth)
 			]
 

@@ -247,13 +247,13 @@ if __name__ == '__main__':
 
 	efg_files = [
 		domain01_efg,
-		# hunger_games_efg,
-		# hunger_games_2_efg
+		hunger_games_efg,
+		hunger_games_2_efg
 	]
 	domain_names = [
 		"domain01",
-		# "hunger_games",
-		# "hunger_games_2",
+		"hunger_games",
+		"hunger_games_2"
 	]
 	for efg_file, domain_name in zip(efg_files, domain_names):
 		GambitLoader(efg_file, domain_name).show()

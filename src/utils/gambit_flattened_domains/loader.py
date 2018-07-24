@@ -28,7 +28,7 @@ class InformationSetManager:
 			return common_constants.INFOSET_FOR_TERMINAL_NODES
 
 		if node.information_set_id not in self.information_sets:
-			information_set_index = len(self.information_sets)
+			information_set_index = self.number_of_information_sets - 1 - len(self.information_sets)  # reverse infoset indices
 			self.information_sets[node.information_set_id] = [information_set_index, node]
 			self.information_set_acting_players_list.insert(0, node.information_set_id)
 			return information_set_index

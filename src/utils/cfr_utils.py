@@ -108,7 +108,7 @@ def get_node_types_from_action_counts(action_counts):
 
 def flatten_strategies_via_action_counts(node_strategies, action_counts, basename="nodal_strategies"):
 	levels = len(action_counts)
-	return [
+	flattened_strategies = [
 		tf.constant(
 				[REACH_PROBABILITY_OF_ROOT],
 				name="flattened_{}_lvl0".format(basename)
@@ -120,6 +120,7 @@ def flatten_strategies_via_action_counts(node_strategies, action_counts, basenam
 		)
 		for level in range(levels)
 	]
+	return flattened_strategies
 
 
 def expand_to_2D_via_action_counts(action_counts, values_in_children, name="2D_cf_values"):

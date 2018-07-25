@@ -130,7 +130,7 @@ def flatten_strategies_via_action_counts(node_strategies, action_counts, basenam
 		) if level == 0
 		else tf.boolean_mask(
 			node_strategies[level - 1],
-			mask=tf.sequence_mask(action_counts[level - 1]),
+			mask=tf.sequence_mask(action_counts_in_inner_nodes[level - 1]),
 			name="flattened_{}_lvl{}".format(basename, level),
 		)
 		for level in range(levels)

@@ -108,6 +108,21 @@ def get_node_types_from_action_counts(action_counts):
 
 def flatten_strategies_via_action_counts(node_strategies, action_counts, basename="nodal_strategies"):
 	levels = len(action_counts)
+	mask_of_inner_nodes = [
+		tf.greater(
+			action_count,
+			0,
+			name="mask_of_inner_nodes_lvl{}".format(level)
+		)
+		for level, action_count in enumerate(action_counts)
+	]
+	action_counts_in_inner_nodes = [
+		tf.boolean_mask(
+			action_count,
+			mask=mask_of_inner_nodes[level]
+		)
+		for level, action_count in enumerate(action_counts)
+	]
 	flattened_strategies = [
 		tf.constant(
 			[REACH_PROBABILITY_OF_ROOT],

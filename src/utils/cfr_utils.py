@@ -110,13 +110,13 @@ def flatten_strategies_via_action_counts(node_strategies, action_counts, basenam
 	levels = len(action_counts)
 	flattened_strategies = [
 		tf.constant(
-				[REACH_PROBABILITY_OF_ROOT],
-				name="flattened_{}_lvl0".format(basename)
+			[REACH_PROBABILITY_OF_ROOT],
+			name="flattened_{}_lvl0".format(basename)
 		) if level == 0
 		else tf.boolean_mask(
-				node_strategies[level - 1],
-				mask=tf.sequence_mask(action_counts[level - 1]),
-				name="flattened_{}_lvl{}".format(basename, level),
+			node_strategies[level - 1],
+			mask=tf.sequence_mask(action_counts[level - 1]),
+			name="flattened_{}_lvl{}".format(basename, level),
 		)
 		for level in range(levels)
 	]

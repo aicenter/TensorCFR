@@ -742,6 +742,7 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("invalid domain name test")
 	# domain = get_domain_by_name("flattened_hunger_games")
 	domain = get_domain_by_name("flattened_hunger_games_2")
+	# domain = get_domain_by_name("flattened_domain01_via_gambit")    # TODO fix for wrong IS 6, 7 (lvl last)
 	tensorcfr = TensorCFRFlattenedDomains(domain)
 
 	# infoset_action_cf_values_, infoset_cf_values_ = tensorcfr.get_infoset_cf_values()

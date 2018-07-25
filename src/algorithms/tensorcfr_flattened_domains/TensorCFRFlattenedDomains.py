@@ -68,7 +68,10 @@ class TensorCFRFlattenedDomains:
 					name="node_strategies_lvl{}".format(level)
 				) for level in range(self.domain.acting_depth)
 			]
-			flattened_node_strategies = flatten_strategies_via_action_counts(node_strategies, self.domain.action_counts)
+			flattened_node_strategies = flatten_strategies_via_action_counts(
+				node_strategies,
+				self.domain.action_counts
+			)
 			return flattened_node_strategies
 
 	def get_node_cf_strategies(self, updating_player=None):

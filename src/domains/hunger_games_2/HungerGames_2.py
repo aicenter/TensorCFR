@@ -11,18 +11,18 @@ from src.domains.Domain import Domain
 
 def get_domain_hunger_games_2():
 	return Domain(
-			domain_name="hunger_games",
-			actions_per_levels=hg.actions_per_levels,
-			node_to_infoset=hg.node_to_infoset,
-			node_types=hg.node_types,
-			utilities=hg.utilities,
-			infoset_acting_players=hg.infoset_acting_players,
-			initial_infoset_strategies=hg.initial_infoset_strategies,
+			domain_name="hunger_games_2",
+			actions_per_levels=hg2.actions_per_levels,
+			node_to_infoset=hg2.node_to_infoset,
+			node_types=hg2.node_types,
+			utilities=hg2.utilities,
+			infoset_acting_players=hg2.infoset_acting_players,
+			initial_infoset_strategies=hg2.initial_infoset_strategies,
 	)
 
 
 if __name__ == '__main__':
-	hunger_games = get_domain_hunger_games()
+	hunger_games_2 = get_domain_hunger_games_2()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		hunger_games.print_domain(sess)
+		hunger_games_2.print_domain(sess)

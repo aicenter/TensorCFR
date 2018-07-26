@@ -709,7 +709,8 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("domain01")
 	# domain = get_domain_by_name("matching_pennies")
 	# domain = get_domain_by_name("invalid domain name test")
-	domain = get_domain_by_name("hunger_games")
+	# domain = get_domain_by_name("hunger_games")
+	domain = get_domain_by_name("hunger_games_2")
 	tensorcfr = TensorCFR(domain)
 	run_cfr(
 			# total_steps=10,

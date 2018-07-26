@@ -94,7 +94,7 @@ node_types[3] = [
 ]
 utilities[3] = [
 	[
-		[1.0] * 4,  # TODO: Fix her by updating to `NON_TERMINAL_UTILITY`
+		[NON_TERMINAL_UTILITY] * 4,
 		[NON_TERMINAL_UTILITY] * 4,
 		[NON_TERMINAL_UTILITY] * 4,
 		[NON_TERMINAL_UTILITY] * 4,

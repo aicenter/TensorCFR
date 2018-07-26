@@ -46,7 +46,7 @@ node_types[2] = [
 ]
 utilities[2] = [
 	[NON_TERMINAL_UTILITY] * 6,
-	[-1.0] * 6
+	[-6, -8, -5, -10, -3, -1]
 ]
 infoset_acting_players[2] = [PLAYER1, NO_ACTING_PLAYER, NO_ACTING_PLAYER]
 initial_infoset_strategies[2] = [
@@ -655,23 +655,23 @@ utilities[5] = [
 	[
 		[
 			[
-				[1.0] * 2,
-				[1.0] * 2,
-				[1.0] * 2
+				[86, 5],
+				[31, 30],
+				[1, 1]
 			],
 			[
-				[1.0] * 2,
-				[1.0] * 2,
-				[1.0] * 2
+				[10, 10],
+				[99, 100],
+				[45, 4]
 			],
 			[
-				[1.0] * 2,
-				[1.0] * 2,
+				[16, 25],
+				[77, 80],
 				[NON_TERMINAL_UTILITY] * 2
 			],
 			[
-				[1.0] * 2,
-				[1.0] * 2,
+				[78, 0],
+				[9, 1],
 				[NON_TERMINAL_UTILITY] * 2
 			],
 		],

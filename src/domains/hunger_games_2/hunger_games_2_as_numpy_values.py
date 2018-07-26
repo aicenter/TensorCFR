@@ -4,7 +4,7 @@ from typing import List
 from src.commons.constants import NON_TERMINAL_UTILITY, INNER_NODE, TERMINAL_NODE, PLAYER1, PLAYER2, \
 	IMAGINARY_PROBABILITIES, IMAGINARY_NODE, NO_ACTING_PLAYER
 
-# domain `hunger_games`: see doc/hunger_games_via_drawing.png
+# flattened domain `hunger_games`: see `doc/hunger_games_via_drawing.png` and `doc/hunger_games_2/`
 
 actions_per_levels = [2, 6, 4, 3, 2]
 levels = len(actions_per_levels) + 1  # accounting for 0th level

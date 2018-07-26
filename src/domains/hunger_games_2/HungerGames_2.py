@@ -2,14 +2,14 @@
 
 import tensorflow as tf
 
-import src.domains.hunger_games.hunger_games_as_numpy_values as hg
+import src.domains.hunger_games_2.hunger_games_2_as_numpy_values as hg2
 from src.domains.Domain import Domain
 
 
-# domain `hunger_games`: see doc/hunger_games_via_drawing.png
+# domain `hunger_games_2`: see doc/hunger_games_via_drawing.png
 
 
-def get_domain_hunger_games():
+def get_domain_hunger_games_2():
 	return Domain(
 			domain_name="hunger_games",
 			actions_per_levels=hg.actions_per_levels,

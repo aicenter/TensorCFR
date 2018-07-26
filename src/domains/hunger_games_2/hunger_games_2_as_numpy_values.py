@@ -921,3 +921,23 @@ utilities[5] = [
 		],
 	],
 ]
+
+
+if __name__ == '__main__':
+	from pprint import pprint
+	print("actions_per_levels:")
+	pprint(actions_per_levels, indent=1, width=80)
+	print("levels:")
+	pprint(levels, indent=1, width=80)
+	print("acting_depth:")
+	pprint(acting_depth, indent=1, width=80)
+	print("node_to_infoset:")
+	pprint(node_to_infoset, indent=1, width=80)
+	print("node_types:")
+	pprint(node_types, indent=1, width=80)
+	print("utilities:")
+	pprint(utilities, indent=1, width=180)
+	print("infoset_acting_players:")
+	pprint(infoset_acting_players, indent=1, width=40)
+	print("initial_infoset_strategies:")
+	pprint(initial_infoset_strategies, indent=1, width=35)

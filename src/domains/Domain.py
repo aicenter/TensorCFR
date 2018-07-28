@@ -168,7 +168,10 @@ class Domain:
 			print("########## Level {} ##########".format(level))
 			if level == 0:
 				print_tensors(session, [self.reach_probability_of_root_node])
-			print_tensors(session, [self.node_types[level], self.utilities[level]])
+			print_tensors(session, [
+				self.node_types[level],
+				self.utilities[level]
+			])
 			if level != range(self.levels)[-1]:
 				print_tensors(session, [
 					self.node_to_infoset[level],

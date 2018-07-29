@@ -1,4 +1,5 @@
 import os
+
 import tensorflow as tf
 
 from src.domains.Domain import Domain
@@ -18,6 +19,7 @@ def get_domain_GP_cards2x2_122():
 			'GP_cards2x2_122.gbt'
 	)
 	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="GP_cards2x2_122_via_gambit")
+
 
 if __name__ == '__main__':
 	poker = get_domain_GP_cards2x2_122()

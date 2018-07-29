@@ -19,6 +19,7 @@ GOOFSPIEL6_GAMBIT = "IIGS6_s1_bf_ft_via_gambit"
 FLATTENED_GOOFSPIEL6_GAMBIT = "IIGS6_gambit_flattened"
 PHANTOM_TTT_GAMBIT = "phantom_ttt_via_gambit"
 GP_CARDS2X2_122 = "GP_cards2x2_122_via_gambit"
+FLATTENED_GP_CARDS2X2_122 = "GP_cards2x2_122_gambit_flattened"
 GP_CARDS4X3_222 = "GP_cards4x3_222_via_gambit"
 GP_CARDS4X3_224 = "GP_cards4x3_224_via_gambit"
 AVAILABLE_DOMAINS = [
@@ -43,6 +44,7 @@ DOMAINS_WITH_LARGE_GAMBIT_FILES = [
 	FLATTENED_GOOFSPIEL6_GAMBIT,
 	PHANTOM_TTT_GAMBIT,
 	GP_CARDS2X2_122,
+	FLATTENED_GP_CARDS2X2_122,
 	GP_CARDS4X3_222,
 	GP_CARDS4X3_224,
 ]
@@ -107,6 +109,9 @@ def get_domain_by_name(name):
 	elif name == GP_CARDS2X2_122:
 		from src.domains.GP_cards2x2_122.domain_from_gambit_loader import get_domain_GP_cards2x2_122
 		return get_domain_GP_cards2x2_122()
+	elif name == FLATTENED_GP_CARDS2X2_122:
+		from src.domains.flattened_GP_cards2x2_122.domain_from_gambit_loader import get_flattened_GP_cards2x2_122
+		return get_flattened_GP_cards2x2_122()
 	elif name == GP_CARDS4X3_222:
 		from src.domains.GP_cards4x3_222.domain_from_gambit_loader import get_domain_GP_cards4x3_222
 		return get_domain_GP_cards4x3_222()

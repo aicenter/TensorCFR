@@ -7,6 +7,14 @@ ACTIVATE_FILE = False
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
+	import time
+	print("Local current time (start): {}".format(
+		time.asctime(
+			time.localtime(
+				time.time()
+			)
+		)
+	))
 	domain = get_domain_by_name("GP_cards4x3_224_gambit_flattened")
 	tensorcfr = TensorCFRFlattenedDomains(domain)
 	run_cfr(
@@ -16,3 +24,10 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 			# profiling=True,
 			delay=0
 	)   # TODO verify the results (final average strategies) via `gtlibrary`
+	print("Local current time (stop): {}".format(
+		time.asctime(
+			time.localtime(
+				time.time()
+			)
+		)
+	))

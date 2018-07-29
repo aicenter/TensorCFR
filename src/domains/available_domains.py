@@ -23,6 +23,7 @@ FLATTENED_GP_CARDS2X2_122 = "GP_cards2x2_122_gambit_flattened"
 GP_CARDS4X3_222 = "GP_cards4x3_222_via_gambit"
 FLATTENED_GP_CARDS4X3_222 = "GP_cards4x3_222_gambit_flattened"
 GP_CARDS4X3_224 = "GP_cards4x3_224_via_gambit"
+FLATTENED_GP_CARDS4X3_224 = "GP_cards4x3_224_gambit_flattened"
 AVAILABLE_DOMAINS = [
 	DOMAIN01,
 	DOMAIN01_GAMBIT,
@@ -49,6 +50,7 @@ DOMAINS_WITH_LARGE_GAMBIT_FILES = [
 	GP_CARDS4X3_222,
 	FLATTENED_GP_CARDS4X3_222,
 	GP_CARDS4X3_224,
+	FLATTENED_GP_CARDS4X3_224,
 ]
 DOMAINS = AVAILABLE_DOMAINS + DOMAINS_WITH_LARGE_GAMBIT_FILES
 
@@ -123,6 +125,9 @@ def get_domain_by_name(name):
 	elif name == GP_CARDS4X3_224:
 		from src.domains.GP_cards4x3_224.domain_from_gambit_loader import get_domain_GP_cards4x3_224
 		return get_domain_GP_cards4x3_224()
+	elif name == FLATTENED_GP_CARDS4X3_224:
+		from src.domains.flattened_GP_cards4x3_224.domain_from_gambit_loader import get_flattened_GP_cards4x3_224
+		return get_flattened_GP_cards4x3_224()
 	else:
 		raise ValueError("Invalid name '{}' for get_domain_by_name().".format(name))
 

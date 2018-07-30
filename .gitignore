@@ -333,6 +333,7 @@ src/out/
 .cache/
 *.out.*
 src/algorithms/tensorcfr/logs/*
+*.json
 
 # Gambit files
 doc/poker/GP_cards2x2_122.gbt

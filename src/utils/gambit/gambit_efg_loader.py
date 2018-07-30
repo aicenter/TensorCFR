@@ -493,6 +493,7 @@ if __name__ == '__main__':
 	)
 
 	gbt_files = [
+		domain01_efg,
 		goofspiel2_efg
 	]
 

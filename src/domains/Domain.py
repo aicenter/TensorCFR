@@ -9,7 +9,8 @@ from src.utils.tensor_utils import print_tensors
 
 class Domain:
 	def __init__(self, domain_name, actions_per_levels, node_to_infoset, node_types, utilities, infoset_acting_players,
-	             initial_infoset_strategies, reach_probability_of_root_node=None, information_set_mapping_to_gtlibrary=None):
+	             initial_infoset_strategies, reach_probability_of_root_node=None,
+	             information_set_mapping_to_gtlibrary=None):
 		self.domain_name = domain_name
 
 		# information set mapping to GTLibrary information sets

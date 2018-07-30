@@ -148,10 +148,9 @@ class GambitEFGLoader:
 
 		self.terminal_nodes_cnt = 0
 
-		# for best response
+		# the mapping of IS between `gtlibrary` and `TensorCFR` for computing best response
 		self.information_set_strategy_index = 0
 		self.information_set_mapping_to_gtlibrary = dict()
-		# end: for best response
 
 		with open(efg_file) as self.gambit_file:
 			game_header_line = self.gambit_file.readline()
@@ -334,14 +333,13 @@ class GambitEFGLoader:
 
 				tree_node = stack_nodes_lvl.pop()
 
-				# best response
+				# the mapping of IS between `gtlibrary` and `TensorCFR` for computing best response
 				if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER and node['infoset_id'] not in self.information_set_mapping_to_gtlibrary.keys():
 					self.information_set_mapping_to_gtlibrary[node['infoset_id']] = {
 						"gtlibrary_index": self.information_set_strategy_index,
 						"tensorcfr_strategy_coordination": None
 					}
 					self.information_set_strategy_index += 1
-				# end: best response
 
 				level = tree_node.level
 				coordinates = tree_node.coordinates

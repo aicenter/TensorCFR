@@ -1,11 +1,11 @@
-from src.algorithms.tensorcfr_flattened_domains.TensorCFRFlattenedDomains import TensorCFRFlattenedDomains, run_cfr
+from src.algorithms.tensorcfr_flattened_domains.TensorCFRFlattenedDomains import TensorCFRFlattenedDomains, get_cfr_strategies
 from src.domains.available_domains import get_domain_by_name
 
 
 if __name__ == '__main__':
 	domain = get_domain_by_name("GP_cards2x2_122_gambit_flattened")
 	tensorcfr = TensorCFRFlattenedDomains(domain)
-	run_cfr(
+	get_cfr_strategies(
 			total_steps=10,
 			tensorcfr_instance=tensorcfr,
 			quiet=True,

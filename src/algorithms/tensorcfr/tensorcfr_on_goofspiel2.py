@@ -1,13 +1,11 @@
-import json
-
-from src.algorithms.tensorcfr.TensorCFR import TensorCFR, run_cfr
+from src.algorithms.tensorcfr.TensorCFR import TensorCFR, get_cfr_strategies
 from src.domains.available_domains import get_domain_by_name
 
 
 if __name__ == '__main__':
 	domain = get_domain_by_name("II-GS2_via_gambit")
 	tensorcfr = TensorCFR(domain)
-	average_strategies = run_cfr(
+	average_strategies = get_cfr_strategies(
 			total_steps=100,
 			tensorcfr_instance=tensorcfr,
 			quiet=True,

@@ -377,7 +377,7 @@ class GambitEFGLoader:
 			self.node_to_infoset[level][tuple(coordinates)] = value
 
 	def update_information_set_mapping_to_gtlibrary(self, node, level, node_to_infoset_value):
-		# coordination = (level, index in the matrix)
+		# coordination == (level, index in the matrix)
 		if node['type'] == constants.GAMBIT_NODE_TYPE_PLAYER:
 			self.information_set_mapping_to_gtlibrary[node['infoset_id']]['tensorcfr_strategy_coordination'] = (level, node_to_infoset_value,)
 

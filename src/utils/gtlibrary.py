@@ -8,6 +8,12 @@ def export_average_strategies_to_json(information_set_mapping_to_gtlibrary, aver
 	return_json = [None] * len(information_set_mapping_to_gtlibrary)
 
 	for mapping in information_set_mapping_to_gtlibrary:
+		if "gtlibrary_index" not in information_set_mapping_to_gtlibrary[mapping]:
+			return False
+
+		if "tensorcfr_strategy_coordination" not in information_set_mapping_to_gtlibrary[mapping]:
+			return False
+
 		index_gtlibrary = information_set_mapping_to_gtlibrary[mapping]["gtlibrary_index"]
 		level, index_in_level = information_set_mapping_to_gtlibrary[mapping]["tensorcfr_strategy_coordination"]
 

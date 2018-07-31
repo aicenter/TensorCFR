@@ -420,6 +420,20 @@ class TensorCFRFixedTrunkStrategies:
 				return strategies_matched_to_regrets
 
 	def update_strategy_of_updating_player(self, acting_player=None, trunk_depth=None):  # TODO unittest
+		"""
+		Update for the strategy for the given `acting_player`.
+
+		Take into `trunk_depth` if it is specified. If so, the strategies at levels `0`, `1`, ... `trunk_depth - 1` are kept
+		 intact (fixed) during the CFR iterations.
+
+		Args:
+			:param acting_player: A variable. An index of the player whose strategies are to be updated.
+			:param trunk_depth: The number of levels of the trunk where the strategies are kept fixed. It should be an integer
+			 between `0` to `self.domain.levels`. It defaults to `0` (no trunk).
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
 		if acting_player is None:
 			acting_player = self.domain.current_updating_player
 		if trunk_depth is None:

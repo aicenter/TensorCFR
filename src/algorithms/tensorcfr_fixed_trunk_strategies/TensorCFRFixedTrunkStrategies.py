@@ -685,8 +685,9 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		)
 
 
-def run_cfr(tensorcfr_instance: TensorCFRFixedTrunkStrategies, total_steps=DEFAULT_TOTAL_STEPS, quiet=False,
-            delay=DEFAULT_AVERAGING_DELAY, profiling=False):
+def get_cfr_strategies_after_fixed_trunk_strategies(tensorcfr_instance: TensorCFRFixedTrunkStrategies,
+                                                    total_steps=DEFAULT_TOTAL_STEPS, quiet=False,
+                                                    delay=DEFAULT_AVERAGING_DELAY, profiling=False):
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
 		assign_averaging_delay_op = tf.assign(
@@ -785,7 +786,7 @@ if __name__ == '__main__':
 	# 	print_tensors(sess, tensorcfr.get_infoset_uniform_strategies())
 	# 	print_tensors(sess, tensorcfr.get_regrets())
 
-	run_cfr(
+	get_cfr_strategies_after_fixed_trunk_strategies(
 		total_steps=10,
 		tensorcfr_instance=tensorcfr,
 		quiet=True,

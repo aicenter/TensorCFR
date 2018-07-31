@@ -719,6 +719,7 @@ def get_cfr_strategies_after_fixed_trunk_strategies(tensorcfr_instance: TensorCF
 		hyperparameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,
+			"trunk_depth": tensorcfr_instance.trunk_depth,
 		}
 		log_dir_path = get_log_dir_path(tensorcfr_instance, hyperparameters)
 		if profiling:

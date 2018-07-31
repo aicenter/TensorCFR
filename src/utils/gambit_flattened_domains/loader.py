@@ -181,7 +181,7 @@ class GambitLoader:
 		self.number_of_nodes_actions[level][self.__placement_indices[level] + action_index] = value
 
 	def __update_information_set_mapping_to_gtlibrary(self, node, level, node_to_infoset_value):
-		# coordination == (level, index in the vector)
+		# coordination == (level, index in the matrix)
 		if node.is_player():
 			self.information_set_mapping_to_gtlibrary[node.information_set_id]['tensorcfr_strategy_coordination'] = (
 			level, node_to_infoset_value,)

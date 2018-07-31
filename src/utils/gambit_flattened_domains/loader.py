@@ -86,6 +86,10 @@ class GambitLoader:
 		self.nodes_per_levels = [1]  # level 0 has always one node
 		self.number_of_levels = 0
 
+		# the mapping of IS between `gtlibrary` and `TensorCFR` for computing best response
+		self.information_set_strategy_index = 0
+		self.information_set_mapping_to_gtlibrary = dict()
+
 		# load meta information - number of levels, max actions per level...
 		self.__load_meta_information(file)
 
@@ -131,6 +135,15 @@ class GambitLoader:
 
 				level = tree_node.level
 
+				# the mapping of IS between `gtlibrary` and `TensorCFR` for computing best response
+				if node.is_player() and \
+						node.information_set_id not in self.information_set_mapping_to_gtlibrary.keys():
+					self.information_set_mapping_to_gtlibrary[node.information_set_id] = {
+						"gtlibrary_index": self.information_set_strategy_index,
+						"tensorcfr_strategy_coordination": None
+					}
+					self.information_set_strategy_index += 1
+
 				if not node.is_terminal():
 					lists_of_information_sets_ids_per_level[level][node.information_set_id] = True
 
@@ -167,6 +180,12 @@ class GambitLoader:
 	def __update_number_of_nodes_actions(self, level, action_index, value):
 		self.number_of_nodes_actions[level][self.__placement_indices[level] + action_index] = value
 
+	def __update_information_set_mapping_to_gtlibrary(self, node, level, node_to_infoset_value):
+		# coordination == (level, index in the vector)
+		if node.is_player():
+			self.information_set_mapping_to_gtlibrary[node.information_set_id]['tensorcfr_strategy_coordination'] = (
+			level, node_to_infoset_value,)
+
 	def __generate_tensors(self, file):
 		# a vector of indices to filling vectors
 		self.__placement_indices = copy.deepcopy(self.nodes_per_levels)
@@ -179,6 +198,7 @@ class GambitLoader:
 				tree_node = nodes_stack.pop()
 
 				node_to_infoset_value = self.__infoset_managers[tree_node.level].add_node(node)
+				self.__update_information_set_mapping_to_gtlibrary(node, tree_node.level, node_to_infoset_value)
 				self.__update_node_to_infoset(tree_node.level, tree_node.action_index, node_to_infoset_value)
 
 				if node.type != constants.TERMINAL_NODE:

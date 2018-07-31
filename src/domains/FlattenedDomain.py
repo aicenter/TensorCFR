@@ -13,8 +13,13 @@ from src.utils.tensor_utils import print_tensors, normalize
 
 class FlattenedDomain:
 	def __init__(self, domain_name, action_counts, node_to_infoset, utilities, infoset_acting_players,
-	             initial_infoset_strategies, reach_probability_of_root_node=None):
+	             initial_infoset_strategies, reach_probability_of_root_node=None,
+				 information_set_mapping_to_gtlibrary=None):
 		self.domain_name = domain_name
+
+		# information set mapping to GTLibrary information sets
+		self.information_set_mapping_to_gtlibrary = information_set_mapping_to_gtlibrary
+
 		with tf.variable_scope(self.domain_name, reuse=tf.AUTO_REUSE) as self.domain_scope:
 			# tensors on tree dimensions
 			self.action_counts = action_counts    # count of (nodal) actions at each levels

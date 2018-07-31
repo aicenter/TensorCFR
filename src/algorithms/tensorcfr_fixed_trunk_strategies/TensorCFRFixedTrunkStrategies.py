@@ -16,7 +16,7 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 
 
 class TensorCFRFixedTrunkStrategies:
-	def __init__(self, domain: FlattenedDomain):
+	def __init__(self, domain: FlattenedDomain, trunk_depth=0):
 		self.domain = domain
 		with tf.variable_scope("increment_step"):
 			self.increment_cfr_step = tf.assign_add(
@@ -25,6 +25,7 @@ class TensorCFRFixedTrunkStrategies:
 				name="increment_cfr_step"
 			)
 		self.summary_writer = None
+		self.trunk_depth = trunk_depth
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -419,7 +420,7 @@ class TensorCFRFixedTrunkStrategies:
 						)
 				return strategies_matched_to_regrets
 
-	def update_strategy_of_updating_player(self, acting_player=None, trunk_depth=0):  # TODO unittest
+	def update_strategy_of_updating_player(self, acting_player=None):  # TODO unittest
 		"""
 		Update for the strategy for the given `acting_player`.
 
@@ -440,7 +441,7 @@ class TensorCFRFixedTrunkStrategies:
 		infoset_acting_players = self.domain.get_infoset_acting_players()
 		ops_update_infoset_strategies = [None] * self.domain.acting_depth
 		with tf.variable_scope("update_strategy_of_updating_player"):
-			for level in range(trunk_depth, self.domain.acting_depth):
+			for level in range(self.trunk_depth, self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_acting_player = tf.reshape(
 						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
@@ -454,7 +455,7 @@ class TensorCFRFixedTrunkStrategies:
 						value=infoset_strategies_matched_to_regrets[level],
 						name="op_update_infoset_strategies_lvl{}".format(level)
 					)
-			return ops_update_infoset_strategies[trunk_depth:]
+			return ops_update_infoset_strategies[self.trunk_depth:]
 
 	def get_weighted_averaging_factor(self, delay=None):  # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
 		if delay is None:
@@ -758,7 +759,10 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("flattened_hunger_games")
 	domain = get_domain_by_name("flattened_hunger_games_2")
 	# domain = get_domain_by_name("flattened_domain01_via_gambit")
-	tensorcfr = TensorCFRFixedTrunkStrategies(domain)
+	tensorcfr = TensorCFRFixedTrunkStrategies(
+		domain,
+		# trunk_depth=3
+	)
 
 	# infoset_action_cf_values_, infoset_cf_values_ = tensorcfr.get_infoset_cf_values()
 	# alternating_cf_values = [

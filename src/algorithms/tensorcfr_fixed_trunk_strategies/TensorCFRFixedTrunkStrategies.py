@@ -419,14 +419,16 @@ class TensorCFRFixedTrunkStrategies:
 						)
 				return strategies_matched_to_regrets
 
-	def update_strategy_of_updating_player(self, acting_player=None):  # TODO unittest
+	def update_strategy_of_updating_player(self, acting_player=None, trunk_depth=None):  # TODO unittest
 		if acting_player is None:
 			acting_player = self.domain.current_updating_player
+		if trunk_depth is None:
+			trunk_depth = 0
 		infoset_strategies_matched_to_regrets = self.get_strategy_matched_to_regrets()
 		infoset_acting_players = self.domain.get_infoset_acting_players()
 		ops_update_infoset_strategies = [None] * self.domain.acting_depth
 		with tf.variable_scope("update_strategy_of_updating_player"):
-			for level in range(self.domain.acting_depth):
+			for level in range(trunk_depth, self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_acting_player = tf.reshape(
 						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]

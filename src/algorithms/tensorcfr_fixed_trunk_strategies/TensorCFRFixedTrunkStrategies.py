@@ -507,7 +507,9 @@ class TensorCFRFixedTrunkStrategies:
 			acting_player = self.domain.current_updating_player
 		if opponent is None:
 			opponent = self.domain.current_opponent
-		update_ops = self.update_strategy_of_updating_player(acting_player=acting_player)
+		update_ops = self.update_strategy_of_updating_player(
+			acting_player=acting_player
+		)
 		cumulate_ops = self.cumulate_strategy_of_opponent(opponent=opponent)
 		return tf.tuple(update_ops + cumulate_ops, name="process_strategies")
 

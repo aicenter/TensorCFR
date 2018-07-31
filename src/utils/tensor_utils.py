@@ -18,14 +18,13 @@ def masked_assign(ref, mask, value, name="masked_assign"):
 
 	This operation outputs a corresponding TensorFlow operation (from the computation graph).
 
-	Args:
-		:param ref: A mutable `Tensor`.
-			Should be from a `Variable` node. May be uninitialized.
-    :param mask:  Either a boolean tensor of the same shape as `ref`, or a vector of the size of 'ref.shape[0]'
-      (i.e. row mask).
-		:param value: Either a `Tensor` of the same type and shape as `ref`, or a scalar (i.e. broadcasting a scalar
-			value). The value to be assigned to the variable.
-		:param name: A name for the operation (optional), by default `masked_assign`.
+	:param ref: A mutable `Tensor`.
+		Should be from a `Variable` node. May be uninitialized.
+	:param mask:  Either a boolean tensor of the same shape as `ref`, or a vector of the size of 'ref.shape[0]'
+		(i.e. row mask).
+	:param value: Either a `Tensor` of the same type and shape as `ref`, or a scalar (i.e. broadcasting a scalar
+		value). The value to be assigned to the variable.
+	:param name: A name for the operation (optional), by default `masked_assign`.
 
 	Returns:
 		A corresponding TensorFlow operation (from the computation graph).

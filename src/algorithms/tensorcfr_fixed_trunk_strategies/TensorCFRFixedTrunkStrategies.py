@@ -456,7 +456,7 @@ class TensorCFRFixedTrunkStrategies:
 						value=infoset_strategies_matched_to_regrets[level],
 						name="op_update_infoset_strategies_lvl{}".format(level)
 					)
-			return ops_update_infoset_strategies
+			return ops_update_infoset_strategies[trunk_depth:]
 
 	def get_weighted_averaging_factor(self, delay=None):  # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
 		if delay is None:

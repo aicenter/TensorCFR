@@ -15,7 +15,7 @@ from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
-class TensorCFRFlattenedDomains:
+class TensorCFRFixedTrunkStrategies:
 	def __init__(self, domain: FlattenedDomain):
 		self.domain = domain
 		with tf.variable_scope("increment_step"):
@@ -41,13 +41,13 @@ class TensorCFRFlattenedDomains:
 			with tf.variable_scope("new_updating_player"):
 				assign_new_updating_player = tf.assign(
 					ref=self.domain.current_updating_player,
-					value=TensorCFRFlattenedDomains.get_the_other_player_of(self.domain.current_updating_player),
+					value=TensorCFRFixedTrunkStrategies.get_the_other_player_of(self.domain.current_updating_player),
 					name="assign_new_updating_player",
 				)
 			with tf.variable_scope("new_opponent"):
 				assign_opponent = tf.assign(
 					ref=self.domain.current_opponent,
-					value=TensorCFRFlattenedDomains.get_the_other_player_of(self.domain.current_opponent),
+					value=TensorCFRFixedTrunkStrategies.get_the_other_player_of(self.domain.current_opponent),
 					name="assign_new_opponent",
 				)
 			return tf.tuple(
@@ -610,7 +610,7 @@ def set_up_cfr(tensorcfr_instance):
 
 
 def log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, averaging_delay):
-	print("TensorCFRFlattenedDomains\n")
+	print("TensorCFRFixedTrunkStrategies\n")
 	print(setup_messages)
 	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
 	print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay))
@@ -667,7 +667,7 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		)
 
 
-def run_cfr(tensorcfr_instance: TensorCFRFlattenedDomains, total_steps=DEFAULT_TOTAL_STEPS, quiet=False,
+def run_cfr(tensorcfr_instance: TensorCFRFixedTrunkStrategies, total_steps=DEFAULT_TOTAL_STEPS, quiet=False,
             delay=DEFAULT_AVERAGING_DELAY, profiling=False):
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
@@ -741,7 +741,7 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("flattened_hunger_games")
 	domain = get_domain_by_name("flattened_hunger_games_2")
 	# domain = get_domain_by_name("flattened_domain01_via_gambit")
-	tensorcfr = TensorCFRFlattenedDomains(domain)
+	tensorcfr = TensorCFRFixedTrunkStrategies(domain)
 
 	# infoset_action_cf_values_, infoset_cf_values_ = tensorcfr.get_infoset_cf_values()
 	# alternating_cf_values = [

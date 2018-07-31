@@ -1,7 +1,10 @@
+import datetime
+import os
 import json
 
 
-def export_average_strategies_to_json(information_set_mapping_to_gtlibrary, average_strategies, output_file):
+def export_average_strategies_to_json(information_set_mapping_to_gtlibrary, average_strategies, output_filename):
+	output_dir = "out"
 	return_json = [None] * len(information_set_mapping_to_gtlibrary)
 
 	for mapping in information_set_mapping_to_gtlibrary:
@@ -12,7 +15,12 @@ def export_average_strategies_to_json(information_set_mapping_to_gtlibrary, aver
 		strategy = average_strategies[level][index_in_level].tolist()
 		return_json[index_gtlibrary] = strategy
 
-	with open(output_file, 'w') as f:
+	if not os.path.exists(output_dir):
+		os.mkdir(output_dir)
+
+	output_filename = "{}_{}.json".format(output_filename, datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"))
+
+	with open(os.path.join(output_dir, output_filename), 'w') as f:
 		json.dump(return_json, f)
 
 	return True

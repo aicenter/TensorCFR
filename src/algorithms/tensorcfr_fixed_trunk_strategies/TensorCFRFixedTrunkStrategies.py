@@ -424,13 +424,11 @@ class TensorCFRFixedTrunkStrategies:
 		"""
 		Update for the strategy for the given `acting_player`.
 
-		Take into account the `trunk_depth` if it is specified. If so, the strategies at levels `0`, `1`, ...
-		 `trunk_depth - 1` are kept intact (fixed) during the CFR iterations.
+		Take into account the `self.trunk_depth`, i.e., the strategies at levels `0`, `1`, ... `trunk_depth - 1` are kept
+		 intact (fixed) during the CFR iterations.
 
 		Args:
 			:param acting_player: A variable. An index of the player whose strategies are to be updated.
-			:param trunk_depth: The number of levels of the trunk where the strategies are kept fixed. It should be an integer
-			 between `0` to `self.domain.levels`. It defaults to `0` (no trunk).
 
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).

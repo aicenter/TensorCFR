@@ -722,6 +722,7 @@ def get_cfr_strategies(tensorcfr_instance: TensorCFRFlattenedDomains, total_step
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
 			log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)
+		return [session.run(x) for x in average_infoset_strategies]
 
 
 if __name__ == '__main__':

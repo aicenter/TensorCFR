@@ -191,7 +191,8 @@ class FlattenedDomain:
 			domain_numpy_tensors.node_to_infoset,
 			domain_numpy_tensors.utilities,
 			domain_numpy_tensors.infoset_acting_players,
-			domain_numpy_tensors.initial_infoset_strategies
+			domain_numpy_tensors.initial_infoset_strategies,
+			information_set_mapping_to_gtlibrary=domain_numpy_tensors.information_set_mapping_to_gtlibrary
 		)
 
 	def get_infoset_acting_players(self):

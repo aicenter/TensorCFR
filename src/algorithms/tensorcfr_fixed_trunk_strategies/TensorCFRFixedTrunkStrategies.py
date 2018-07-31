@@ -17,6 +17,14 @@ from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_
 
 class TensorCFRFixedTrunkStrategies:
 	def __init__(self, domain: FlattenedDomain, trunk_depth=0):
+		"""
+		Constructor for an instance of TensorCFR algorithm with given parameters (as a TensorFlow computation graph).
+
+		:param domain: The domain of the game (as an instance of class `FlattenedDomain`). TensorCFR (the CFR+ algorithm)
+		 will be launched for this game.
+		:param trunk_depth: The number of levels of the trunk where the strategies are kept fixed. It should be an integer
+			 between `0` to `self.domain.levels`. It defaults to `0` (no trunk).
+		"""
 		self.domain = domain
 		with tf.variable_scope("increment_step"):
 			self.increment_cfr_step = tf.assign_add(

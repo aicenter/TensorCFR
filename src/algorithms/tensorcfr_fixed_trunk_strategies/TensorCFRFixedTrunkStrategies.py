@@ -699,6 +699,13 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 	print_tensors(session, tensorcfr_instance.domain.cumulative_infoset_strategies)
 	print("___________________________________\n")
 	print_tensors(session, average_infoset_strategies)
+	print("___________________________________\n")
+	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
+	print("___________________________________\n")
+	assigns = tensorcfr_instance.assign_avg_strategies_to_current_strategies()
+	print_tensors(session, assigns)
+	print("___________________________________\n")
+	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
 
 	print("Storing average strategies to '{}'...".format(log_dir_path))
 

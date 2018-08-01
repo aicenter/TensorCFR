@@ -725,7 +725,9 @@ def get_cfr_strategies(tensorcfr_instance: TensorCFRFlattenedDomains, total_step
 
 				if i in register_strategies_on_step:
 					# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
-					return_average_strategies.append([session.run(x) for x in average_infoset_strategies])
+					return_average_strategies.append(
+						{"step": i,
+						 "average_strategy": [session.run(x) for x in average_infoset_strategies]})
 
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)

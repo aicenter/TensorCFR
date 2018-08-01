@@ -561,6 +561,26 @@ class TensorCFRFixedTrunkStrategies:
 			name="cfr_step"
 		)
 
+	def assign_avg_strategies_to_current_strategies(self):  # TODO unittest
+		"""
+		Assign average strategies to current strategies.
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
+		avg_strategies = self.get_average_infoset_strategies()
+		with tf.variable_scope("assign_avg_strategies_to_current_strategies"):
+			ops_assign_strategies = [None] * self.domain.acting_depth
+			for level, avg_strategy in enumerate(avg_strategies):
+				with tf.variable_scope("level{}".format(level)):
+					ops_assign_strategies[level] = masked_assign(
+						ref=self.domain.current_infoset_strategies[level],
+						mask=self.domain.infosets_of_non_chance_player[level],
+						value=avg_strategy,
+						name="assign_avg_strategies_to_current_strategies_lvl{}".format(level)
+					)
+		return ops_assign_strategies
+
 
 def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):
 	if method == "by-domain":

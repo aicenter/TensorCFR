@@ -130,12 +130,13 @@ class TensorCFRFixedTrunkStrategies:
 		"""
 		if for_player is None:
 			for_player = self.domain.current_updating_player
+		signum = self.domain.signum_of_current_player
 		node_strategies = self.get_node_strategies()
 		with tf.variable_scope("expected_values"):
 			expected_values = [None] * self.domain.levels
 			with tf.variable_scope("level{}".format(self.domain.levels - 1)):
 				expected_values[self.domain.levels - 1] = tf.multiply(
-					self.domain.signum_of_current_player,
+					signum,
 					self.domain.utilities[self.domain.levels - 1],
 					name="expected_values_lvl{}".format(self.domain.levels - 1),
 				)
@@ -163,7 +164,7 @@ class TensorCFRFixedTrunkStrategies:
 					expected_values[level] = tf.where(
 						condition=self.domain.mask_of_inner_nodes[level],
 						x=extended_weighted_sum,
-						y=self.domain.signum_of_current_player * tf.reshape(
+						y=signum * tf.reshape(
 							self.domain.utilities[level],
 							shape=[self.domain.utilities[level].shape[-1]],
 						),

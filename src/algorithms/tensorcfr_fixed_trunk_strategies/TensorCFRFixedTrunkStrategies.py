@@ -279,8 +279,17 @@ class TensorCFRFixedTrunkStrategies:
 				) for level in range(self.domain.levels)
 			]
 
-	def get_infoset_action_cf_values(self):  # TODO verify and write a unittest
-		node_cf_values = self.get_nodal_cf_values()
+	def get_infoset_action_cf_values(self, for_player=None):  # TODO verify and write a unittest
+		"""
+		Compute infoset-action counterfactual values by summing relevant counterfactual values of nodes.
+
+		:param for_player: The player for which the counterfactual values are computed. These values are usually
+		 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
+		:return: The infoset-action counterfactual values based on `current_infoset_strategies`.
+		"""
+		if for_player is None:
+			for_player = self.domain.current_updating_player
+		node_cf_values = self.get_nodal_cf_values(for_player=for_player)
 		with tf.variable_scope("infoset_action_cf_values"):
 			cf_values_infoset_actions = [None] * (self.domain.levels - 1)
 			cf_values_infoset_actions[0] = tf.expand_dims(

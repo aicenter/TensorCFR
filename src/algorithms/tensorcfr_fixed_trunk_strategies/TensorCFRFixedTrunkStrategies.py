@@ -343,8 +343,9 @@ class TensorCFRFixedTrunkStrategies:
 		:return: The infoset(-action) counterfactual values based on `current_infoset_strategies`.
 		"""
 		if for_player is None:
-			for_player = self.domain.current_updating_player
-		nodal_cf_values = self.get_nodal_cf_values(for_player=for_player)
+			nodal_cf_values = self.get_nodal_cf_values()
+		else:
+			nodal_cf_values = self.get_nodal_cf_values(for_player=for_player)
 		infoset_actions_cf_values, infoset_cf_values = [], []
 		for level in range(self.domain.acting_depth):
 			infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(

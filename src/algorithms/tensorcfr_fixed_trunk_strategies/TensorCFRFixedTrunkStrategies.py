@@ -212,8 +212,6 @@ class TensorCFRFixedTrunkStrategies:
 			`current_updating_player` by default.
 		:return: The reach probabilities of nodes based on `current_infoset_strategies`.
 		"""
-		if for_player is None:
-			for_player = self.domain.current_updating_player
 		node_cf_strategies = self.get_node_cf_strategies(updating_player=for_player)
 		with tf.variable_scope("nodal_reach_probabilities"):
 			nodal_reach_probabilities = [None] * self.domain.levels

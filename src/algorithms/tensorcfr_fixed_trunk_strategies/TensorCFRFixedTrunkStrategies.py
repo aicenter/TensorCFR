@@ -744,12 +744,12 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
 
 		# compute trunk
-		trunk_depth_infoset_cfvs = {}
-		for player in [PLAYER1, PLAYER2]:
-			print("___________________________________\n")
-			_, infoset_cf_values = tensorcfr_instance.get_infoset_cf_values(for_player=player)
-			trunk_depth_infoset_cfvs[player] = infoset_cf_values[tensorcfr_instance.trunk_depth - 1]
-			print_tensor(session, trunk_depth_infoset_cfvs[player])
+		print("___________________________________\n")
+		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
+		print_tensors(session, [
+			trunk_depth_infoset_cfvs[PLAYER1],
+			trunk_depth_infoset_cfvs[PLAYER2]
+		])
 
 	print("Storing average strategies to '{}'...".format(log_dir_path))
 

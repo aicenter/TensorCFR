@@ -124,8 +124,8 @@ class TensorCFRFixedTrunkStrategies:
 		Compute expected values of nodes using the top-down tree traversal.
 
 		:param for_player: The player for which the expected values are computed. These values are usually computed for the
-		 updating player when counterfactual values are computed. Therefore, `for_player` is set to
-		  `current_updating_player` by default.
+		 updating player when counterfactual values are computed. Therefore, by default the expected values are computed for
+		 the `current_updating_player`, i.e. multiplied with `signum` of `signum_of_current_player`.
 		:return: The expected values of nodes based on `current_infoset_strategies`.
 		"""
 		if for_player is None:
@@ -148,7 +148,7 @@ class TensorCFRFixedTrunkStrategies:
 				expected_values[self.domain.levels - 1] = tf.multiply(
 					signum,
 					self.domain.utilities[self.domain.levels - 1],
-					name="expected_values_lvl{}_for_{}".format(self.domain.levels - 1, player_name),
+					name="expected_values_lvl{}_for_{}".format(self.domain.levels - 1, player_name)
 				)
 			for level in reversed(range(self.domain.levels - 1)):
 				with tf.variable_scope("level{}".format(level)):

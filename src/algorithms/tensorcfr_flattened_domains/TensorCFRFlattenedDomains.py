@@ -267,24 +267,6 @@ class TensorCFRFlattenedDomains:
 				) for level in range(self.domain.levels)
 			]
 
-	def get_infoset_action_cf_values(self):  # TODO verify and write a unittest
-		node_cf_values = self.get_nodal_cf_values()
-		with tf.variable_scope("infoset_action_cf_values"):
-			cf_values_infoset_actions = [None] * (self.domain.levels - 1)
-			cf_values_infoset_actions[0] = tf.expand_dims(
-				node_cf_values[1],
-				axis=0,
-				name="infoset_action_cf_values_lvl0"
-			)
-			for level in range(1, self.domain.levels - 1):  # TODO replace for-loop with parallel_map on TensorArray?
-				cf_values_infoset_actions[level] = scatter_nd_sum(
-					indices=tf.expand_dims(self.domain.node_to_infoset[level], axis=-1),
-					updates=node_cf_values[level + 1],
-					shape=self.domain.current_infoset_strategies[level].shape,
-					name="infoset_action_cf_values_lvl{}".format(level),
-				)
-			return cf_values_infoset_actions
-
 	def get_infoset_cf_values(self):  # TODO verify and write a unittest
 		nodal_cf_values = self.get_nodal_cf_values()
 		infoset_actions_cf_values, infoset_cf_values = [], []

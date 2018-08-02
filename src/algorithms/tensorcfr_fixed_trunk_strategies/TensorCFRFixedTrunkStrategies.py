@@ -185,7 +185,9 @@ class TensorCFRFixedTrunkStrategies:
 	def show_expected_values(self, session):
 		self.domain.print_misc_variables(session=session)
 		node_strategies = self.get_node_strategies()
-		expected_values = self.get_expected_values()
+		expected_values_for_current_player = self.get_expected_values()
+		expected_values_for_player1 = self.get_expected_values(for_player=PLAYER1)
+		expected_values_for_player2 = self.get_expected_values(for_player=PLAYER2)
 		for level in reversed(range(self.domain.levels)):
 			print("########## Level {} ##########".format(level))
 			if level < len(node_strategies):
@@ -196,7 +198,9 @@ class TensorCFRFixedTrunkStrategies:
 					self.domain.utilities[level],
 					name="signum_utilities_lvl{}".format(level)
 				),
-				expected_values[level]
+				expected_values_for_current_player[level],
+				expected_values_for_player1[level],
+				expected_values_for_player2[level],
 			])
 
 	def get_nodal_reach_probabilities(self, for_player=None):

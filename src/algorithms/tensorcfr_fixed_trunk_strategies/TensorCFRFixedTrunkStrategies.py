@@ -12,8 +12,7 @@ from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
 	distribute_strategies_to_inner_nodes
-from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize, \
-	print_tensor
+from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
 class TensorCFRFixedTrunkStrategies:
@@ -35,6 +34,7 @@ class TensorCFRFixedTrunkStrategies:
 			)
 		self.summary_writer = None
 		self.trunk_depth = trunk_depth
+		self.trunk_depth_infoset_cfvs = None
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -600,6 +600,21 @@ class TensorCFRFixedTrunkStrategies:
 						name="assign_avg_strategies_to_current_strategies_lvl{}".format(level)
 					)
 		return ops_assign_strategies
+
+	def get_infoset_cfvs_at_trunk_depth(self):  # TODO unittest
+		"""
+		Get infoset counterfactual values at the bottom of the trunk.
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
+		if self.trunk_depth_infoset_cfvs is None:
+			self.trunk_depth_infoset_cfvs = {}
+			for player in [PLAYER1, PLAYER2]:
+				_, infoset_cf_values = self.get_infoset_cf_values(for_player=player)
+				self.trunk_depth_infoset_cfvs[player] = infoset_cf_values[self.trunk_depth - 1]
+
+		return self.trunk_depth_infoset_cfvs
 
 
 def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):

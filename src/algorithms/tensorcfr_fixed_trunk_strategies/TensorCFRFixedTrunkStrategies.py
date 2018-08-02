@@ -119,7 +119,17 @@ class TensorCFRFixedTrunkStrategies:
 				node_cf_strategies[level],
 			])
 
-	def get_expected_values(self):
+	def get_expected_values(self, for_player=None):
+		"""
+		Compute expected values of nodes using the top-down tree traversal.
+
+		:param for_player: The player for which the expected values are computed. These values are usually computed for the
+		 updating player when counterfactual values are computed. Therefore, `for_player` is set to
+		  `current_updating_player` by default.
+		:return: The expected values of nodes based on `current_infoset_strategies`.
+		"""
+		if for_player is None:
+			for_player = self.domain.current_updating_player
 		node_strategies = self.get_node_strategies()
 		with tf.variable_scope("expected_values"):
 			expected_values = [None] * self.domain.levels

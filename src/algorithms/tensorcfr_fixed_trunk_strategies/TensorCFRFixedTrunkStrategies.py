@@ -129,8 +129,18 @@ class TensorCFRFixedTrunkStrategies:
 		:return: The expected values of nodes based on `current_infoset_strategies`.
 		"""
 		if for_player is None:
-			for_player = self.domain.current_updating_player
-		signum = self.domain.signum_of_current_player
+			signum = self.domain.signum_of_current_player
+			player_name = "current_player"
+		else:
+			signum = tf.where(
+				condition=tf.equal(for_player, self.domain.player_owning_the_utilities),
+				x=tf.cast(1.0, dtype=FLOAT_DTYPE),
+				# Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
+				y=tf.cast(-1.0, dtype=FLOAT_DTYPE),
+				name="signum_of_player_{}".format(for_player),
+			)
+			player_name = "player{}".format(for_player)
+
 		node_strategies = self.get_node_strategies()
 		with tf.variable_scope("expected_values"):
 			expected_values = [None] * self.domain.levels
@@ -138,7 +148,7 @@ class TensorCFRFixedTrunkStrategies:
 				expected_values[self.domain.levels - 1] = tf.multiply(
 					signum,
 					self.domain.utilities[self.domain.levels - 1],
-					name="expected_values_lvl{}".format(self.domain.levels - 1),
+					name="expected_values_lvl{}_for_{}".format(self.domain.levels - 1, player_name),
 				)
 			for level in reversed(range(self.domain.levels - 1)):
 				with tf.variable_scope("level{}".format(level)):
@@ -168,7 +178,7 @@ class TensorCFRFixedTrunkStrategies:
 							self.domain.utilities[level],
 							shape=[self.domain.utilities[level].shape[-1]],
 						),
-						name="expected_values_lvl{}".format(level)
+						name="expected_values_lvl{}_for_{}".format(level, player_name)
 					)
 		return expected_values
 

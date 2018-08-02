@@ -293,9 +293,11 @@ class TensorCFRFixedTrunkStrategies:
 		:return: The counterfactual values of nodes based on `current_infoset_strategies`.
 		"""
 		if for_player is None:
-			for_player = self.domain.current_updating_player
-		expected_values = self.get_expected_values()
-		reach_probabilities = self.get_nodal_reach_probabilities(for_player=for_player)
+			expected_values = self.get_expected_values()
+			reach_probabilities = self.get_nodal_reach_probabilities()
+		else:
+			reach_probabilities = self.get_nodal_reach_probabilities(for_player=for_player)
+			expected_values = self.get_expected_values(for_player=for_player)
 		with tf.variable_scope("nodal_counterfactual_values"):
 			return [
 				tf.multiply(

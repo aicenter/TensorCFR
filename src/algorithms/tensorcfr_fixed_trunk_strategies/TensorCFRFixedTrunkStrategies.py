@@ -309,6 +309,10 @@ class TensorCFRFixedTrunkStrategies:
 		 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
 		:return: The infoset(-action) counterfactual values based on `current_infoset_strategies`.
 		"""
+		if for_player is None:
+			player_name = "current_player"
+		else:
+			player_name = "player{}".format(for_player)
 		nodal_cf_values = self.get_nodal_cf_values(for_player=for_player)
 		infoset_actions_cf_values, infoset_cf_values = [], []
 		for level in range(self.domain.acting_depth):
@@ -317,7 +321,7 @@ class TensorCFRFixedTrunkStrategies:
 				action_counts=self.domain.action_counts[level],
 				parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
 				infoset_strategy=self.domain.current_infoset_strategies[level],
-				name="cf_values_lvl{}".format(level)
+				name="cf_values_lvl{}_for_{}".format(level, player_name)
 			)
 			infoset_cf_values.append(infoset_cf_value)
 			infoset_actions_cf_values.append(infoset_action_cf_value)

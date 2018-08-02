@@ -736,41 +736,12 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
 
 		# TODO remove this section
-		print("___________________________________\n")
-		reach_probabilities = tensorcfr_instance.get_nodal_reach_probabilities()
-		print_tensors(session, reach_probabilities)
-		print("___________________________________\n")
-		expected_values = tensorcfr_instance.get_expected_values()
-		print_tensors(session, expected_values)
-		print("___________________________________\n")
-		nodal_cf_values = tensorcfr_instance.get_nodal_cf_values()
-		print_tensors(session, nodal_cf_values)
-
-		# TODO remove this section
-		print("___________________________________\n")
-		infoset_actions_cf_values, infoset_cf_values = tensorcfr_instance.get_infoset_cf_values()
-		trunk_depth_infoset_cfvs = infoset_cf_values[tensorcfr_instance.trunk_depth - 1]
-		print_tensors(session, infoset_cf_values + infoset_actions_cf_values)   # TODO remove
-		print_tensor(session, trunk_depth_infoset_cfvs)
-		print("___________________________________\n")
-
-		session.run(tensorcfr_instance.swap_players())
-
-		# TODO remove this section
-		reach_probabilities = tensorcfr_instance.get_nodal_reach_probabilities()
-		print_tensors(session, reach_probabilities)
-		print("___________________________________\n")
-		expected_values = tensorcfr_instance.get_expected_values()
-		print_tensors(session, expected_values)
-		print("___________________________________\n")
-		nodal_cf_values = tensorcfr_instance.get_nodal_cf_values()
-		print_tensors(session, nodal_cf_values)
-
-		print("___________________________________\n")
-		infoset_actions_cf_values, infoset_cf_values = tensorcfr_instance.get_infoset_cf_values()
-		trunk_depth_infoset_cfvs = infoset_cf_values[tensorcfr_instance.trunk_depth - 1]
-		print_tensors(session, infoset_cf_values + infoset_actions_cf_values)   # TODO remove
-		print_tensor(session, trunk_depth_infoset_cfvs)
+		trunk_depth_infoset_cfvs = {}
+		for player in [PLAYER1, PLAYER2]:
+			print("___________________________________\n")
+			_, infoset_cf_values = tensorcfr_instance.get_infoset_cf_values(for_player=player)
+			trunk_depth_infoset_cfvs[player] = infoset_cf_values[tensorcfr_instance.trunk_depth - 1]
+			print_tensor(session, trunk_depth_infoset_cfvs[player])
 
 	print("Storing average strategies to '{}'...".format(log_dir_path))
 

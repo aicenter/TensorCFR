@@ -12,10 +12,11 @@ from src.utils.tensor_utils import print_tensors, normalize
 
 
 class FlattenedDomain:
-	def __init__(self, domain_name, action_counts, node_to_infoset, utilities, infoset_acting_players,
+	def __init__(self, domain_name, domain_parameters, action_counts, node_to_infoset, utilities, infoset_acting_players,
 	             initial_infoset_strategies, reach_probability_of_root_node=None,
 				 information_set_mapping_to_gtlibrary=None):
 		self.domain_name = domain_name
+		self.domain_parameters = domain_parameters
 
 		# information set mapping to GTLibrary information sets
 		self.information_set_mapping_to_gtlibrary = information_set_mapping_to_gtlibrary
@@ -187,6 +188,7 @@ class FlattenedDomain:
 		domain_numpy_tensors = GambitLoader(path_to_gambitfile)
 		return cls(
 			domain_name,
+			domain_numpy_tensors.domain_parameters,
 			domain_numpy_tensors.number_of_nodes_actions,
 			domain_numpy_tensors.node_to_infoset,
 			domain_numpy_tensors.utilities,

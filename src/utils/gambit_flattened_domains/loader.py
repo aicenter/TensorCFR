@@ -78,7 +78,11 @@ class GambitLoader:
 
 		self.number_of_players = 2
 
+		# domain name
 		self.domain_name = domain_name
+		# domain parameters
+		self.domain_parameters = {}
+
 		self.actions_per_levels = []
 		self.max_actions_per_levels = []
 

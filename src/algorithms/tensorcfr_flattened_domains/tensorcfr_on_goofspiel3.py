@@ -15,6 +15,6 @@ if __name__ == '__main__':
 	)   # TODO verify the results (final average strategies) via `gtlibrary`
 
 	utils.gtlibrary.export_average_strategies_to_json(
-		domain.information_set_mapping_to_gtlibrary,
+		domain,
 		average_strategies,
 		"GS3_average_strategies")

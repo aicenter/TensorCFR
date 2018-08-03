@@ -606,6 +606,45 @@ class TensorCFRFixedTrunkStrategies:
 					)
 		return ops_assign_strategies
 
+	def combine_infoset_values_based_on_owners(self, tensor_of_player1, tensor_of_player2, level,
+	                                           name="infoset_cf_values"):
+		"""
+		Combine `tensor_of_player1` and `tensor_of_player2` that correspond to some infoset-related values at level `level`.
+
+		Use values of `tensor_of_player1` for `PLAYER1`'s infosets, values of `tensor_of_player2` for `PLAYER2`'s infosets,
+		 `np.nan` otherwise.
+
+		:param tensor_of_player1: A tensor of infoset values for `PLAYER1`.
+		:param tensor_of_player2: A tensor of infoset values for `PLAYER2`.
+		:param level: The tree level for which `tensor_of_player1` and `tensor_of_player2` are defined.
+		:param name: A string used for naming tensors.
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
+		mask_of_acting_players = {}
+		for player in [PLAYER1, PLAYER2]:
+			mask_of_acting_players[player] = tf.equal(
+				self.domain.infoset_acting_players[level],
+				player,
+				name="mask_of_acting_player{}_lvl{}".format(player, level)
+			)
+		default_values_at_chance_infosets = tf.fill(
+			dims=tf.shape(tensor_of_player1),
+			value=np.nan,
+			name="{}_at_chance_infosets".format(name)
+		)
+		return tf.where(
+			condition=mask_of_acting_players[PLAYER1],
+			x=tensor_of_player1,
+			y=tf.where(
+				condition=mask_of_acting_players[PLAYER2],
+				x=tensor_of_player2,
+				y=default_values_at_chance_infosets
+			),
+			name="{}_lvl{}_based_on_owners".format(name, level)
+		)
+
 	def get_infoset_cfvs_at_trunk_depth(self):  # TODO unittest
 		"""
 		Get infoset counterfactual values at the bottom of the trunk.
@@ -615,34 +654,16 @@ class TensorCFRFixedTrunkStrategies:
 		"""
 		if self.trunk_depth_infoset_cfvs is None and self.trunk_depth > 0:
 			boundary_level = self.trunk_depth - 1
-
 			self.trunk_depth_infoset_cfvs = {}
-			mask_of_acting_players = {}
 			for player in [PLAYER1, PLAYER2]:
 				_, infoset_cf_values = self.get_infoset_cf_values(for_player=player)
-				mask_of_acting_players[player] = tf.equal(
-					self.domain.infoset_acting_players[boundary_level],
-					player,
-					name="mask_of_acting_player{}".format(player)
-				)
 				self.trunk_depth_infoset_cfvs[player] = infoset_cf_values[boundary_level]
 
-			cfvalues_at_chance_infosets = tf.fill(
-				dims=tf.shape(self.trunk_depth_infoset_cfvs[PLAYER1]),
-				value=np.nan,
-				name="cf_values_at_chance_infosets"
+			self.trunk_depth_infoset_cfvs["combined_players"] = self.combine_infoset_values_based_on_owners(
+				tensor_of_player1=self.trunk_depth_infoset_cfvs[PLAYER1],
+				tensor_of_player2=self.trunk_depth_infoset_cfvs[PLAYER2],
+				level=boundary_level
 			)
-			self.trunk_depth_infoset_cfvs["combined_players"] = tf.where(
-				condition=mask_of_acting_players[PLAYER1],
-				x=self.trunk_depth_infoset_cfvs[PLAYER1],
-				y=tf.where(
-					condition=mask_of_acting_players[PLAYER2],
-					x=self.trunk_depth_infoset_cfvs[PLAYER2],
-					y=cfvalues_at_chance_infosets
-				),
-				name="infoset_cf_values_lvl{}_for_owner_players".format(boundary_level)
-			)
-
 		return self.trunk_depth_infoset_cfvs["combined_players"]
 
 

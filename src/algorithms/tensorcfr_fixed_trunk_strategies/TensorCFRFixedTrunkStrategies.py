@@ -838,14 +838,6 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		print_tensor(session, tf_tensor_to_store)
 
 		print("Storing trunk-boundary cf values to '{}'...".format(log_dir_path))
-		boundary_level = tensorcfr_instance.trunk_depth - 1
-		tf_tensor_to_store = tf.concat(
-			[
-				trunk_depth_infoset_cfvs,
-			],
-			axis=0
-		)
-		np_tensor_to_store = session.run(tf_tensor_to_store)
 		np.savetxt(
 			'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, tensorcfr_instance.trunk_depth - 1),
 			session.run(tf_tensor_to_store),

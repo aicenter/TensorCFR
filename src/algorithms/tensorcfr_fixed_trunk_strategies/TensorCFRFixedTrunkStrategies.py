@@ -612,13 +612,37 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		if self.trunk_depth_infoset_cfvs is None:
+		if self.trunk_depth_infoset_cfvs is None and self.trunk_depth > 0:
+			boundary_level = self.trunk_depth - 1
+
 			self.trunk_depth_infoset_cfvs = {}
+			mask_of_acting_players = {}
 			for player in [PLAYER1, PLAYER2]:
 				_, infoset_cf_values = self.get_infoset_cf_values(for_player=player)
-				self.trunk_depth_infoset_cfvs[player] = infoset_cf_values[self.trunk_depth - 1]
+				mask_of_acting_players[player] = tf.equal(
+					self.domain.infoset_acting_players[boundary_level],
+					player,
+					name="mask_of_acting_player{}".format(player)
+				)
+				self.trunk_depth_infoset_cfvs[player] = infoset_cf_values[boundary_level]
 
-		return self.trunk_depth_infoset_cfvs
+			cfvalues_at_chance_infosets = tf.fill(
+				dims=tf.shape(self.trunk_depth_infoset_cfvs[PLAYER1]),
+				value=np.nan,
+				name="cf_values_at_chance_infosets"
+			)
+			self.trunk_depth_infoset_cfvs["combined_players"] = tf.where(
+				condition=mask_of_acting_players[PLAYER1],
+				x=self.trunk_depth_infoset_cfvs[PLAYER1],
+				y=tf.where(
+					condition=mask_of_acting_players[PLAYER2],
+					x=self.trunk_depth_infoset_cfvs[PLAYER2],
+					y=cfvalues_at_chance_infosets
+				),
+				name="infoset_cf_values_lvl{}_for_owner_players".format(boundary_level)
+			)
+
+		return self.trunk_depth_infoset_cfvs, mask_of_acting_players
 
 
 def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):
@@ -749,10 +773,13 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 
 		# compute trunk
 		print("___________________________________\n")
-		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
+		trunk_depth_infoset_cfvs, mask_of_acting_players = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
 		print_tensors(session, [
 			trunk_depth_infoset_cfvs[PLAYER1],
-			trunk_depth_infoset_cfvs[PLAYER2]
+			trunk_depth_infoset_cfvs[PLAYER2],
+			mask_of_acting_players[PLAYER1],
+			mask_of_acting_players[PLAYER2],
+			trunk_depth_infoset_cfvs["combined_players"]
 		])
 
 	print("Storing average strategies to '{}'...".format(log_dir_path))

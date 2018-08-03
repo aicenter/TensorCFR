@@ -866,11 +866,11 @@ def get_cfr_strategies_after_fixed_trunk_strategies(tensorcfr_instance: TensorCF
 if __name__ == '__main__':
 	# domain = get_domain_by_name("invalid domain name test")
 	# domain = get_domain_by_name("flattened_hunger_games")
-	domain = get_domain_by_name("flattened_hunger_games_2")
-	# domain = get_domain_by_name("flattened_domain01_via_gambit")
+	# domain = get_domain_by_name("flattened_hunger_games_2")
+	domain = get_domain_by_name("flattened_domain01_via_gambit")
 	tensorcfr = TensorCFRFixedTrunkStrategies(
 		domain,
-		# trunk_depth=3
+		trunk_depth=2
 	)
 
 	# infoset_action_cf_values_, infoset_cf_values_ = tensorcfr.get_infoset_cf_values()

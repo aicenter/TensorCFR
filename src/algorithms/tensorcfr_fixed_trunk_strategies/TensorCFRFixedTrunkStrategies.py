@@ -763,19 +763,18 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 	print_tensors(session, tensorcfr_instance.domain.cumulative_infoset_strategies)
 	print("___________________________________\n")
 	print_tensors(session, average_infoset_strategies)
-	if tensorcfr_instance.trunk_depth > 0:
-		print("___________________________________\n")
-		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
-		print_tensor(session, trunk_depth_infoset_cfvs)
-
 	print("Storing average strategies to '{}'...".format(log_dir_path))
-
 	for level in range(len(average_infoset_strategies)):
 		np.savetxt(
 			'{}/average_infoset_strategies_level_{}.csv'.format(log_dir_path, level),
 			session.run(average_infoset_strategies[level]),
 			delimiter=',',
 		)
+
+	if tensorcfr_instance.trunk_depth > 0:
+		print("___________________________________\n")
+		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
+		print_tensor(session, trunk_depth_infoset_cfvs)
 
 
 def get_cfr_strategies_after_fixed_trunk_strategies(tensorcfr_instance: TensorCFRFixedTrunkStrategies,

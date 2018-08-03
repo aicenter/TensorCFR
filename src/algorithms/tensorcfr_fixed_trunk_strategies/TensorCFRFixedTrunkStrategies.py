@@ -775,6 +775,13 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		print("___________________________________\n")
 		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
 		print_tensor(session, trunk_depth_infoset_cfvs)
+		print("Storing trunk-boundary cf values to '{}'...".format(log_dir_path))
+		boundary_level = tensorcfr_instance.trunk_depth - 1
+		np.savetxt(
+			'{}/trunk_depth_infoset_cfvs_lvl{}.csv'.format(log_dir_path, boundary_level),
+			session.run(trunk_depth_infoset_cfvs),
+			delimiter=',',
+		)
 
 
 def get_cfr_strategies_after_fixed_trunk_strategies(tensorcfr_instance: TensorCFRFixedTrunkStrategies,

@@ -11,7 +11,6 @@ if __name__ == '__main__':
 			quiet=True,
 			# profiling=True,
 			delay=0,
-			register_strategies_on_step=[0, 1, 15]
 	)   # TODO verify the results (final average strategies) via `gtlibrary`
 	# export average strategies to JSON
 	utils.gtlibrary.export_average_strategies_to_json(

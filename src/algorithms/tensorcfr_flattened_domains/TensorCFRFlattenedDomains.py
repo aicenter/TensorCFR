@@ -661,6 +661,10 @@ def get_cfr_strategies(tensorcfr_instance: TensorCFRFlattenedDomains, total_step
 	# the parameter `register_strategies_on_step` is used to determine which strategy export
 	return_average_strategies = list()
 
+	# if the `register_strategies_on_step` list is empty, register just the last iteration
+	if len(register_strategies_on_step) == 0:
+		register_strategies_on_step.append(total_steps - 1)
+
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
 		assign_averaging_delay_op = tf.assign(

@@ -18,6 +18,6 @@ if __name__ == '__main__':
 	)
 
 	utils.gtlibrary.export_average_strategies_to_json(
-		domain.information_set_mapping_to_gtlibrary,
+		domain,
 		average_strategies,
 		os.path.join(PROJECT_ROOT, 'matching_pennies_average_strategy.json'))

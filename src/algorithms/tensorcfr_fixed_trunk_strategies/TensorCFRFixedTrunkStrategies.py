@@ -667,6 +667,32 @@ class TensorCFRFixedTrunkStrategies:
 			)
 		return self.trunk_depth_infoset_cfvs["combined_players"]
 
+	def get_infoset_reach_probabilities_at_trunk_depth(self):  # TODO unittest
+		"""
+		Get infoset reach probabilities at the bottom of the trunk.
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
+		reach_probabilities = {}
+		if self.trunk_depth > 0:
+			boundary_level = self.trunk_depth - 1
+			reach_probabilities = {}
+			for player in [PLAYER1, PLAYER2]:
+				reach_probabilities_for_a_single_player = self.get_infoset_reach_probabilities(for_player=player)
+				reach_probabilities[player] = tf.expand_dims(
+					reach_probabilities_for_a_single_player[boundary_level],
+					axis=-1
+				)
+
+			reach_probabilities["combined_players"] = self.combine_infoset_values_based_on_owners(
+				tensor_of_player1=reach_probabilities[PLAYER1],
+				tensor_of_player2=reach_probabilities[PLAYER2],
+				level=boundary_level,
+				name="reach_probabilities"
+			)
+		return reach_probabilities["combined_players"]
+
 
 def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):
 	if method == "by-domain":

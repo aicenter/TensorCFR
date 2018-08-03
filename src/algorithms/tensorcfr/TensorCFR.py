@@ -645,7 +645,15 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 
 
 def get_cfr_strategies(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_STEPS, quiet=False, delay=DEFAULT_AVERAGING_DELAY,
-                       profiling=False):
+                       profiling=False, register_strategies_on_step=list()):
+	# a list of returned average strategies
+	# the parameter `register_strategies_on_step` is used to determine which strategy export
+	return_average_strategies = list()
+
+	# if the `register_strategies_on_step` list is empty, register just the last iteration
+	if len(register_strategies_on_step) == 0:
+		register_strategies_on_step.append(total_steps - 1)
+
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
 		assign_averaging_delay_op = tf.assign(
@@ -706,11 +714,17 @@ def get_cfr_strategies(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_
 				else:
 					session.run(cfr_step_op)
 
+				if i in register_strategies_on_step:
+					# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
+					return_average_strategies.append(
+						{"step": i,
+						 "average_strategy": [session.run(x) for x in average_infoset_strategies]})
+
 				if quiet is False:
 					log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
 			log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)
 
-			return [session.run(x) for x in average_infoset_strategies]
+			return return_average_strategies
 
 
 if __name__ == '__main__':

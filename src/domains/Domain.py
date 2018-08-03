@@ -8,10 +8,13 @@ from src.utils.tensor_utils import print_tensors
 
 
 class Domain:
-	def __init__(self, domain_name, actions_per_levels, node_to_infoset, node_types, utilities, infoset_acting_players,
+	def __init__(self, domain_name, domain_parameters, actions_per_levels, node_to_infoset, node_types, utilities, infoset_acting_players,
 	             initial_infoset_strategies, reach_probability_of_root_node=None,
 	             information_set_mapping_to_gtlibrary=None):
+		# GTLibrary domain name
 		self.domain_name = domain_name
+		# GTLibrary parameters of the game
+		self.domain_parameters = domain_parameters
 
 		# information set mapping to GTLibrary information sets
 		self.information_set_mapping_to_gtlibrary = information_set_mapping_to_gtlibrary
@@ -145,6 +148,7 @@ class Domain:
 		domain_numpy_tensors = GambitEFGLoader(path_to_gambitfile)
 		return cls(
 			domain_name,
+			domain_numpy_tensors.domain_parameters,
 			domain_numpy_tensors.actions_per_levels,
 			domain_numpy_tensors.node_to_infoset,
 			domain_numpy_tensors.node_types,

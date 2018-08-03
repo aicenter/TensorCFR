@@ -143,6 +143,7 @@ class GambitEFGLoader:
 		self.number_of_players = 2
 
 		self.domain_name = ""
+		self.domain_parameters = {}
 		self.actions_per_levels = []
 		self.number_of_levels = 0
 
@@ -162,9 +163,6 @@ class GambitEFGLoader:
 			self.domain_name = game_header['name']
 
 			self.load()
-
-		print("Information set index")
-		print(self.information_set_mapping_to_gtlibrary)
 
 		self.infoset_managers = [InformationSetManager(lvl) for lvl in range(len(self.actions_per_levels) + 1)]
 
@@ -188,8 +186,6 @@ class GambitEFGLoader:
 
 		with open(efg_file) as self.gambit_file:
 			self.load_post()
-
-			print(self.information_set_mapping_to_gtlibrary)
 
 	@staticmethod
 	def parse_gambit_header(input_line):

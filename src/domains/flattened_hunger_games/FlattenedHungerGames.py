@@ -10,12 +10,13 @@ from src.domains.FlattenedDomain import FlattenedDomain
 
 def get_flattened_domain_hunger_games():
 	return FlattenedDomain(
-			domain_name="flattened_hunger_games",
-			action_counts=fhg.action_counts,
-			node_to_infoset=fhg.node_to_infoset,
-			utilities=fhg.utilities,
-			infoset_acting_players=fhg.infoset_acting_players,
-			initial_infoset_strategies=fhg.initial_infoset_strategies,
+		domain_name="flattened_hunger_games",
+		domain_parameters={},
+		action_counts=fhg.action_counts,
+		node_to_infoset=fhg.node_to_infoset,
+		utilities=fhg.utilities,
+		infoset_acting_players=fhg.infoset_acting_players,
+		initial_infoset_strategies=fhg.initial_infoset_strategies,
 	)
 
 

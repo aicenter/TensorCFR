@@ -8,13 +8,14 @@ from src.domains.Domain import Domain
 
 def get_domain_matching_pennies():
 	return Domain(
-			domain_name="matching_pennies",
-			actions_per_levels=mp.actions_per_levels,
-			node_to_infoset=mp.node_to_infoset,
-			node_types=mp.node_types,
-			utilities=mp.utilities,
-			infoset_acting_players=mp.infoset_acting_players,
-			initial_infoset_strategies=mp.initial_infoset_strategies,
+		domain_name="matching_pennies",
+		domain_parameters={},
+		actions_per_levels=mp.actions_per_levels,
+		node_to_infoset=mp.node_to_infoset,
+		node_types=mp.node_types,
+		utilities=mp.utilities,
+		infoset_acting_players=mp.infoset_acting_players,
+		initial_infoset_strategies=mp.initial_infoset_strategies,
 	)
 
 

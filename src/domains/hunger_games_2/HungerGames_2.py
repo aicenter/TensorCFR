@@ -11,13 +11,14 @@ from src.domains.Domain import Domain
 
 def get_domain_hunger_games_2():
 	return Domain(
-			domain_name="hunger_games_2",
-			actions_per_levels=hg2.actions_per_levels,
-			node_to_infoset=hg2.node_to_infoset,
-			node_types=hg2.node_types,
-			utilities=hg2.utilities,
-			infoset_acting_players=hg2.infoset_acting_players,
-			initial_infoset_strategies=hg2.initial_infoset_strategies,
+		domain_name="hunger_games_2",
+		domain_parameters={},
+		actions_per_levels=hg2.actions_per_levels,
+		node_to_infoset=hg2.node_to_infoset,
+		node_types=hg2.node_types,
+		utilities=hg2.utilities,
+		infoset_acting_players=hg2.infoset_acting_players,
+		initial_infoset_strategies=hg2.initial_infoset_strategies,
 	)
 
 

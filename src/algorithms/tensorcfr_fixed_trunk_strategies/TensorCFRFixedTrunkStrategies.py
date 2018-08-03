@@ -12,7 +12,8 @@ from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
 	distribute_strategies_to_inner_nodes
-from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
+from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize, \
+	print_tensor
 
 
 class TensorCFRFixedTrunkStrategies:
@@ -642,7 +643,7 @@ class TensorCFRFixedTrunkStrategies:
 				name="infoset_cf_values_lvl{}_for_owner_players".format(boundary_level)
 			)
 
-		return self.trunk_depth_infoset_cfvs, mask_of_acting_players
+		return self.trunk_depth_infoset_cfvs["combined_players"]
 
 
 def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):
@@ -773,14 +774,8 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 
 		# compute trunk
 		print("___________________________________\n")
-		trunk_depth_infoset_cfvs, mask_of_acting_players = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
-		print_tensors(session, [
-			trunk_depth_infoset_cfvs[PLAYER1],
-			trunk_depth_infoset_cfvs[PLAYER2],
-			mask_of_acting_players[PLAYER1],
-			mask_of_acting_players[PLAYER2],
-			trunk_depth_infoset_cfvs["combined_players"]
-		])
+		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
+		print_tensor(session, trunk_depth_infoset_cfvs)
 
 	print("Storing average strategies to '{}'...".format(log_dir_path))
 

@@ -298,12 +298,13 @@ if __name__ == '__main__':
 	import os
 	import src.domains.flattened_hunger_games.flattened_hunger_games_as_numpy_values as fhg
 	flattened_hunger_games = FlattenedDomain(
-			domain_name="flattened_hunger_games",
-			action_counts=fhg.action_counts,
-			node_to_infoset=fhg.node_to_infoset,
-			utilities=fhg.utilities,
-			infoset_acting_players=fhg.infoset_acting_players,
-			initial_infoset_strategies=fhg.initial_infoset_strategies,
+		domain_name="flattened_hunger_games",
+		domain_parameters={},
+		action_counts=fhg.action_counts,
+		node_to_infoset=fhg.node_to_infoset,
+		utilities=fhg.utilities,
+		infoset_acting_players=fhg.infoset_acting_players,
+		initial_infoset_strategies=fhg.initial_infoset_strategies,
 	)
 	handcoded_domains = [
 		flattened_hunger_games

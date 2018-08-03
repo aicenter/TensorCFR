@@ -765,15 +765,6 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 	print_tensors(session, average_infoset_strategies)
 	if tensorcfr_instance.trunk_depth > 0:
 		print("___________________________________\n")
-		print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
-		print("___________________________________\n")
-		assigns = tensorcfr_instance.assign_avg_strategies_to_current_strategies()
-		print_tensors(session, assigns)
-		print("___________________________________\n")
-		print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
-
-		# compute trunk
-		print("___________________________________\n")
 		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
 		print_tensor(session, trunk_depth_infoset_cfvs)
 

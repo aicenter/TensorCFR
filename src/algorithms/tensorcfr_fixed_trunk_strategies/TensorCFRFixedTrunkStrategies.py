@@ -694,17 +694,33 @@ class TensorCFRFixedTrunkStrategies:
 		return reach_probabilities["combined_players"]
 
 	def get_trunk_info_to_store(self):
-		trunk_depth_reach_probabilities = self.get_infoset_reach_probabilities_at_trunk_depth()
-		trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
-		tf_tensor_to_store = tf.concat(
-			[
-				trunk_depth_reach_probabilities,
-				trunk_depth_infoset_cfvs
-			],
-			axis=-1,
-			name="tf_tensor_to_store"
-		)
-		return tf_tensor_to_store
+		if self.trunk_depth > 0:
+			trunk_depth_reach_probabilities = self.get_infoset_reach_probabilities_at_trunk_depth()
+			trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
+			trunk_depth_infoset_indices = tf.expand_dims(
+				tf.range(
+					tf.cast(
+						tf.shape(trunk_depth_reach_probabilities)[0],
+						dtype=FLOAT_DTYPE
+					),
+					# 4,
+					dtype=FLOAT_DTYPE
+				),
+				axis=-1,
+				name="infoset_indices_lvl{}".format(self.trunk_depth - 1)
+			)
+			tf_tensor_to_store = tf.concat(
+				[
+					trunk_depth_infoset_indices,
+					trunk_depth_reach_probabilities,
+					trunk_depth_infoset_cfvs
+				],
+				axis=-1,
+				name="tf_tensor_to_store"
+			)
+			return tf_tensor_to_store
+		else:
+			return None
 
 
 def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):

@@ -709,14 +709,14 @@ class TensorCFRFixedTrunkStrategies:
 				axis=-1,
 				name="infoset_indices_lvl{}".format(boundary_level)
 			)
-			tf_tensor_to_store = tf.concat(
+			concat_trunk_info_tensors = tf.concat(
 				[
 					trunk_depth_infoset_indices,
 					trunk_depth_reach_probabilities,
 					trunk_depth_infoset_cfvs
 				],
 				axis=-1,
-				name="tf_tensor_to_store"
+				name="concat_trunk_info_tensors_lvl{}".format(boundary_level)
 			)
 			return tf_tensor_to_store
 		else:

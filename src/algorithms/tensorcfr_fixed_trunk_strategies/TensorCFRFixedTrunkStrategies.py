@@ -868,8 +868,8 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		np.savetxt(
 			'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, tensorcfr_instance.trunk_depth - 1),
 			session.run(tf_tensor_to_store),
-			fmt="%7d;\t%.3f;\t%+.4f",
-			header="IS_id;\trange;\tCFV",
+			fmt="%7d,\t%.4f,\t%+.4f",
+			header="IS_id,\trange,\tCFV",
 		)
 
 

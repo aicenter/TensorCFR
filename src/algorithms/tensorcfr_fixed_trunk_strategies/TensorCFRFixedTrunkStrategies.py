@@ -697,14 +697,13 @@ class TensorCFRFixedTrunkStrategies:
 		if self.trunk_depth > 0:
 			trunk_depth_reach_probabilities = self.get_infoset_reach_probabilities_at_trunk_depth()
 			trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
+			count_of_infosets = tf.cast(
+				tf.shape(trunk_depth_reach_probabilities)[0],
+				dtype=FLOAT_DTYPE
+			)
 			trunk_depth_infoset_indices = tf.expand_dims(
 				tf.range(
-					tf.cast(
-						tf.shape(trunk_depth_reach_probabilities)[0],
-						dtype=FLOAT_DTYPE
-					),
-					# 4,
-					dtype=FLOAT_DTYPE
+					count_of_infosets
 				),
 				axis=-1,
 				name="infoset_indices_lvl{}".format(self.trunk_depth - 1)

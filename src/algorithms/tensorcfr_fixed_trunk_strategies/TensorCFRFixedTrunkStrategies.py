@@ -695,6 +695,7 @@ class TensorCFRFixedTrunkStrategies:
 
 	def get_trunk_info_to_store(self):
 		if self.trunk_depth > 0:
+			boundary_level = self.trunk_depth - 1
 			trunk_depth_reach_probabilities = self.get_infoset_reach_probabilities_at_trunk_depth()
 			trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
 			count_of_infosets = tf.cast(
@@ -706,7 +707,7 @@ class TensorCFRFixedTrunkStrategies:
 					count_of_infosets
 				),
 				axis=-1,
-				name="infoset_indices_lvl{}".format(self.trunk_depth - 1)
+				name="infoset_indices_lvl{}".format(boundary_level)
 			)
 			tf_tensor_to_store = tf.concat(
 				[

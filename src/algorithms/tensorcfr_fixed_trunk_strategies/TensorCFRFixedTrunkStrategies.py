@@ -854,6 +854,7 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		)
 
 	if tensorcfr_instance.trunk_depth > 0:
+		session.run(tensorcfr_instance.assign_avg_strategies_to_current_strategies())
 		print("___________________________________\n")
 		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
 		print_tensor(session, trunk_depth_infoset_cfvs)

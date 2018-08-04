@@ -718,7 +718,12 @@ class TensorCFRFixedTrunkStrategies:
 				axis=-1,
 				name="concat_trunk_info_tensors_lvl{}".format(boundary_level)
 			)
-			return tf_tensor_to_store
+			masked_out_trunk_info_tensors = tf.boolean_mask(
+				concat_trunk_info_tensors,
+				mask=self.domain.infosets_of_non_chance_player[boundary_level],
+				name="masked_out_trunk_info_tensors_lvl{}".format(boundary_level)
+			)
+			return masked_out_trunk_info_tensors
 		else:
 			return None
 

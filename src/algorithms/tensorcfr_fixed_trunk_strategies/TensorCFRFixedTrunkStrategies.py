@@ -951,7 +951,9 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("invalid domain name test")
 	# domain = get_domain_by_name("flattened_hunger_games")
 	# domain = get_domain_by_name("flattened_hunger_games_2")
-	domain = get_domain_by_name("flattened_domain01_via_gambit")
+	# domain = get_domain_by_name("flattened_domain01_via_gambit")
+	domain = get_domain_by_name("II-GS2_gambit_flattened")
+	# TODO try for II-GS6 @lvl 3
 	tensorcfr = TensorCFRFixedTrunkStrategies(
 		domain,
 		trunk_depth=2

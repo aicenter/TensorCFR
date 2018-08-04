@@ -693,6 +693,19 @@ class TensorCFRFixedTrunkStrategies:
 			)
 		return reach_probabilities["combined_players"]
 
+	def get_trunk_info_to_store(self):
+		trunk_depth_reach_probabilities = self.get_infoset_reach_probabilities_at_trunk_depth()
+		trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
+		tf_tensor_to_store = tf.concat(
+			[
+				trunk_depth_reach_probabilities,
+				trunk_depth_infoset_cfvs
+			],
+			axis=-1,
+			name="tf_tensor_to_store"
+		)
+		return tf_tensor_to_store
+
 
 def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):
 	if method == "by-domain":
@@ -827,14 +840,7 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		trunk_depth_reach_probabilities = tensorcfr_instance.get_infoset_reach_probabilities_at_trunk_depth()
 		print_tensor(session, trunk_depth_reach_probabilities)
 		print("___________________________________\n")
-		tf_tensor_to_store = tf.concat(
-			[
-				trunk_depth_reach_probabilities,
-				trunk_depth_infoset_cfvs
-			],
-			axis=-1,
-			name="tf_tensor_to_store"
-		)
+		tf_tensor_to_store = tensorcfr_instance.get_trunk_info_to_store()
 		print_tensor(session, tf_tensor_to_store)
 
 		print("Storing trunk-boundary cf values to '{}'...".format(log_dir_path))

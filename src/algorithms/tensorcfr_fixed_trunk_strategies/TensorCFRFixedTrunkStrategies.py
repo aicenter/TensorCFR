@@ -952,11 +952,12 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("flattened_hunger_games")
 	# domain = get_domain_by_name("flattened_hunger_games_2")
 	# domain = get_domain_by_name("flattened_domain01_via_gambit")
-	domain = get_domain_by_name("II-GS2_gambit_flattened")
+	# domain = get_domain_by_name("II-GS2_gambit_flattened")
+	domain = get_domain_by_name("II-GS3_gambit_flattened")
 	# TODO try for II-GS6 @lvl 3
 	tensorcfr = TensorCFRFixedTrunkStrategies(
 		domain,
-		trunk_depth=2
+		trunk_depth=4
 	)
 
 	# infoset_action_cf_values_, infoset_cf_values_ = tensorcfr.get_infoset_cf_values()

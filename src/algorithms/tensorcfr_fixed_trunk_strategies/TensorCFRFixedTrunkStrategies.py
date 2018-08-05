@@ -956,11 +956,12 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("flattened_hunger_games_2")
 	# domain = get_domain_by_name("flattened_domain01_via_gambit")
 	# domain = get_domain_by_name("II-GS2_gambit_flattened")
-	domain = get_domain_by_name("II-GS3_gambit_flattened")
-	# TODO try for II-GS6 @lvl 3
+	# domain = get_domain_by_name("II-GS3_gambit_flattened")
+	# domain = get_domain_by_name("IIGS5_gambit_flattened")
+	domain = get_domain_by_name("IIGS6_gambit_flattened")
 	tensorcfr = TensorCFRFixedTrunkStrategies(
 		domain,
-		trunk_depth=2
+		trunk_depth=10
 	)
 
 	# infoset_action_cf_values_, infoset_cf_values_ = tensorcfr.get_infoset_cf_values()
@@ -988,9 +989,9 @@ if __name__ == '__main__':
 	# 	print_tensors(sess, tensorcfr.get_regrets())
 
 	get_cfr_strategies_after_fixed_trunk_strategies(
-		total_steps=10,
+		# total_steps=10,
 		tensorcfr_instance=tensorcfr,
 		quiet=True,
 		# profiling=True,
-		delay=0
+		# delay=0
 	)

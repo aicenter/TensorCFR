@@ -36,6 +36,12 @@ class TensorCFRFixedTrunkStrategies:
 		self.summary_writer = None
 		self.trunk_depth = trunk_depth
 		self.boundary_level = self.trunk_depth - 1
+		last_level_with_infosets = self.domain.acting_depth - 1
+		assert 0 <= self.boundary_level <= last_level_with_infosets, \
+			"Invalid boundary_level == {}: make sure that 0 <= trunk_depth <= {}.".format(
+				self.boundary_level,
+				last_level_with_infosets
+			)
 		self.trunk_depth_infoset_cfvs = None
 
 	@staticmethod

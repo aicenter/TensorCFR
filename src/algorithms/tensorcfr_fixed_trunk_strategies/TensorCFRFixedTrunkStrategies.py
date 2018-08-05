@@ -873,7 +873,7 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 
 		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(log_dir_path))
 		np.savetxt(
-			'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, tensorcfr_instance.trunk_depth - 1),
+			'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, tensorcfr_instance.boundary_level),
 			session.run(tf_tensor_to_store),
 			fmt="%7d,\t%.4f,\t%+.4f",
 			header="IS_id,\trange,\tCFV",

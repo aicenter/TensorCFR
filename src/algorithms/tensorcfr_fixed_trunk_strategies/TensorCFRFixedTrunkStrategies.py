@@ -35,6 +35,7 @@ class TensorCFRFixedTrunkStrategies:
 			)
 		self.summary_writer = None
 		self.trunk_depth = trunk_depth
+		self.boundary_level = self.trunk_depth - 1
 		self.trunk_depth_infoset_cfvs = None
 
 	@staticmethod
@@ -654,16 +655,15 @@ class TensorCFRFixedTrunkStrategies:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
 		if self.trunk_depth_infoset_cfvs is None and self.trunk_depth > 0:
-			boundary_level = self.trunk_depth - 1
 			self.trunk_depth_infoset_cfvs = {}
 			for player in [PLAYER1, PLAYER2]:
 				_, infoset_cf_values = self.get_infoset_cf_values(for_player=player)
-				self.trunk_depth_infoset_cfvs[player] = infoset_cf_values[boundary_level]
+				self.trunk_depth_infoset_cfvs[player] = infoset_cf_values[self.boundary_level]
 
 			self.trunk_depth_infoset_cfvs["combined_players"] = self.combine_infoset_values_based_on_owners(
 				tensor_of_player1=self.trunk_depth_infoset_cfvs[PLAYER1],
 				tensor_of_player2=self.trunk_depth_infoset_cfvs[PLAYER2],
-				level=boundary_level
+				level=self.boundary_level
 			)
 		return self.trunk_depth_infoset_cfvs["combined_players"]
 
@@ -676,26 +676,24 @@ class TensorCFRFixedTrunkStrategies:
 		"""
 		reach_probabilities = {}
 		if self.trunk_depth > 0:
-			boundary_level = self.trunk_depth - 1
 			reach_probabilities = {}
 			for player in [PLAYER1, PLAYER2]:
 				reach_probabilities_for_a_single_player = self.get_infoset_reach_probabilities(for_player=player)
 				reach_probabilities[player] = tf.expand_dims(
-					reach_probabilities_for_a_single_player[boundary_level],
+					reach_probabilities_for_a_single_player[self.boundary_level],
 					axis=-1
 				)
 
 			reach_probabilities["combined_players"] = self.combine_infoset_values_based_on_owners(
 				tensor_of_player1=reach_probabilities[PLAYER1],
 				tensor_of_player2=reach_probabilities[PLAYER2],
-				level=boundary_level,
+				level=self.boundary_level,
 				name="reach_probabilities"
 			)
 		return reach_probabilities["combined_players"]
 
 	def get_trunk_info_to_store(self):
 		if self.trunk_depth > 0:
-			boundary_level = self.trunk_depth - 1
 			trunk_depth_reach_probabilities = self.get_infoset_reach_probabilities_at_trunk_depth()
 			trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
 			count_of_infosets = tf.cast(
@@ -707,7 +705,7 @@ class TensorCFRFixedTrunkStrategies:
 					count_of_infosets
 				),
 				axis=-1,
-				name="infoset_indices_lvl{}".format(boundary_level)
+				name="infoset_indices_lvl{}".format(self.boundary_level)
 			)
 			concat_trunk_info_tensors = tf.concat(
 				[
@@ -716,12 +714,12 @@ class TensorCFRFixedTrunkStrategies:
 					trunk_depth_infoset_cfvs
 				],
 				axis=-1,
-				name="concat_trunk_info_tensors_lvl{}".format(boundary_level)
+				name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
 			)
 			masked_out_trunk_info_tensors = tf.boolean_mask(
 				concat_trunk_info_tensors,
-				mask=self.domain.infosets_of_non_chance_player[boundary_level],
-				name="masked_out_trunk_info_tensors_lvl{}".format(boundary_level)
+				mask=self.domain.infosets_of_non_chance_player[self.boundary_level],
+				name="masked_out_trunk_info_tensors_lvl{}".format(self.boundary_level)
 			)
 			return masked_out_trunk_info_tensors
 		else:

@@ -960,7 +960,7 @@ if __name__ == '__main__':
 	# TODO try for II-GS6 @lvl 3
 	tensorcfr = TensorCFRFixedTrunkStrategies(
 		domain,
-		trunk_depth=4
+		trunk_depth=2
 	)
 
 	# infoset_action_cf_values_, infoset_cf_values_ = tensorcfr.get_infoset_cf_values()

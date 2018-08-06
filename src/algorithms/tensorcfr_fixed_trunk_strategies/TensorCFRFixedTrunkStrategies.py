@@ -684,7 +684,8 @@ class TensorCFRFixedTrunkStrategies:
 		if self.trunk_depth > 0:
 			ranges = {}
 			for player in [PLAYER1, PLAYER2]:
-				range_of_the_player = self.get_infoset_reach_probabilities(for_player=player)
+				opponent = PLAYER2 if player == PLAYER1 else PLAYER1
+				range_of_the_player = self.get_infoset_reach_probabilities(for_player=opponent)
 				ranges[player] = tf.expand_dims(
 					range_of_the_player[self.boundary_level],
 					axis=-1

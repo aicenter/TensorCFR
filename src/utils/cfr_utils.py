@@ -8,15 +8,14 @@ from src.commons.constants import INT_DTYPE, TERMINAL_NODE, INNER_NODE, REACH_PR
 from src.utils.tensor_utils import print_tensors, scatter_nd_sum
 
 
-def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, updating_player=None,
-                                   acting_players=None):
+def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, for_player=None, acting_players=None):
 	"""
   Distribute 2-D tensor `infoset_strategies` of strategies per information sets to strategies per game nodes.
   The translation is done based on N-D tensor `node_to_infosets`: each node (indexed by N-D coordinate)
   stores the index of its information set.
 
-  If both `updating_player` and `acting_players` are `None` (default), no masking is used for strategies. Otherwise,
-  the `updating_player` acts with probabilities 1 everywhere (for the reach probability in the formula of
+  If both `for_player` and `acting_players` are `None` (default), no masking is used for strategies. Otherwise,
+  the `for_player` acts with probabilities 1 everywhere (for the reach probability in the formula of
   counterfactual values).
 
   The corresponding TensorFlow operation (in the computation graph) outputs (N+1)-D tensor, which gives
@@ -27,15 +26,15 @@ def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, up
     :param infoset_strategies: A 2-D tensor of floats.
     :param node_to_infoset: An N-D tensor of ints.
     :param name: A string to name the resulting tensor operation.
-    :param updating_player: The index of the updating player to create for counterfactual probabilities.
+    :param for_player: The index of the updating player to create for counterfactual probabilities.
     :param acting_players: A tensor of the same shape as `node_to_infoset`, representing acting players per infosets.
 
   Returns:
     A corresponding TensorFlow operation (from the computation graph).
   """
-	if (updating_player is not None) and (acting_players is not None):  # counterfactual reach probabilities
+	if (for_player is not None) and (acting_players is not None):  # counterfactual reach probabilities
 		strategies = tf.where(
-				condition=tf.equal(acting_players, updating_player),
+				condition=tf.equal(acting_players, for_player),
 				x=tf.ones_like(infoset_strategies),
 				y=infoset_strategies
 		)
@@ -240,7 +239,7 @@ def get_action_and_infoset_values(values_in_children, action_counts, parental_no
 
 
 def distribute_strategies_to_inner_nodes(infoset_strategies, node_to_infoset, mask_of_inner_nodes, name,
-                                         updating_player=None, acting_players=None):
+                                         for_player=None, acting_players=None):
 	"""
 	The same as the function `distribute_strategies_to_inner_nodes()` with the only difference that strategies are
 	 distributed just to inner nodes, not to terminal nodes.
@@ -250,7 +249,7 @@ def distribute_strategies_to_inner_nodes(infoset_strategies, node_to_infoset, ma
     :param node_to_infoset: An N-D tensor of ints.
     :param mask_of_inner_nodes: A boolean mask whether the inner node at the corresponding position is an inner node.
     :param name: A string to name the resulting tensor operation.
-    :param updating_player: The index of the updating player to create for counterfactual probabilities.
+    :param for_player: The index of the updating player to create for counterfactual probabilities.
     :param acting_players: A tensor of the same shape as `node_to_infoset`, representing acting players per infosets.
 
   Returns:
@@ -265,7 +264,7 @@ def distribute_strategies_to_inner_nodes(infoset_strategies, node_to_infoset, ma
 		infoset_strategies=infoset_strategies,
 		node_to_infoset=inner_node_to_infoset,
 		name=name,
-		updating_player=updating_player,
+		for_player=for_player,
 		acting_players=acting_players
 	)
 

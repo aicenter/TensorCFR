@@ -92,9 +92,9 @@ class TensorCFRFixedTrunkStrategies:
 			)
 			return flattened_node_strategies
 
-	def get_node_cf_strategies(self, updating_player=None):
-		if updating_player is None:
-			updating_player = self.domain.current_updating_player
+	def get_node_cf_strategies(self, for_player=None):
+		if for_player is None:
+			for_player = self.domain.current_updating_player
 		with tf.variable_scope("node_cf_strategies"):
 			# TODO generate node_cf_strategies_* with tf.where on node_strategies
 			node_cf_strategies = [
@@ -102,7 +102,7 @@ class TensorCFRFixedTrunkStrategies:
 					self.domain.current_infoset_strategies[level],
 					self.domain.node_to_infoset[level],
 					self.domain.mask_of_inner_nodes[level],
-					updating_player=updating_player,
+					for_player=for_player,
 					acting_players=self.domain.infoset_acting_players[level],
 					name="node_cf_strategies_lvl{}".format(level)
 				) for level in range(self.domain.acting_depth)
@@ -220,7 +220,7 @@ class TensorCFRFixedTrunkStrategies:
 			`current_updating_player` by default.
 		:return: The reach probabilities of nodes based on `current_infoset_strategies`.
 		"""
-		node_cf_strategies = self.get_node_cf_strategies(updating_player=for_player)
+		node_cf_strategies = self.get_node_cf_strategies(for_player=for_player)
 		with tf.variable_scope("nodal_reach_probabilities"):
 			nodal_reach_probabilities = [None] * self.domain.levels
 			nodal_reach_probabilities[0] = tf.expand_dims(

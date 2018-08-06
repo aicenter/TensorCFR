@@ -680,23 +680,23 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		reach_probabilities = {}
+		ranges = {}
 		if self.trunk_depth > 0:
-			reach_probabilities = {}
+			ranges = {}
 			for player in [PLAYER1, PLAYER2]:
-				reach_probabilities_for_a_single_player = self.get_infoset_reach_probabilities(for_player=player)
-				reach_probabilities[player] = tf.expand_dims(
-					reach_probabilities_for_a_single_player[self.boundary_level],
+				range_of_the_player = self.get_infoset_reach_probabilities(for_player=player)
+				ranges[player] = tf.expand_dims(
+					range_of_the_player[self.boundary_level],
 					axis=-1
 				)
 
-			reach_probabilities["combined_players"] = self.combine_infoset_values_based_on_owners(
-				tensor_of_player1=reach_probabilities[PLAYER1],
-				tensor_of_player2=reach_probabilities[PLAYER2],
+			ranges["combined_players"] = self.combine_infoset_values_based_on_owners(
+				tensor_of_player1=ranges[PLAYER1],
+				tensor_of_player2=ranges[PLAYER2],
 				level=self.boundary_level,
-				name="reach_probabilities"
+				name="ranges"
 			)
-		return reach_probabilities["combined_players"]
+		return ranges["combined_players"]
 
 	def get_trunk_info_to_store(self):
 		if self.trunk_depth > 0:

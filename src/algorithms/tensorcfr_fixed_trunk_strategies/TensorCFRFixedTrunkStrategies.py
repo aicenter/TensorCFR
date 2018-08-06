@@ -673,7 +673,7 @@ class TensorCFRFixedTrunkStrategies:
 			)
 		return self.trunk_depth_infoset_cfvs["combined_players"]
 
-	def get_infoset_reach_probabilities_at_trunk_depth(self):  # TODO unittest
+	def get_infoset_ranges_at_trunk_depth(self):  # TODO unittest
 		"""
 		Get infoset reach probabilities at the bottom of the trunk.
 
@@ -700,10 +700,10 @@ class TensorCFRFixedTrunkStrategies:
 
 	def get_trunk_info_to_store(self):
 		if self.trunk_depth > 0:
-			trunk_depth_reach_probabilities = self.get_infoset_reach_probabilities_at_trunk_depth()
+			trunk_depth_ranges = self.get_infoset_ranges_at_trunk_depth()
 			trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
 			count_of_infosets = tf.cast(
-				tf.shape(trunk_depth_reach_probabilities)[0],
+				tf.shape(trunk_depth_ranges)[0],
 				dtype=FLOAT_DTYPE
 			)
 			trunk_depth_infoset_indices = tf.expand_dims(
@@ -716,7 +716,7 @@ class TensorCFRFixedTrunkStrategies:
 			concat_trunk_info_tensors = tf.concat(
 				[
 					trunk_depth_infoset_indices,
-					trunk_depth_reach_probabilities,
+					trunk_depth_ranges,
 					trunk_depth_infoset_cfvs
 				],
 				axis=-1,
@@ -865,7 +865,7 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
 		print_tensor(session, trunk_depth_infoset_cfvs)
 		print("___________________________________\n")
-		trunk_depth_reach_probabilities = tensorcfr_instance.get_infoset_reach_probabilities_at_trunk_depth()
+		trunk_depth_reach_probabilities = tensorcfr_instance.get_infoset_ranges_at_trunk_depth()
 		print_tensor(session, trunk_depth_reach_probabilities)
 		print("___________________________________\n")
 		tf_tensor_to_store = tensorcfr_instance.get_trunk_info_to_store()

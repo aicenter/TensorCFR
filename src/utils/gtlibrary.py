@@ -32,7 +32,10 @@ def export_average_strategies_to_json(
 			level, level_idx = information_set_mapping_to_gtlibrary[mapping]["tensorcfr_strategy_coordination"]
 
 			# convert a Numpy 1D array to a list of floats
-			return_strategy[gtlib_idx] = strategy[level][level_idx].tolist()
+			return_strategy_per_step = strategy[level][level_idx].tolist()
+			# reverse order of strategy action for GTLibrary
+			return_strategy_per_step.reverse()
+			return_strategy[gtlib_idx] = return_strategy_per_step
 
 		return_json.append({"step": step, "strategy": return_strategy})
 

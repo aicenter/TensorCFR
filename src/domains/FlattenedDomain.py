@@ -192,6 +192,16 @@ class FlattenedDomain:
 	def get_infoset_acting_players(self):
 		return self.infoset_acting_players
 
+	def generate_random_strategies(self):
+		random_weights = [
+			tf.random_uniform(
+				shape=tf.shape(strategy),
+				name="random_weights_lvl{}".format(level)
+			)
+			for level, strategy in enumerate(self.initial_infoset_strategies)
+		]
+		return random_weights
+
 	def print_misc_variables(self, session):
 		print("########## Misc ##########")
 		print_tensors(session, [

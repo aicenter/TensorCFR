@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY, INT_DTYPE
+	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
@@ -888,9 +888,8 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		store_trunk_info(log_dir_path, session, tensorcfr_instance)
 
 
-def get_cfr_strategies_after_fixed_trunk_strategies(tensorcfr_instance: TensorCFRFixedTrunkStrategies,
-                                                    total_steps=DEFAULT_TOTAL_STEPS, quiet=False,
-                                                    delay=DEFAULT_AVERAGING_DELAY, profiling=False):
+def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStrategies, total_steps=DEFAULT_TOTAL_STEPS,
+                                     quiet=False, delay=DEFAULT_AVERAGING_DELAY, profiling=False):
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
 		assign_averaging_delay_op = tf.assign(
@@ -996,7 +995,7 @@ if __name__ == '__main__':
 	# 	print_tensors(sess, tensorcfr.get_infoset_uniform_strategies())
 	# 	print_tensors(sess, tensorcfr.get_regrets())
 
-	get_cfr_strategies_after_fixed_trunk_strategies(
+	cfr_strategies_after_fixed_trunk(
 		# total_steps=10,
 		tensorcfr_instance=tensorcfr,
 		quiet=True,

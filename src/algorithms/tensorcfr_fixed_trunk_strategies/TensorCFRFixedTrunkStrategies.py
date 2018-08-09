@@ -873,8 +873,6 @@ def store_trunk_info(log_dir_path, session, tensorcfr_instance):
 
 def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path):
 	print("###################################\n")
-	print_tensors(session, tensorcfr_instance.domain.cumulative_infoset_strategies)
-	print("___________________________________\n")
 	print_tensors(session, average_infoset_strategies)
 	print("Storing average strategies to '{}'...".format(log_dir_path))
 	for level in range(len(average_infoset_strategies)):

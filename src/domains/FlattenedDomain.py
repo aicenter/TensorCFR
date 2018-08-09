@@ -226,7 +226,16 @@ class FlattenedDomain:
 			)
 			for level, mask in enumerate(mask_of_valid_actions)
 		]
-		return mask_of_valid_actions + normalized_random_weights
+		random_strategies = [
+			tf.where(
+				condition=mask_non_chance_players,
+				x=normalized_random_weights[level],
+				y=self.initial_infoset_strategies[level],    # re-use strategy of the chance player
+				name="random_strategies_lvl{}".format(level)
+			)
+			for level, mask_non_chance_players in enumerate(self.infosets_of_non_chance_player)
+		]
+		return mask_of_valid_actions + normalized_random_weights + random_strategies
 
 	def print_misc_variables(self, session):
 		print("########## Misc ##########")

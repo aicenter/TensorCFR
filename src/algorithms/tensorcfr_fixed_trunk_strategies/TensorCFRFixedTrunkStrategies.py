@@ -241,11 +241,11 @@ class TensorCFRFixedTrunkStrategies:
 
 	def get_infoset_reach_probabilities(self, for_player=None):
 		"""
-		 :param for_player: The player for which the reach probabilities are computed. These probabilities are usually
-		  computed for the opponent when his strategies are cumulated. Therefore, `for_player` is set to `current_opponent`
-		  by default.
-		 :return: The reach probabilities of information sets based on `current_infoset_strategies`.
-		 """
+		:param for_player: The player for which the reach probabilities are computed. These probabilities are usually
+		 computed for the opponent when his strategies are cumulated. Therefore, `for_player` is set to `current_opponent`
+		 by default.
+		:return: The reach probabilities of information sets based on `current_infoset_strategies`.
+		"""
 		if for_player is None:
 			for_player = self.domain.current_opponent
 		nodal_reach_probabilities = self.get_nodal_reach_probabilities(for_player)

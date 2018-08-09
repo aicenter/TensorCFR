@@ -213,7 +213,7 @@ class FlattenedDomain:
 			)
 			for level, action_count in enumerate(self.infoset_action_counts)
 		]
-		normalized_random_strategies = [
+		normalized_random_weights = [
 			normalize(
 				tf.where(
 					condition=mask,
@@ -221,11 +221,11 @@ class FlattenedDomain:
 					y=tf.zeros_like(random_weights[level]),
 					name="masked_out_random_weights_lvl{}".format(level)
 				),
-				name="normalized_random_strategies_lvl{}".format(level)
+				name="normalized_random_weights_lvl{}".format(level)
 			)
 			for level, mask in enumerate(mask_of_valid_actions)
 		]
-		return mask_of_valid_actions + normalized_random_strategies
+		return mask_of_valid_actions + normalized_random_weights
 
 	def print_misc_variables(self, session):
 		print("########## Misc ##########")

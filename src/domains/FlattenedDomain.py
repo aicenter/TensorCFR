@@ -235,7 +235,7 @@ class FlattenedDomain:
 			)
 			for level, mask_non_chance_players in enumerate(self.infosets_of_non_chance_player)
 		]
-		return mask_of_valid_actions + normalized_random_weights + random_strategies
+		return random_strategies
 
 	def print_misc_variables(self, session):
 		print("########## Misc ##########")

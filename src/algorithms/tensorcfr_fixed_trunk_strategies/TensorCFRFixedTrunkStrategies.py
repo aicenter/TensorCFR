@@ -849,6 +849,28 @@ def log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regr
 	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
 
 
+def store_trunk_info(log_dir_path, session, tensorcfr_instance):
+	session.run(tensorcfr_instance.assign_avg_strategies_to_current_strategies())
+	print("___________________________________\n")
+	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
+	print("___________________________________\n")
+	trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
+	print_tensor(session, trunk_depth_infoset_cfvs)
+	print("___________________________________\n")
+	trunk_depth_ranges = tensorcfr_instance.get_infoset_ranges_at_trunk_depth()
+	print_tensor(session, trunk_depth_ranges)
+	print("___________________________________\n")
+	tf_tensor_to_store = tensorcfr_instance.get_trunk_info_to_store()
+	print_tensor(session, tf_tensor_to_store)
+	print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(log_dir_path))
+	np.savetxt(
+		'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, tensorcfr_instance.boundary_level),
+		session.run(tf_tensor_to_store),
+		fmt="%7d,\t%.4f,\t%+.4f",
+		header="IS_id,\trange,\tCFV",
+	)
+
+
 def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path):
 	print("###################################\n")
 	print_tensors(session, tensorcfr_instance.domain.cumulative_infoset_strategies)
@@ -863,26 +885,7 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 		)
 
 	if tensorcfr_instance.trunk_depth > 0:
-		session.run(tensorcfr_instance.assign_avg_strategies_to_current_strategies())
-		print("___________________________________\n")
-		print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
-		print("___________________________________\n")
-		trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
-		print_tensor(session, trunk_depth_infoset_cfvs)
-		print("___________________________________\n")
-		trunk_depth_ranges = tensorcfr_instance.get_infoset_ranges_at_trunk_depth()
-		print_tensor(session, trunk_depth_ranges)
-		print("___________________________________\n")
-		tf_tensor_to_store = tensorcfr_instance.get_trunk_info_to_store()
-		print_tensor(session, tf_tensor_to_store)
-
-		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(log_dir_path))
-		np.savetxt(
-			'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, tensorcfr_instance.boundary_level),
-			session.run(tf_tensor_to_store),
-			fmt="%7d,\t%.4f,\t%+.4f",
-			header="IS_id,\trange,\tCFV",
-		)
+		store_trunk_info(log_dir_path, session, tensorcfr_instance)
 
 
 def get_cfr_strategies_after_fixed_trunk_strategies(tensorcfr_instance: TensorCFRFixedTrunkStrategies,

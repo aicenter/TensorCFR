@@ -47,3 +47,4 @@ INFOSET_FOR_TERMINAL_NODES = -1
 PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 
 RANDOM_SEED = 1337
+DEFAULT_DATASET_SIZE = 5

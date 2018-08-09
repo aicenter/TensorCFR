@@ -953,8 +953,10 @@ def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStra
 							cmd='scope',
 							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
 						)
-						writer.add_run_metadata(metadata,
-						                        "step{}".format(step))  # save metadata about time and memory for tensorboard
+						writer.add_run_metadata(
+							metadata,
+							"step{}".format(step)
+						)  # save metadata about time and memory for tensorboard
 					else:
 						session.run(cfr_step_op)
 

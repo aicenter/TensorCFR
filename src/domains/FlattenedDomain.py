@@ -200,7 +200,20 @@ class FlattenedDomain:
 			)
 			for level, strategy in enumerate(self.initial_infoset_strategies)
 		]
-		return random_weights
+		mask_of_valid_actions = [
+			tf.logical_and(
+				tf.sequence_mask(
+					action_count
+				),
+				tf.expand_dims(
+					self.infosets_of_non_chance_player[level],
+					axis=-1
+				),
+				name="mask_of_valid_actions_lvl{}".format(level)
+			)
+			for level, action_count in enumerate(self.infoset_action_counts)
+		]
+		return mask_of_valid_actions
 
 	def print_misc_variables(self, session):
 		print("########## Misc ##########")

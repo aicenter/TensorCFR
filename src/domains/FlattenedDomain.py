@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE, \
-	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT, RANDOM_SEED
+	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT
 from src.utils.cfr_utils import get_parents_from_action_counts
 from src.utils.gambit_flattened_domains.loader import GambitLoader
 from src.utils.tensor_utils import print_tensors, normalize
@@ -196,7 +196,7 @@ class FlattenedDomain:
 		random_weights = [
 			tf.random_uniform(
 				shape=tf.shape(strategy),
-				seed=RANDOM_SEED,
+				# seed=RANDOM_SEED,
 				name="random_weights_lvl{}".format(level)
 			)
 			for level, strategy in enumerate(self.initial_infoset_strategies)

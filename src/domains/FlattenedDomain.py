@@ -8,7 +8,7 @@ from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERA
 	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT
 from src.utils.cfr_utils import get_parents_from_action_counts
 from src.utils.gambit_flattened_domains.loader import GambitLoader
-from src.utils.tensor_utils import print_tensors
+from src.utils.tensor_utils import print_tensors, normalize
 
 
 class FlattenedDomain:
@@ -213,7 +213,19 @@ class FlattenedDomain:
 			)
 			for level, action_count in enumerate(self.infoset_action_counts)
 		]
-		return mask_of_valid_actions
+		normalized_random_strategies = [
+			normalize(
+				tf.where(
+					condition=mask,
+					x=random_weights[level],
+					y=tf.zeros_like(random_weights[level]),
+					name="masked_out_random_weights_lvl{}".format(level)
+				),
+				name="normalized_random_strategies_lvl{}".format(level)
+			)
+			for level, mask in enumerate(mask_of_valid_actions)
+		]
+		return mask_of_valid_actions + normalized_random_strategies
 
 	def print_misc_variables(self, session):
 		print("########## Misc ##########")

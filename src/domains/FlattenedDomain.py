@@ -294,3 +294,7 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		for domain in domains:
 			domain.print_domain(sess)
+			print("Random strategies #1:")
+			print_tensors(sess, domain.generate_random_strategies())
+			print("Random strategies #2:")
+			print_tensors(sess, domain.generate_random_strategies())

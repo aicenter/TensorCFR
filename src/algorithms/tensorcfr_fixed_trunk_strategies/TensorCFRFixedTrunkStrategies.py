@@ -828,16 +828,16 @@ def store_trunk_info(log_dir_path, session, tensorcfr_instance):
 	)
 
 
-def store_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path):
+def store_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path, store_strategies):
 	print("###################################\n")
-	store_final_average_strategies(log_dir_path, session, average_infoset_strategies)
-
+	if store_strategies:
+		store_final_average_strategies(log_dir_path, session, average_infoset_strategies)
 	if tensorcfr_instance.trunk_depth > 0:
 		store_trunk_info(log_dir_path, session, tensorcfr_instance)
 
 
 def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStrategies, total_steps=DEFAULT_TOTAL_STEPS,
-                                     delay=DEFAULT_AVERAGING_DELAY, profiling=False):
+                                     delay=DEFAULT_AVERAGING_DELAY, store_strategies=False, profiling=False):
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
 	hyperparameters = {
@@ -887,7 +887,7 @@ def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStra
 						)  # save metadata about time and memory for tensorboard
 					else:
 						session.run(cfr_step_op)
-				store_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)
+				store_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path, store_strategies)
 
 
 if __name__ == '__main__':
@@ -907,6 +907,7 @@ if __name__ == '__main__':
 				trunk_depth=4
 			)
 		),
+		store_strategies=True,
 		# profiling=True,
 		# delay=0
 	)

@@ -81,7 +81,7 @@ class GambitLoader:
 		# domain name
 		self.domain_name = domain_name
 		# domain parameters
-		self.domain_parameters = {}
+		self.domain_parameters = []
 
 		self.actions_per_levels = []
 		self.max_actions_per_levels = []
@@ -134,6 +134,9 @@ class GambitLoader:
 		stack_nodes_lvl = [TreeNode(level=0)]
 
 		with Parser(file) as parser:
+			print(parser.header)
+			self.domain_parameters = parser.header["domain_parameters"]
+
 			for node in parser.next_node():
 				tree_node = stack_nodes_lvl.pop()
 
@@ -256,6 +259,12 @@ if __name__ == '__main__':
 			'doc',
 			'domain01_via_gambit.efg'
 	)
+	goofspiel_efg = os.path.join(
+		common_constants.PROJECT_ROOT,
+		'doc',
+		'goofspiel',
+		'II-GS3.efg'
+	)
 	hunger_games_efg = os.path.join(
 		common_constants.PROJECT_ROOT,
 		'doc',
@@ -268,17 +277,20 @@ if __name__ == '__main__':
 		'hunger_games_2',
 		'hunger_games_via_gambit.efg'
 	)
-
 	efg_files = [
 		domain01_efg,
+		goofspiel_efg,
 		hunger_games_efg,
 		hunger_games_2_efg
 	]
 	domain_names = [
 		"domain01",
+		"goofspiel_efg",
 		"hunger_games",
 		"hunger_games_2"
 	]
 	for efg_file, domain_name in zip(efg_files, domain_names):
-		GambitLoader(efg_file, domain_name).show()
+		domain = GambitLoader(efg_file, domain_name)
+		print(domain.domain_parameters)
 		print("___________________________________\n")
+

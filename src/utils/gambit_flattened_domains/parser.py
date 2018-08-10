@@ -46,7 +46,7 @@ class Parser:
 	def __init__(self, file):
 		self.__gambit_file = open(file)
 
-		self.__parse_header()
+		self.header = self.__parse_header()
 
 	def __enter__(self):
 		return self
@@ -63,11 +63,11 @@ class Parser:
 			for line in self.__gambit_file:
 				if line.strip() == "<efgfile>":
 					flag_is_efg_file = True
-					self.__parse_header_line(line)
+					return self.__parse_header_line(line)
 			if not flag_is_efg_file:
 				raise exceptions.NotImplementedFormatException()
 		elif len(line) > 3 and line[0:3] == "EFG":
-			self.__parse_header_line(line)
+			return self.__parse_header_line(line)
 		elif len(line) > 3 and line[0:3] == "NFG":
 			raise exceptions.NotImplementedFormatException()
 		else:
@@ -75,18 +75,23 @@ class Parser:
 
 	def __parse_header_line(self, input_line):
 		results = re.search(
-			r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" {(?P<players_dirty>.*)}',
-			input_line
+			r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" ({(?P<players_dirty>[^}]*)}) ?({(?P<domain_parameters_dirty>.*)})?',
+			input_line.strip()
 		)
 		if results:
 			results_players = re.findall(r'"([^"]+)"', results.group('players_dirty'))
+			if results.group('domain_parameters_dirty') is not None:
+				result_domain_parameters = re.findall(r'"([^"]+)"', results.group('domain_parameters_dirty'))
+			else:
+				result_domain_parameters = list()
 			if results_players is None:
 				raise exceptions.NotRecognizedPlayersException()
 			return_dict = {
 				'format': results.group('format'),
 				'version': int(results.group('version')),
 				'name': results.group('name'),
-				'players': results_players
+				'players': results_players,
+				'domain_parameters': result_domain_parameters
 			}
 			return return_dict
 		else:
@@ -214,8 +219,16 @@ if __name__ == "__main__":
 		"domain01_via_gambit.efg"
 	)
 
+	iigs_efg = os.path.join(
+		common_constants.PROJECT_ROOT,
+		"doc",
+		"goofspiel",
+		"II-GS3.efg"
+	)
+
 	cnt = 1
-	with Parser(domain01_gambit_efg) as p:
+	with Parser(iigs_efg) as p:
+		print(p.header)
 		for node in p.next_node():
 			print("-----------------------------")
 			print(cnt)

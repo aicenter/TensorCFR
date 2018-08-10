@@ -740,16 +740,6 @@ class TensorCFRFixedTrunkStrategies:
 			# TODO: @janrudolf Fix here
 			# if self.domain.initial_infoset_strategies has nans use uniform methods
 			return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
-		elif method == "uniform":
-			with tf.variable_scope("initialize_strategies"):
-				uniform_strategies_tensors = self.get_infoset_uniform_strategies()
-				with tf.Session() as temp_sess:
-					temp_sess.run(tf.global_variables_initializer())
-					uniform_strategy_arrays = temp_sess.run(uniform_strategies_tensors)
-				return "Initializing to uniform strategies...\n", {
-					self.domain.initial_infoset_strategies[level]: uniform_strategy_arrays[level]
-					for level in range(self.domain.acting_depth)
-				}
 		elif method == "custom":
 			if initial_strategy_values is None:
 				raise ValueError('No "initial_strategy_values" given.')
@@ -782,7 +772,6 @@ class TensorCFRFixedTrunkStrategies:
 		# TODO extract these lines to a UnitTest
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary()
 		setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="uniform") # TODO remove "uniform option"
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="custom")
 		# #  should raise ValueError
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(

@@ -871,7 +871,7 @@ def store_trunk_info(log_dir_path, session, tensorcfr_instance):
 	)
 
 
-def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path):
+def store_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path):
 	print("###################################\n")
 	print_tensors(session, average_infoset_strategies)
 	print("Storing average strategies to '{}'...".format(log_dir_path))
@@ -937,7 +937,7 @@ def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStra
 						)  # save metadata about time and memory for tensorboard
 					else:
 						session.run(cfr_step_op)
-				log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)
+				store_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)
 
 
 if __name__ == '__main__':

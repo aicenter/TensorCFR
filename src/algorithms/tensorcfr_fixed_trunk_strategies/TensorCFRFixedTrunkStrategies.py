@@ -887,15 +887,9 @@ def log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies,
 
 
 def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStrategies, total_steps=DEFAULT_TOTAL_STEPS,
-                                     quiet=False, delay=DEFAULT_AVERAGING_DELAY, profiling=False):
+                                     delay=DEFAULT_AVERAGING_DELAY, profiling=False):
 	with tf.variable_scope("initialization"):
 		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
-		assign_averaging_delay_op = tf.assign(
-			ref=tensorcfr_instance.domain.averaging_delay,
-			value=delay,
-			name="assign_averaging_delay"
-		)
-	cfr_step_op = tensorcfr_instance.do_cfr_step()
 	hyperparameters = {
 		"total_steps"    : total_steps,
 		"averaging_delay": delay,
@@ -904,15 +898,9 @@ def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStra
 	log_dir_root = get_log_dir_path(tensorcfr_instance, hyperparameters)
 	if profiling:
 		log_dir_root += "-profiling"
+	cfr_step_op = tensorcfr_instance.do_cfr_step()
 
 	# tensors to log if quiet is False
-	reach_probabilities = tensorcfr_instance.get_nodal_reach_probabilities() if not quiet else None
-	expected_values = tensorcfr_instance.get_expected_values() if not quiet else None
-	nodal_cf_values = tensorcfr_instance.get_nodal_cf_values() if not quiet else None
-	infoset_cf_values, infoset_action_cf_values = tensorcfr_instance.get_infoset_cf_values() if not quiet \
-		else (None, None)
-	regrets = tensorcfr_instance.get_regrets() if not quiet else None
-	strategies_matched_to_regrets = tensorcfr_instance.get_strategy_matched_to_regrets() if not quiet else None
 	average_infoset_strategies = tensorcfr_instance.get_average_infoset_strategies()
 
 	dataset_size = DEFAULT_DATASET_SIZE
@@ -923,17 +911,9 @@ def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStra
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
 		) as session:
 			session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-			assigned_averaging_delay = session.run(assign_averaging_delay_op)
-
-			if quiet is False:
-				log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, assigned_averaging_delay)
 
 			with tf.summary.FileWriter(log_dir_path, tf.get_default_graph()) as writer:
 				for step in range(total_steps):
-					if quiet is False:
-						log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_action_cf_values,
-						                      nodal_cf_values, expected_values, reach_probabilities, regrets)
-
 					"""
 					Profiler gives the Model report with total compute time and memory consumption.
 					- Add CUDA libs to LD_LIBRARY_PATH: https://github.com/tensorflow/tensorflow/issues/8830
@@ -957,9 +937,6 @@ def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStra
 						)  # save metadata about time and memory for tensorboard
 					else:
 						session.run(cfr_step_op)
-
-					if quiet is False:
-						log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets)
 				log_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path)
 
 
@@ -1003,7 +980,6 @@ if __name__ == '__main__':
 	cfr_strategies_after_fixed_trunk(
 		# total_steps=10,
 		tensorcfr_instance=tensorcfr,
-		quiet=True,
 		# profiling=True,
 		# delay=0
 	)

@@ -948,38 +948,15 @@ if __name__ == '__main__':
 	domain = get_domain_by_name("II-GS3_gambit_flattened")
 	# domain = get_domain_by_name("IIGS5_gambit_flattened")
 	# domain = get_domain_by_name("IIGS6_gambit_flattened")
-	tensorcfr = TensorCFRFixedTrunkStrategies(
-		domain,
-		trunk_depth=4
-	)
-
-	# infoset_action_cf_values_, infoset_cf_values_ = tensorcfr.get_infoset_cf_values()
-	# alternating_cf_values = [
-	# 	value
-	# 	for pair_of_values in zip(infoset_action_cf_values_, infoset_cf_values_)
-	# 	for value in pair_of_values
-	# ]
-	# with tf.Session(
-	# 	config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-	# ) as sess:
-	# 	sess.run(tf.global_variables_initializer())
-	# 	tensorcfr.domain.print_domain(sess)
-	# 	tensorcfr.show_strategies(sess)
-	# 	tensorcfr.show_expected_values(sess)
-	# 	tensorcfr.show_reach_probabilities(sess)
-	# 	sess.run(tensorcfr.swap_players())
-	# 	tensorcfr.show_reach_probabilities(sess)
-	# 	print_tensors(sess, tensorcfr.get_nodal_cf_values())
-	# 	print_tensors(sess, alternating_cf_values)
-	# 	sess.run(tensorcfr.swap_players())
-	# 	print_tensors(sess, alternating_cf_values)
-	# 	print_tensors(sess, tensorcfr.domain.infoset_action_counts + tensorcfr.get_infoset_mask_non_imaginary_children())
-	# 	print_tensors(sess, tensorcfr.get_infoset_uniform_strategies())
-	# 	print_tensors(sess, tensorcfr.get_regrets())
 
 	cfr_strategies_after_fixed_trunk(
 		# total_steps=10,
-		tensorcfr_instance=tensorcfr,
+		tensorcfr_instance=(
+			TensorCFRFixedTrunkStrategies(
+				domain,
+				trunk_depth=4
+			)
+		),
 		# profiling=True,
 		# delay=0
 	)

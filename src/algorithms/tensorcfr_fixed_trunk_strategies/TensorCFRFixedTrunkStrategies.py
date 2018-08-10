@@ -12,8 +12,7 @@ from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
 	distribute_strategies_to_inner_nodes
-from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize, \
-	print_tensor
+from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
 class TensorCFRFixedTrunkStrategies:
@@ -820,21 +819,10 @@ def store_final_average_strategies(log_dir_path, session, average_infoset_strate
 
 def store_trunk_info(log_dir_path, session, tensorcfr_instance):
 	session.run(tensorcfr_instance.assign_avg_strategies_to_current_strategies())
-	print("___________________________________\n")
-	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
-	print("___________________________________\n")
-	trunk_depth_infoset_cfvs = tensorcfr_instance.get_infoset_cfvs_at_trunk_depth()
-	print_tensor(session, trunk_depth_infoset_cfvs)
-	print("___________________________________\n")
-	trunk_depth_ranges = tensorcfr_instance.get_infoset_ranges_at_trunk_depth()
-	print_tensor(session, trunk_depth_ranges)
-	print("___________________________________\n")
-	tf_tensor_to_store = tensorcfr_instance.get_trunk_info_to_store()
-	print_tensor(session, tf_tensor_to_store)
 	print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(log_dir_path))
 	np.savetxt(
 		'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, tensorcfr_instance.boundary_level),
-		session.run(tf_tensor_to_store),
+		session.run(tensorcfr_instance.get_trunk_info_to_store()),
 		fmt="%7d,\t%.4f,\t%+.4f",
 		header="IS_id,\trange,\tCFV",
 	)

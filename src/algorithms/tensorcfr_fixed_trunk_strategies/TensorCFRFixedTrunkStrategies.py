@@ -42,7 +42,7 @@ class TensorCFRFixedTrunkStrategies:
 				last_level_with_infosets
 			)
 		self.trunk_depth_infoset_cfvs = None
-		self.hyperparameters = {}
+		self.cfr_parameters = {}
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -763,7 +763,7 @@ class TensorCFRFixedTrunkStrategies:
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
 			",".join(
 				("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
-				 for key, value in sorted(self.hyperparameters.items()))).replace("/", "-")
+				 for key, value in sorted(self.cfr_parameters.items()))).replace("/", "-")
 		)
 		if not os.path.exists("logs"):
 			os.mkdir("logs")
@@ -824,7 +824,7 @@ class TensorCFRFixedTrunkStrategies:
 	                                     store_strategies=False, profiling=False):
 		with tf.variable_scope("initialization"):
 			feed_dictionary, setup_messages = self.set_up_cfr()
-		self.hyperparameters = {
+		self.cfr_parameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,

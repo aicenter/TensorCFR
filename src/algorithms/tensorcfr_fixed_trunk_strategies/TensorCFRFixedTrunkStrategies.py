@@ -42,6 +42,7 @@ class TensorCFRFixedTrunkStrategies:
 				last_level_with_infosets
 			)
 		self.trunk_depth_infoset_cfvs = None
+		self.hyperparameters = {}
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -756,13 +757,13 @@ class TensorCFRFixedTrunkStrategies:
 		else:
 			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
-	def get_log_dir_path(self, hyperparameters):  # TODO make `hyperparameters` a class field
+	def get_log_dir_path(self):
 		log_dir_path = "logs/{}-{}-{}".format(
 			self.domain.domain_name,
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
 			",".join(
 				("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
-				 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
+				 for key, value in sorted(self.hyperparameters.items()))).replace("/", "-")
 		)
 		if not os.path.exists("logs"):
 			os.mkdir("logs")
@@ -823,12 +824,12 @@ class TensorCFRFixedTrunkStrategies:
 	                                     store_strategies=False, profiling=False):
 		with tf.variable_scope("initialization"):
 			feed_dictionary, setup_messages = self.set_up_cfr()
-		hyperparameters = {
+		self.hyperparameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,
 		}
-		log_dir_root = self.get_log_dir_path(hyperparameters)
+		log_dir_root = self.get_log_dir_path()
 		if profiling:
 			log_dir_root += "-profiling"
 		cfr_step_op = self.do_cfr_step()

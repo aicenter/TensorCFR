@@ -735,159 +735,153 @@ class TensorCFRFixedTrunkStrategies:
 		else:
 			return None
 
-
-def set_up_feed_dictionary(tensorcfr_instance, method="by-domain", initial_strategy_values=None):
-	if method == "by-domain":
-		# TODO: @janrudolf Fix here
-		# if tensorcfr_instance.domain.initial_infoset_strategies has nans use uniform methods
-		return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
-	elif method == "uniform":
-		with tf.variable_scope("initialize_strategies"):
-			uniform_strategies_tensors = tensorcfr_instance.get_infoset_uniform_strategies()
-			with tf.Session() as temp_sess:
-				temp_sess.run(tf.global_variables_initializer())
-				uniform_strategy_arrays = temp_sess.run(uniform_strategies_tensors)
-			return "Initializing to uniform strategies...\n", {
-				tensorcfr_instance.domain.initial_infoset_strategies[level]: uniform_strategy_arrays[level]
-				for level in range(tensorcfr_instance.domain.acting_depth)
-			}
-	elif method == "custom":
-		if initial_strategy_values is None:
-			raise ValueError('No "initial_strategy_values" given.')
-		if len(initial_strategy_values) != len(tensorcfr_instance.domain.initial_infoset_strategies):
-			raise ValueError(
-				'Mismatched "len(initial_strategy_values) == {}" and "len(initial_infoset_strategies) == {}".'.format(
-					len(initial_strategy_values), len(tensorcfr_instance.domain.initial_infoset_strategies)
+	def set_up_feed_dictionary(self, method="by-domain", initial_strategy_values=None):
+		if method == "by-domain":
+			# TODO: @janrudolf Fix here
+			# if self.domain.initial_infoset_strategies has nans use uniform methods
+			return "Initializing strategies via domain definitions...\n", {}  # default value of `initial_infoset_strategies`
+		elif method == "uniform":
+			with tf.variable_scope("initialize_strategies"):
+				uniform_strategies_tensors = self.get_infoset_uniform_strategies()
+				with tf.Session() as temp_sess:
+					temp_sess.run(tf.global_variables_initializer())
+					uniform_strategy_arrays = temp_sess.run(uniform_strategies_tensors)
+				return "Initializing to uniform strategies...\n", {
+					self.domain.initial_infoset_strategies[level]: uniform_strategy_arrays[level]
+					for level in range(self.domain.acting_depth)
+				}
+		elif method == "custom":
+			if initial_strategy_values is None:
+				raise ValueError('No "initial_strategy_values" given.')
+			if len(initial_strategy_values) != len(self.domain.initial_infoset_strategies):
+				raise ValueError(
+					'Mismatched "len(initial_strategy_values) == {}" and "len(initial_infoset_strategies) == {}".'.format(
+						len(initial_strategy_values), len(self.domain.initial_infoset_strategies)
+					)
 				)
+			return "Initializing strategies to custom values defined by user...\n", {
+				self.domain.initial_infoset_strategies[level]: initial_strategy_values[level]
+				for level in range(self.domain.acting_depth)
+			}
+		else:
+			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
+
+	def get_log_dir_path(self, hyperparameters):  # TODO make `hyperparameters` a class field
+		log_dir_path = "logs/{}-{}-{}".format(
+			self.domain.domain_name,
+			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
+			",".join(
+				("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
+				 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
+		)
+		if not os.path.exists("logs"):
+			os.mkdir("logs")
+		return log_dir_path
+
+	def set_up_cfr(self):
+		# TODO extract these lines to a UnitTest
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary()
+		setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="uniform") # TODO remove "uniform option"
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="custom")
+		# #  should raise ValueError
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
+		# 		method="custom",
+		# 		initial_strategy_values=[
+		# 			[[1.0, 0.0]],
+		# 		],
+		# )  # should raise ValueError
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
+		# 		method="custom",
+		# 		initial_strategy_values=[   # on domain `matching_pennies`
+		# 			[[1.0, 0.0]],
+		# 			[[1.0, 0.0]],
+		# 		]
+		# )
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="invalid")
+		# #  should raise ValueError
+		return feed_dictionary, setup_messages
+
+	@staticmethod
+	def store_final_average_strategies(log_dir_path, session, average_infoset_strategies):  # TODO params -> fields
+		print_tensors(session, average_infoset_strategies)
+		print("Storing average strategies to '{}'...".format(log_dir_path))
+		for level in range(len(average_infoset_strategies)):
+			np.savetxt(
+				'{}/average_infoset_strategies_lvl{}.csv'.format(log_dir_path, level),
+				session.run(average_infoset_strategies[level]),
+				delimiter=',',
 			)
-		return "Initializing strategies to custom values defined by user...\n", {
-			tensorcfr_instance.domain.initial_infoset_strategies[level]: initial_strategy_values[level]
-			for level in range(tensorcfr_instance.domain.acting_depth)
-		}
-	else:
-		raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
-
-def get_log_dir_path(tensorcfr_instance, hyperparameters):
-	log_dir_path = "logs/{}-{}-{}".format(
-		tensorcfr_instance.domain.domain_name,
-		datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
-		",".join(
-			("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
-			 for key, value in sorted(hyperparameters.items()))).replace("/", "-")
-	)
-	if not os.path.exists("logs"):
-		os.mkdir("logs")
-	return log_dir_path
-
-
-def set_up_cfr(tensorcfr_instance):
-	# TODO extract these lines to a UnitTest
-	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance)
-	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance, method="by-domain")
-	setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance, method="uniform")
-	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance, method="custom")
-	# #  should raise ValueError
-	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance,
-	# 		method="custom",
-	# 		initial_strategy_values=[
-	# 			[[1.0, 0.0]],
-	# 		],
-	# )  # should raise ValueError
-	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance,
-	# 		method="custom",
-	# 		initial_strategy_values=[   # on domain `matching_pennies`
-	# 			[[1.0, 0.0]],
-	# 			[[1.0, 0.0]],
-	# 		]
-	# )
-	# setup_messages, feed_dictionary = set_up_feed_dictionary(tensorcfr_instance, method="invalid")
-	# #  should raise ValueError
-	return feed_dictionary, setup_messages
-
-
-def store_final_average_strategies(log_dir_path, session, average_infoset_strategies):
-	print_tensors(session, average_infoset_strategies)
-	print("Storing average strategies to '{}'...".format(log_dir_path))
-	for level in range(len(average_infoset_strategies)):
+	def store_trunk_info(self, log_dir_path, session):  # TODO params -> fields
+		session.run(self.assign_avg_strategies_to_current_strategies())
+		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(log_dir_path))
 		np.savetxt(
-			'{}/average_infoset_strategies_lvl{}.csv'.format(log_dir_path, level),
-			session.run(average_infoset_strategies[level]),
-			delimiter=',',
+			'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, self.boundary_level),
+			session.run(self.get_trunk_info_to_store()),
+			fmt="%7d,\t%.4f,\t%+.4f",
+			header="IS_id,\trange,\tCFV",
 		)
 
+	def store_after_all_steps(self, session, average_infoset_strategies, log_dir_path, store_strategies):
+		print("###################################\n")
+		if store_strategies:
+			self.store_final_average_strategies(log_dir_path, session, average_infoset_strategies)
+		if self.trunk_depth > 0:
+			self.store_trunk_info(log_dir_path, session)
 
-def store_trunk_info(log_dir_path, session, tensorcfr_instance):
-	session.run(tensorcfr_instance.assign_avg_strategies_to_current_strategies())
-	print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(log_dir_path))
-	np.savetxt(
-		'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, tensorcfr_instance.boundary_level),
-		session.run(tensorcfr_instance.get_trunk_info_to_store()),
-		fmt="%7d,\t%.4f,\t%+.4f",
-		header="IS_id,\trange,\tCFV",
-	)
+	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
+	                                     store_strategies=False, profiling=False):
+		with tf.variable_scope("initialization"):
+			feed_dictionary, setup_messages = self.set_up_cfr()
+		hyperparameters = {
+			"total_steps"    : total_steps,
+			"averaging_delay": delay,
+			"trunk_depth"    : self.trunk_depth,
+		}
+		log_dir_root = self.get_log_dir_path(hyperparameters)
+		if profiling:
+			log_dir_root += "-profiling"
+		cfr_step_op = self.do_cfr_step()
 
+		# tensors to log if quiet is False
+		average_infoset_strategies = self.get_average_infoset_strategies()
 
-def store_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path, store_strategies):
-	print("###################################\n")
-	if store_strategies:
-		store_final_average_strategies(log_dir_path, session, average_infoset_strategies)
-	if tensorcfr_instance.trunk_depth > 0:
-		store_trunk_info(log_dir_path, session, tensorcfr_instance)
+		dataset_size = DEFAULT_DATASET_SIZE
+		for datapoint_index in range(dataset_size):
+			log_dir_path = "{}/datapoint_{}".format(log_dir_root, datapoint_index)
 
+			with tf.Session(
+				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+			) as session:
+				session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
-def cfr_strategies_after_fixed_trunk(tensorcfr_instance: TensorCFRFixedTrunkStrategies, total_steps=DEFAULT_TOTAL_STEPS,
-                                     delay=DEFAULT_AVERAGING_DELAY, store_strategies=False, profiling=False):
-	with tf.variable_scope("initialization"):
-		feed_dictionary, setup_messages = set_up_cfr(tensorcfr_instance)
-	hyperparameters = {
-		"total_steps"    : total_steps,
-		"averaging_delay": delay,
-		"trunk_depth"    : tensorcfr_instance.trunk_depth,
-	}
-	log_dir_root = get_log_dir_path(tensorcfr_instance, hyperparameters)
-	if profiling:
-		log_dir_root += "-profiling"
-	cfr_step_op = tensorcfr_instance.do_cfr_step()
-
-	# tensors to log if quiet is False
-	average_infoset_strategies = tensorcfr_instance.get_average_infoset_strategies()
-
-	dataset_size = DEFAULT_DATASET_SIZE
-	for datapoint_index in range(dataset_size):
-		log_dir_path = "{}/datapoint_{}".format(log_dir_root, datapoint_index)
-
-		with tf.Session(
-			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-		) as session:
-			session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-
-			with tf.summary.FileWriter(log_dir_path, tf.get_default_graph()) as writer:
-				for step in range(total_steps):
-					"""
-					Profiler gives the Model report with total compute time and memory consumption.
-					- Add CUDA libs to LD_LIBRARY_PATH: https://github.com/tensorflow/tensorflow/issues/8830
-					- For `cmd` see:
-					https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
-					"""
-					if profiling:
-						run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-						metadata = tf.RunMetadata()
-						session.run(cfr_step_op, options=run_options, run_metadata=metadata)
-						tf.profiler.profile(
-							session.graph,
-							run_meta=metadata,
-							# cmd='op',
-							cmd='scope',
-							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
-						)
-						writer.add_run_metadata(
-							metadata,
-							"step{}".format(step)
-						)  # save metadata about time and memory for tensorboard
-					else:
-						session.run(cfr_step_op)
-				store_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path, store_strategies)
+				with tf.summary.FileWriter(log_dir_path, tf.get_default_graph()) as writer:
+					for step in range(total_steps):
+						"""
+						Profiler gives the Model report with total compute time and memory consumption.
+						- Add CUDA libs to LD_LIBRARY_PATH: https://github.com/tensorflow/tensorflow/issues/8830
+						- For `cmd` see:
+						https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
+						"""
+						if profiling:
+							run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+							metadata = tf.RunMetadata()
+							session.run(cfr_step_op, options=run_options, run_metadata=metadata)
+							tf.profiler.profile(
+								session.graph,
+								run_meta=metadata,
+								# cmd='op',
+								cmd='scope',
+								options=tf.profiler.ProfileOptionBuilder.time_and_memory()
+							)
+							writer.add_run_metadata(
+								metadata,
+								"step{}".format(step)
+							)  # save metadata about time and memory for tensorboard
+						else:
+							session.run(cfr_step_op)
+					self.store_after_all_steps(session, average_infoset_strategies, log_dir_path, store_strategies)
 
 
 if __name__ == '__main__':
@@ -899,14 +893,12 @@ if __name__ == '__main__':
 	# domain = get_domain_by_name("IIGS5_gambit_flattened")
 	# domain = get_domain_by_name("IIGS6_gambit_flattened")
 
-	cfr_strategies_after_fixed_trunk(
+	tensorcfr_instance = TensorCFRFixedTrunkStrategies(
+		domain,
+		trunk_depth=4
+	)
+	tensorcfr_instance.cfr_strategies_after_fixed_trunk(
 		# total_steps=10,
-		tensorcfr_instance=(
-			TensorCFRFixedTrunkStrategies(
-				domain,
-				trunk_depth=4
-			)
-		),
 		# store_strategies=True,
 		# profiling=True,
 		# delay=0

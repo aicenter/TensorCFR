@@ -807,6 +807,17 @@ def set_up_cfr(tensorcfr_instance):
 	return feed_dictionary, setup_messages
 
 
+def store_final_average_strategies(log_dir_path, session, average_infoset_strategies):
+	print_tensors(session, average_infoset_strategies)
+	print("Storing average strategies to '{}'...".format(log_dir_path))
+	for level in range(len(average_infoset_strategies)):
+		np.savetxt(
+			'{}/average_infoset_strategies_lvl{}.csv'.format(log_dir_path, level),
+			session.run(average_infoset_strategies[level]),
+			delimiter=',',
+		)
+
+
 def store_trunk_info(log_dir_path, session, tensorcfr_instance):
 	session.run(tensorcfr_instance.assign_avg_strategies_to_current_strategies())
 	print("___________________________________\n")
@@ -831,14 +842,7 @@ def store_trunk_info(log_dir_path, session, tensorcfr_instance):
 
 def store_after_all_steps(tensorcfr_instance, session, average_infoset_strategies, log_dir_path):
 	print("###################################\n")
-	print_tensors(session, average_infoset_strategies)
-	print("Storing average strategies to '{}'...".format(log_dir_path))
-	for level in range(len(average_infoset_strategies)):
-		np.savetxt(
-			'{}/average_infoset_strategies_lvl{}.csv'.format(log_dir_path, level),
-			session.run(average_infoset_strategies[level]),
-			delimiter=',',
-		)
+	store_final_average_strategies(log_dir_path, session, average_infoset_strategies)
 
 	if tensorcfr_instance.trunk_depth > 0:
 		store_trunk_info(log_dir_path, session, tensorcfr_instance)

@@ -907,7 +907,7 @@ if __name__ == '__main__':
 				trunk_depth=4
 			)
 		),
-		store_strategies=True,
+		# store_strategies=True,
 		# profiling=True,
 		# delay=0
 	)

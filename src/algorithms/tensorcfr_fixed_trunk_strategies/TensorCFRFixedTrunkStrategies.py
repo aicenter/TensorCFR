@@ -807,48 +807,6 @@ def set_up_cfr(tensorcfr_instance):
 	return feed_dictionary, setup_messages
 
 
-def log_before_all_steps(tensorcfr_instance, session, setup_messages, total_steps, averaging_delay):
-	print("TensorCFRFixedTrunkStrategies\n")
-	print(setup_messages)
-	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
-	print("Running {} CFR+ iterations, averaging_delay == {}...\n".format(total_steps, averaging_delay))
-
-
-def log_before_every_step(tensorcfr_instance, session, infoset_cf_values, infoset_action_cf_values,
-                          nodal_cf_values, expected_values, reach_probabilities, regrets):
-	print("########## CFR+ step #{} ##########".format(tensorcfr_instance.domain.cfr_step.eval()))
-	print_tensors(session, reach_probabilities)
-	print("___________________________________\n")
-	print_tensors(session, expected_values)
-	print("___________________________________\n")
-	print_tensors(session, nodal_cf_values)
-	print("___________________________________\n")
-	print_tensors(session, infoset_action_cf_values)
-	print("___________________________________\n")
-	print_tensors(session, infoset_cf_values)
-	print("___________________________________\n")
-	print_tensors(session, regrets)
-	print("___________________________________\n")
-	print_tensors(session, infoset_action_cf_values)
-	print("___________________________________\n")
-	print_tensors(session, infoset_cf_values)
-	print("___________________________________\n")
-	print_tensors(session, regrets)
-	print("___________________________________\n")
-	print_tensors(session, tensorcfr_instance.domain.positive_cumulative_regrets)
-	print("___________________________________\n")
-	print_tensors(session, regrets)
-	print("___________________________________\n")
-
-
-def log_after_every_step(tensorcfr_instance, session, strategies_matched_to_regrets):
-	print_tensors(session, tensorcfr_instance.domain.positive_cumulative_regrets)
-	print("___________________________________\n")
-	print_tensors(session, strategies_matched_to_regrets)
-	print("___________________________________\n")
-	print_tensors(session, tensorcfr_instance.domain.current_infoset_strategies)
-
-
 def store_trunk_info(log_dir_path, session, tensorcfr_instance):
 	session.run(tensorcfr_instance.assign_avg_strategies_to_current_strategies())
 	print("___________________________________\n")

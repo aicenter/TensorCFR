@@ -814,7 +814,7 @@ class TensorCFRFixedTrunkStrategies:
 			csv_file,
 			self.session.run(self.get_trunk_info_to_store()),
 			fmt="%7d,\t %7d,\t %.4f,\t %+.4f",
-			header="data_id,\t IS_id,\t range,\t CFV",
+			header="data_id,\t IS_id,\t range,\t CFV" if self.data_id == 0 else "",
 		)
 
 	def store_after_all_steps(self, storing_strategies):

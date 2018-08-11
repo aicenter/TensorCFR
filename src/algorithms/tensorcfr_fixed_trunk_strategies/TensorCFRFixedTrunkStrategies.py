@@ -38,7 +38,7 @@ class TensorCFRFixedTrunkStrategies:
 		self.set_average_infoset_strategies()
 
 		self.summary_writer = None
-		self.log_dir_path = None
+		self.log_directory = None
 		self.trunk_depth = trunk_depth
 		self.boundary_level = self.trunk_depth
 		last_level_with_infosets = self.domain.acting_depth - 1
@@ -761,8 +761,8 @@ class TensorCFRFixedTrunkStrategies:
 		else:
 			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
-	def set_log_dir_path(self):
-		self.log_dir_path = "logs/{}-{}-{}".format(
+	def set_log_directory(self):
+		self.log_directory = "logs/{}-{}-{}".format(
 			self.domain.domain_name,
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
 			",".join(
@@ -797,19 +797,19 @@ class TensorCFRFixedTrunkStrategies:
 
 	def store_final_average_strategies(self):
 		print_tensors(self.session, self.average_infoset_strategies)
-		print("Storing average strategies to '{}'...".format(self.log_dir_path))
+		print("Storing average strategies to '{}'...".format(self.log_directory))
 		for level in range(len(self.average_infoset_strategies)):
 			np.savetxt(
-				'{}/average_infoset_strategies_lvl{}.csv'.format(self.log_dir_path, level),
+				'{}/average_infoset_strategies_lvl{}.csv'.format(self.log_directory, level),
 				self.session.run(self.average_infoset_strategies[level]),
 				delimiter=',',
 			)
 
 	def store_trunk_info(self):
 		self.session.run(self.assign_avg_strategies_to_current_strategies())
-		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(self.log_dir_path))
+		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(self.log_directory))
 		np.savetxt(
-			'{}/trunk_depth_information_lvl{}.csv'.format(self.log_dir_path, self.boundary_level),
+			'{}/trunk_depth_information_lvl{}.csv'.format(self.log_directory, self.boundary_level),
 			self.session.run(self.get_trunk_info_to_store()),
 			fmt="%7d,\t%.4f,\t%+.4f",
 			header="IS_id,\trange,\tCFV",
@@ -831,22 +831,20 @@ class TensorCFRFixedTrunkStrategies:
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,
 		}
-		self.set_log_dir_path()
+		self.set_log_directory()
 		if profiling:
-			self.log_dir_path += "-profiling"
-		log_dir_root = self.log_dir_path
+			self.log_directory += "-profiling"
 		cfr_step_op = self.do_cfr_step()
 
 		dataset_size = DEFAULT_DATASET_SIZE
 		for datapoint_index in range(dataset_size):
-			self.log_dir_path = "{}/datapoint_{}".format(log_dir_root, datapoint_index)
-
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
 			) as self.session:
 				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
-				with tf.summary.FileWriter(self.log_dir_path, tf.get_default_graph()) as writer:
+				log_subdirectory = "{}/datapoint_{}".format(self.log_directory, datapoint_index)
+				with tf.summary.FileWriter(log_subdirectory, tf.get_default_graph()) as writer:
 					for step in range(total_steps):
 						"""
 						Profiler gives the Model report with total compute time and memory consumption.

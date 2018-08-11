@@ -876,16 +876,16 @@ class TensorCFRFixedTrunkStrategies:
 
 
 if __name__ == '__main__':
-	# domain = get_domain_by_name("flattened_hunger_games")
-	# domain = get_domain_by_name("flattened_hunger_games_2")
-	# domain = get_domain_by_name("flattened_domain01_via_gambit")
-	# domain = get_domain_by_name("II-GS2_gambit_flattened")
-	domain = get_domain_by_name("II-GS3_gambit_flattened")
-	# domain = get_domain_by_name("IIGS5_gambit_flattened")
-	# domain = get_domain_by_name("IIGS6_gambit_flattened")
+	# domain_ = get_domain_by_name("flattened_hunger_games")
+	# domain_ = get_domain_by_name("flattened_hunger_games_2")
+	# domain_ = get_domain_by_name("flattened_domain01_via_gambit")
+	# domain_ = get_domain_by_name("II-GS2_gambit_flattened")
+	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
+	# domain_ = get_domain_by_name("IIGS5_gambit_flattened")
+	# domain_ = get_domain_by_name("IIGS6_gambit_flattened")
 
 	tensorcfr_instance = TensorCFRFixedTrunkStrategies(
-		domain,
+		domain_,
 		trunk_depth=4
 	)
 	tensorcfr_instance.cfr_strategies_after_fixed_trunk(

@@ -722,8 +722,10 @@ class TensorCFRFixedTrunkStrategies:
 			axis=-1,
 			name="infoset_indices_lvl{}".format(self.boundary_level)
 		)
+		data_id_column = self.data_id * tf.ones_like(trunk_depth_infoset_indices)
 		concat_trunk_info_tensors = tf.concat(
 			[
+				data_id_column,
 				trunk_depth_infoset_indices,
 				trunk_depth_ranges,
 				trunk_depth_infoset_cfvs
@@ -811,8 +813,8 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			self.session.run(self.get_trunk_info_to_store()),
-			fmt="%7d,\t%.4f,\t%+.4f",
-			header="IS_id,\trange,\tCFV",
+			fmt="%7d,\t %7d,\t %.4f,\t %+.4f",
+			header="data_id,\t IS_id,\t range,\t CFV",
 		)
 
 	def store_after_all_steps(self, storing_strategies):

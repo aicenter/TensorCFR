@@ -808,9 +808,11 @@ class TensorCFRFixedTrunkStrategies:
 
 	def store_trunk_info(self):
 		self.session.run(self.assign_avg_strategies_to_current_strategies())
-		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(self.log_directory))
+		csv_filename = '{}/trunk_depth_information_lvl{}.csv'.format(self.log_directory, self.boundary_level)
+		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(csv_filename))
+		csv_file = open(csv_filename, 'ab')   # binary mode for appending
 		np.savetxt(
-			'{}/trunk_depth_information_lvl{}.csv'.format(self.log_directory, self.boundary_level),
+			csv_file,
 			self.session.run(self.get_trunk_info_to_store()),
 			fmt="%7d,\t%.4f,\t%+.4f",
 			header="IS_id,\trange,\tCFV",

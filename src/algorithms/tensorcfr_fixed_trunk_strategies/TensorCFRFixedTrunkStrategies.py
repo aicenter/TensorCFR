@@ -815,15 +815,15 @@ class TensorCFRFixedTrunkStrategies:
 			header="IS_id,\trange,\tCFV",
 		)
 
-	def store_after_all_steps(self, store_strategies):
+	def store_after_all_steps(self, storing_strategies):
 		print("###################################\n")
-		if store_strategies:
+		if storing_strategies:
 			self.store_final_average_strategies()
 		if self.trunk_depth > 0:
 			self.store_trunk_info()
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                     store_strategies=False, profiling=False):
+	                                     storing_strategies=False, profiling=False):
 		with tf.variable_scope("initialization"):
 			feed_dictionary, setup_messages = self.set_up_cfr()
 		self.cfr_parameters = {
@@ -871,7 +871,7 @@ class TensorCFRFixedTrunkStrategies:
 							)  # save metadata about time and memory for tensorboard
 						else:
 							self.session.run(cfr_step_op)
-					self.store_after_all_steps(store_strategies)
+					self.store_after_all_steps(storing_strategies)
 
 
 if __name__ == '__main__':
@@ -889,7 +889,7 @@ if __name__ == '__main__':
 	)
 	tensorcfr_instance.cfr_strategies_after_fixed_trunk(
 		# total_steps=10,
-		# store_strategies=True,
+		storing_strategies=True,
 		# profiling=True,
 		# delay=0
 	)

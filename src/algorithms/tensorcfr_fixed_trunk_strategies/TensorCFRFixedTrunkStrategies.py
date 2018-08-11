@@ -27,12 +27,16 @@ class TensorCFRFixedTrunkStrategies:
 		"""
 		self.domain = domain
 		self.session = None
+
 		with tf.variable_scope("increment_step"):
 			self.increment_cfr_step = tf.assign_add(
 				ref=self.domain.cfr_step,
 				value=1,
 				name="increment_cfr_step"
 			)
+		self.average_infoset_strategies = None
+		self.set_average_infoset_strategies()
+
 		self.summary_writer = None
 		self.log_dir_path = None
 		self.trunk_depth = trunk_depth
@@ -553,10 +557,10 @@ class TensorCFRFixedTrunkStrategies:
 		cumulate_ops = self.cumulate_strategy_of_opponent(opponent=opponent)
 		return tf.tuple(update_ops + cumulate_ops, name="process_strategies")
 
-	def get_average_infoset_strategies(self):
+	def set_average_infoset_strategies(self):
 		# TODO Do not normalize over imaginary nodes. <- Do we need to solve this? Or is it already ok (cf. `bottomup-*.py`)
 		with tf.variable_scope("average_strategies"):
-			average_infoset_strategies = [None] * self.domain.acting_depth
+			self.average_infoset_strategies = [None] * self.domain.acting_depth
 			norm_of_strategies = [None] * self.domain.acting_depth
 			infosets_with_nonzero_norm = [None] * self.domain.acting_depth
 			for level in range(self.domain.acting_depth):
@@ -571,7 +575,7 @@ class TensorCFRFixedTrunkStrategies:
 						tf.not_equal(norm_of_strategies[level], 0.0),
 						name="infosets_with_nonzero_norm_lvl{}".format(level)
 					)
-					average_infoset_strategies[level] = tf.where(
+					self.average_infoset_strategies[level] = tf.where(
 						condition=tf.logical_and(
 							self.domain.infosets_of_non_chance_player[level],
 							infosets_with_nonzero_norm[level],
@@ -584,7 +588,6 @@ class TensorCFRFixedTrunkStrategies:
 						y=self.domain.current_infoset_strategies[level],
 						name="average_infoset_strategies_lvl{}".format(level),
 					)
-		return average_infoset_strategies
 
 	def do_cfr_step(self):
 		ops_process_strategies = self.process_strategies()
@@ -603,10 +606,9 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		avg_strategies = self.get_average_infoset_strategies()
 		with tf.variable_scope("assign_avg_strategies_to_current_strategies"):
 			ops_assign_strategies = [None] * self.domain.acting_depth
-			for level, avg_strategy in enumerate(avg_strategies):
+			for level, avg_strategy in enumerate(self.average_infoset_strategies):
 				with tf.variable_scope("level{}".format(level)):
 					ops_assign_strategies[level] = masked_assign(
 						ref=self.domain.current_infoset_strategies[level],
@@ -793,13 +795,13 @@ class TensorCFRFixedTrunkStrategies:
 		# #  should raise ValueError
 		return feed_dictionary, setup_messages
 
-	def store_final_average_strategies(self, average_infoset_strategies):  # TODO params -> fields
-		print_tensors(self.session, average_infoset_strategies)
+	def store_final_average_strategies(self):
+		print_tensors(self.session, self.average_infoset_strategies)
 		print("Storing average strategies to '{}'...".format(self.log_dir_path))
-		for level in range(len(average_infoset_strategies)):
+		for level in range(len(self.average_infoset_strategies)):
 			np.savetxt(
 				'{}/average_infoset_strategies_lvl{}.csv'.format(self.log_dir_path, level),
-				self.session.run(average_infoset_strategies[level]),
+				self.session.run(self.average_infoset_strategies[level]),
 				delimiter=',',
 			)
 
@@ -813,10 +815,10 @@ class TensorCFRFixedTrunkStrategies:
 			header="IS_id,\trange,\tCFV",
 		)
 
-	def store_after_all_steps(self, average_infoset_strategies, store_strategies):
+	def store_after_all_steps(self, store_strategies):
 		print("###################################\n")
 		if store_strategies:
-			self.store_final_average_strategies(average_infoset_strategies)
+			self.store_final_average_strategies()
 		if self.trunk_depth > 0:
 			self.store_trunk_info()
 
@@ -834,9 +836,6 @@ class TensorCFRFixedTrunkStrategies:
 			self.log_dir_path += "-profiling"
 		log_dir_root = self.log_dir_path
 		cfr_step_op = self.do_cfr_step()
-
-		# tensors to log if quiet is False
-		average_infoset_strategies = self.get_average_infoset_strategies()
 
 		dataset_size = DEFAULT_DATASET_SIZE
 		for datapoint_index in range(dataset_size):
@@ -872,7 +871,7 @@ class TensorCFRFixedTrunkStrategies:
 							)  # save metadata about time and memory for tensorboard
 						else:
 							self.session.run(cfr_step_op)
-					self.store_after_all_steps(average_infoset_strategies, store_strategies)
+					self.store_after_all_steps(store_strategies)
 
 
 if __name__ == '__main__':

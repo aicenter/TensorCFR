@@ -758,6 +758,20 @@ class TensorCFRFixedTrunkStrategies:
 				self.domain.initial_infoset_strategies[level]: initial_strategy_values[level]
 				for level in range(self.domain.acting_depth)
 			}
+		elif method == "random":
+			tf_random_strategies = self.domain.generate_random_strategies()
+			with tf.Session(
+				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+			) as tmp_session:
+				tmp_session.run(tf.global_variables_initializer())
+				np_random_strategies = [
+					tmp_session.run(tf_op)
+					for tf_op in tf_random_strategies
+				]
+			return "Initializing strategies to random distributions...\n", {
+				self.domain.initial_infoset_strategies[level]: np_random_strategies[level]
+				for level in range(self.domain.acting_depth)
+			}
 		else:
 			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
@@ -775,7 +789,7 @@ class TensorCFRFixedTrunkStrategies:
 	def set_up_cfr(self):
 		# TODO extract these lines to a UnitTest
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary()
-		setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="custom")
 		# #  should raise ValueError
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
@@ -793,6 +807,7 @@ class TensorCFRFixedTrunkStrategies:
 		# )
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="invalid")
 		# #  should raise ValueError
+		setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="random")
 		return feed_dictionary, setup_messages
 
 	def store_final_average_strategies(self):

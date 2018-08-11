@@ -805,7 +805,7 @@ class TensorCFRFixedTrunkStrategies:
 				delimiter=',',
 			)
 
-	def store_trunk_info(self):  # TODO params -> fields
+	def store_trunk_info(self):
 		self.session.run(self.assign_avg_strategies_to_current_strategies())
 		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(self.log_dir_path))
 		np.savetxt(

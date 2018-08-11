@@ -26,6 +26,7 @@ class TensorCFRFixedTrunkStrategies:
 			 between `0` to `self.domain.levels`. It defaults to `0` (no trunk).
 		"""
 		self.domain = domain
+		self.session = None
 		with tf.variable_scope("increment_step"):
 			self.increment_cfr_step = tf.assign_add(
 				ref=self.domain.cfr_step,
@@ -114,12 +115,12 @@ class TensorCFRFixedTrunkStrategies:
 			)
 			return flattened_node_cf_strategies
 
-	def show_strategies(self, session):
+	def show_strategies(self):
 		node_strategies = self.get_node_strategies()
 		node_cf_strategies = self.get_node_cf_strategies()
 		for level in range(self.domain.acting_depth):
 			print("########## Level {} ##########".format(level))
-			print_tensors(session, [
+			print_tensors(self.session, [
 				self.domain.node_to_infoset[level],
 				self.domain.current_infoset_strategies[level],
 				node_strategies[level],
@@ -190,8 +191,8 @@ class TensorCFRFixedTrunkStrategies:
 					)
 		return expected_values
 
-	def show_expected_values(self, session):
-		self.domain.print_misc_variables(session=session)
+	def show_expected_values(self):
+		self.domain.print_misc_variables(session=self.session)
 		node_strategies = self.get_node_strategies()
 		expected_values_for_current_player = self.get_expected_values()
 		expected_values_for_player1 = self.get_expected_values(for_player=PLAYER1)
@@ -199,8 +200,8 @@ class TensorCFRFixedTrunkStrategies:
 		for level in reversed(range(self.domain.levels)):
 			print("########## Level {} ##########".format(level))
 			if level < len(node_strategies):
-				print_tensors(session, [node_strategies[level]])
-			print_tensors(session, [
+				print_tensors(self.session, [node_strategies[level]])
+			print_tensors(self.session, [
 				tf.multiply(
 					self.domain.signum_of_current_player,
 					self.domain.utilities[level],
@@ -792,33 +793,32 @@ class TensorCFRFixedTrunkStrategies:
 		# #  should raise ValueError
 		return feed_dictionary, setup_messages
 
-	@staticmethod
-	def store_final_average_strategies(log_dir_path, session, average_infoset_strategies):  # TODO params -> fields
-		print_tensors(session, average_infoset_strategies)
+	def store_final_average_strategies(self, log_dir_path, average_infoset_strategies):  # TODO params -> fields
+		print_tensors(self.session, average_infoset_strategies)
 		print("Storing average strategies to '{}'...".format(log_dir_path))
 		for level in range(len(average_infoset_strategies)):
 			np.savetxt(
 				'{}/average_infoset_strategies_lvl{}.csv'.format(log_dir_path, level),
-				session.run(average_infoset_strategies[level]),
+				self.session.run(average_infoset_strategies[level]),
 				delimiter=',',
 			)
 
-	def store_trunk_info(self, log_dir_path, session):  # TODO params -> fields
-		session.run(self.assign_avg_strategies_to_current_strategies())
+	def store_trunk_info(self, log_dir_path):  # TODO params -> fields
+		self.session.run(self.assign_avg_strategies_to_current_strategies())
 		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(log_dir_path))
 		np.savetxt(
 			'{}/trunk_depth_information_lvl{}.csv'.format(log_dir_path, self.boundary_level),
-			session.run(self.get_trunk_info_to_store()),
+			self.session.run(self.get_trunk_info_to_store()),
 			fmt="%7d,\t%.4f,\t%+.4f",
 			header="IS_id,\trange,\tCFV",
 		)
 
-	def store_after_all_steps(self, session, average_infoset_strategies, log_dir_path, store_strategies):
+	def store_after_all_steps(self, average_infoset_strategies, log_dir_path, store_strategies):
 		print("###################################\n")
 		if store_strategies:
-			self.store_final_average_strategies(log_dir_path, session, average_infoset_strategies)
+			self.store_final_average_strategies(log_dir_path, average_infoset_strategies)
 		if self.trunk_depth > 0:
-			self.store_trunk_info(log_dir_path, session)
+			self.store_trunk_info(log_dir_path)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     store_strategies=False, profiling=False):
@@ -843,8 +843,8 @@ class TensorCFRFixedTrunkStrategies:
 
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-			) as session:
-				session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+			) as self.session:
+				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
 				with tf.summary.FileWriter(log_dir_path, tf.get_default_graph()) as writer:
 					for step in range(total_steps):
@@ -857,9 +857,9 @@ class TensorCFRFixedTrunkStrategies:
 						if profiling:
 							run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
 							metadata = tf.RunMetadata()
-							session.run(cfr_step_op, options=run_options, run_metadata=metadata)
+							self.session.run(cfr_step_op, options=run_options, run_metadata=metadata)
 							tf.profiler.profile(
-								session.graph,
+								self.session.graph,
 								run_meta=metadata,
 								# cmd='op',
 								cmd='scope',
@@ -870,8 +870,8 @@ class TensorCFRFixedTrunkStrategies:
 								"step{}".format(step)
 							)  # save metadata about time and memory for tensorboard
 						else:
-							session.run(cfr_step_op)
-					self.store_after_all_steps(session, average_infoset_strategies, log_dir_path, store_strategies)
+							self.session.run(cfr_step_op)
+					self.store_after_all_steps(average_infoset_strategies, log_dir_path, store_strategies)
 
 
 if __name__ == '__main__':

@@ -50,6 +50,7 @@ class TensorCFRFixedTrunkStrategies:
 			)
 		self.trunk_depth_infoset_cfvs = None
 		self.cfr_parameters = {}
+		self.datapoint_index = None
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -840,13 +841,13 @@ class TensorCFRFixedTrunkStrategies:
 		cfr_step_op = self.do_cfr_step()
 
 		dataset_size = DEFAULT_DATASET_SIZE
-		for datapoint_index in range(dataset_size):
+		for self.datapoint_index in range(dataset_size):
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
 			) as self.session:
 				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
-				self.log_subdirectory = "{}/datapoint_{}".format(self.log_directory, datapoint_index)
+				self.log_subdirectory = "{}/datapoint_{}".format(self.log_directory, self.datapoint_index)
 				with tf.summary.FileWriter(self.log_subdirectory, tf.get_default_graph()) as writer:
 					for step in range(total_steps):
 						"""

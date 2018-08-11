@@ -39,6 +39,7 @@ class TensorCFRFixedTrunkStrategies:
 
 		self.summary_writer = None
 		self.log_directory = None
+		self.log_subdirectory = None
 		self.trunk_depth = trunk_depth
 		self.boundary_level = self.trunk_depth
 		last_level_with_infosets = self.domain.acting_depth - 1
@@ -797,10 +798,10 @@ class TensorCFRFixedTrunkStrategies:
 
 	def store_final_average_strategies(self):
 		print_tensors(self.session, self.average_infoset_strategies)
-		print("Storing average strategies to '{}'...".format(self.log_directory))
+		print("Storing average strategies to '{}'...".format(self.log_subdirectory))
 		for level in range(len(self.average_infoset_strategies)):
 			np.savetxt(
-				'{}/average_infoset_strategies_lvl{}.csv'.format(self.log_directory, level),
+				'{}/average_infoset_strategies_lvl{}.csv'.format(self.log_subdirectory, level),
 				self.session.run(self.average_infoset_strategies[level]),
 				delimiter=',',
 			)
@@ -843,8 +844,8 @@ class TensorCFRFixedTrunkStrategies:
 			) as self.session:
 				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
-				log_subdirectory = "{}/datapoint_{}".format(self.log_directory, datapoint_index)
-				with tf.summary.FileWriter(log_subdirectory, tf.get_default_graph()) as writer:
+				self.log_subdirectory = "{}/datapoint_{}".format(self.log_directory, datapoint_index)
+				with tf.summary.FileWriter(self.log_subdirectory, tf.get_default_graph()) as writer:
 					for step in range(total_steps):
 						"""
 						Profiler gives the Model report with total compute time and memory consumption.

@@ -705,7 +705,10 @@ class TensorCFRFixedTrunkStrategies:
 			)
 		return ranges["combined_players"]
 
-	def get_masked_out_trunk_info_tensors(self):
+	def get_trunk_info_to_store(self):
+		if self.trunk_depth <= 0:
+			return None
+
 		trunk_depth_ranges = self.get_infoset_ranges_at_trunk_depth()
 		trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
 		count_of_infosets = tf.cast(
@@ -734,13 +737,6 @@ class TensorCFRFixedTrunkStrategies:
 			name="masked_out_trunk_info_tensors_lvl{}".format(self.boundary_level)
 		)
 		return masked_out_trunk_info_tensors
-
-	def get_trunk_info_to_store(self):
-		if self.trunk_depth > 0:
-			masked_out_trunk_info_tensors = self.get_masked_out_trunk_info_tensors()
-			return masked_out_trunk_info_tensors
-		else:
-			return None
 
 	def set_up_feed_dictionary(self, method="by-domain", initial_strategy_values=None):
 		if method == "by-domain":

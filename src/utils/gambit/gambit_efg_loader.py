@@ -148,6 +148,7 @@ class GambitEFGLoader:
 		self.number_of_levels = 0
 
 		self.terminal_nodes_cnt = 0
+		# GTLibrary games domain parameters
 
 		# the mapping of IS between `gtlibrary` and `TensorCFR` for computing best response
 		self.information_set_strategy_index = 0
@@ -161,6 +162,7 @@ class GambitEFGLoader:
 				raise NotImplementedFormatException
 
 			self.domain_name = game_header['name']
+			self.domain_parameters = game_header['domain_parameters']
 
 			self.load()
 
@@ -189,17 +191,24 @@ class GambitEFGLoader:
 
 	@staticmethod
 	def parse_gambit_header(input_line):
-		results = re.search(r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" \{(?P<players_dirty>.*)\}',
-		                    input_line)
+		results = re.search(
+			r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" ({(?P<players_dirty>[^}]*)}) ?("(?P<domain_parameters_dirty>.*)")?',
+			input_line.strip()
+		)
 		if results:
 			results_players = re.findall(r'"([^"]+)"', results.group('players_dirty'))
+			if results.group('domain_parameters_dirty') is not None:
+				result_domain_parameters = results.group('domain_parameters_dirty').split()
+			else:
+				result_domain_parameters = list()
 			if results_players is None:
 				raise NotRecognizedPlayersException
 			return_dict = {
 				'format' : results.group('format'),
 				'version': int(results.group('version')),
 				'name'   : results.group('name'),
-				'players': results_players
+				'players': results_players,
+				'domain_parameters': result_domain_parameters
 			}
 			return return_dict
 		else:
@@ -478,6 +487,7 @@ class GambitEFGLoader:
 
 if __name__ == '__main__':
 	domain01_efg = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'doc', 'domain01_via_gambit.efg')
+
 	goofspiel2_efg = os.path.join(
 		os.path.dirname(os.path.abspath(__file__)),
 		'..',
@@ -485,7 +495,7 @@ if __name__ == '__main__':
 		'..',
 		'doc',
 		'goofspiel',
-		'II-GS2.gbt'
+		'II-GS2.efg'
 	)
 
 	gbt_files = [
@@ -495,6 +505,7 @@ if __name__ == '__main__':
 
 	for gbt_file in gbt_files:
 		domain = GambitEFGLoader(gbt_file)
+		print(domain.domain_parameters)
 		print("\n>>>>>>>>>> {} <<<<<<<<<<".format(gbt_file))
 		for level in range(len(domain.actions_per_levels) + 1):
 			print("\n########## Level {} ##########".format(level))

@@ -9,7 +9,7 @@ from src.domains.Domain import Domain
 def get_domain01():
 	return Domain(
 			domain_name="domain01",
-			domain_parameters={},
+			domain_parameters=[],
 			actions_per_levels=d1.actions_per_levels,
 			node_to_infoset=d1.node_to_infoset,
 			node_types=d1.node_types,

@@ -192,19 +192,24 @@ class FlattenedDomain:
 	def get_infoset_acting_players(self):
 		return self.infoset_acting_players
 
-	def generate_random_strategies(self, seed=None):   # TODO generate up to trunk
-		random_weights = [
-			tf.random_uniform(
-				shape=tf.shape(strategy),
+	def generate_random_strategies(self, seed=None, trunk_depth=0):   # TODO generate up to trunk
+		total_size = self.acting_depth
+		trunk_levels = range(trunk_depth)
+
+		random_weights = [None] * total_size
+		mask_of_valid_actions = [None] * total_size
+		normalized_random_weights = [None] * total_size
+		tf_random_strategies = [None] * total_size
+
+		for level in trunk_levels:
+			random_weights[level] = tf.random_uniform(
+				shape=tf.shape(self.initial_infoset_strategies[level]),
 				seed=seed,
 				name="random_weights_lvl{}".format(level)
 			)
-			for level, strategy in enumerate(self.initial_infoset_strategies)
-		]
-		mask_of_valid_actions = [
-			tf.logical_and(
+			mask_of_valid_actions[level] = tf.logical_and(
 				tf.sequence_mask(
-					action_count
+					self.infoset_action_counts[level]
 				),
 				tf.expand_dims(
 					self.infosets_of_non_chance_player[level],
@@ -212,38 +217,34 @@ class FlattenedDomain:
 				),
 				name="mask_of_valid_actions_lvl{}".format(level)
 			)
-			for level, action_count in enumerate(self.infoset_action_counts)
-		]
-		normalized_random_weights = [
-			normalize(
+			normalized_random_weights[level] = normalize(
 				tf.where(
-					condition=mask,
+					condition=mask_of_valid_actions[level],
 					x=random_weights[level],
 					y=tf.zeros_like(random_weights[level]),
 					name="masked_out_random_weights_lvl{}".format(level)
 				),
 				name="normalized_random_weights_lvl{}".format(level)
 			)
-			for level, mask in enumerate(mask_of_valid_actions)
-		]
-		tf_random_strategies = [
-			tf.where(
-				condition=mask_non_chance_players,
+			tf_random_strategies[level] = tf.where(
+				condition=self.infosets_of_non_chance_player[level],
 				x=normalized_random_weights[level],
 				y=self.initial_infoset_strategies[level],    # re-use strategy of the chance player
 				name="random_strategies_lvl{}".format(level)
 			)
-			for level, mask_non_chance_players in enumerate(self.infosets_of_non_chance_player)
-		]
+
 		with tf.Session(
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
 		) as tmp_session:
 			tmp_session.run(tf.global_variables_initializer())
-			np_random_strategies = [
-				tmp_session.run(tf_op)
-				for tf_op in tf_random_strategies
+			np_strategies = [
+				tmp_session.run(
+					tf_random_strategies[level] if level in trunk_levels
+					else self.initial_infoset_strategies[level]
+				)
+				for level in range(total_size)
 			]
-		return np_random_strategies
+		return np_strategies
 
 	def print_misc_variables(self, session):
 		print("########## Misc ##########")
@@ -338,8 +339,12 @@ if __name__ == '__main__':
 		for domain in domains:
 			domain.print_domain(sess)
 			for i in range(2):
-				print("Random strategies #{}:".format(i + 1))
-				strategies = domain.generate_random_strategies(seed=RANDOM_SEED + i)
+				trunk_depth_ = i + 1
+				print("Random strategies #{} (trunk depth {}):".format(i + 1, trunk_depth_))
+				strategies = domain.generate_random_strategies(
+					seed=RANDOM_SEED + i,
+					trunk_depth=trunk_depth_
+				)
 				for level_, strategy_ in enumerate(strategies):
 					print("Level {}".format(level_))
 					pprint(strategy_.tolist(), indent=1, width=140)

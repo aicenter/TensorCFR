@@ -780,30 +780,6 @@ class TensorCFRFixedTrunkStrategies:
 		if not os.path.exists(self.log_directory):
 			os.mkdir(self.log_directory)
 
-	def set_up_cfr(self):
-		# TODO extract these lines to a UnitTest
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary()
-		setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="custom")
-		# #  should raise ValueError
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
-		# 		method="custom",
-		# 		initial_strategy_values=[
-		# 			[[1.0, 0.0]],
-		# 		],
-		# )  # should raise ValueError
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
-		# 		method="custom",
-		# 		initial_strategy_values=[   # on domain `matching_pennies`
-		# 			[[1.0, 0.0]],
-		# 			[[1.0, 0.0]],
-		# 		]
-		# )
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="invalid")
-		# #  should raise ValueError
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="random")
-		return feed_dictionary, setup_messages
-
 	def store_final_average_strategies(self):
 		print_tensors(self.session, self.average_infoset_strategies)
 		print("Storing average strategies to '{}'...".format(self.log_directory))
@@ -837,7 +813,7 @@ class TensorCFRFixedTrunkStrategies:
 		if profiling:
 			self.log_directory += "-profiling"
 		with tf.variable_scope("initialization"):
-			feed_dictionary, setup_messages = self.set_up_cfr()
+			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 			print(setup_messages)
 
 		cfr_step_op = self.do_cfr_step()
@@ -887,7 +863,7 @@ class TensorCFRFixedTrunkStrategies:
 
 		for self.data_id in range(dataset_size):  # TODO place the for-loop inside with-block (session)
 			with tf.variable_scope("initialization"):
-				feed_dictionary, setup_messages = self.set_up_cfr()
+				setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="random")
 				print(setup_messages)
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU

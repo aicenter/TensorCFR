@@ -12,7 +12,7 @@ from src.domains.Domain import Domain
 def get_domain_hunger_games():
 	return Domain(
 		domain_name="hunger_games",
-		domain_parameters={},
+		domain_parameters=[],
 		actions_per_levels=hg.actions_per_levels,
 		node_to_infoset=hg.node_to_infoset,
 		node_types=hg.node_types,

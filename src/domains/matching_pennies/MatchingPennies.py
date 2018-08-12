@@ -9,7 +9,7 @@ from src.domains.Domain import Domain
 def get_domain_matching_pennies():
 	return Domain(
 		domain_name="matching_pennies",
-		domain_parameters={},
+		domain_parameters=[],
 		actions_per_levels=mp.actions_per_levels,
 		node_to_infoset=mp.node_to_infoset,
 		node_types=mp.node_types,

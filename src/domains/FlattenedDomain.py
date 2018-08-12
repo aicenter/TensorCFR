@@ -192,11 +192,11 @@ class FlattenedDomain:
 	def get_infoset_acting_players(self):
 		return self.infoset_acting_players
 
-	def generate_random_strategies(self):   # TODO generate up to trunk
+	def generate_random_strategies(self, seed=None):   # TODO generate up to trunk
 		random_weights = [
 			tf.random_uniform(
 				shape=tf.shape(strategy),
-				seed=RANDOM_SEED,
+				seed=seed,
 				name="random_weights_lvl{}".format(level)
 			)
 			for level, strategy in enumerate(self.initial_infoset_strategies)
@@ -240,7 +240,7 @@ class FlattenedDomain:
 		) as tmp_session:
 			tmp_session.run(tf.global_variables_initializer())
 			np_random_strategies = [
-				tmp_session.run(tf_op)    # TODO set up `seed` as parameter (default None)
+				tmp_session.run(tf_op)
 				for tf_op in tf_random_strategies
 			]
 		return np_random_strategies

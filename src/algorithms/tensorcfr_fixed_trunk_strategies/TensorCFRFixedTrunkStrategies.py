@@ -39,7 +39,6 @@ class TensorCFRFixedTrunkStrategies:
 
 		self.summary_writer = None
 		self.log_directory = None
-		self.log_subdirectory = None
 		self.trunk_depth = trunk_depth
 		self.boundary_level = self.trunk_depth
 		last_level_with_infosets = self.domain.acting_depth - 1
@@ -784,7 +783,7 @@ class TensorCFRFixedTrunkStrategies:
 	def set_up_cfr(self):
 		# TODO extract these lines to a UnitTest
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary()
-		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
+		setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="custom")
 		# #  should raise ValueError
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(
@@ -802,15 +801,15 @@ class TensorCFRFixedTrunkStrategies:
 		# )
 		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="invalid")
 		# #  should raise ValueError
-		setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="random")
+		# setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="random")
 		return feed_dictionary, setup_messages
 
 	def store_final_average_strategies(self):
 		print_tensors(self.session, self.average_infoset_strategies)
-		print("Storing average strategies to '{}'...".format(self.log_subdirectory))
+		print("Storing average strategies to '{}'...".format(self.log_directory))
 		for level in range(len(self.average_infoset_strategies)):
 			np.savetxt(
-				'{}/average_infoset_strategies_lvl{}.csv'.format(self.log_subdirectory, level),
+				'{}/average_infoset_strategies_lvl{}.csv'.format(self.log_directory, level),
 				self.session.run(self.average_infoset_strategies[level]),
 				delimiter=',',
 			)
@@ -837,50 +836,44 @@ class TensorCFRFixedTrunkStrategies:
 		self.set_log_directory()
 		if profiling:
 			self.log_directory += "-profiling"
+		with tf.variable_scope("initialization"):
+			feed_dictionary, setup_messages = self.set_up_cfr()
+			print(setup_messages)
+
 		cfr_step_op = self.do_cfr_step()
 
-		dataset_size = DEFAULT_DATASET_SIZE   # TODO set as paramater with a default value
-		for self.data_id in range(dataset_size):  # TODO place the for-loop inside with-block (session)
-			with tf.variable_scope("initialization"):
-				feed_dictionary, setup_messages = self.set_up_cfr()
-				print(setup_messages)
+		with tf.Session(
+			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+		) as self.session:
+			self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()) as writer:
+				for step in range(total_steps):
+					"""
+					Profiler gives the Model report with total compute time and memory consumption.
+					- Add CUDA libs to LD_LIBRARY_PATH: https://github.com/tensorflow/tensorflow/issues/8830
+					- For `cmd` see:
+					https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
+					"""
+					if profiling:
+						run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+						metadata = tf.RunMetadata()
+						self.session.run(cfr_step_op, options=run_options, run_metadata=metadata)
+						tf.profiler.profile(
+							self.session.graph,
+							run_meta=metadata,
+							# cmd='op',
+							cmd='scope',
+							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
+						)
+						writer.add_run_metadata(
+							metadata,
+							"step{}".format(step)
+						)  # save metadata about time and memory for tensorboard
+					else:
+						self.session.run(cfr_step_op)
 
-			with tf.Session(
-				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-			) as self.session:
-				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-
-				self.log_subdirectory = "{}/data_id_{}".format(self.log_directory, self.data_id)
-				with tf.summary.FileWriter(self.log_subdirectory, tf.get_default_graph()) as writer:
-					for step in range(total_steps):
-						"""
-						Profiler gives the Model report with total compute time and memory consumption.
-						- Add CUDA libs to LD_LIBRARY_PATH: https://github.com/tensorflow/tensorflow/issues/8830
-						- For `cmd` see:
-						https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
-						"""
-						if profiling:
-							run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-							metadata = tf.RunMetadata()
-							self.session.run(cfr_step_op, options=run_options, run_metadata=metadata)
-							tf.profiler.profile(
-								self.session.graph,
-								run_meta=metadata,
-								# cmd='op',
-								cmd='scope',
-								options=tf.profiler.ProfileOptionBuilder.time_and_memory()
-							)
-							writer.add_run_metadata(
-								metadata,
-								"step{}".format(step)
-							)  # save metadata about time and memory for tensorboard
-						else:
-							self.session.run(cfr_step_op)
-
-					if storing_strategies:
-						self.store_final_average_strategies()
-					if self.trunk_depth > 0:
-						self.store_trunk_info()
+				if storing_strategies:
+					self.store_final_average_strategies()
 
 	def generate_dataset_at_trunk_depth(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_size=DEFAULT_DATASET_SIZE):

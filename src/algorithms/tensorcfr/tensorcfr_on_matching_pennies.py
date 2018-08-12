@@ -20,4 +20,4 @@ if __name__ == '__main__':
 	utils.gtlibrary.export_average_strategies_to_json(
 		domain,
 		average_strategies,
-		os.path.join(PROJECT_ROOT, 'matching_pennies_average_strategy.json'))
+		'matching_pennies_average_strategy')

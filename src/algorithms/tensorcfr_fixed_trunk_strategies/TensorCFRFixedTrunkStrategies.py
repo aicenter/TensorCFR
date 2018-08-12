@@ -759,15 +759,7 @@ class TensorCFRFixedTrunkStrategies:
 				for level in range(self.domain.acting_depth)
 			}
 		elif method == "random":
-			tf_random_strategies = self.domain.generate_random_strategies()
-			with tf.Session(
-				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-			) as tmp_session:
-				tmp_session.run(tf.global_variables_initializer())
-				np_random_strategies = [
-					tmp_session.run(tf_op)
-					for tf_op in tf_random_strategies
-				]
+			np_random_strategies = self.domain.generate_random_strategies()
 			return "Initializing strategies to random distributions...\n", {
 				self.domain.initial_infoset_strategies[level]: np_random_strategies[level]
 				for level in range(self.domain.acting_depth)
@@ -854,7 +846,7 @@ class TensorCFRFixedTrunkStrategies:
 		cfr_step_op = self.do_cfr_step()
 
 		dataset_size = DEFAULT_DATASET_SIZE   # TODO set as paramater with a default value
-		for self.data_id in range(dataset_size):
+		for self.data_id in range(dataset_size):  # TODO place the for-loop inside with-block (session)
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
 			) as self.session:

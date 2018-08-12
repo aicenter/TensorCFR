@@ -338,8 +338,8 @@ if __name__ == '__main__':
 		sess.run(tf.global_variables_initializer())
 		for domain in domains:
 			domain.print_domain(sess)
-			for i in range(2):
-				trunk_depth_ = i + 1
+			for i in range(3):
+				trunk_depth_ = i
 				print("Random strategies #{} (trunk depth {}):".format(i + 1, trunk_depth_))
 				strategies = domain.generate_random_strategies(
 					seed=RANDOM_SEED + i,

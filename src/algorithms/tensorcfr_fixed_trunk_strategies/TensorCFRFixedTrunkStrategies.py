@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE, RANDOM_SEED
+	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
@@ -739,7 +739,7 @@ class TensorCFRFixedTrunkStrategies:
 		)
 		return masked_out_trunk_info_tensors
 
-	def set_up_feed_dictionary(self, method="by-domain", initial_strategy_values=None):
+	def set_up_feed_dictionary(self, method="by-domain", initial_strategy_values=None, seed=None):
 		if method == "by-domain":
 			# TODO: @janrudolf Fix here
 			# if self.domain.initial_infoset_strategies has nans use uniform methods
@@ -759,7 +759,7 @@ class TensorCFRFixedTrunkStrategies:
 			}
 		elif method == "random":
 			np_random_strategies = self.domain.generate_random_strategies(
-				# seed=RANDOM_SEED + self.data_id,
+				seed=seed,
 				trunk_depth=self.trunk_depth,
 			)
 			return "Initializing strategies to random distributions...\n", {
@@ -852,7 +852,7 @@ class TensorCFRFixedTrunkStrategies:
 					self.store_final_average_strategies()
 
 	def generate_dataset_at_trunk_depth(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                    dataset_size=DEFAULT_DATASET_SIZE):
+	                                    dataset_size=DEFAULT_DATASET_SIZE, seed=None):
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,
@@ -862,9 +862,17 @@ class TensorCFRFixedTrunkStrategies:
 		cfr_step_op = self.do_cfr_step()
 
 		for self.data_id in range(dataset_size):  # TODO place the for-loop inside with-block (session)
+			if seed is not None:
+				seed_of_iteration = seed + self.data_id
+			else:
+				seed_of_iteration = None
 			with tf.variable_scope("initialization"):
-				setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="random")
+				setup_messages, feed_dictionary = self.set_up_feed_dictionary(
+					method="random",
+					seed=seed_of_iteration
+				)
 				print(setup_messages)
+
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
 			) as self.session:

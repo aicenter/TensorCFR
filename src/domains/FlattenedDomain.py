@@ -340,6 +340,6 @@ if __name__ == '__main__':
 			for i in range(2):
 				print("Random strategies #{}:".format(i + 1))
 				strategies = domain.generate_random_strategies(seed=RANDOM_SEED + i)
-				for level, strategy in enumerate(strategies):
-					print("Level {}".format(level))
-					pprint(strategy.tolist(), indent=1, width=140)
+				for level_, strategy_ in enumerate(strategies):
+					print("Level {}".format(level_))
+					pprint(strategy_.tolist(), indent=1, width=140)

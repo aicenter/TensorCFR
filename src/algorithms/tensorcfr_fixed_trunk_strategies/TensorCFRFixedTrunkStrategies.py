@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE, RANDOM_SEED
+	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
@@ -759,7 +759,10 @@ class TensorCFRFixedTrunkStrategies:
 				for level in range(self.domain.acting_depth)
 			}
 		elif method == "random":
-			np_random_strategies = self.domain.generate_random_strategies()
+			np_random_strategies = self.domain.generate_random_strategies(
+				# seed=RANDOM_SEED + self.data_id,
+				trunk_depth=self.trunk_depth,
+			)
 			return "Initializing strategies to random distributions...\n", {
 				self.domain.initial_infoset_strategies[level]: np_random_strategies[level]
 				for level in range(self.domain.acting_depth)

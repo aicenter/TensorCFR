@@ -15,7 +15,7 @@ def get_domain_goofspiel3():
 			'..',
 			'doc',
 			'goofspiel',
-			'II-GS3.gbt'
+			'II-GS3.efg'
 	)
 	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="II-GS3_via_gambit")
 

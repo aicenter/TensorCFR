@@ -336,6 +336,8 @@ if __name__ == '__main__':
 	domains = handcoded_domains + domains_from_gambit
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
+		np.set_printoptions(precision=5)
+
 		for domain in domains:
 			domain.print_domain(sess)
 			for i in range(3):
@@ -347,4 +349,4 @@ if __name__ == '__main__':
 				)
 				for level_, strategy_ in enumerate(strategies):
 					print("Level {}".format(level_))
-					pprint(strategy_.tolist(), indent=1, width=140)
+					print(strategy_)

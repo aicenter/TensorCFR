@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE
+	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE, RANDOM_SEED
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
@@ -827,13 +827,6 @@ class TensorCFRFixedTrunkStrategies:
 			header="data_id,\t IS_id,\t range,\t CFV" if self.data_id == 0 else "",
 		)
 
-	def store_after_all_steps(self, storing_strategies):
-		print("###################################\n")
-		if storing_strategies:
-			self.store_final_average_strategies()
-		if self.trunk_depth > 0:
-			self.store_trunk_info()
-
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     storing_strategies=False, profiling=False):
 		self.cfr_parameters = {
@@ -883,7 +876,11 @@ class TensorCFRFixedTrunkStrategies:
 							)  # save metadata about time and memory for tensorboard
 						else:
 							self.session.run(cfr_step_op)
-					self.store_after_all_steps(storing_strategies)
+
+					if storing_strategies:
+						self.store_final_average_strategies()
+					if self.trunk_depth > 0:
+						self.store_trunk_info()
 
 
 if __name__ == '__main__':

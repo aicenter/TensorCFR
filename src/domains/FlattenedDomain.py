@@ -226,7 +226,7 @@ class FlattenedDomain:
 			)
 			for level, mask in enumerate(mask_of_valid_actions)
 		]
-		random_strategies = [
+		tf_random_strategies = [
 			tf.where(
 				condition=mask_non_chance_players,
 				x=normalized_random_weights[level],
@@ -235,7 +235,15 @@ class FlattenedDomain:
 			)
 			for level, mask_non_chance_players in enumerate(self.infosets_of_non_chance_player)
 		]
-		return random_strategies
+		with tf.Session(
+			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+		) as tmp_session:
+			tmp_session.run(tf.global_variables_initializer())
+			np_random_strategies = [
+				tmp_session.run(tf_op)    # TODO set up `seed` as parameter (default None)
+				for tf_op in tf_random_strategies
+			]
+		return np_random_strategies
 
 	def print_misc_variables(self, session):
 		print("########## Misc ##########")

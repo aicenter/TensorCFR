@@ -778,8 +778,8 @@ class TensorCFRFixedTrunkStrategies:
 				("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
 				 for key, value in sorted(self.cfr_parameters.items()))).replace("/", "-")
 		)
-		if not os.path.exists("logs"):
-			os.mkdir("logs")
+		if not os.path.exists(self.log_directory):
+			os.mkdir(self.log_directory)
 
 	def set_up_cfr(self):
 		# TODO extract these lines to a UnitTest

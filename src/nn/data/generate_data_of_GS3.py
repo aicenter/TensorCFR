@@ -1,7 +1,11 @@
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
+from src.commons.constants import RANDOM_SEED
 from src.domains.available_domains import get_domain_by_name
 
 if __name__ == '__main__':
 	domain = get_domain_by_name("II-GS3_gambit_flattened")
 	tensorcfr = TensorCFRFixedTrunkStrategies(domain, trunk_depth=4)
-	tensorcfr.generate_dataset_at_trunk_depth(dataset_size=5)
+	tensorcfr.generate_dataset_at_trunk_depth(
+		dataset_size=5,
+		seed=RANDOM_SEED
+	)

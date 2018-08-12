@@ -75,13 +75,13 @@ class Parser:
 
 	def __parse_header_line(self, input_line):
 		results = re.search(
-			r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" ({(?P<players_dirty>[^}]*)}) ?({(?P<domain_parameters_dirty>.*)})?',
+			r'^(?P<format>EFG|NFG) (?P<version>\d) R "(?P<name>[^"]+)" ({(?P<players_dirty>[^}]*)}) ?("(?P<domain_parameters_dirty>.*)")?',
 			input_line.strip()
 		)
 		if results:
 			results_players = re.findall(r'"([^"]+)"', results.group('players_dirty'))
 			if results.group('domain_parameters_dirty') is not None:
-				result_domain_parameters = re.findall(r'"([^"]+)"', results.group('domain_parameters_dirty'))
+				result_domain_parameters = results.group('domain_parameters_dirty').split()
 			else:
 				result_domain_parameters = list()
 			if results_players is None:
@@ -227,7 +227,7 @@ if __name__ == "__main__":
 	)
 
 	cnt = 1
-	with Parser(iigs_efg) as p:
+	with Parser(domain01_gambit_efg) as p:
 		print(p.header)
 		for node in p.next_node():
 			print("-----------------------------")

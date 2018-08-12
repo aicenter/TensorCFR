@@ -1,4 +1,4 @@
-EFG 2 R "class cz.agents.gtlibrary.domain.goofspiel.IIGoofSpielGameStateclass cz.agents.gtlibrary.domain.goofspiel.GoofSpielExpander" {"Pl0" "Pl1"} { "IIGS" "1" "2" "true" "true" }
+EFG 2 R "class cz.agents.gtlibrary.domain.goofspiel.IIGoofSpielGameStateclass cz.agents.gtlibrary.domain.goofspiel.GoofSpielExpander" {"Pl0" "Pl1"} "IIGS 1 2 true true 13"
 c "{Pl0=Pl0: [], Pl1=Pl1: [], Pl2=Pl2: []}" 1 "" { "[13, Pl2]" 1.0 } 0
 p "{Pl0=Pl0: [], Pl1=Pl1: [], Pl2=Pl2: [[13, Pl2]]}" 1 1 "" { "[1, Pl0]" "[2, Pl0]" "[3, Pl0]" "[4, Pl0]" "[5, Pl0]" "[6, Pl0]" "[7, Pl0]" "[8, Pl0]" "[9, Pl0]" "[10, Pl0]" "[11, Pl0]" "[12, Pl0]" "[13, Pl0]" } 0
 p "{Pl0=Pl0: [[1, Pl0]], Pl1=Pl1: [], Pl2=Pl2: [[13, Pl2]]}" 2 2 "" { "[1, Pl1]" "[2, Pl1]" "[3, Pl1]" "[4, Pl1]" "[5, Pl1]" "[6, Pl1]" "[7, Pl1]" "[8, Pl1]" "[9, Pl1]" "[10, Pl1]" "[11, Pl1]" "[12, Pl1]" "[13, Pl1]" } 0

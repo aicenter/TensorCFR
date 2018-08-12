@@ -882,6 +882,29 @@ class TensorCFRFixedTrunkStrategies:
 					if self.trunk_depth > 0:
 						self.store_trunk_info()
 
+	def generate_dataset_at_trunk_depth(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
+	                                    dataset_size=DEFAULT_DATASET_SIZE):
+		self.cfr_parameters = {
+			"total_steps"    : total_steps,
+			"averaging_delay": delay,
+			"trunk_depth"    : self.trunk_depth,
+		}
+		self.set_log_directory()
+		cfr_step_op = self.do_cfr_step()
+
+		for self.data_id in range(dataset_size):  # TODO place the for-loop inside with-block (session)
+			with tf.variable_scope("initialization"):
+				feed_dictionary, setup_messages = self.set_up_cfr()
+				print(setup_messages)
+			with tf.Session(
+				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+			) as self.session:
+				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+				for _ in range(total_steps):
+					self.session.run(cfr_step_op)
+				if self.trunk_depth > 0:
+					self.store_trunk_info()
+
 
 if __name__ == '__main__':
 	# domain_ = get_domain_by_name("flattened_hunger_games")

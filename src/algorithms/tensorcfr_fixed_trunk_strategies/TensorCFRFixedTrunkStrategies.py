@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE
+	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE, RANDOM_SEED
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
@@ -833,8 +833,6 @@ class TensorCFRFixedTrunkStrategies:
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     storing_strategies=False, profiling=False):
-		with tf.variable_scope("initialization"):
-			feed_dictionary, setup_messages = self.set_up_cfr()
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,
@@ -847,6 +845,10 @@ class TensorCFRFixedTrunkStrategies:
 
 		dataset_size = DEFAULT_DATASET_SIZE   # TODO set as paramater with a default value
 		for self.data_id in range(dataset_size):  # TODO place the for-loop inside with-block (session)
+			with tf.variable_scope("initialization"):
+				feed_dictionary, setup_messages = self.set_up_cfr()
+				print(setup_messages)
+
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
 			) as self.session:

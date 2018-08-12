@@ -283,6 +283,6 @@ if __name__ == '__main__':
 		"hunger_games_2"
 	]
 	for efg_file, domain_name in zip(efg_files, domain_names):
-		domain = GambitLoader(efg_file, domain_name)
+		GambitLoader(efg_file, domain_name).show()
 		print("___________________________________\n")
 

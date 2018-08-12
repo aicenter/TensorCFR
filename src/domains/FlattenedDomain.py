@@ -196,7 +196,7 @@ class FlattenedDomain:
 		random_weights = [
 			tf.random_uniform(
 				shape=tf.shape(strategy),
-				# seed=RANDOM_SEED,
+				seed=RANDOM_SEED,
 				name="random_weights_lvl{}".format(level)
 			)
 			for level, strategy in enumerate(self.initial_infoset_strategies)

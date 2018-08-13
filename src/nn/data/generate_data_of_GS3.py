@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
+
 import os
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
-from src.commons.constants import SEED_FOR_TESTING
 from src.domains.available_domains import get_domain_by_name
 
 if __name__ == '__main__':

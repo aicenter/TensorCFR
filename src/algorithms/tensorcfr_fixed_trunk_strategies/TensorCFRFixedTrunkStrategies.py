@@ -872,7 +872,8 @@ class TensorCFRFixedTrunkStrategies:
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 		cfr_step_op = self.do_cfr_step()
 
-		for self.data_id in range(dataset_size):  # TODO place the for-loop inside with-block (session)
+		for self.data_id in range(dataset_size):
+			# TODO place the for-loop inside the with-block below in order to keep a single session
 			if seed is not None:
 				seed_of_iteration = seed + self.data_id
 			else:

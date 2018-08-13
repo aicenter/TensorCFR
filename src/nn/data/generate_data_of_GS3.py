@@ -1,7 +1,7 @@
 import os
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
-from src.commons.constants import RANDOM_SEED
+from src.commons.constants import SEED_FOR_TESTING
 from src.domains.available_domains import get_domain_by_name
 
 if __name__ == '__main__':
@@ -14,5 +14,5 @@ if __name__ == '__main__':
 	tensorcfr.generate_dataset_at_trunk_depth(
 		dataset_size=5,
 		dataset_directory=script_directory + "/out",
-		seed=RANDOM_SEED
+		seed=SEED_FOR_TESTING
 	)

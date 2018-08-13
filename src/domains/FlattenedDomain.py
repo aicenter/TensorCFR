@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE, \
-	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT, RANDOM_SEED
+	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT, SEED_FOR_TESTING
 from src.utils.cfr_utils import get_parents_from_action_counts
 from src.utils.gambit_flattened_domains.loader import GambitLoader
 from src.utils.tensor_utils import print_tensors, normalize
@@ -344,7 +344,7 @@ if __name__ == '__main__':
 				trunk_depth_ = i
 				print("Random strategies #{} (trunk depth {}):".format(i + 1, trunk_depth_))
 				strategies = domain.generate_random_strategies(
-					seed=RANDOM_SEED + i,
+					seed=SEED_FOR_TESTING + i,
 					trunk_depth=trunk_depth_
 				)
 				for level_, strategy_ in enumerate(strategies):

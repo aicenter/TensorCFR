@@ -13,12 +13,10 @@ if __name__ == '__main__':
 		trunk_depth=10
 	)
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	current_timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-	print(current_timestamp)
+	print(get_current_timestamp())
 	tensorcfr.generate_dataset_at_trunk_depth(
 		dataset_size=2,
 		dataset_directory=script_directory + "/out",
 		seed=SEED_FOR_TESTING
 	)
-	current_timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-	print(current_timestamp)
+	print(get_current_timestamp())

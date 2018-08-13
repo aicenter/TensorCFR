@@ -790,10 +790,15 @@ class TensorCFRFixedTrunkStrategies:
 				delimiter=',',
 			)
 
-	def store_trunk_info(self):
+	def store_trunk_info(self, dataset_directory=""):
 		self.session.run(self.assign_avg_strategies_to_current_strategies())
-		csv_filename = '{}/dataset_lvl{}.csv'.format(self.log_directory, self.boundary_level)
-		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(csv_filename))
+
+		csv_directory = '{}/{}/'.format(dataset_directory, self.log_directory)
+		if not os.path.exists(csv_directory):
+			os.mkdir(csv_directory)
+		csv_filename = '{}/dataset_lvl{}.csv'.format(csv_directory, self.boundary_level)
+		print("Storing trunk-boundary reach probabilities and cf values to '{}'...".format(csv_filename))   # TODO prefix [Data #data_id]
+
 		csv_file = open(csv_filename, 'ab')   # binary mode for appending
 		np.savetxt(
 			csv_file,
@@ -852,7 +857,7 @@ class TensorCFRFixedTrunkStrategies:
 					self.store_final_average_strategies()
 
 	def generate_dataset_at_trunk_depth(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                    dataset_size=DEFAULT_DATASET_SIZE, seed=None):
+	                                    dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="", seed=None):
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,
@@ -880,7 +885,7 @@ class TensorCFRFixedTrunkStrategies:
 				for _ in range(total_steps):
 					self.session.run(cfr_step_op)
 				if self.trunk_depth > 0:
-					self.store_trunk_info()
+					self.store_trunk_info(dataset_directory=dataset_directory)
 
 
 if __name__ == '__main__':

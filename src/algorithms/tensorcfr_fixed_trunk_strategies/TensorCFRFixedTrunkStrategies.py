@@ -867,7 +867,6 @@ class TensorCFRFixedTrunkStrategies:
 			"trunk_depth"    : self.trunk_depth,
 		}
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
-		self.set_log_directory()
 		cfr_step_op = self.do_cfr_step()
 
 		for self.data_id in range(dataset_size):  # TODO place the for-loop inside with-block (session)

@@ -813,6 +813,25 @@ class TensorCFRFixedTrunkStrategies:
 			header="data_id,\t IS_id,\t range,\t CFV" if self.data_id == 0 else "",
 		)
 
+	def store_trunk_info_via_nodes(self, dataset_basename, dataset_directory=""):
+		self.session.run(self.assign_avg_strategies_to_current_strategies())
+
+		if not os.path.exists(dataset_directory):
+			os.mkdir(dataset_directory)
+		csv_filename = '{}/dataset_{}.csv'.format(dataset_directory, dataset_basename)
+		print("[data_id #{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
+			self.data_id,
+			csv_filename
+		))
+
+		csv_file = open(csv_filename, 'ab')   # binary mode for appending
+		np.savetxt(
+			csv_file,
+			self.session.run(self.get_trunk_info_to_store()),
+			fmt="%7d,\t %7d,\t %.4f,\t %+.4f",
+			header="data_id,\t IS_id,\t range,\t CFV" if self.data_id == 0 else "",
+		)
+
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     storing_strategies=False, profiling=False):
 		self.cfr_parameters = {
@@ -893,7 +912,7 @@ class TensorCFRFixedTrunkStrategies:
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(cfr_step_op)
 				if self.trunk_depth > 0:
-					self.store_trunk_info(
+					self.store_trunk_info_via_nodes(
 						dataset_basename=basename_from_cfr_parameters,
 						dataset_directory=dataset_directory
 					)

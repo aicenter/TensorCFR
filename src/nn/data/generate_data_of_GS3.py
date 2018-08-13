@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import os
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies

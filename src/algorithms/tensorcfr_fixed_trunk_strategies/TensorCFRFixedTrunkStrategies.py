@@ -709,7 +709,6 @@ class TensorCFRFixedTrunkStrategies:
 			return None
 
 		trunk_depth_ranges = self.get_infoset_ranges_at_trunk_depth()
-		trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
 		count_of_infosets = tf.cast(
 			tf.shape(trunk_depth_ranges)[0],
 			dtype=FLOAT_DTYPE
@@ -727,7 +726,6 @@ class TensorCFRFixedTrunkStrategies:
 				data_id_column,
 				trunk_depth_infoset_indices,
 				trunk_depth_ranges,
-				trunk_depth_infoset_cfvs
 			],
 			axis=-1,
 			name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
@@ -828,8 +826,8 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			self.session.run(self.get_trunk_info_to_store()),
-			fmt="%7d,\t %7d,\t %.4f,\t %+.4f",
-			header="data_id,\t IS_id,\t range,\t CFV" if self.data_id == 0 else "",
+			fmt="%7d,\t %7d,\t %.4f",
+			header="data_id,\t IS_id,\t range" if self.data_id == 0 else "",
 		)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

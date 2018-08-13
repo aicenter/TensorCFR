@@ -192,7 +192,7 @@ class FlattenedDomain:
 	def get_infoset_acting_players(self):
 		return self.infoset_acting_players
 
-	def generate_random_strategies(self, seed=None, trunk_depth=0):   # TODO generate up to trunk
+	def generate_random_strategies(self, seed=None, trunk_depth=0):
 		total_size = self.acting_depth
 		trunk_levels = range(trunk_depth)
 

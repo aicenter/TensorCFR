@@ -769,7 +769,7 @@ class TensorCFRFixedTrunkStrategies:
 		else:
 			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
-	def set_log_directory(self):
+	def get_basename_from_cfr_parameters(self):
 		basename_from_cfr_parameters = "{}-{}-{}".format(
 			self.domain.domain_name,
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
@@ -777,7 +777,10 @@ class TensorCFRFixedTrunkStrategies:
 				("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
 				 for key, value in sorted(self.cfr_parameters.items()))).replace("/", "-")
 		)
+		return basename_from_cfr_parameters
 
+	def set_log_directory(self):
+		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 		self.log_directory = "logs/{}".format(
 			basename_from_cfr_parameters
 		)

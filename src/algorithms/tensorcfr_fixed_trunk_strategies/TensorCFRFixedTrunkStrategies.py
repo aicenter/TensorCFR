@@ -800,7 +800,10 @@ class TensorCFRFixedTrunkStrategies:
 		if not os.path.exists(dataset_directory):
 			os.mkdir(dataset_directory)
 		csv_filename = '{}/dataset_{}.csv'.format(dataset_directory, dataset_basename)
-		print("Generating dataset at the trunk-boundary and storing to '{}'...".format(csv_filename))   # TODO prefix [Data #data_id]
+		print("[data_id #{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
+			self.data_id,
+			csv_filename
+		))
 
 		csv_file = open(csv_filename, 'ab')   # binary mode for appending
 		np.savetxt(
@@ -879,7 +882,7 @@ class TensorCFRFixedTrunkStrategies:
 					method="random",
 					seed=seed_of_iteration
 				)
-				print(setup_messages)
+				print("[data_id #{}] {}".format(self.data_id, setup_messages))
 
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU

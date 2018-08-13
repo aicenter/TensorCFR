@@ -780,10 +780,7 @@ class TensorCFRFixedTrunkStrategies:
 		return basename_from_cfr_parameters
 
 	def set_log_directory(self):
-		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
-		self.log_directory = "logs/{}".format(
-			basename_from_cfr_parameters
-		)
+		self.log_directory = "logs/" + self.get_basename_from_cfr_parameters()
 		if not os.path.exists(self.log_directory):
 			os.mkdir(self.log_directory)
 

@@ -890,6 +890,7 @@ class TensorCFRFixedTrunkStrategies:
 			) as self.session:
 				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 				for _ in range(total_steps):
+					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(cfr_step_op)
 				if self.trunk_depth > 0:
 					self.store_trunk_info(

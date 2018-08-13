@@ -136,7 +136,7 @@ class TensorCFRFixedTrunkStrategies:
 
 	def get_expected_values(self, for_player=None):
 		"""
-		Compute expected values of nodes using the top-down tree traversal.
+		Compute expected values of nodes using the bottom-up tree traversal.
 
 		:param for_player: The player for which the expected values are computed. These values are usually computed for the
 		 updating player when counterfactual values are computed. Therefore, by default the expected values are computed for

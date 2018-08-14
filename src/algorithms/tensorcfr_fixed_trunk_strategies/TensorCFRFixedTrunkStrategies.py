@@ -849,7 +849,7 @@ class TensorCFRFixedTrunkStrategies:
 			header="data_id,\t IS_id,\t range,\t CFV" if self.data_id == 0 else "",
 		)
 
-	def store_trunk_info_via_nodes(self, dataset_basename, dataset_directory=""):
+	def store_trunk_info_of_nodes(self, dataset_basename, dataset_directory=""):
 		self.session.run(self.assign_avg_strategies_to_current_strategies())
 
 		if not os.path.exists(dataset_directory):
@@ -953,7 +953,7 @@ class TensorCFRFixedTrunkStrategies:
 						dataset_basename=basename_from_cfr_parameters,
 						dataset_directory=dataset_directory
 					)
-					self.store_trunk_info_via_nodes(    # TODO fix why CSV file does not store everything
+					self.store_trunk_info_of_nodes(    # TODO fix why CSV file does not store everything
 						dataset_basename=basename_from_cfr_parameters,
 						dataset_directory=dataset_directory
 					)

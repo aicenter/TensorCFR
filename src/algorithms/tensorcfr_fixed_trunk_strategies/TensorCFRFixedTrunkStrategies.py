@@ -914,7 +914,11 @@ class TensorCFRFixedTrunkStrategies:
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(cfr_step_op)
 				if self.trunk_depth > 0:
-					self.store_trunk_info_via_nodes(
+					self.store_trunk_info(
+						dataset_basename=basename_from_cfr_parameters,
+						dataset_directory=dataset_directory
+					)
+					self.store_trunk_info_via_nodes(    # TODO fix why CSV file does not store everything
 						dataset_basename=basename_from_cfr_parameters,
 						dataset_directory=dataset_directory
 					)

@@ -21,4 +21,4 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	utils.gtlibrary.export_average_strategies_to_json(
 		domain,
 		average_strategies,
-		"GS3_average_strategies")
+		"GS6_average_strategies")

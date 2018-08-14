@@ -739,6 +739,41 @@ class TensorCFRFixedTrunkStrategies:
 		)
 		return masked_out_trunk_info_tensors
 
+	def get_trunk_info_of_nodes(self):
+		if self.trunk_depth <= 0:
+			return None
+
+		trunk_depth_ranges = self.get_infoset_ranges_at_trunk_depth()
+		trunk_depth_infoset_cfvs = self.get_infoset_cfvs_at_trunk_depth()
+		count_of_infosets = tf.cast(
+			tf.shape(trunk_depth_ranges)[0],
+			dtype=FLOAT_DTYPE
+		)
+		trunk_depth_infoset_indices = tf.expand_dims(
+			tf.range(
+				count_of_infosets
+			),
+			axis=-1,
+			name="infoset_indices_lvl{}".format(self.boundary_level)
+		)
+		data_id_column = self.data_id * tf.ones_like(trunk_depth_infoset_indices)
+		concat_trunk_info_tensors = tf.concat(
+			[
+				data_id_column,
+				trunk_depth_infoset_indices,
+				trunk_depth_ranges,
+				trunk_depth_infoset_cfvs
+			],
+			axis=-1,
+			name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
+		)
+		masked_out_trunk_info_tensors = tf.boolean_mask(
+			concat_trunk_info_tensors,
+			mask=self.domain.infosets_of_non_chance_player[self.boundary_level],
+			name="masked_out_trunk_info_tensors_lvl{}".format(self.boundary_level)
+		)
+		return masked_out_trunk_info_tensors
+
 	def set_up_feed_dictionary(self, method="by-domain", initial_strategy_values=None, seed=None):
 		if method == "by-domain":
 			# TODO: @janrudolf Fix here

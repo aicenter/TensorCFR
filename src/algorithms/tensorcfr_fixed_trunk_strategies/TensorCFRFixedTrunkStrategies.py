@@ -861,12 +861,12 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')   # binary mode for appending
-		print_tensors(self.session, [self.get_trunk_info_to_store()]),
+		print_tensors(self.session, [self.get_trunk_info_of_nodes()]),
 		np.savetxt(
 			csv_file,
-			self.session.run(self.get_trunk_info_to_store()),
+			self.session.run(self.get_trunk_info_of_nodes()),
 			fmt="%7d,\t %7d",
-			header="data_id,\t IS_id" if self.data_id == 0 else "",
+			header="data_id,\t node_to_infoset" if self.data_id == 0 else "",
 		)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

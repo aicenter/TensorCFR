@@ -806,6 +806,7 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')   # binary mode for appending
+		print_tensors(self.session, [self.get_trunk_info_to_store()]),
 		np.savetxt(
 			csv_file,
 			self.session.run(self.get_trunk_info_to_store()),
@@ -825,6 +826,7 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')   # binary mode for appending
+		print_tensors(self.session, [self.get_trunk_info_to_store()]),
 		np.savetxt(
 			csv_file,
 			self.session.run(self.get_trunk_info_to_store()),

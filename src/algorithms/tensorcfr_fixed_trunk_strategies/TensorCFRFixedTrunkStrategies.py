@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
-	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE
+	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE, ALL_PLAYERS
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
@@ -228,6 +228,8 @@ class TensorCFRFixedTrunkStrategies:
 		:return: The reach probabilities of nodes based on `current_infoset_strategies`.
 		"""
 		node_cf_strategies = self.get_node_cf_strategies(for_player=for_player)
+		if for_player == ALL_PLAYERS:
+			node_cf_strategies = self.get_node_strategies()
 		with tf.variable_scope("nodal_reach_probabilities"):
 			nodal_reach_probabilities = [None] * self.domain.levels
 			nodal_reach_probabilities[0] = tf.expand_dims(

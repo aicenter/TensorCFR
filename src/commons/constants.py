@@ -17,6 +17,7 @@ PLAYER1 = 1
 PLAYER2 = 2
 CHANCE_PLAYER = 0
 NO_ACTING_PLAYER = -1  # dummy acting-player value in nodes without acting players, i.e. terminal and imaginary nodes
+ALL_PLAYERS = -2  # dummy acting-player value to denote request for all players (see `get_nodal_reach_probabilities()`)
 
 # test-error tolerances
 LARGE_ERROR_TOLERANCE = 0.0001

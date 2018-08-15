@@ -31,11 +31,13 @@ class TestTopDownReachProbabilities(tf.test.TestCase):
 			self.assertNDArrayNear(reach_probabilities[1], expected_output, self.error_tolerance)
 
 	def test_level_2_via_dense_tensorcfr(self):
-		expected_output = np.array([[0.5, 0.5, 0.5],
-									[0.025, 0.225, 0],
-									[0.02, 0.08, 0],
-									[0.02, 0.08, 0],
-									[0.015, 0.015, 0.015]])
+		expected_output = np.array([
+			[0.5, 0.5, 0.5],
+			[0.025, 0.225, 0],
+			[0.02, 0.08, 0],
+			[0.02, 0.08, 0],
+			[0.015, 0.015, 0.015]
+		])
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
 			tensorcfr = TensorCFR(self.domain01)
@@ -43,25 +45,33 @@ class TestTopDownReachProbabilities(tf.test.TestCase):
 			self.assertNDArrayNear(reach_probabilities[2], expected_output, self.error_tolerance)
 
 	def test_level_3_via_dense_tensorcfr(self):
-		expected_output = np.array([[[0.5, 0.5],
-									 [0.35, 0.15],
-									 [0, 0]],
-
-									[[0.025, 0.025],
-									 [0.225, 0.225],
-									 [0, 0]],
-
-									[[0.01, 0.01],
-									 [0.008, 0.072],
-									 [0, 0]],
-
-									[[0.01, 0.01],
-									 [0.008, 0.072],
-									 [0, 0]],
-
-									[[0, 0],
-									 [0.015, 0.015],
-									 [0.006, 0.009]]])
+		expected_output = np.array([
+			[
+				[0.5, 0.5],
+				[0.35, 0.15],
+				[0, 0]
+			],
+			[
+				[0.025, 0.025],
+				[0.225, 0.225],
+				[0, 0]
+			],
+			[
+				[0.01, 0.01],
+				[0.008, 0.072],
+				[0, 0]
+			],
+			[
+				[0.01, 0.01],
+				[0.008, 0.072],
+				[0, 0]
+			],
+			[
+				[0, 0],
+				[0.015, 0.015],
+				[0.006, 0.009]
+			]
+		])
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
 			tensorcfr = TensorCFR(self.domain01)

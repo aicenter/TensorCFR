@@ -854,7 +854,7 @@ class TensorCFRFixedTrunkStrategies:
 
 		if not os.path.exists(dataset_directory):
 			os.mkdir(dataset_directory)
-		csv_filename = '{}/dataset_{}.csv'.format(dataset_directory, dataset_basename)
+		csv_filename = '{}/nodal_dataset_{}.csv'.format(dataset_directory, dataset_basename)
 		print("[data_id #{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
 			self.data_id,
 			csv_filename

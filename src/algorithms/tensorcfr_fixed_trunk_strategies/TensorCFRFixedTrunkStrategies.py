@@ -293,11 +293,15 @@ class TensorCFRFixedTrunkStrategies:
 
 	def show_reach_probabilities(self, session):
 		node_cf_strategies = self.get_node_cf_strategies()
-		nodal_reach_probabilities = self.get_nodal_reach_probabilities()
+		nodal_reach_probabilities = {}
+		for player in [PLAYER1, PLAYER2, ALL_PLAYERS]:
+			nodal_reach_probabilities[player] = self.get_nodal_reach_probabilities(for_player=player)
 		infoset_reach_probabilities = self.get_infoset_reach_probabilities()
 		for level in range(self.domain.levels):
 			print("########## Level {} ##########".format(level))
-			print_tensors(session, [nodal_reach_probabilities[level]])
+			for player in [PLAYER1, PLAYER2, ALL_PLAYERS]:
+				print_tensors(session, [nodal_reach_probabilities[player][level]])
+			print("___________________________________\n")
 			if level < self.domain.levels - 1:
 				print_tensors(session, [
 					self.domain.node_to_infoset[level],

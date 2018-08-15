@@ -756,12 +756,20 @@ class TensorCFRFixedTrunkStrategies:
 			axis=-1,
 			name="infoset_indices_lvl{}".format(self.boundary_level)
 		)
-		# node_to_infoset = self.domain.node_to_infoset[self.boundary_level]
+		node_to_infoset = tf.expand_dims(
+			tf.cast(
+				self.domain.node_to_infoset[self.boundary_level],
+				dtype=FLOAT_DTYPE
+			),
+			axis=-1,
+			name="node_to_infoset_lvl{}".format(self.boundary_level)
+		)
 		# data_id_column = self.data_id * tf.ones_like(node_to_infoset)
 		data_id_column = self.data_id * tf.ones_like(trunk_depth_infoset_indices)
 		concat_trunk_info_tensors = tf.concat(
 			[
 				data_id_column,
+				node_to_infoset,
 				trunk_depth_infoset_indices,
 				# trunk_depth_ranges,
 				# trunk_depth_infoset_cfvs,
@@ -863,8 +871,8 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			self.session.run(self.get_trunk_info_of_nodes()),
-			fmt="%7d,\t %7d",
-			header="data_id,\t trunk_depth_infoset_indices" if self.data_id == 0 else "",
+			fmt="%7d,\t %7d,\t %7d",
+			header="data_id,\t node_to_infoset,\t trunk_depth_infoset_indices" if self.data_id == 0 else "",
 		)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

@@ -86,7 +86,7 @@ class TestTopDownReachProbabilities(tf.test.TestCase):
 			reach_probabilities = sess.run(tensorcfr.get_nodal_reach_probabilities(for_player=ALL_PLAYERS))
 			self.assertNDArrayNear(reach_probabilities[0], expected_output, self.error_tolerance)
 
-	def test_level_1_via_tensorcfr_fixed_trunk(self):
+	def test_level_1_via_tensorcfr_fixed_trunk_for_all_players(self):
 		expected_output = np.array([0.5, 0.25, 0.1, 0.1, 0.05])
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
@@ -94,7 +94,7 @@ class TestTopDownReachProbabilities(tf.test.TestCase):
 			reach_probabilities = sess.run(tensorcfr.get_nodal_reach_probabilities(for_player=ALL_PLAYERS))
 			self.assertNDArrayNear(reach_probabilities[1], expected_output, self.error_tolerance)
 
-	def test_level_2_via_tensorcfr_fixed_trunk(self):
+	def test_level_2_via_tensorcfr_fixed_trunk_for_all_players(self):
 		expected_output = np.array([
 			0.16666667, 0.16666667, 0.16666667,
 			0.125, 0.125,

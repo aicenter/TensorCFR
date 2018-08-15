@@ -704,6 +704,32 @@ class TensorCFRFixedTrunkStrategies:
 			)
 		return ranges["combined_players"]
 
+	def get_nodal_reaches_at_trunk_depth(self):  # TODO unittest
+		"""
+		Get nodal reach probabilities at the bottom of the trunk (at `self.boundary_level`).
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
+		ranges = {}
+		if self.trunk_depth > 0:
+			ranges = {}
+			for player in [PLAYER1, PLAYER2]:
+				opponent = PLAYER2 if player == PLAYER1 else PLAYER1
+				range_of_the_player = self.get_infoset_reach_probabilities(for_player=opponent)
+				ranges[player] = tf.expand_dims(
+					range_of_the_player[self.boundary_level],
+					axis=-1
+				)
+
+			ranges["combined_players"] = self.combine_infoset_values_based_on_owners(
+				tensor_of_player1=ranges[PLAYER1],
+				tensor_of_player2=ranges[PLAYER2],
+				level=self.boundary_level,
+				name="ranges"
+			)
+		return ranges["combined_players"]
+
 	def get_trunk_info_to_store(self):
 		if self.trunk_depth <= 0:
 			return None

@@ -228,9 +228,14 @@ class TensorCFRFixedTrunkStrategies:
 		:return: The reach probabilities of nodes based on `current_infoset_strategies`.
 		"""
 		node_cf_strategies = self.get_node_cf_strategies(for_player=for_player)
-		if for_player == ALL_PLAYERS:
+		if for_player is None:
+			player_name = "current_player"
+		elif for_player == ALL_PLAYERS:
 			node_cf_strategies = self.get_node_strategies()
-		with tf.variable_scope("nodal_reach_probabilities"):
+			player_name = "all_players"
+		else:
+			player_name = "player{}".format(for_player)
+		with tf.variable_scope("nodal_reach_probabilities_for_{}".format(player_name)):
 			nodal_reach_probabilities = [None] * self.domain.levels
 			nodal_reach_probabilities[0] = tf.expand_dims(
 				self.domain.reach_probability_of_root_node,

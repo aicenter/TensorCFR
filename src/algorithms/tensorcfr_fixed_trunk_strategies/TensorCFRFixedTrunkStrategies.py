@@ -752,9 +752,19 @@ class TensorCFRFixedTrunkStrategies:
 			name="node_to_infoset_lvl{}".format(self.boundary_level)
 		)
 		data_id_column = self.data_id * tf.ones_like(node_to_infoset)
+		count_of_nodes = len(self.domain.action_counts[self.boundary_level])
+		nodal_indices = tf.expand_dims(
+			tf.range(
+				count_of_nodes,
+				dtype=FLOAT_DTYPE
+			),
+			axis=-1,
+			name="nodal_indices_lvl{}".format(self.boundary_level)
+		)
 		concat_trunk_info_tensors = tf.concat(
 			[
 				data_id_column,
+				nodal_indices,
 				node_to_infoset,
 			],
 			axis=-1,
@@ -853,8 +863,8 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			self.session.run(self.get_trunk_info_of_nodes()),
-			fmt="%7d,\t %7d",
-			header="data_id,\t node_to_infoset" if self.data_id == 0 else "",
+			fmt="%7d,\t %7d,\t %7d",
+			header="data_id,\t nodal_indices,\t node_to_infoset" if self.data_id == 0 else "",
 		)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

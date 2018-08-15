@@ -876,7 +876,7 @@ class TensorCFRFixedTrunkStrategies:
 			csv_filename
 		))
 
-		csv_file = open(csv_filename, 'ab')   # binary mode for appending
+		csv_file = open(csv_filename, 'ab')  # binary mode for appending
 		print_tensors(self.session, [self.get_trunk_info_to_store()]),
 		np.savetxt(
 			csv_file,
@@ -896,7 +896,7 @@ class TensorCFRFixedTrunkStrategies:
 			csv_filename
 		))
 
-		csv_file = open(csv_filename, 'ab')   # binary mode for appending
+		csv_file = open(csv_filename, 'ab')  # binary mode for appending
 		print_tensors(self.session, [self.get_trunk_info_of_nodes()]),
 		np.savetxt(
 			csv_file,
@@ -989,7 +989,7 @@ class TensorCFRFixedTrunkStrategies:
 					# 	dataset_basename=basename_from_cfr_parameters,
 					# 	dataset_directory=dataset_directory
 					# )
-					self.store_trunk_info_of_nodes(    # TODO fix why CSV file does not store everything
+					self.store_trunk_info_of_nodes(  # TODO fix why CSV file does not store everything
 						dataset_basename=basename_from_cfr_parameters,
 						dataset_directory=dataset_directory
 					)

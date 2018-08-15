@@ -680,7 +680,7 @@ class TensorCFRFixedTrunkStrategies:
 
 	def get_infoset_ranges_at_trunk_depth(self):  # TODO unittest
 		"""
-		Get infoset reach probabilities at the bottom of the trunk.
+		Get infoset reach probabilities at the bottom of the trunk (at `self.boundary_level`).
 
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).

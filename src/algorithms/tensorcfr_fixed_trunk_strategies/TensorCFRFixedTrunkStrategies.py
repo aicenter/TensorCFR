@@ -779,10 +779,14 @@ class TensorCFRFixedTrunkStrategies:
 		if self.trunk_depth_nodal_values is None and self.trunk_depth > 0:
 			self.trunk_depth_nodal_values = {}
 			for player in [PLAYER1, PLAYER2]:
-				_, infoset_cf_values = self.get_infoset_cf_values(for_player=player)
-				self.trunk_depth_nodal_values[player] = infoset_cf_values[self.boundary_level]
+				expected_values = self.get_expected_values(for_player=player)
+				inner_nodal_expected_values = self.domain.mask_out_values_in_terminal_nodes(
+					expected_values,
+					name="expected_values"
+				)
+				self.trunk_depth_nodal_values[player] = inner_nodal_expected_values[self.boundary_level]
 
-			self.trunk_depth_nodal_values["combined_players"] = self.combine_infoset_values_based_on_owners(
+			self.trunk_depth_nodal_values["combined_players"] = self.combine_inner_nodal_values_based_on_owners(
 				tensor_of_player1=self.trunk_depth_nodal_values[PLAYER1],
 				tensor_of_player2=self.trunk_depth_nodal_values[PLAYER2],
 				level=self.boundary_level

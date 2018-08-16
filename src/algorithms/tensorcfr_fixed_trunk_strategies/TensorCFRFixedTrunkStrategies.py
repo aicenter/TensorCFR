@@ -687,25 +687,25 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		mask_of_acting_players = {}
+		inner_nodal_mask_of_acting_players = {}
 		for player in [PLAYER1, PLAYER2]:
-			mask_of_acting_players[player] = tf.equal(
-				self.domain.infoset_acting_players[level],
+			inner_nodal_mask_of_acting_players[player] = tf.equal(
+				self.domain.inner_nodal_acting_players[level],
 				player,
-				name="mask_of_acting_player{}_lvl{}".format(player, level)
+				name="nodal_mask_of_acting_player{}_lvl{}".format(player, level)
 			)
-		default_values_at_chance_infosets = tf.fill(
+		default_values_at_chance_nodes = tf.fill(
 			dims=tf.shape(tensor_of_player1),
 			value=np.nan,
-			name="{}_at_chance_infosets".format(name)
+			name="{}_at_chance_nodes".format(name)
 		)
 		return tf.where(
-			condition=mask_of_acting_players[PLAYER1],
+			condition=inner_nodal_mask_of_acting_players[PLAYER1],
 			x=tensor_of_player1,
 			y=tf.where(
-				condition=mask_of_acting_players[PLAYER2],
+				condition=inner_nodal_mask_of_acting_players[PLAYER2],
 				x=tensor_of_player2,
-				y=default_values_at_chance_infosets
+				y=default_values_at_chance_nodes
 			),
 			name="{}_lvl{}_based_on_owners".format(name, level)
 		)

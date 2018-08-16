@@ -729,6 +729,26 @@ class TensorCFRFixedTrunkStrategies:
 		else:
 			raise ValueError('Trunk depth has to be positive to get nodal reaches.')
 
+	def get_nodal_expected_values_at_trunk_depth(self):  # TODO unittest
+		"""
+		Get nodal expected values at the bottom of the trunk (at `self.boundary_level`).
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
+		if self.trunk_depth_infoset_cfvs is None and self.trunk_depth > 0:
+			self.trunk_depth_infoset_cfvs = {}
+			for player in [PLAYER1, PLAYER2]:
+				_, infoset_cf_values = self.get_infoset_cf_values(for_player=player)
+				self.trunk_depth_infoset_cfvs[player] = infoset_cf_values[self.boundary_level]
+
+			self.trunk_depth_infoset_cfvs["combined_players"] = self.combine_infoset_values_based_on_owners(
+				tensor_of_player1=self.trunk_depth_infoset_cfvs[PLAYER1],
+				tensor_of_player2=self.trunk_depth_infoset_cfvs[PLAYER2],
+				level=self.boundary_level
+			)
+		return self.trunk_depth_infoset_cfvs["combined_players"]
+
 	def get_trunk_info_to_store(self):
 		if self.trunk_depth <= 0:
 			return None

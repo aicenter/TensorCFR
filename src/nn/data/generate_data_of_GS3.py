@@ -13,8 +13,7 @@ if __name__ == '__main__':
 	)
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	tensorcfr.generate_dataset_at_trunk_depth(
-		dataset_size=2,
-		# dataset_size=DEFAULT_DATASET_SIZE,
+		dataset_size=3,
 		dataset_directory=script_directory + "/out",
 		seed=SEED_FOR_TESTING
 	)

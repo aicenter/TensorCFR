@@ -671,12 +671,13 @@ class TensorCFRFixedTrunkStrategies:
 			name="{}_lvl{}_based_on_owners".format(name, level)
 		)
 
-	def combine_nodal_values_based_on_owners(self, tensor_of_player1, tensor_of_player2, level, name="nodal_values"):
+	def combine_inner_nodal_values_based_on_owners(self, tensor_of_player1, tensor_of_player2, level,
+	                                               name="inner_nodal_values"):
 		"""
-		Combine `tensor_of_player1` and `tensor_of_player2` that correspond to some nodal-related values at level `level`.
+		Combine `tensor_of_player1` and `tensor_of_player2` that correspond to some inner-nodal-related values at `level`.
 
 		Use values of `tensor_of_player1` for `PLAYER1`'s nodes, values of `tensor_of_player2` for `PLAYER2`'s nodes,
-		 `np.nan` otherwise (which includes chance nodes and terminal nodes).
+		 `np.nan` in case of chance nodes (terminal nodes are considered to be excluded from `tensor_of_player*`).
 
 		:param tensor_of_player1: A tensor of nodal values for `PLAYER1`.
 		:param tensor_of_player2: A tensor of nodal values for `PLAYER2`.

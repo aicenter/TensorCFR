@@ -723,24 +723,11 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		reaches = {}
 		if self.trunk_depth > 0:
-			reaches = {}
-			for player in [PLAYER1, PLAYER2]:
-				opponent = PLAYER2 if player == PLAYER1 else PLAYER1
-				range_of_the_player = self.get_infoset_reach_probabilities(for_player=opponent)
-				reaches[player] = tf.expand_dims(
-					range_of_the_player[self.boundary_level],
-					axis=-1
-				)
-
-			reaches["combined_players"] = self.combine_infoset_values_based_on_owners(
-				tensor_of_player1=reaches[PLAYER1],
-				tensor_of_player2=reaches[PLAYER2],
-				level=self.boundary_level,
-				name="reaches"
-			)
-		return reaches["combined_players"]
+			nodal_reaches_for_all_players = self.get_nodal_reach_probabilities(for_player=ALL_PLAYERS)
+			return nodal_reaches_for_all_players[self.boundary_level]
+		else:
+			raise ValueError('Trunk depth has to be positive to get nodal reaches.')
 
 	def get_trunk_info_to_store(self):
 		if self.trunk_depth <= 0:

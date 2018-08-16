@@ -855,6 +855,11 @@ class TensorCFRFixedTrunkStrategies:
 			axis=-1,
 			name="nodal_reaches_for_all_players_lvl{}".format(self.boundary_level)
 		)
+		nodal_expected_values = tf.expand_dims(
+			self.get_nodal_expected_values_at_trunk_depth(),
+			axis=-1,
+			name="nodal_expected_values_lvl{}".format(self.boundary_level)
+		)
 
 		concat_trunk_info_tensors = tf.concat(
 			[
@@ -862,6 +867,7 @@ class TensorCFRFixedTrunkStrategies:
 				nodal_indices,
 				node_to_infoset,
 				nodal_reaches_for_all_players,
+				nodal_expected_values
 			],
 			axis=-1,
 			name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
@@ -955,12 +961,14 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending
-		print_tensors(self.session, [self.get_trunk_info_of_nodes()]),
+		trunk_info_of_nodes = self.get_trunk_info_of_nodes()
+		print_tensors(self.session, [trunk_info_of_nodes]),
 		np.savetxt(
 			csv_file,
-			self.session.run(self.get_trunk_info_of_nodes()),
-			fmt="%7d,\t %7d,\t %7d,\t %+.6f",
-			header="data_id,\t nodal_indices,\t node_to_infoset,\t nodal_reaches" if self.data_id == 0 else "",
+			self.session.run(trunk_info_of_nodes),
+			fmt="%7d,\t %7d,\t %7d,\t %+.6f,\t %+.6f",
+			header="data_id,\t nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
+			else "",
 		)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

@@ -718,7 +718,7 @@ class TensorCFRFixedTrunkStrategies:
 
 	def get_nodal_reaches_at_trunk_depth(self):  # TODO unittest
 		"""
-		Get nodal reach probabilities at the bottom of the trunk (at `self.boundary_level`).
+		Get nodal reach probabilities of all players at the bottom of the trunk (at `self.boundary_level`).
 
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).

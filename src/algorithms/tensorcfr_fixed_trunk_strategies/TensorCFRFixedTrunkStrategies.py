@@ -776,7 +776,10 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		if self.trunk_depth_nodal_values is None and self.trunk_depth > 0:
+		# TODO rename to `trunk_depth_nodal_expected_values`
+		if self.trunk_depth_nodal_values is not None and self.trunk_depth_nodal_values["combined_players"] is not None:
+			return self.trunk_depth_nodal_values["combined_players"]
+		elif self.trunk_depth > 0:
 			self.trunk_depth_nodal_values = {}
 			for player in [PLAYER1, PLAYER2]:
 				expected_values = self.get_expected_values(for_player=player)

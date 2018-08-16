@@ -786,11 +786,18 @@ class TensorCFRFixedTrunkStrategies:
 			axis=-1,
 			name="nodal_indices_lvl{}".format(self.boundary_level)
 		)
+		nodal_reaches_for_all_players = tf.expand_dims(
+			self.get_nodal_reaches_at_trunk_depth(),
+			axis=-1,
+			name="nodal_reaches_for_all_players_lvl{}".format(self.boundary_level)
+		)
+
 		concat_trunk_info_tensors = tf.concat(
 			[
 				data_id_column,
 				nodal_indices,
 				node_to_infoset,
+				nodal_reaches_for_all_players,
 			],
 			axis=-1,
 			name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
@@ -888,8 +895,8 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			self.session.run(self.get_trunk_info_of_nodes()),
-			fmt="%7d,\t %7d,\t %7d",
-			header="data_id,\t nodal_indices,\t node_to_infoset" if self.data_id == 0 else "",
+			fmt="%7d,\t %7d,\t %7d,\t %+.6f",
+			header="data_id,\t nodal_indices,\t node_to_infoset,\t nodal_reaches" if self.data_id == 0 else "",
 		)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

@@ -673,13 +673,13 @@ class TensorCFRFixedTrunkStrategies:
 
 	def combine_nodal_values_based_on_owners(self, tensor_of_player1, tensor_of_player2, level, name="nodal_values"):
 		"""
-		Combine `tensor_of_player1` and `tensor_of_player2` that correspond to some infoset-related values at level `level`.
+		Combine `tensor_of_player1` and `tensor_of_player2` that correspond to some nodal-related values at level `level`.
 
-		Use values of `tensor_of_player1` for `PLAYER1`'s infosets, values of `tensor_of_player2` for `PLAYER2`'s infosets,
-		 `np.nan` otherwise.
+		Use values of `tensor_of_player1` for `PLAYER1`'s nodes, values of `tensor_of_player2` for `PLAYER2`'s nodes,
+		 `np.nan` otherwise (which includes chance nodes and terminal nodes).
 
-		:param tensor_of_player1: A tensor of infoset values for `PLAYER1`.
-		:param tensor_of_player2: A tensor of infoset values for `PLAYER2`.
+		:param tensor_of_player1: A tensor of nodal values for `PLAYER1`.
+		:param tensor_of_player2: A tensor of nodal values for `PLAYER2`.
 		:param level: The tree level for which `tensor_of_player1` and `tensor_of_player2` are defined.
 		:param name: A string used for naming tensors.
 

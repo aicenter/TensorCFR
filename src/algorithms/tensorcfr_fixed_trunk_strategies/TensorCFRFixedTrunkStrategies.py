@@ -791,7 +791,9 @@ class TensorCFRFixedTrunkStrategies:
 				tensor_of_player2=self.trunk_depth_nodal_values[PLAYER2],
 				level=self.boundary_level
 			)
-		return self.trunk_depth_nodal_values["combined_players"]
+			return self.trunk_depth_nodal_values["combined_players"]
+		else:
+			raise ValueError('Trunk depth has to be positive to get nodal values.')
 
 	def get_trunk_info_to_store(self):
 		if self.trunk_depth <= 0:

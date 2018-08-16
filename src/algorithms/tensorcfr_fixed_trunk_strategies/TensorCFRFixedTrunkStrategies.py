@@ -767,7 +767,7 @@ class TensorCFRFixedTrunkStrategies:
 			nodal_reaches_for_all_players = self.get_nodal_reach_probabilities(for_player=ALL_PLAYERS)
 			return nodal_reaches_for_all_players[self.boundary_level]
 		else:
-			raise ValueError('Trunk depth has to be positive to get nodal reaches.')
+			raise ValueError('Trunk depth {} has to be positive to get nodal reaches.'.format(self.trunk_depth))
 
 	def get_nodal_expected_values_at_trunk_depth(self):  # TODO unittest
 		"""
@@ -793,7 +793,7 @@ class TensorCFRFixedTrunkStrategies:
 			)
 			return self.trunk_depth_nodal_values["combined_players"]
 		else:
-			raise ValueError('Trunk depth has to be positive to get nodal values.')
+			raise ValueError('Trunk depth {} has to be positive to get nodal values.'.format(self.trunk_depth))
 
 	def get_trunk_info_to_store(self):
 		if self.trunk_depth <= 0:

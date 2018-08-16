@@ -48,7 +48,7 @@ class TensorCFRFixedTrunkStrategies:
 				last_level_with_infosets
 			)
 		self.trunk_depth_infoset_cfvs = None
-		self.trunk_depth_nodal_values = None
+		self.trunk_depth_nodal_expected_values = None
 		self.cfr_parameters = {}
 		self.data_id = None
 
@@ -776,25 +776,24 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		# TODO rename to `trunk_depth_nodal_expected_values`
-		if self.trunk_depth_nodal_values is not None and self.trunk_depth_nodal_values["combined_players"] is not None:
-			return self.trunk_depth_nodal_values["combined_players"]
+		if self.trunk_depth_nodal_expected_values is not None and self.trunk_depth_nodal_expected_values["combined_players"] is not None:
+			return self.trunk_depth_nodal_expected_values["combined_players"]
 		elif self.trunk_depth > 0:
-			self.trunk_depth_nodal_values = {}
+			self.trunk_depth_nodal_expected_values = {}
 			for player in [PLAYER1, PLAYER2]:
 				expected_values = self.get_expected_values(for_player=player)
 				inner_nodal_expected_values = self.domain.mask_out_values_in_terminal_nodes(
 					expected_values,
 					name="expected_values"
 				)
-				self.trunk_depth_nodal_values[player] = inner_nodal_expected_values[self.boundary_level]
+				self.trunk_depth_nodal_expected_values[player] = inner_nodal_expected_values[self.boundary_level]
 
-			self.trunk_depth_nodal_values["combined_players"] = self.combine_inner_nodal_values_based_on_owners(
-				tensor_of_player1=self.trunk_depth_nodal_values[PLAYER1],
-				tensor_of_player2=self.trunk_depth_nodal_values[PLAYER2],
+			self.trunk_depth_nodal_expected_values["combined_players"] = self.combine_inner_nodal_values_based_on_owners(
+				tensor_of_player1=self.trunk_depth_nodal_expected_values[PLAYER1],
+				tensor_of_player2=self.trunk_depth_nodal_expected_values[PLAYER2],
 				level=self.boundary_level
 			)
-			return self.trunk_depth_nodal_values["combined_players"]
+			return self.trunk_depth_nodal_expected_values["combined_players"]
 		else:
 			raise ValueError('Trunk depth {} has to be positive to get nodal values.'.format(self.trunk_depth))
 

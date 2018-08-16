@@ -671,7 +671,7 @@ class TensorCFRFixedTrunkStrategies:
 			name="{}_lvl{}_based_on_owners".format(name, level)
 		)
 
-	def combine_nodal_values_based_on_owners(self, tensor_of_player1, tensor_of_player2, level, name="infoset_cf_values"):
+	def combine_nodal_values_based_on_owners(self, tensor_of_player1, tensor_of_player2, level, name="nodal_values"):
 		"""
 		Combine `tensor_of_player1` and `tensor_of_player2` that correspond to some infoset-related values at level `level`.
 

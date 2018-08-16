@@ -764,8 +764,11 @@ class TensorCFRFixedTrunkStrategies:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
 		if self.trunk_depth > 0:
-			nodal_reaches_for_all_players = self.get_nodal_reach_probabilities(for_player=ALL_PLAYERS)
-			return nodal_reaches_for_all_players[self.boundary_level]
+			inner_nodal_reaches_for_all_players = self.domain.mask_out_values_in_terminal_nodes(
+				self.get_nodal_reach_probabilities(for_player=ALL_PLAYERS),
+				name="nodal_reaches"
+			)
+			return inner_nodal_reaches_for_all_players[self.boundary_level]
 		else:
 			raise ValueError('Trunk depth {} has to be positive to get nodal reaches.'.format(self.trunk_depth))
 
@@ -860,7 +863,7 @@ class TensorCFRFixedTrunkStrategies:
 		nodal_reaches_for_all_players = tf.expand_dims(
 			self.get_nodal_reaches_at_trunk_depth(),
 			axis=-1,
-			name="nodal_reaches_for_all_players_lvl{}".format(self.boundary_level)
+			name="inner_nodal_reaches_for_all_players_lvl{}".format(self.boundary_level)
 		)
 		nodal_expected_values = tf.expand_dims(
 			self.get_nodal_expected_values_at_trunk_depth(),

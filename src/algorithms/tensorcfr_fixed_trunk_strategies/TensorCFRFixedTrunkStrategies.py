@@ -227,9 +227,9 @@ class TensorCFRFixedTrunkStrategies:
 			`current_updating_player` by default.
 		:return: The reach probabilities of nodes based on `current_infoset_strategies`.
 		"""
-		node_cf_strategies = self.get_node_cf_strategies(for_player=for_player)
+		nodal_strategies = self.get_node_cf_strategies(for_player=for_player)
 		if for_player == ALL_PLAYERS:
-			node_cf_strategies = self.get_node_strategies()
+			nodal_strategies = self.get_node_strategies()
 			player_name = "all_players"
 		elif for_player in [PLAYER1, PLAYER2]:
 			player_name = "player{}".format(for_player)
@@ -249,7 +249,7 @@ class TensorCFRFixedTrunkStrategies:
 						indices=self.domain.parents[level],
 						name="children_reach_probabilities_lvl{}".format(level)
 					),
-					node_cf_strategies[level],
+					nodal_strategies[level],
 					name="nodal_reach_probabilities_lvl{}".format(level)
 				)
 			return nodal_reach_probabilities

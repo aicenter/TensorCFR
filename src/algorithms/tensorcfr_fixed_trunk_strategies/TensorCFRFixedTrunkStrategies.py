@@ -858,7 +858,7 @@ class TensorCFRFixedTrunkStrategies:
 		nodal_expected_values = tf.expand_dims(
 			self.get_nodal_expected_values_at_trunk_depth(),
 			axis=-1,
-			name="nodal_expected_values_lvl{}".format(self.boundary_level)
+			name="inner_nodal_expected_values_lvl{}".format(self.boundary_level)
 		)
 
 		concat_trunk_info_tensors = tf.concat(

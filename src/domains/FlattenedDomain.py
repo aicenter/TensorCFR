@@ -68,6 +68,14 @@ class FlattenedDomain:
 				)
 				for level in range(self.acting_depth)
 			]
+			self.inner_nodal_acting_players = [
+				tf.gather(
+					params=self.infoset_acting_players[level],
+					indices=inner_node_to_infoset,
+					name="inner_nodal_acting_players_lvl{}".format(level)
+				)
+				for level, inner_node_to_infoset in enumerate(self.inner_node_to_infoset)
+			]
 			action_counts_of_inner_nodes = self.mask_out_values_in_terminal_nodes(
 				self.action_counts,
 				name="action_counts"
@@ -200,6 +208,9 @@ class FlattenedDomain:
 	def get_infoset_acting_players(self):
 		return self.infoset_acting_players
 
+	def get_nodal_acting_players(self):
+		return self.inner_nodal_acting_players
+
 	def generate_random_strategies(self, seed=None, trunk_depth=0):
 		total_size = self.acting_depth
 		trunk_levels = range(trunk_depth)
@@ -284,6 +295,7 @@ class FlattenedDomain:
 				print_tensors(session, [
 					self.node_to_infoset[level],
 					self.infoset_acting_players[level],
+					self.inner_nodal_acting_players[level],
 					self.infosets_of_non_chance_player[level],
 					self.infoset_action_counts[level],
 					self.initial_infoset_strategies[level],

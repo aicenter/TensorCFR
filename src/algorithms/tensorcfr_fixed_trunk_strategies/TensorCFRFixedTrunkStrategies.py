@@ -866,12 +866,12 @@ class TensorCFRFixedTrunkStrategies:
 			axis=-1,
 			name="inner_nodal_indices_lvl{}".format(self.boundary_level)
 		)
-		nodal_reaches_for_all_players = tf.expand_dims(
+		inner_nodal_reaches_for_all_players = tf.expand_dims(
 			self.get_nodal_reaches_at_trunk_depth(),
 			axis=-1,
 			name="inner_nodal_reaches_for_all_players_lvl{}".format(self.boundary_level)
 		)
-		nodal_expected_values = tf.expand_dims(
+		inner_nodal_expected_values = tf.expand_dims(
 			self.get_nodal_expected_values_at_trunk_depth(),
 			axis=-1,
 			name="inner_nodal_expected_values_lvl{}".format(self.boundary_level)
@@ -882,8 +882,8 @@ class TensorCFRFixedTrunkStrategies:
 				data_id_column,
 				inner_nodal_indices,
 				inner_node_to_infoset,
-				nodal_reaches_for_all_players,
-				nodal_expected_values
+				inner_nodal_reaches_for_all_players,
+				inner_nodal_expected_values
 			],
 			axis=-1,
 			name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)

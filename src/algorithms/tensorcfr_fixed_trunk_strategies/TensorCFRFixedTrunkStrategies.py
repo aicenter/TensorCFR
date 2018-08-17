@@ -848,18 +848,23 @@ class TensorCFRFixedTrunkStrategies:
 			name="node_to_infoset_lvl{}".format(self.boundary_level)
 		)
 		data_id_column = self.data_id * tf.ones_like(inner_node_to_infoset)
-
-		# TODO amend following 3 for inner nodes
-		count_of_nodes = len(self.domain.action_counts[self.boundary_level])
-		nodal_indices = tf.expand_dims(
+		nodal_enumerations = [
 			tf.range(
-				count_of_nodes,
-				dtype=FLOAT_DTYPE
-			),
-			axis=-1,
-			name="nodal_indices_lvl{}".format(self.boundary_level)
+				len(action_counts_in_a_level),
+				dtype=FLOAT_DTYPE,
+				name="nodal_enumeration_lvl{}".format(level)
+			)
+			for level, action_counts_in_a_level in enumerate(self.domain.action_counts)
+		]
+		inner_nodal_enumerations = self.domain.mask_out_values_in_terminal_nodes(
+			nodal_enumerations,
+			name="nodal_enumeration"
 		)
-
+		inner_nodal_indices = tf.expand_dims(
+			inner_nodal_enumerations[self.boundary_level],
+			axis=-1,
+			name="inner_nodal_indices_lvl{}".format(self.boundary_level)
+		)
 		nodal_reaches_for_all_players = tf.expand_dims(
 			self.get_nodal_reaches_at_trunk_depth(),
 			axis=-1,
@@ -873,9 +878,8 @@ class TensorCFRFixedTrunkStrategies:
 
 		concat_trunk_info_tensors = tf.concat(
 			[
-				# TODO re-enable
 				data_id_column,
-				# nodal_indices,
+				inner_nodal_indices,
 				inner_node_to_infoset,
 				nodal_reaches_for_all_players,
 				nodal_expected_values
@@ -977,12 +981,9 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			self.session.run(trunk_info_of_nodes),
-			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f",
-			# fmt="%7d,\t %7d,\t %7d,\t %+.6f,\t %+.6f",
-			header="data_id,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
+			fmt="%7d,\t %7d,\t %7d,\t %+.6f,\t %+.6f",
+			header="data_id,\t nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
 			else "",
-			# header="data_id,\t nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
-			# else "",
 		)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

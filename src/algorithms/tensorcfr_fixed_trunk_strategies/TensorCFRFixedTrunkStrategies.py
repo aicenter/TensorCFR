@@ -1070,7 +1070,7 @@ class TensorCFRFixedTrunkStrategies:
 					# 	dataset_basename=basename_from_cfr_parameters,
 					# 	dataset_directory=dataset_directory
 					# )
-					self.store_trunk_info_of_nodes(  # TODO fix why CSV file does not store everything
+					self.store_trunk_info_of_nodes(
 						dataset_basename=basename_from_cfr_parameters,
 						dataset_directory=dataset_directory
 					)

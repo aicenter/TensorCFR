@@ -76,7 +76,7 @@ class FlattenedDomain:
 				)
 				for level, inner_node_to_infoset in enumerate(self.inner_node_to_infoset)
 			]
-			action_counts_of_inner_nodes = self.mask_out_values_in_terminal_nodes(
+			self.action_counts_of_inner_nodes = self.mask_out_values_in_terminal_nodes(
 				self.action_counts,
 				name="action_counts"
 			)
@@ -91,7 +91,7 @@ class FlattenedDomain:
 						self.inner_node_to_infoset[level],
 						axis=-1
 					),
-					updates=action_counts_of_inner_nodes[level],
+					updates=self.action_counts_of_inner_nodes[level],
 					name="infoset_action_counts_lvl{}".format(level),
 				)
 				for level in range(len(self.infoset_acting_players))

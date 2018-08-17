@@ -779,7 +779,8 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		if self.trunk_depth_nodal_expected_values is not None and self.trunk_depth_nodal_expected_values["combined_players"] is not None:
+		if self.trunk_depth_nodal_expected_values is not None \
+			and self.trunk_depth_nodal_expected_values["combined_players"] is not None:
 			return self.trunk_depth_nodal_expected_values["combined_players"]
 		elif self.trunk_depth > 0:
 			self.trunk_depth_nodal_expected_values = {}

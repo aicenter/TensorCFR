@@ -839,9 +839,9 @@ class TensorCFRFixedTrunkStrategies:
 		if self.trunk_depth <= 0:
 			return None
 
-		node_to_infoset = tf.expand_dims(
+		inner_node_to_infoset = tf.expand_dims(
 			tf.cast(
-				self.domain.node_to_infoset[self.boundary_level],
+				self.domain.inner_node_to_infoset[self.boundary_level],
 				dtype=FLOAT_DTYPE
 			),
 			axis=-1,
@@ -849,7 +849,7 @@ class TensorCFRFixedTrunkStrategies:
 		)
 
 		# TODO amend following 3 for inner nodes
-		data_id_column = self.data_id * tf.ones_like(node_to_infoset)
+		data_id_column = self.data_id * tf.ones_like(inner_node_to_infoset)
 		count_of_nodes = len(self.domain.action_counts[self.boundary_level])
 		nodal_indices = tf.expand_dims(
 			tf.range(
@@ -876,7 +876,7 @@ class TensorCFRFixedTrunkStrategies:
 				# TODO re-enable
 				# data_id_column,
 				# nodal_indices,
-				# node_to_infoset,
+				inner_node_to_infoset,
 				nodal_reaches_for_all_players,
 				nodal_expected_values
 			],
@@ -977,9 +977,9 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			self.session.run(trunk_info_of_nodes),
-			fmt="%+.6f,\t %+.6f",
+			fmt="%7d,\t %+.6f,\t %+.6f",
 			# fmt="%7d,\t %7d,\t %7d,\t %+.6f,\t %+.6f",
-			header="nodal_reach,\t nodal_expected_value" if self.data_id == 0
+			header="node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
 			else "",
 			# header="data_id,\t nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
 			# else "",

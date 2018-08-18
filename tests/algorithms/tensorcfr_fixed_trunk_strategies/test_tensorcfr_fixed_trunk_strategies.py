@@ -40,6 +40,5 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
 			tf_expected_values = tensorcfr_instance.get_nodal_expected_values_at_trunk_depth()
-			np_expected_values = sess.run(tf_expected_values)
 			self.print_debug_information(expected_output, sess, tensorcfr_instance, tf_expected_values)
-			self.compare_with_expected_output(expected_output, np_expected_values)
+			self.compare_with_expected_output(expected_output, sess.run(tf_expected_values))

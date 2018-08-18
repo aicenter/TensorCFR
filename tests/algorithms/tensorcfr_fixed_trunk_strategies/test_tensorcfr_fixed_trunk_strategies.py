@@ -30,6 +30,22 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 		print_tensor(sess, tf_expected_values)
 		pprint(expected_output.tolist())
 
+	def run_test_nodal_expected_values_given_domain_level_seed(self, flattened_domain, level, seed, expected_output):
+		tensorcfr_instance = TensorCFRFixedTrunkStrategies(
+			domain=flattened_domain,
+			trunk_depth=level
+		)
+		nodal_expected_values = tensorcfr_instance.get_nodal_expected_values_at_trunk_depth()
+		setup_messages, feed_dictionary = tensorcfr_instance.set_up_feed_dictionary(
+			method="random",
+			seed=seed
+		)
+		with self.test_session() as sess:
+			sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+			print(setup_messages)
+			self.print_debug_information(expected_output, sess, tensorcfr_instance, nodal_expected_values)
+			self.compare_with_expected_output(expected_output, sess.run(nodal_expected_values))
+
 	def test_domain01_lvl2_for_uniform_strategies(self):
 		expected_output = np.array(
 			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
@@ -41,16 +57,9 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			self.compare_with_expected_output(expected_output, sess.run(nodal_expected_values))
 
 	def test_domain01_lvl2_for_seed42(self):
-		expected_output = np.array(
-			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
+		self.run_test_nodal_expected_values_given_domain_level_seed(
+			flattened_domain=self.flattened_domain01,
+			level=2,
+			seed=42,
+			expected_output=np.array([15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.])
 		)
-		nodal_expected_values = self.tensorcfr_domain01_td2.get_nodal_expected_values_at_trunk_depth()
-		setup_messages, feed_dictionary = self.tensorcfr_domain01_td2.set_up_feed_dictionary(
-			method="random",
-			seed=42
-		)
-		with self.test_session() as sess:
-			sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-			print(setup_messages)
-			self.print_debug_information(expected_output, sess, self.tensorcfr_domain01_td2, nodal_expected_values)
-			self.compare_with_expected_output(expected_output, sess.run(nodal_expected_values))

@@ -14,6 +14,14 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 		self.error_tolerance = SMALL_ERROR_TOLERANCE
 		self.flattened_domain01 = get_flattened_domain01_from_gambit()
 
+	def compare_with_expected_output(self, expected_output, np_expected_values):
+		np.testing.assert_allclose(
+			np_expected_values,
+			expected_output,
+			rtol=self.error_tolerance,
+			equal_nan=True
+		)
+
 	def test_domain01_lvl2_for_uniform_strategies(self):
 		expected_output = np.array(
 			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
@@ -30,4 +38,4 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			print_tensor(sess, tf_expected_values)
 			pprint(expected_output.tolist())
 			np_expected_values = sess.run(tf_expected_values)
-			np.testing.assert_allclose(np_expected_values, expected_output, rtol=self.error_tolerance, equal_nan=True)
+			self.compare_with_expected_output(expected_output, np_expected_values)

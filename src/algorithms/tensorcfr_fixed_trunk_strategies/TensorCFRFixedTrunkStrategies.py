@@ -883,7 +883,7 @@ class TensorCFRFixedTrunkStrategies:
 				inner_nodal_indices,
 				inner_node_to_infoset,
 				inner_nodal_reaches_for_all_players,
-				inner_nodal_expected_values
+				inner_nodal_expected_values   # TODO unit test
 			],
 			axis=-1,
 			name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)

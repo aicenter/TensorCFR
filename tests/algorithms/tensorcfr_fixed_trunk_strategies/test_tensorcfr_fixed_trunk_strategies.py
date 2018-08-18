@@ -63,3 +63,11 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			seed=42,
 			expected_output=np.array([15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.])
 		)
+
+	def test_domain01_lvl2_for_seed1337(self):
+		self.run_test_nodal_expected_values_given_domain_level_seed(
+			flattened_domain=self.flattened_domain01,
+			level=2,
+			seed=1337,
+			expected_output=np.array([15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.])
+		)

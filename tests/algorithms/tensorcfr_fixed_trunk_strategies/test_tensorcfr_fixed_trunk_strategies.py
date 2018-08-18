@@ -1,3 +1,6 @@
+from pprint import pprint
+
+import numpy as np
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
@@ -13,8 +16,9 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 
 	def test_domain01_lvl2_seed42(self):
 		# seed = 42
-		#  [  15.  -35.   75.   95. -135.   nan -195.   nan  275. -295.]
-		# expected_output = np.array([1])
+		expected_output = np.array(
+			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
+		)
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
 			tensorcfr = TensorCFRFixedTrunkStrategies(
@@ -25,5 +29,6 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			print_tensors(sess, tensorcfr.domain.current_infoset_strategies)
 			print("___________________________________\n")
 			print_tensor(sess, tf_expected_values)
-			# np_expected_values = sess.run(tf_expected_values)
-			# self.assertNDArrayNear(np_expected_values, expected_output, self.error_tolerance)
+			pprint(expected_output.tolist())
+			np_expected_values = sess.run(tf_expected_values)
+			np.testing.assert_allclose(np_expected_values, expected_output, rtol=self.error_tolerance, equal_nan=True)

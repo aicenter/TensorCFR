@@ -14,8 +14,7 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 		self.error_tolerance = SMALL_ERROR_TOLERANCE
 		self.flattened_domain01 = get_flattened_domain01_from_gambit()
 
-	def test_domain01_lvl2_seed42(self):
-		# seed = 42
+	def test_domain01_lvl2_for_uniform_strategies(self):
 		expected_output = np.array(
 			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
 		)

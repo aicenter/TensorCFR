@@ -33,12 +33,12 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 		expected_output = np.array(
 			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
 		)
+		tensorcfr = TensorCFRFixedTrunkStrategies(
+			self.flattened_domain01,
+			trunk_depth=2
+		)
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
-			tensorcfr = TensorCFRFixedTrunkStrategies(
-				self.flattened_domain01,
-				trunk_depth=2
-			)
 			tf_expected_values = tensorcfr.get_nodal_expected_values_at_trunk_depth()
 			np_expected_values = sess.run(tf_expected_values)
 			self.print_debug_information(expected_output, sess, tensorcfr, tf_expected_values)

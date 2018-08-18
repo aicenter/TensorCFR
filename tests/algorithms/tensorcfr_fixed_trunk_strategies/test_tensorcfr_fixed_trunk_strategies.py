@@ -22,6 +22,13 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			equal_nan=True
 		)
 
+	@staticmethod
+	def print_debug_information(expected_output, sess, tensorcfr, tf_expected_values):
+		print_tensors(sess, tensorcfr.domain.current_infoset_strategies)
+		print("___________________________________\n")
+		print_tensor(sess, tf_expected_values)
+		pprint(expected_output.tolist())
+
 	def test_domain01_lvl2_for_uniform_strategies(self):
 		expected_output = np.array(
 			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
@@ -33,9 +40,6 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 				trunk_depth=2
 			)
 			tf_expected_values = tensorcfr.get_nodal_expected_values_at_trunk_depth()
-			print_tensors(sess, tensorcfr.domain.current_infoset_strategies)
-			print("___________________________________\n")
-			print_tensor(sess, tf_expected_values)
-			pprint(expected_output.tolist())
 			np_expected_values = sess.run(tf_expected_values)
+			self.print_debug_information(expected_output, sess, tensorcfr, tf_expected_values)
 			self.compare_with_expected_output(expected_output, np_expected_values)

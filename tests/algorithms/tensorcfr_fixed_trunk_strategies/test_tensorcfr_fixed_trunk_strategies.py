@@ -1,5 +1,9 @@
 from unittest import TestCase
 
+import numpy as np
+import tensorflow as tf
+
+from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 from src.commons.constants import SMALL_ERROR_TOLERANCE
 from src.domains.flattened_domain01_gambit.domain_from_gambit_loader import get_flattened_domain01_from_gambit
 

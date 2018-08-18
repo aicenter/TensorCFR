@@ -1,5 +1,3 @@
-from unittest import TestCase
-
 import numpy as np
 import tensorflow as tf
 
@@ -8,7 +6,7 @@ from src.commons.constants import SMALL_ERROR_TOLERANCE
 from src.domains.flattened_domain01_gambit.domain_from_gambit_loader import get_flattened_domain01_from_gambit
 
 
-class TestNodalExpectedValuesAtTrunkDepth(TestCase):
+class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 	def setUp(self):
 		self.error_tolerance = SMALL_ERROR_TOLERANCE
 		self.flattened_domain01 = get_flattened_domain01_from_gambit()

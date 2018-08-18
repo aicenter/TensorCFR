@@ -19,6 +19,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	print(get_current_timestamp())
 	tensorcfr.generate_dataset_at_trunk_depth(
+		# dataset_for_nodes=False,
 		dataset_size=DEFAULT_DATASET_SIZE,
 		dataset_directory=script_directory + "/out",
 		seed=SEED_FOR_TESTING

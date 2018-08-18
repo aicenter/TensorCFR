@@ -15,6 +15,13 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 		self.flattened_domain01 = get_flattened_domain01_from_gambit()
 		self.tensorcfr_domain01_td2 = TensorCFRFixedTrunkStrategies(self.flattened_domain01, trunk_depth=2)
 
+	@staticmethod
+	def print_debug_information(expected_output, sess, tensorcfr_instance, tf_expected_values):
+		print_tensors(sess, tensorcfr_instance.domain.current_infoset_strategies)
+		print("___________________________________\n")
+		print_tensor(sess, tf_expected_values)
+		pprint(expected_output.tolist())
+
 	def compare_with_expected_output(self, expected_output, np_expected_values):
 		np.testing.assert_allclose(
 			np_expected_values,
@@ -22,13 +29,6 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			rtol=self.error_tolerance,
 			equal_nan=True
 		)
-
-	@staticmethod
-	def print_debug_information(expected_output, sess, tensorcfr_instance, tf_expected_values):
-		print_tensors(sess, tensorcfr_instance.domain.current_infoset_strategies)
-		print("___________________________________\n")
-		print_tensor(sess, tf_expected_values)
-		pprint(expected_output.tolist())
 
 	def run_test_nodal_expected_values_given_domain_level_seed(self, flattened_domain, level, seed, expected_output):
 		tensorcfr_instance = TensorCFRFixedTrunkStrategies(

@@ -4,13 +4,14 @@ import numpy as np
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
-from src.commons.constants import SMALL_ERROR_TOLERANCE
+from src.commons.constants import SMALL_ERROR_TOLERANCE, DEFAULT_TOTAL_STEPS
 from src.domains.flattened_domain01_gambit.domain_from_gambit_loader import get_flattened_domain01_from_gambit
 from src.utils.tensor_utils import print_tensor, print_tensors
 
 
 class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 	def setUp(self):
+		self.total_steps = DEFAULT_TOTAL_STEPS
 		self.error_tolerance = SMALL_ERROR_TOLERANCE
 		self.flattened_domain01 = get_flattened_domain01_from_gambit()
 		self.tensorcfr_domain01_td2 = TensorCFRFixedTrunkStrategies(self.flattened_domain01, trunk_depth=2)
@@ -30,6 +31,12 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			equal_nan=True
 		)
 
+	def run_cfr_and_assign_average_strategies(self, sess, tensorcfr_instance):
+		cfr_step_op = tensorcfr_instance.do_cfr_step()
+		for _ in range(self.total_steps):
+			sess.run(cfr_step_op)
+		sess.run(tensorcfr_instance.assign_avg_strategies_to_current_strategies())
+
 	def run_test_nodal_expected_values_given_domain_level_seed(self, flattened_domain, level, seed, expected_output):
 		tensorcfr_instance = TensorCFRFixedTrunkStrategies(
 			domain=flattened_domain,
@@ -43,6 +50,7 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 			print(setup_messages)
+			self.run_cfr_and_assign_average_strategies(sess, tensorcfr_instance)
 			self.print_debug_information(expected_output, sess, tensorcfr_instance, nodal_expected_values)
 			self.compare_with_expected_output(expected_output, sess.run(nodal_expected_values))
 
@@ -69,5 +77,6 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 		nodal_expected_values = self.tensorcfr_domain01_td2.get_nodal_expected_values_at_trunk_depth()
 		with self.test_session() as sess:
 			sess.run(tf.global_variables_initializer())
+			self.run_cfr_and_assign_average_strategies(sess, self.tensorcfr_domain01_td2)
 			self.print_debug_information(expected_output, sess, self.tensorcfr_domain01_td2, nodal_expected_values)
 			self.compare_with_expected_output(expected_output, sess.run(nodal_expected_values))

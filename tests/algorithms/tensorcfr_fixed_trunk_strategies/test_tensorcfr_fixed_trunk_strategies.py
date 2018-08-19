@@ -86,6 +86,29 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 		)
 
 	def test_domain01_lvl2_for_seed1337(self):
+		"""
+		Strategies after 1000 CFR iterations should converge as follows:
+
+			```
+			"flattened_domain01_gambit/current_infoset_strategies_lvl0:0"
+			 [[0.5  0.25 0.1  0.1  0.05]]
+
+			"flattened_domain01_gambit/current_infoset_strategies_lvl1:0"
+			 [[0.15991694 0.6740532  0.16602989]
+			 [0.6694928  0.3305072  0.        ]
+			 [0.85365707 0.14634295 0.        ]
+			 [0.33333334 0.33333334 0.33333334]]
+
+			"flattened_domain01_gambit/current_infoset_strategies_lvl2:0"
+			 [[0.  1. ]
+			 [1.  0. ]
+			 [0.  1. ]
+			 [1.  0. ]
+			 [0.1 0.9]
+			 [0.  1. ]
+			 [1.  0. ]]
+			```
+		"""
 		self.run_test_nodal_expected_values_given_domain_level_seed(
 			flattened_domain=self.flattened_domain01,
 			level=2,

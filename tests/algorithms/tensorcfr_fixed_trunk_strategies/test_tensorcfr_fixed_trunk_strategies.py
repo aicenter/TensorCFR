@@ -46,16 +46,6 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			self.print_debug_information(expected_output, sess, tensorcfr_instance, nodal_expected_values)
 			self.compare_with_expected_output(expected_output, sess.run(nodal_expected_values))
 
-	def test_domain01_lvl2_for_uniform_strategies(self):
-		expected_output = np.array(
-			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
-		)
-		nodal_expected_values = self.tensorcfr_domain01_td2.get_nodal_expected_values_at_trunk_depth()
-		with self.test_session() as sess:
-			sess.run(tf.global_variables_initializer())
-			self.print_debug_information(expected_output, sess, self.tensorcfr_domain01_td2, nodal_expected_values)
-			self.compare_with_expected_output(expected_output, sess.run(nodal_expected_values))
-
 	def test_domain01_lvl2_for_seed42(self):
 		self.run_test_nodal_expected_values_given_domain_level_seed(
 			flattened_domain=self.flattened_domain01,
@@ -71,3 +61,13 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			seed=1337,
 			expected_output=np.array([15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.])
 		)
+
+	def test_domain01_lvl2_for_uniform_strategies(self):
+		expected_output = np.array(
+			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
+		)
+		nodal_expected_values = self.tensorcfr_domain01_td2.get_nodal_expected_values_at_trunk_depth()
+		with self.test_session() as sess:
+			sess.run(tf.global_variables_initializer())
+			self.print_debug_information(expected_output, sess, self.tensorcfr_domain01_td2, nodal_expected_values)
+			self.compare_with_expected_output(expected_output, sess.run(nodal_expected_values))

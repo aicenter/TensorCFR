@@ -95,7 +95,7 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			```
 		"""
 		expected_output = np.array(
-			[15., -35., 75., 95., -135., np.nan, -195., np.nan, 275., -295.]
+			[20, -30, 80, 100, -130, np.nan, -190, np.nan, 280, -290]
 		)
 		nodal_expected_values = self.tensorcfr_domain01_td2.get_nodal_expected_values_at_trunk_depth()
 		with self.test_session() as sess:

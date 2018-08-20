@@ -11,6 +11,7 @@ FLATTENED_HUNGER_GAMES = "flattened_hunger_games"
 FLATTENED_HUNGER_GAMES_2 = "flattened_hunger_games_2"
 GOOFSPIEL2_GAMBIT = "II-GS2_via_gambit"                   # for 13 cards
 FLATTENED_GOOFSPIEL2_GAMBIT = "II-GS2_gambit_flattened"   # for 13 cards
+FLATTENED_GOOFSPIEL2_2CARDS_GAMBIT = "II-GS2_2_cards_gambit_flattened"   # TODO
 GOOFSPIEL3_GAMBIT = "II-GS3_via_gambit"
 FLATTENED_GOOFSPIEL3_GAMBIT = "II-GS3_gambit_flattened"
 GOOFSPIEL5_GAMBIT = "IIGS5_s1_bf_ft_via_gambit"

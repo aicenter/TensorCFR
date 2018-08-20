@@ -904,6 +904,10 @@ class TensorCFRFixedTrunkStrategies:
 						len(initial_strategy_values), len(self.domain.initial_infoset_strategies)
 					)
 				)
+			# TODO @mathemage Fix problem:
+			#  `custom` initializing does not work in `test.algorithms.tensorcfr_fixed_trunk_strategies`
+			print("initial_strategy_values")
+			print(initial_strategy_values)
 			return "Initializing strategies to custom values defined by user...\n", {
 				self.domain.initial_infoset_strategies[level]: initial_strategy_values[level]
 				for level in range(self.domain.acting_depth)

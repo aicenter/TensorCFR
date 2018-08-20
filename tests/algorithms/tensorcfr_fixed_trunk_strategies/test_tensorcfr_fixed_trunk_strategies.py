@@ -1,4 +1,5 @@
 from pprint import pprint
+from unittest import TestCase
 
 import numpy as np
 import tensorflow as tf
@@ -10,7 +11,7 @@ from src.domains.flattened_goofspiel3.domain_from_gambit_loader import get_flatt
 from src.utils.tensor_utils import print_tensor, print_tensors
 
 
-class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
+class TestNodalExpectedValuesAtTrunkDepth(TestCase):
 	def setUp(self):
 		self.total_steps = DEFAULT_TOTAL_STEPS
 		self.error_tolerance = SMALL_ERROR_TOLERANCE
@@ -50,7 +51,9 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			method="random",
 			seed=seed
 		)
-		with self.test_session() as sess:
+		with tf.Session(
+			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+		) as sess:
 			sess.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 			print(setup_messages)
 			self.run_cfr_and_assign_average_strategies(sess, tensorcfr_instance)
@@ -66,9 +69,9 @@ class TestNodalExpectedValuesAtTrunkDepth(tf.test.TestCase):
 			 [[0.5  0.25 0.1  0.1  0.05]]
 
 			"flattened_domain01_gambit/current_infoset_strategies_lvl1:0"
-			 [[0.39268968 0.2793436  0.32796666]
-			 [0.61359006 0.38641    0.        ]
-			 [0.61939037 0.3806096  0.        ]
+			[[0.25356138 0.5085074  0.23793125]
+			 [0.5893185  0.4106815  0.        ]
+			 [0.4773155  0.5226845  0.        ]
 			 [0.33333334 0.33333334 0.33333334]]
 
 			"flattened_domain01_gambit/current_infoset_strategies_lvl2:0"

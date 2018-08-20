@@ -121,9 +121,9 @@ class TestNodalExpectedValuesAtTrunkDepth(TestCase):
 			 [[0.5  0.25 0.1  0.1  0.05]]
 
 			"flattened_domain01_gambit/current_infoset_strategies_lvl1:0"
-			 [[0.15991694 0.6740532  0.16602989]
-			 [0.6694928  0.3305072  0.        ]
-			 [0.85365707 0.14634295 0.        ]
+			 [[0.25356135 0.5085074  0.23793127]
+			 [0.5893186  0.4106815  0.        ]
+			 [0.47731555 0.5226844  0.        ]
 			 [0.33333334 0.33333334 0.33333334]]
 
 			"flattened_domain01_gambit/current_infoset_strategies_lvl2:0"
@@ -136,10 +136,30 @@ class TestNodalExpectedValuesAtTrunkDepth(TestCase):
 			 [1.  0. ]]
 			```
 		"""
+		initial_infoset_strategies = [
+			[
+				[0.5, .25, 0.1, 0.1, .05]
+			],
+			[
+				[0.25356138, 0.5085074, 0.23793125],
+				[0.5893185, 0.4106815, 0],
+				[0.4773155, 0.5226845, 0],
+				[0.33333334, 0.33333334, 0.33333334]
+			],
+			[
+				[.5, .5],
+				[.5, .5],
+				[.5, .5],
+				[.5, .5],
+				[.1, .9],
+				[.5, .5],
+				[.5, .5]
+			]
+		]
 		self.run_test_nodal_expected_values_given_domain_level_seed(
 			flattened_domain=self.flattened_domain01,
 			level=2,
-			seed=1337,
+			initial_strategies=initial_infoset_strategies,
 			expected_output=np.array([20, -30, 80, 100, -130, np.nan, -190, np.nan, 280, -290])
 		)
 

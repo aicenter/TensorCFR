@@ -1,26 +1,7 @@
-import os
-
 import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING
-from src.domains.FlattenedDomain import FlattenedDomain
-
-
-def get_flattened_goofspiel3():
-	path_to_domain_filename = os.path.join(
-			os.path.dirname(
-					os.path.abspath(
-							__file__)
-			),
-			'..',
-			'..',
-			'..',
-			'doc',
-			'goofspiel',
-			'II-GS3.efg'
-	)
-	return FlattenedDomain.init_from_gambit_file(path_to_domain_filename, domain_name="II-GS3_gambit_flattened")
-
+from src.domains.flattened_goofspiel3.domain_from_gambit_loader import get_flattened_goofspiel3
 
 if __name__ == '__main__':
 	goofspiel3 = get_flattened_goofspiel3()

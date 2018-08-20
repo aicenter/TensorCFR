@@ -196,7 +196,7 @@ class TestNodalExpectedValuesAtTrunkDepth(TestCase):
 			[20, -30, 80, 100, -130, np.nan, -190, np.nan, 280, -290]
 		)
 		nodal_expected_values = self.tensorcfr_domain01_td2.get_nodal_expected_values_at_trunk_depth()
-		with self.test_session() as sess:
+		with tf.Session() as sess:
 			sess.run(tf.global_variables_initializer())
 			self.run_cfr_and_assign_average_strategies(sess, self.tensorcfr_domain01_td2)
 			self.print_debug_information(expected_output, sess, self.tensorcfr_domain01_td2, nodal_expected_values)

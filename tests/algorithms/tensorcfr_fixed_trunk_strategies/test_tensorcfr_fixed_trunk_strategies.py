@@ -168,49 +168,6 @@ class TestNodalExpectedValuesAtTrunkDepth(TestCase):
 	# 		expected_output=np.array([20, -30, 80, 100, -130, np.nan, -190, np.nan, 280, -290])
 	# 	)
 
-			"flattened_domain01_gambit/current_infoset_strategies_lvl1:0"
-			 [[0.25356135 0.5085074  0.23793127]
-			 [0.5893186  0.4106815  0.        ]
-			 [0.47731555 0.5226844  0.        ]
-			 [0.33333334 0.33333334 0.33333334]]
-
-			"flattened_domain01_gambit/current_infoset_strategies_lvl2:0"
-			 [[0.  1. ]
-			 [1.  0. ]
-			 [0.  1. ]
-			 [1.  0. ]
-			 [0.1 0.9]
-			 [0.  1. ]
-			 [1.  0. ]]
-			```
-		"""
-		initial_infoset_strategies = [
-			[
-				[0.5, .25, 0.1, 0.1, .05]
-			],
-			[
-				[0.25356138, 0.5085074, 0.23793125],
-				[0.5893185, 0.4106815, 0],
-				[0.4773155, 0.5226845, 0],
-				[0.33333334, 0.33333334, 0.33333334]
-			],
-			[
-				[.5, .5],
-				[.5, .5],
-				[.5, .5],
-				[.5, .5],
-				[.1, .9],
-				[.5, .5],
-				[.5, .5]
-			]
-		]
-		self.run_test_nodal_expected_values_given_domain_level_seed(
-			flattened_domain=self.flattened_domain01,
-			level=2,
-			initial_strategies=initial_infoset_strategies,
-			expected_output=np.array([20, -30, 80, 100, -130, np.nan, -190, np.nan, 280, -290])
-		)
-
 	def test_domain01_lvl2_for_uniform_strategies(self):
 		"""
 		Strategies after 1000 CFR iterations should converge as follows:

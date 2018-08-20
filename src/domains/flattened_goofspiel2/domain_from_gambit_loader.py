@@ -5,7 +5,7 @@ import tensorflow as tf
 from src.domains.FlattenedDomain import FlattenedDomain
 
 
-def get_flattened_goofspiel2():
+def get_flattened_goofspiel2():   # TODO rename to _13cards
 	path_to_domain_filename = os.path.join(
 			os.path.dirname(
 					os.path.abspath(

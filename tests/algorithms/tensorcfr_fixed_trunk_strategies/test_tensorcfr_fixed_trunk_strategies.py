@@ -41,15 +41,16 @@ class TestNodalExpectedValuesAtTrunkDepth(TestCase):
 			sess.run(cfr_step_op)
 		sess.run(tensorcfr_instance.assign_avg_strategies_to_current_strategies())
 
-	def run_test_nodal_expected_values_given_domain_level_seed(self, flattened_domain, level, seed, expected_output):
+	def run_test_nodal_expected_values_given_domain_level_seed(self, flattened_domain, level, initial_strategies,
+	                                                           expected_output):
 		tensorcfr_instance = TensorCFRFixedTrunkStrategies(
 			domain=flattened_domain,
 			trunk_depth=level
 		)
 		nodal_expected_values = tensorcfr_instance.get_nodal_expected_values_at_trunk_depth()
 		setup_messages, feed_dictionary = tensorcfr_instance.set_up_feed_dictionary(
-			method="random",
-			seed=seed
+			method="custom",
+			initial_strategy_values=initial_strategies
 		)
 		with tf.Session(
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
@@ -69,9 +70,9 @@ class TestNodalExpectedValuesAtTrunkDepth(TestCase):
 			 [[0.5  0.25 0.1  0.1  0.05]]
 
 			"flattened_domain01_gambit/current_infoset_strategies_lvl1:0"
-			[[0.25356138 0.5085074  0.23793125]
-			 [0.5893185  0.4106815  0.        ]
-			 [0.4773155  0.5226845  0.        ]
+			[[0.6176899  0.21680082 0.16550928]
+			 [0.09548762 0.9045124  0.        ]
+			 [0.68187284 0.31812713 0.        ]
 			 [0.33333334 0.33333334 0.33333334]]
 
 			"flattened_domain01_gambit/current_infoset_strategies_lvl2:0"
@@ -84,10 +85,30 @@ class TestNodalExpectedValuesAtTrunkDepth(TestCase):
 			 [1.  0. ]]
 			```
 		"""
+		initial_infoset_strategies = [
+			[
+				[0.5, .25, 0.1, 0.1, .05]
+			],
+			[
+				[0.6176899, 0.21680082, 0.16550928],
+				[0.09548762, 0.9045124, 0],
+				[0.68187284, 0.31812713, 0],
+				[0.33333334, 0.33333334, 0.33333334]
+			],
+			[
+				[.5, .5],
+				[.5, .5],
+				[.5, .5],
+				[.5, .5],
+				[.1, .9],
+				[.5, .5],
+				[.5, .5]
+			]
+		]
 		self.run_test_nodal_expected_values_given_domain_level_seed(
 			flattened_domain=self.flattened_domain01,
 			level=2,
-			seed=42,
+			initial_strategies=initial_infoset_strategies,
 			expected_output=np.array([20, -30, 80, 100, -130, np.nan, -190, np.nan, 280, -290])
 		)
 

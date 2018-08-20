@@ -22,6 +22,8 @@ class TestNodalExpectedValuesAtTrunkDepth(TestCase):
 
 	@staticmethod
 	def print_debug_information(expected_output, sess, tensorcfr_instance, tf_expected_values):
+		print_tensors(sess, tensorcfr_instance.domain.initial_infoset_strategies)
+		print("___________________________________\n")
 		print_tensors(sess, tensorcfr_instance.domain.current_infoset_strategies)
 		print("___________________________________\n")
 		print_tensor(sess, tf_expected_values)

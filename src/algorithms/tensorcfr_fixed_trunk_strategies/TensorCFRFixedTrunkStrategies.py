@@ -1119,23 +1119,26 @@ class TensorCFRFixedTrunkStrategies:
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 		cfr_step_op = self.do_cfr_step()
 
-		for self.data_id in range(dataset_size):
-			# TODO place the for-loop inside the with-block below in order to keep a single session
-			if seed is not None:
-				seed_of_iteration = seed + self.data_id
-			else:
-				seed_of_iteration = None
-			with tf.variable_scope("initialization"):
-				setup_messages, feed_dictionary = self.set_up_feed_dictionary(
-					method="random",
-					seed=seed_of_iteration
-				)
-				print("[data_id #{}] {}".format(self.data_id, setup_messages))
+		with tf.Session(
+			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+		) as self.session:
+			self.session.run(tf.global_variables_initializer())
 
-			with tf.Session(
-				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-			) as self.session:
-				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+			for self.data_id in range(dataset_size):
+				print("[data_id #{}]".format(self.data_id))
+
+				print("current_infoset_strategies before:")
+				print_tensors(self.session, self.domain.current_infoset_strategies)
+				if seed is not None:
+					seed_of_iteration = seed + self.data_id
+				else:
+					seed_of_iteration = None
+				self.session.run(
+					self.randomize_strategies(seed=seed_of_iteration)
+				)
+				print("current_infoset_strategies after:")
+				print_tensors(self.session, self.domain.current_infoset_strategies)
+
 				# for _ in range(total_steps):
 				# 	# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 				# 	self.session.run(cfr_step_op)

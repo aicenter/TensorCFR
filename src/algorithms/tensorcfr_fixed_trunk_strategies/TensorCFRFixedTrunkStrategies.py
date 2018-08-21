@@ -956,8 +956,9 @@ class TensorCFRFixedTrunkStrategies:
 		if not os.path.exists(dataset_directory):
 			os.mkdir(dataset_directory)
 		csv_filename = '{}/infoset_dataset_{}.csv'.format(dataset_directory, dataset_basename)
-		print("[data_id #{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
+		print("[data_id #{} @{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
 			self.data_id,
+			get_current_timestamp(),
 			csv_filename
 		))
 
@@ -976,8 +977,9 @@ class TensorCFRFixedTrunkStrategies:
 		if not os.path.exists(dataset_directory):
 			os.mkdir(dataset_directory)
 		csv_filename = '{}/nodal_dataset_{}.csv'.format(dataset_directory, dataset_basename)
-		print("[data_id #{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
+		print("[data_id #{} @{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
 			self.data_id,
+			get_current_timestamp(),
 			csv_filename
 		))
 
@@ -1063,7 +1065,7 @@ class TensorCFRFixedTrunkStrategies:
 					method="random",
 					seed=seed_of_iteration
 				)
-				print("[data_id #{}] {}".format(self.data_id, setup_messages))
+				print("[data_id #{} @{}] {}".format(self.data_id, get_current_timestamp(), setup_messages))
 
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
@@ -1125,7 +1127,7 @@ class TensorCFRFixedTrunkStrategies:
 		) as self.session:
 			for self.data_id in range(dataset_size):
 				self.session.run(tf.global_variables_initializer())
-				print("[data_id #{}] {}".format(self.data_id, get_current_timestamp()))
+				print("[data_id #{} @{}]".format(self.data_id, get_current_timestamp()))
 				if seed is not None:
 					seed_of_iteration = seed + self.data_id
 				else:

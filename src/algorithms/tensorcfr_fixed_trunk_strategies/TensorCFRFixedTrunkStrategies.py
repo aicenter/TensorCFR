@@ -1124,29 +1124,17 @@ class TensorCFRFixedTrunkStrategies:
 		with tf.Session(
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
 		) as self.session:
-			self.session.run(tf.global_variables_initializer())
-
 			for self.data_id in range(dataset_size):
+				self.session.run(tf.global_variables_initializer())
 				print("[data_id #{}] {}".format(self.data_id, get_current_timestamp()))
 				if seed is not None:
 					seed_of_iteration = seed + self.data_id
 				else:
 					seed_of_iteration = None
 
-				# TODO: extract to reset_CFR()
 				self.session.run(
 					self.randomize_strategies(seed=seed_of_iteration)
 				)
-				self.session.run(
-					tf.assign(
-						self.domain.cfr_step,
-						value=1     # TODO: extract initial value
-					)
-				)
-				if total_steps % 2 != 0:
-					self.session.run(
-						player_swap
-					)
 
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop

@@ -211,7 +211,7 @@ class FlattenedDomain:
 	def get_nodal_acting_players(self):
 		return self.inner_nodal_acting_players
 
-	def generate_random_strategies(self, seed=None, trunk_depth=0):
+	def get_tf_random_strategies(self, seed, trunk_depth):
 		total_size = self.acting_depth
 		trunk_levels = range(trunk_depth)
 
@@ -222,7 +222,7 @@ class FlattenedDomain:
 
 		for level in trunk_levels:
 			if seed is not None:
-				seed_for_level = seed + level    # to ensure different random tensors at each level
+				seed_for_level = seed + level  # to ensure different random tensors at each level
 			else:
 				seed_for_level = None
 			random_weights[level] = tf.random_uniform(
@@ -252,9 +252,15 @@ class FlattenedDomain:
 			tf_random_strategies[level] = tf.where(
 				condition=self.infosets_of_non_chance_player[level],
 				x=normalized_random_weights[level],
-				y=self.initial_infoset_strategies[level],    # re-use strategy of the chance player
+				y=self.initial_infoset_strategies[level],  # re-use strategy of the chance player
 				name="random_strategies_lvl{}".format(level)
 			)
+		return tf_random_strategies
+
+	def generate_random_strategies(self, seed=None, trunk_depth=0):
+		total_size = self.acting_depth
+		trunk_levels = range(trunk_depth)
+		tf_random_strategies = self.get_tf_random_strategies(seed, trunk_depth)
 
 		with tf.Session(
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU

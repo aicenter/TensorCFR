@@ -20,7 +20,14 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	print(get_current_timestamp())
 	tensorcfr.generate_dataset_at_trunk_depth(
 		# dataset_for_nodes=False,
-		dataset_size=1000,
+		dataset_size=2,
+		dataset_directory=script_directory + "/out",
+		seed=SEED_FOR_TESTING
+	)
+	print(get_current_timestamp())
+	tensorcfr.generate_dataset_single_session(
+		# dataset_for_nodes=False,
+		dataset_size=2,
 		dataset_directory=script_directory + "/out",
 		seed=SEED_FOR_TESTING
 	)

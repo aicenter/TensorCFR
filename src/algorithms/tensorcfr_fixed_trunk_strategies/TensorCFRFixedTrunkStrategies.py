@@ -1118,6 +1118,7 @@ class TensorCFRFixedTrunkStrategies:
 		}
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 		cfr_step_op = self.do_cfr_step()
+		player_swap = self.swap_players()
 
 		with tf.Session(
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
@@ -1126,33 +1127,40 @@ class TensorCFRFixedTrunkStrategies:
 
 			for self.data_id in range(dataset_size):
 				print("[data_id #{}]".format(self.data_id))
-
-				print("current_infoset_strategies before:")
-				print_tensors(self.session, self.domain.current_infoset_strategies)
 				if seed is not None:
 					seed_of_iteration = seed + self.data_id
 				else:
 					seed_of_iteration = None
+
+				# TODO: extract to reset_CFR()
 				self.session.run(
 					self.randomize_strategies(seed=seed_of_iteration)
 				)
-				print("current_infoset_strategies after:")
-				print_tensors(self.session, self.domain.current_infoset_strategies)
+				self.session.run(
+					tf.assign(
+						self.domain.cfr_step,
+						value=1     # TODO: extract initial value
+					)
+				)
+				if total_steps % 2 != 0:
+					self.session.run(
+						player_swap
+					)
 
-				# for _ in range(total_steps):
-				# 	# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
-				# 	self.session.run(cfr_step_op)
-				# if self.trunk_depth > 0:
-				# 	if dataset_for_nodes:
-				# 		self.store_trunk_info_of_nodes(
-				# 			dataset_basename=basename_from_cfr_parameters,
-				# 			dataset_directory=dataset_directory
-				# 		)
-				# 	else:
-				# 		self.store_trunk_info_of_infosets(
-				# 			dataset_basename=basename_from_cfr_parameters,
-				# 			dataset_directory=dataset_directory
-				# 		)
+				for _ in range(total_steps):
+					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
+					self.session.run(cfr_step_op)
+				if self.trunk_depth > 0:
+					if dataset_for_nodes:
+						self.store_trunk_info_of_nodes(
+							dataset_basename=basename_from_cfr_parameters,
+							dataset_directory=dataset_directory
+						)
+					else:
+						self.store_trunk_info_of_infosets(
+							dataset_basename=basename_from_cfr_parameters,
+							dataset_directory=dataset_directory
+						)
 
 
 if __name__ == '__main__':

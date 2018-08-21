@@ -1083,6 +1083,48 @@ class TensorCFRFixedTrunkStrategies:
 							dataset_directory=dataset_directory
 						)
 
+	def generate_dataset_single_session(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
+	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
+	                                    seed=None):
+		self.cfr_parameters = {
+			"total_steps"    : total_steps,
+			"averaging_delay": delay,
+			"trunk_depth"    : self.trunk_depth,
+		}
+		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
+		cfr_step_op = self.do_cfr_step()
+
+		for self.data_id in range(dataset_size):
+			# TODO place the for-loop inside the with-block below in order to keep a single session
+			if seed is not None:
+				seed_of_iteration = seed + self.data_id
+			else:
+				seed_of_iteration = None
+			with tf.variable_scope("initialization"):
+				setup_messages, feed_dictionary = self.set_up_feed_dictionary(
+					method="random",
+					seed=seed_of_iteration
+				)
+				print("[data_id #{}] {}".format(self.data_id, setup_messages))
+
+			with tf.Session(
+				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
+			) as self.session:
+				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+				for _ in range(total_steps):
+					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
+					self.session.run(cfr_step_op)
+				if self.trunk_depth > 0:
+					if dataset_for_nodes:
+						self.store_trunk_info_of_nodes(
+							dataset_basename=basename_from_cfr_parameters,
+							dataset_directory=dataset_directory
+						)
+					else:
+						self.store_trunk_info_of_infosets(
+							dataset_basename=basename_from_cfr_parameters,
+							dataset_directory=dataset_directory
+						)
 
 if __name__ == '__main__':
 	# domain_ = get_domain_by_name("flattened_hunger_games")

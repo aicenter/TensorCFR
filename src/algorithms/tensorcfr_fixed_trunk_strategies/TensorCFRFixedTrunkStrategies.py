@@ -1083,6 +1083,31 @@ class TensorCFRFixedTrunkStrategies:
 							dataset_directory=dataset_directory
 						)
 
+	def randomize_strategies(self, seed):  # TODO unittest
+		"""
+		Reset infoset strategies to random ones.
+
+		:param seed: The seed used to test random strategies
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
+		tf_uniform_strategies = self.get_infoset_uniform_strategies()
+		with tf.variable_scope("randomize_strategies"):
+			tf_random_strategies = self.domain.get_tf_random_strategies(
+				seed=seed,
+				trunk_depth=self.trunk_depth
+			)
+			ops_randomize_strategies = [
+				tf.assign(
+					current_strategies_per_level,
+					value=tf_random_strategies[level] if level in range(self.trunk_depth)
+					else tf_uniform_strategies[level]
+				)
+				for level, current_strategies_per_level in enumerate(self.domain.current_infoset_strategies)
+			]
+		return ops_randomize_strategies
+
 	def generate_dataset_single_session(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
 	                                    seed=None):

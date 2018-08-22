@@ -1,10 +1,10 @@
 import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING
-from src.domains.flattened_domain01_gambit.domain_from_gambit_loader import get_flattened_domain01_from_gambit
 
+# TODO rewrite
 if __name__ == '__main__':
-	flattened_domain01 = get_flattened_domain01_from_gambit()
+	flattened_domain01 = ()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		seeds = [None, SEED_FOR_TESTING, 42]

@@ -1161,7 +1161,6 @@ class TensorCFRFixedTrunkStrategies:
 			"trunk_depth"    : self.trunk_depth,
 		}
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
-		cfr_step_op = self.do_cfr_step()
 
 		def condition(i, cfr_step_op):
 			return tf.less(i, total_steps)
@@ -1174,7 +1173,7 @@ class TensorCFRFixedTrunkStrategies:
 		all_cfr_steps = tf.while_loop(
 			cond=condition,
 			body=body,
-			loop_vars=[i, cfr_step_op],
+			loop_vars=[i, self.do_cfr_step()],
 			parallel_iterations=1,
 			back_prop=False,
 		)

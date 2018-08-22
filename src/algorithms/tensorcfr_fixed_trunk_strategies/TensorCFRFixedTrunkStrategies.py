@@ -1163,18 +1163,21 @@ class TensorCFRFixedTrunkStrategies:
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 		cfr_step_op = self.do_cfr_step()
 
-		# i = tf.constant(0)
-		# c = lambda i: tf.less(i, total_steps)
-		# TODO change to do_cfr_step that takes cfr_step as input
-		# - see https://stackoverflow.com/questions/37441140/how-to-use-tf-while-loop-in-tensorflow
-		# b = lambda i: cfr_step_op
-		# all_cfr_steps = tf.while_loop(
-		# 	cond=c,
-		# 	body=b,
-		# 	loop_vars=[i],
-		# 	parallel_iterations=1,
-		# 	back_prop=False,
-		# )
+		def condition(i, cfr_step_op):
+			return tf.less(i, total_steps)
+
+		def body(i, cfr_step_op):
+			i = tf.add(i, 1)
+			return [i, cfr_step_op]
+
+		i = tf.constant(0)
+		all_cfr_steps = tf.while_loop(
+			cond=condition,
+			body=body,
+			loop_vars=[i, cfr_step_op],
+			parallel_iterations=1,
+			back_prop=False,
+		)
 
 		with tf.Session(
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
@@ -1190,11 +1193,8 @@ class TensorCFRFixedTrunkStrategies:
 				self.session.run(
 					self.randomize_strategies(seed=seed_of_iteration)
 				)
+				self.session.run(all_cfr_steps)
 
-				for _ in range(total_steps):
-					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
-					self.session.run(cfr_step_op)
-					# self.session.run(all_cfr_steps)
 				if self.trunk_depth > 0:
 					if dataset_for_nodes:
 						self.store_trunk_info_of_nodes(

@@ -624,8 +624,8 @@ class TensorCFRFixedTrunkStrategies:
 		)
 
 	def do_all_cfr_steps(self, total_steps):
-		def condition(loop_counter):
-			return tf.less_equal(loop_counter, total_steps)
+		def condition(cfr_step):
+			return tf.less_equal(cfr_step, total_steps)
 
 		def body(loop_counter):
 			ops_process_strategies = self.process_strategies()
@@ -642,11 +642,11 @@ class TensorCFRFixedTrunkStrategies:
 				# )
 			return loop_counter
 
-		loop_counter_ = tf.constant(1)
+		cfr_step_ = tf.constant(1)
 		all_cfr_steps = tf.while_loop(
 			cond=condition,
 			body=body,
-			loop_vars=[loop_counter_],
+			loop_vars=[cfr_step_],
 			parallel_iterations=1,
 			back_prop=False,
 		)

@@ -1219,7 +1219,7 @@ class TensorCFRFixedTrunkStrategies:
 				)
 				print("before:")
 				self.print_debug_info()
-				self.session.run(all_cfr_steps)   # TODO fix: only 2 steps are done!
+				self.session.run(all_cfr_steps)
 				print("after:")
 				self.print_debug_info()
 

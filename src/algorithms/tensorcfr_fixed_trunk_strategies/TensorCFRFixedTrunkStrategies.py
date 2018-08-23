@@ -615,22 +615,29 @@ class TensorCFRFixedTrunkStrategies:
 		)
 
 	def do_all_cfr_steps(self, total_steps):
-		def condition(i, cfr_step_op):
-			return tf.less(i, total_steps)
+		def condition(loop_counter):
+			return tf.less_equal(loop_counter, total_steps)
 
-		def body(i, cfr_step_op):
-			i = tf.add(i, 1)
-			# return [i, cfr_step_op]
-			return [
-				tf.Print(i, [i, self.domain.cfr_step], message="(i, cfr_step): "),
-				cfr_step_op
-			]
+		def body(loop_counter):
+			ops_process_strategies = self.process_strategies()
+			ops_swap_players = self.swap_players()
+			with tf.variable_scope("increment_step"):
+				with tf.control_dependencies(ops_process_strategies + ops_swap_players):
+					assign_cfr_step = tf.assign(self.domain.cfr_step, loop_counter)
+			with tf.control_dependencies([assign_cfr_step]):
+				loop_counter = tf.add(loop_counter, 1)
+				# loop_counter = tf.Print(
+				# 	loop_counter,
+				# 	[loop_counter, self.domain.cfr_step],
+				# 	message="(loop_counter, cfr_step): "
+				# )
+			return loop_counter
 
-		i = tf.constant(0)
+		loop_counter_ = tf.constant(1)
 		all_cfr_steps = tf.while_loop(
 			cond=condition,
 			body=body,
-			loop_vars=[i, self.do_cfr_step()],
+			loop_vars=[loop_counter_],
 			parallel_iterations=1,
 			back_prop=False,
 		)
@@ -1200,7 +1207,17 @@ class TensorCFRFixedTrunkStrategies:
 				self.session.run(
 					self.randomize_strategies(seed=seed_of_iteration)
 				)
-				self.session.run(all_cfr_steps)
+				print("before:")
+				print_tensors(self.session, [self.domain.cfr_step])
+				# print_tensors(self.session, self.domain.current_infoset_strategies + self.domain.positive_cumulative_regrets
+				#               + self.domain.cumulative_infoset_strategies)
+				self.session.run(all_cfr_steps)   # TODO fix: only 2 steps are done!
+				print("___________________________________\n")
+				print("after:")
+				print_tensors(self.session, [self.domain.cfr_step])
+				# print_tensors(self.session, self.domain.current_infoset_strategies + self.domain.positive_cumulative_regrets
+				#               + self.domain.cumulative_infoset_strategies)
+				# print("___________________________________\n")
 
 				if self.trunk_depth > 0:
 					if dataset_for_nodes:

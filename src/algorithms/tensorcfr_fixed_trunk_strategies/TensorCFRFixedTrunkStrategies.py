@@ -614,6 +614,28 @@ class TensorCFRFixedTrunkStrategies:
 			name="cfr_step"
 		)
 
+	def do_all_cfr_steps(self, total_steps):
+		def condition(i, cfr_step_op):
+			return tf.less(i, total_steps)
+
+		def body(i, cfr_step_op):
+			i = tf.add(i, 1)
+			# return [i, cfr_step_op]
+			return [
+				tf.Print(i, [i, self.domain.cfr_step], message="(i, cfr_step): "),
+				cfr_step_op
+			]
+
+		i = tf.constant(0)
+		all_cfr_steps = tf.while_loop(
+			cond=condition,
+			body=body,
+			loop_vars=[i, self.do_cfr_step()],
+			parallel_iterations=1,
+			back_prop=False,
+		)
+		return all_cfr_steps
+
 	def assign_avg_strategies_to_current_strategies(self):  # TODO unittest
 		"""
 		Assign average strategies to current strategies.
@@ -1162,21 +1184,7 @@ class TensorCFRFixedTrunkStrategies:
 		}
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 
-		def condition(i, cfr_step_op):
-			return tf.less(i, total_steps)
-
-		def body(i, cfr_step_op):
-			i = tf.add(i, 1)
-			return [i, cfr_step_op]
-
-		i = tf.constant(0)
-		all_cfr_steps = tf.while_loop(
-			cond=condition,
-			body=body,
-			loop_vars=[i, self.do_cfr_step()],
-			parallel_iterations=1,
-			back_prop=False,
-		)
+		all_cfr_steps = self.do_all_cfr_steps(total_steps)
 
 		with tf.Session(
 			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU

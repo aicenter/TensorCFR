@@ -920,6 +920,12 @@ class TensorCFRFixedTrunkStrategies:
 		)
 		return concat_trunk_info_tensors
 
+	def print_debug_info(self):
+		print_tensors(self.session, [self.domain.cfr_step])
+		print_tensors(self.session, self.domain.current_infoset_strategies + self.domain.positive_cumulative_regrets
+		              + self.domain.cumulative_infoset_strategies)
+		print("___________________________________\n")
+
 	def set_up_feed_dictionary(self, method="by-domain", initial_strategy_values=None, seed=None):
 		if method == "by-domain":
 			# TODO: @janrudolf Fix here
@@ -1166,9 +1172,13 @@ class TensorCFRFixedTrunkStrategies:
 					self.randomize_strategies(seed=seed_of_iteration)
 				)
 
+				print("before:")
+				self.print_debug_info()
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(cfr_step_op)
+				print("after:")
+				self.print_debug_info()
 				if self.trunk_depth > 0:
 					if dataset_for_nodes:
 						self.store_trunk_info_of_nodes(
@@ -1208,16 +1218,10 @@ class TensorCFRFixedTrunkStrategies:
 					self.randomize_strategies(seed=seed_of_iteration)
 				)
 				print("before:")
-				print_tensors(self.session, [self.domain.cfr_step])
-				# print_tensors(self.session, self.domain.current_infoset_strategies + self.domain.positive_cumulative_regrets
-				#               + self.domain.cumulative_infoset_strategies)
+				self.print_debug_info()
 				self.session.run(all_cfr_steps)   # TODO fix: only 2 steps are done!
-				print("___________________________________\n")
 				print("after:")
-				print_tensors(self.session, [self.domain.cfr_step])
-				# print_tensors(self.session, self.domain.current_infoset_strategies + self.domain.positive_cumulative_regrets
-				#               + self.domain.cumulative_infoset_strategies)
-				# print("___________________________________\n")
+				self.print_debug_info()
 
 				if self.trunk_depth > 0:
 					if dataset_for_nodes:

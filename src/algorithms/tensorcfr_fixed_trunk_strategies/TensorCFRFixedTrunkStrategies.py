@@ -517,7 +517,16 @@ class TensorCFRFixedTrunkStrategies:
 					)
 			return ops_update_infoset_strategies[self.trunk_depth:]
 
-	def get_weighted_averaging_factor(self, delay=None):  # see https://arxiv.org/pdf/1407.5042.pdf (Section 2)
+	def get_weighted_averaging_factor(self, custom_cfr_step=None, delay=None):
+		"""
+		See https://arxiv.org/pdf/1407.5042.pdf (Section 2).
+	 
+		:param custom_cfr_step: Custom CFR+ step (iteration) from which to compute weighted averaging factor.
+		:param delay: An averaging delay as a TensorFlow interger.
+		:return: The weighted averaging factor as a TensorFlow scalar
+		"""
+		if custom_cfr_step is None:
+			custom_cfr_step = self.domain.cfr_step
 		if delay is None:
 			delay = self.domain.averaging_delay
 		with tf.variable_scope("weighted_averaging_factor"):
@@ -529,12 +538,12 @@ class TensorCFRFixedTrunkStrategies:
 				)
 			else:
 				return tf.cast(
-					tf.maximum(self.domain.cfr_step - delay, 0),
+					tf.maximum(custom_cfr_step - delay, 0),
 					dtype=FLOAT_DTYPE,
 					name="weighted_averaging_factor",
 				)
 
-	def cumulate_strategy_of_opponent(self, opponent=None):  # TODO unittest
+	def cumulate_strategy_of_opponent(self, custom_cfr_step=None, opponent=None):  # TODO unittest
 		if opponent is None:
 			opponent = self.domain.current_opponent
 		infoset_acting_players = self.domain.get_infoset_acting_players()
@@ -548,7 +557,7 @@ class TensorCFRFixedTrunkStrategies:
 						shape=[self.domain.current_infoset_strategies[level].shape[0]],
 						name="infosets_of_opponent_lvl{}".format(level)
 					)
-					averaging_factor = self.get_weighted_averaging_factor()
+					averaging_factor = self.get_weighted_averaging_factor(custom_cfr_step=custom_cfr_step)
 					cumulate_infoset_strategies_ops[level] = masked_assign(
 						# TODO implement and use `masked_assign_add` here
 						ref=self.domain.cumulative_infoset_strategies[level],
@@ -561,7 +570,7 @@ class TensorCFRFixedTrunkStrategies:
 					)
 			return cumulate_infoset_strategies_ops
 
-	def process_strategies(self, acting_player=None, opponent=None):
+	def process_strategies(self, custom_cfr_step=None, acting_player=None, opponent=None):
 		if acting_player is None:
 			acting_player = self.domain.current_updating_player
 		if opponent is None:
@@ -569,7 +578,7 @@ class TensorCFRFixedTrunkStrategies:
 		update_ops = self.update_strategy_of_updating_player(
 			acting_player=acting_player
 		)
-		cumulate_ops = self.cumulate_strategy_of_opponent(opponent=opponent)
+		cumulate_ops = self.cumulate_strategy_of_opponent(custom_cfr_step=custom_cfr_step, opponent=opponent)
 		return tf.tuple(update_ops + cumulate_ops, name="process_strategies")
 
 	def set_average_infoset_strategies(self):

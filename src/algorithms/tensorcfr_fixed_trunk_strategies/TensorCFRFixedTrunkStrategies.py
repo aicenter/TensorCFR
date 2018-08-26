@@ -1181,13 +1181,13 @@ class TensorCFRFixedTrunkStrategies:
 					self.randomize_strategies(seed=seed_of_iteration)
 				)
 
-				print("before:")
-				self.print_debug_info()
+				# print("before:")
+				# self.print_debug_info()
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(cfr_step_op)
-				print("after:")
-				self.print_debug_info()
+				# print("after:")
+				# self.print_debug_info()
 				if self.trunk_depth > 0:
 					if dataset_for_nodes:
 						self.store_trunk_info_of_nodes(

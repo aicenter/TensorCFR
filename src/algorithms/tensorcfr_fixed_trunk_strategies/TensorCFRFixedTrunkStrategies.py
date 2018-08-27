@@ -1086,6 +1086,7 @@ class TensorCFRFixedTrunkStrategies:
 
 				if storing_strategies:
 					self.store_final_average_strategies()
+	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 
 	def generate_dataset_at_trunk_depth(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
@@ -1154,6 +1155,7 @@ class TensorCFRFixedTrunkStrategies:
 				for level, current_strategies_per_level in enumerate(self.domain.current_infoset_strategies)
 			]
 		return ops_randomize_strategies
+	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 
 	def generate_dataset_single_session(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",

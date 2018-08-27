@@ -1011,6 +1011,9 @@ class TensorCFRFixedTrunkStrategies:
 		)
 
 	def store_trunk_info_of_nodes(self, dataset_basename, dataset_directory=""):
+		self.store_trunk_info(dataset_basename, dataset_directory)
+
+	def store_trunk_info(self, dataset_basename, dataset_directory):
 		self.session.run(self.assign_avg_strategies_to_current_strategies())
 
 		if not os.path.exists(dataset_directory):

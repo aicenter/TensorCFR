@@ -627,20 +627,13 @@ class TensorCFRFixedTrunkStrategies:
 		def condition(cfr_step):
 			return tf.less_equal(cfr_step, total_steps)
 
-		def body(loop_counter):
-			ops_process_strategies = self.process_strategies()
+		def body(cfr_step):
+			# TODO debug here
+			ops_process_strategies = self.process_strategies(cfr_step)
 			ops_swap_players = self.swap_players()
-			with tf.variable_scope("increment_step"):
-				with tf.control_dependencies(ops_process_strategies + ops_swap_players):
-					assign_cfr_step = tf.assign(self.domain.cfr_step, loop_counter)
-			with tf.control_dependencies([assign_cfr_step]):
-				loop_counter = tf.add(loop_counter, 1)
-				# loop_counter = tf.Print(
-				# 	loop_counter,
-				# 	[loop_counter, self.domain.cfr_step],
-				# 	message="(loop_counter, cfr_step): "
-				# )
-			return loop_counter
+			with tf.control_dependencies(ops_process_strategies + ops_swap_players):
+				increment_cfr_step = cfr_step + 1
+			return tf.Print(increment_cfr_step, [cfr_step, self.domain.cfr_step], "cfr_step: ")
 
 		cfr_step_ = tf.constant(1)
 		all_cfr_steps = tf.while_loop(

@@ -1002,11 +1002,11 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending
-		trunk_info_of_nodes = self.get_trunk_info_of_nodes()
-		print_tensors(self.session, [trunk_info_of_nodes]),
+		trunk_info = self.get_trunk_info_of_nodes()
+		print_tensors(self.session, [trunk_info]),
 		np.savetxt(
 			csv_file,
-			self.session.run(trunk_info_of_nodes),
+			self.session.run(trunk_info),
 			fmt="%7d,\t %7d,\t %7d,\t %+.6f,\t %+.6f",
 			header="data_id,\t nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
 			else "",

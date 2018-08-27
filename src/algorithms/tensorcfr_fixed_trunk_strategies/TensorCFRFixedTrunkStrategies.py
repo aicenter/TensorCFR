@@ -527,6 +527,8 @@ class TensorCFRFixedTrunkStrategies:
 		"""
 		if custom_cfr_step is None:
 			custom_cfr_step = self.domain.cfr_step
+		# else:   # TODO problem here?
+			# self.domain.cfr_step = custom_cfr_step
 		if delay is None:
 			delay = self.domain.averaging_delay
 		with tf.variable_scope("weighted_averaging_factor"):

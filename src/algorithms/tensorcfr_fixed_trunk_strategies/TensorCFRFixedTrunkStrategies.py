@@ -1034,7 +1034,37 @@ class TensorCFRFixedTrunkStrategies:
 		)
 
 	def store_trunk_info_of_nodes(self, dataset_basename, dataset_directory=""):
-		self.store_trunk_info(dataset_basename, dataset_directory)
+		self.session.run(self.assign_avg_strategies_to_current_strategies())
+
+		if not os.path.exists(dataset_directory):
+			os.mkdir(dataset_directory)
+		csv_filename = '{}/nodal_dataset_{}.csv'.format(dataset_directory, dataset_basename)
+		print("[data_id #{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
+			self.data_id,
+			csv_filename
+		))
+
+		csv_file = open(csv_filename, 'ab')  # binary mode for appending
+		trunk_info_of_nodes = self.get_trunk_info_of_nodes()
+		print_tensors(self.session, [trunk_info_of_nodes]),
+		np.savetxt(
+			csv_file,
+			self.session.run(trunk_info_of_nodes),
+			fmt="%7d,\t %7d,\t %7d,\t %+.6f,\t %+.6f",
+			header="data_id,\t nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
+			else "",
+		)
+
+		# TODO: remove below or use it
+		# print("[data_id #{} @{}] Generating dataset at the trunk-boundary...".format(
+		# 	self.data_id,
+		# 	get_current_timestamp(),
+		# ))
+		# tf_trunk_info = self.get_trunk_info_of_nodes()
+		# np_trunk_info = self.session.run(tf_trunk_info)
+		# # from pprint import pprint
+		# # pprint(np_trunk_info)
+		# self.store_trunk_info(np_trunk_info, dataset_basename, dataset_directory)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     storing_strategies=False, profiling=False):

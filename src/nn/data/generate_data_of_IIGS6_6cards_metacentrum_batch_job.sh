@@ -11,25 +11,25 @@
 #  qsub generate_data_of_IIGS6_6cards_metacentrum_batch_job.sh
 
 # configure variables
-HOMEDIR=/storage/plzen1/home/${PBS_O_LOGNAME}
-DATADIR=${HOMEDIR}/tensorcfr
-DATADIR_OUTPUT=${DATADIR}/output/job_${PBS_JOBID}
+FRONTNODE_HOME="/storage/plzen1/home/mathemage"
+REPO_DIR="${FRONTNODE_HOME}/beyond-deepstack/TensorCFR"
+FRONTNODE_DATA="${FRONTNODE_HOME}/beyond-deepstack/data/IIGS6/1000_datapoints"
+DATASET_DIR="TensorCFR/src/nn/data/out/IIGS6/1000_datapoints" # TODO rename the current script with 1000 datapoints
 
 trap 'clean_scratch' TERM EXIT  # nastaveni uklidu SCRATCHE v pripade chyby
-cp ${HOMEDIR}/.ssh/* ./.ssh/    # copy SSH keys for `git clone` without password
 module add tensorflow-1.7.1-gpu-python3
 
-cd ${SCRATCHDIR} || exit 1 # vstoupi do scratch adresare
-git clone git@gitlab.com:beyond-deepstack/TensorCFR.git
+cd ${SCRATCHDIR} || exit 1
+cp ${REPO_DIR} .           # copy repo from FRONTNODE
 
 # run TensorCFR
 cd TensorCFR
-python -m src.algorithms.tensorcfr_flattened_domains.tensorcfr_on_goofspiel6
+python -m src.algorithms.tensorcfr_flattened_domains.generate_data_of_IIGS6
 
-mkdir ${DATADIR_OUTPUT}
-mv out/*.csv ${DATADIR_OUTPUT} || export CLEAN_SCRATCH=false # presune vysledky do domovskeho adresare nebo je ponecha ve scratchi v pripade chyby
+# copy results back from temporal drive
+mkdir ${FRONTNODE_DATA}
+mv ${DATASET_DIR}/* ${FRONTNODE_DATA} || export CLEAN_SCRATCH=false # presune vysledky do domovskeho adresare nebo je ponecha ve scratchi v pripade chyby
 
 # clean up
 cd ${SCRATCHDIR}
 rm -Rf *
-rm -Rf ./.ssh/  # remove SSH credentials

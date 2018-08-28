@@ -1029,8 +1029,7 @@ class TensorCFRFixedTrunkStrategies:
 			csv_file,
 			self.session.run(trunk_info_of_nodes),
 			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f",
-			header="nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
-			else "",
+			header="nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value"
 		)
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

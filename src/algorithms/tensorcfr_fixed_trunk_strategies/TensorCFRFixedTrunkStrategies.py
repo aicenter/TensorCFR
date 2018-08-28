@@ -882,7 +882,6 @@ class TensorCFRFixedTrunkStrategies:
 			axis=-1,
 			name="node_to_infoset_lvl{}".format(self.boundary_level)
 		)
-		data_id_column = self.data_id * tf.ones_like(inner_node_to_infoset)
 		nodal_enumerations = [
 			tf.range(
 				len(action_counts_in_a_level),
@@ -913,7 +912,6 @@ class TensorCFRFixedTrunkStrategies:
 
 		concat_trunk_info_tensors = tf.concat(
 			[
-				data_id_column,
 				inner_nodal_indices,
 				inner_node_to_infoset,
 				inner_nodal_reaches_for_all_players,
@@ -1030,8 +1028,8 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			self.session.run(trunk_info_of_nodes),
-			fmt="%7d,\t %7d,\t %7d,\t %+.6f,\t %+.6f",
-			header="data_id,\t nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
+			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f",
+			header="nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value" if self.data_id == 0
 			else "",
 		)
 

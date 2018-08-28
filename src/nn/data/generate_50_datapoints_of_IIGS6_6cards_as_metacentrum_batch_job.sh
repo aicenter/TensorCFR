@@ -8,13 +8,13 @@
 # This script generates dataset for II-GS6 on Metacentrum's server.
 #
 # Run this command in Metacentrum's command line to run the job:
-#  qsub generate_1000_datapoints_of_IIGS6_6cards_as_metacentrum_batch_job.sh
+#  qsub generate_50_datapoints_of_IIGS6_6cards_as_metacentrum_batch_job.sh
 
 # configure variables
 FRONTNODE_HOME="/storage/plzen1/home/mathemage"
 REPO_DIR="${FRONTNODE_HOME}/beyond-deepstack/TensorCFR"
-FRONTNODE_DATA="${FRONTNODE_HOME}/beyond-deepstack/data/IIGS6/1000_datapoints"
-DATASET_DIR="TensorCFR/src/nn/data/out/IIGS6/1000_datapoints" # TODO rename the current script with 1000 datapoints
+FRONTNODE_DATA="${FRONTNODE_HOME}/beyond-deepstack/data/IIGS6/50_datapoints"
+DATASET_DIR="TensorCFR/src/nn/data/out/IIGS6/50_datapoints"
 
 trap 'clean_scratch' TERM EXIT  # nastaveni uklidu SCRATCHE v pripade chyby
 module add tensorflow-1.7.1-gpu-python3

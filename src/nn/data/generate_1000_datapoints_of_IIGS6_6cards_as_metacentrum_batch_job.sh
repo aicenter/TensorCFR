@@ -8,7 +8,7 @@
 # This script generates dataset for II-GS6 on Metacentrum's server.
 #
 # Run this command in Metacentrum's command line to run the job:
-#  qsub generate_data_of_IIGS6_6cards_metacentrum_batch_job.sh
+#  qsub generate_1000_datapoints_of_IIGS6_6cards_as_metacentrum_batch_job.sh
 
 # configure variables
 FRONTNODE_HOME="/storage/plzen1/home/mathemage"

@@ -1012,10 +1012,10 @@ class TensorCFRFixedTrunkStrategies:
 		self.session.run(self.assign_avg_strategies_to_current_strategies())
 
 		if not os.path.exists(dataset_directory):
-			os.mkdir(dataset_directory)
+			os.makedirs(dataset_directory)
 		dataset_subdirectory = "{}/{}".format(dataset_directory, dataset_basename)
 		if not os.path.exists(dataset_subdirectory):
-			os.mkdir(dataset_subdirectory)
+			os.makedirs(dataset_subdirectory)
 		csv_filename = '{}/nodal_dataset_{}.csv'.format(dataset_subdirectory, self.data_id)
 		print("[data_id #{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
 			self.data_id,

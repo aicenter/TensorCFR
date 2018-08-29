@@ -6,7 +6,7 @@ from src.domains.available_domains import get_domain_by_name
 from src.utils.other_utils import get_current_timestamp
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
@@ -26,9 +26,9 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	print(get_current_timestamp())
 	tensorcfr.generate_dataset_single_session(
 		# dataset_for_nodes=False,
-		dataset_size=1000,
-		dataset_directory=script_directory + "/out/IIGS6/1000_datapoints",
-		# seed=SEED_FOR_TESTING
+		dataset_size=50,
+		dataset_directory=script_directory + "/out/IIGS6/50_datapoints",
+		#seed=SEED_FOR_TESTING
 	)
 	print(get_current_timestamp())
 	# tensorcfr.generate_dataset_tf_while_loop(

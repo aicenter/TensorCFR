@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -N II-GS6_50_data_pt
 #PBS -q gpu
-#PBS -l walltime=2:00:00
+#PBS -l walltime=5:00:00
 #PBS -l select=1:ncpus=10:ngpus=1:gpu_cap=cuda35:mem=30gb:scratch_local=10gb
 
 # README

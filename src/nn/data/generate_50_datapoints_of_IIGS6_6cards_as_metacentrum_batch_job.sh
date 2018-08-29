@@ -14,7 +14,7 @@
 FRONTNODE_HOME="/storage/plzen1/home/mathemage"
 REPO_DIR="${FRONTNODE_HOME}/beyond-deepstack/TensorCFR"
 FRONTNODE_DATA="${FRONTNODE_HOME}/beyond-deepstack/data/IIGS6/50_datapoints"
-DATASET_DIR="TensorCFR/src/nn/data/out/IIGS6/50_datapoints"
+DATASET_DIR="${SCRATCHDIR}/TensorCFR/src/nn/data/out/IIGS6/50_datapoints"
 
 trap 'clean_scratch' TERM EXIT  # nastaveni uklidu SCRATCHE v pripade chyby
 module add tensorflow-1.7.1-gpu-python3

@@ -1111,7 +1111,8 @@ class TensorCFRFixedTrunkStrategies:
 					method="random",
 					seed=seed_of_iteration
 				)
-				print("[data_id #{} @{}] {}".format(self.data_id, get_current_timestamp(), setup_messages))
+				self.print_data_id_header()
+				print(setup_messages)
 
 			with tf.Session(
 				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
@@ -1220,7 +1221,7 @@ class TensorCFRFixedTrunkStrategies:
 		) as self.session:
 			for self.data_id in range(dataset_size):
 				self.session.run(tf.global_variables_initializer())
-				print("[data_id #{} @{}]".format(self.data_id, get_current_timestamp()))
+				self.print_data_id_header()
 				if seed is not None:
 					seed_of_iteration = seed + self.data_id
 				else:

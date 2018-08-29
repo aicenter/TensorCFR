@@ -27,9 +27,9 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	print(get_current_timestamp())
 	tensorcfr.generate_dataset_single_session(
 		# dataset_for_nodes=False,
-		dataset_size=3,
-		dataset_directory=script_directory + "/out",
-		seed=SEED_FOR_TESTING
+		dataset_size=1000,
+		dataset_directory=script_directory + "/out/IIGS6/1000_datapoints",
+		#seed=SEED_FOR_TESTING
 	)
 	print(get_current_timestamp())
 	# tensorcfr.generate_dataset_tf_while_loop(

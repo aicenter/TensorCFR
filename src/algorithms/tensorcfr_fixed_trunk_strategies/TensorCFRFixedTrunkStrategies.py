@@ -993,7 +993,7 @@ class TensorCFRFixedTrunkStrategies:
 		if not os.path.exists(dataset_directory):
 			os.mkdir(dataset_directory)
 		csv_filename = '{}/infoset_dataset_{}.csv'.format(dataset_directory, dataset_basename)
-		print("[data_id #{} @{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
+		print("[data_id #{}\t time: {}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
 			self.data_id,
 			get_current_timestamp(),
 			csv_filename
@@ -1017,9 +1017,10 @@ class TensorCFRFixedTrunkStrategies:
 		if not os.path.exists(dataset_subdirectory):
 			os.makedirs(dataset_subdirectory)
 		csv_filename = '{}/nodal_dataset_{}.csv'.format(dataset_subdirectory, self.data_id)
-		print("[data_id #{}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
+		print("[data_id #{}\t time: {}] Generating dataset at the trunk-boundary and storing to '{}'...".format(
 			self.data_id,
-			csv_filename
+			csv_filename,
+			get_current_timestamp()
 		))
 
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending

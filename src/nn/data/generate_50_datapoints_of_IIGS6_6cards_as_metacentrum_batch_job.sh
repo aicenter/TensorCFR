@@ -20,16 +20,13 @@ trap 'clean_scratch' TERM EXIT  # nastaveni uklidu SCRATCHE v pripade chyby
 module add tensorflow-1.7.1-gpu-python3
 
 cd ${SCRATCHDIR} || exit 1
-cp ${REPO_DIR} .           # copy repo from FRONTNODE
+cp -r ${REPO_DIR} .           # copy repo from FRONTNODE
 
 # run TensorCFR
 cd TensorCFR
-python -m src.algorithms.tensorcfr_flattened_domains.generate_data_of_IIGS6
+python -m src.nn.data.generate_data_of_IIGS6
 
 # copy results back from temporal drive
-mkdir ${FRONTNODE_DATA}
+mkdir -p ${FRONTNODE_DATA}
 mv ${DATASET_DIR}/* ${FRONTNODE_DATA} || export CLEAN_SCRATCH=false # presune vysledky do domovskeho adresare nebo je ponecha ve scratchi v pripade chyby
 
-# clean up
-cd ${SCRATCHDIR}
-rm -Rf *

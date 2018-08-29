@@ -12,7 +12,7 @@ from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
 	distribute_strategies_to_inner_nodes
-from src.utils.other_utils import get_current_timestamp
+from src.utils.other_utils import get_current_timestamp, get_memory_usage
 from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
@@ -1167,7 +1167,11 @@ class TensorCFRFixedTrunkStrategies:
 		) as self.session:
 			for self.data_id in range(dataset_size):
 				self.session.run(tf.global_variables_initializer())
-				print("[data_id #{} @{}]".format(self.data_id, get_current_timestamp()))
+				print("[data_id #{}] time: {}\t memory: {:,} bytes".format(
+					self.data_id,
+					get_current_timestamp(),
+					get_memory_usage()
+				))
 				if seed is not None:
 					seed_of_iteration = seed + self.data_id
 				else:

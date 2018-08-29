@@ -1080,8 +1080,15 @@ class TensorCFRFixedTrunkStrategies:
 
 				if storing_strategies:
 					self.store_final_average_strategies()
-	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 
+	def print_data_id_header(self):
+		print("[data_id #{}] time: {}\t memory: {:,} bytes".format(
+			self.data_id,
+			get_current_timestamp(),
+			get_memory_usage()
+		))
+
+	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 	def generate_dataset_at_trunk_depth(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
 	                                    seed=None):
@@ -1149,8 +1156,8 @@ class TensorCFRFixedTrunkStrategies:
 				for level, current_strategies_per_level in enumerate(self.domain.current_infoset_strategies)
 			]
 		return ops_randomize_strategies
-	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 
+	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 	def generate_dataset_single_session(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
 	                                    seed=None):
@@ -1167,11 +1174,7 @@ class TensorCFRFixedTrunkStrategies:
 		) as self.session:
 			for self.data_id in range(dataset_size):
 				self.session.run(tf.global_variables_initializer())
-				print("[data_id #{}] time: {}\t memory: {:,} bytes".format(
-					self.data_id,
-					get_current_timestamp(),
-					get_memory_usage()
-				))
+				self.print_data_id_header()
 				if seed is not None:
 					seed_of_iteration = seed + self.data_id
 				else:

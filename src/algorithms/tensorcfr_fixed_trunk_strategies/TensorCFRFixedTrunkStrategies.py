@@ -1114,9 +1114,7 @@ class TensorCFRFixedTrunkStrategies:
 					setup_messages
 				))
 
-			with tf.Session(
-				# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-			) as self.session:
+			with tf.Session(config=get_default_config_proto()) as self.session:
 				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop

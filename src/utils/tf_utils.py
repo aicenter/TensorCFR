@@ -89,7 +89,9 @@ def scatter_nd_sum(indices, updates, shape, name="scatter_nd_sum"):
 
 
 def get_default_config_proto():
-	default_config_proto = tf.ConfigProto()
-	# default_config_proto.device_count = {'GPU': 0}  # uncomment to run on CPU
+	default_config_proto = tf.ConfigProto(
+		# log_device_placement=True,  # uncomment to show the devices (CPU, GPUs...) on which the computation graph ops are
+		# device_count={'GPU': 0},  # uncomment to run on CPU
+	)
 	default_config_proto.gpu_options.allow_growth = DEFAULT_GPU_ALLOW_GROWTH
 	return default_config_proto

@@ -13,7 +13,8 @@ from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
 	distribute_strategies_to_inner_nodes
 from src.utils.other_utils import get_current_timestamp, get_memory_usage
-from src.utils.tf_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
+from src.utils.tf_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize, \
+	get_default_config_proto
 
 
 class TensorCFRFixedTrunkStrategies:
@@ -1047,9 +1048,7 @@ class TensorCFRFixedTrunkStrategies:
 
 		cfr_step_op = self.do_cfr_step()
 
-		with tf.Session(
-			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-		) as self.session:
+		with tf.Session(config=get_default_config_proto()) as self.session:
 			self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()) as writer:
 				for step in range(total_steps):

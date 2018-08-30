@@ -90,4 +90,5 @@ def get_default_config_proto():
 	default_config_proto = tf.ConfigProto()
 	# default_config_proto.device_count = {'GPU': 0},  # uncomment to run on CPU
 	default_config_proto.gpu_options.allow_growth = True
+	default_config_proto.gpu_options.per_process_gpu_memory_fraction = 0.45
 	return default_config_proto

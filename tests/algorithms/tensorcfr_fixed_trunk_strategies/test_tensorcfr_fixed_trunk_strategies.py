@@ -8,7 +8,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.commons.constants import SMALL_ERROR_TOLERANCE, DEFAULT_TOTAL_STEPS
 from src.domains.flattened_domain01_gambit.domain_from_gambit_loader import get_flattened_domain01_from_gambit
 from src.domains.flattened_goofspiel3.domain_from_gambit_loader import get_flattened_goofspiel3
-from src.utils.tensor_utils import print_tensor, print_tensors
+from src.utils.tf_utils import print_tensor, print_tensors
 
 
 class TestNodalExpectedValuesAtTrunkDepth(TestCase):

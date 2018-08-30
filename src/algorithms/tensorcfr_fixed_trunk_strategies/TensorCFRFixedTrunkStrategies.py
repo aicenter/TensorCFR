@@ -13,7 +13,7 @@ from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
 	distribute_strategies_to_inner_nodes
 from src.utils.other_utils import get_current_timestamp, get_memory_usage
-from src.utils.tensor_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
+from src.utils.tf_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
 class TensorCFRFixedTrunkStrategies:

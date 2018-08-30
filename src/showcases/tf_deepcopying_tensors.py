@@ -3,7 +3,7 @@
 # from https://stackoverflow.com/questions/33717772/how-can-i-copy-a-variable-in-tensorflow
 import tensorflow as tf
 
-from src.utils.tensor_utils import print_tensor
+from src.utils.tf_utils import print_tensor
 
 var = tf.Variable(0.9)
 var2 = tf.Variable(0.0)

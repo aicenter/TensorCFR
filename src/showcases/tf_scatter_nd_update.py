@@ -4,7 +4,7 @@ from pprint import pprint
 import tensorflow as tf
 
 from src.domains.flattened_hunger_games.flattened_hunger_games_as_numpy_values import infoset_acting_players
-from src.utils.tensor_utils import print_tensors
+from src.utils.tf_utils import print_tensors
 
 action_counts = [
 	[2],

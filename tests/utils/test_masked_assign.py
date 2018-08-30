@@ -3,7 +3,7 @@ from unittest import TestCase
 import tensorflow as tf
 
 from src.commons.constants import PLAYER1, PLAYER2, CHANCE_PLAYER, NO_ACTING_PLAYER
-from src.utils.tensor_utils import masked_assign, print_tensors
+from src.utils.tf_utils import masked_assign, print_tensors
 
 
 class TestMaskedAssign(TestCase):

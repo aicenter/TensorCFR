@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE
 from src.utils.gambit.gambit_efg_loader import GambitEFGLoader
-from src.utils.tensor_utils import print_tensors
+from src.utils.tf_utils import print_tensors
 
 
 class Domain:

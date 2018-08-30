@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.utils.tensor_utils import print_tensors
+from src.utils.tf_utils import print_tensors
 
 t = tf.constant(
 		[

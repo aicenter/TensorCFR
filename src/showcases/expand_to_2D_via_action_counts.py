@@ -5,7 +5,7 @@ from pprint import pprint
 import tensorflow as tf
 
 from src.utils.cfr_utils import get_action_and_infoset_values
-from src.utils.tensor_utils import print_tensors
+from src.utils.tf_utils import print_tensors
 
 if __name__ == '__main__':
 	# showcase using the domain `hunger_games`

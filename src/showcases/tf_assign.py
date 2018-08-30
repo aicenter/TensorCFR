@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.utils.tensor_utils import print_tensors
+from src.utils.tf_utils import print_tensors
 
 shape = [3, 3, 3]
 tensor = tf.Variable(tf.reshape(tf.range(0.0, 27), shape), name="tensor")

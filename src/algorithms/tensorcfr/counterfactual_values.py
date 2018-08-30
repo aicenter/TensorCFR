@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from src.algorithms.tensorcfr.TensorCFR import TensorCFR
 from src.domains.available_domains import get_domain_by_name
-from src.utils.tensor_utils import print_tensors
+from src.utils.tf_utils import print_tensors
 
 if __name__ == '__main__':
 	domains = [

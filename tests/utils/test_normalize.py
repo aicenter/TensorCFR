@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import SMALL_ERROR_TOLERANCE
-from src.utils.tensor_utils import normalize
+from src.utils.tf_utils import normalize
 
 
 class TestTensorNormalization(tf.test.TestCase):

@@ -8,7 +8,7 @@ from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERA
 	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT, SEED_FOR_TESTING
 from src.utils.cfr_utils import get_parents_from_action_counts
 from src.utils.gambit_flattened_domains.loader import GambitLoader
-from src.utils.tensor_utils import print_tensors, normalize
+from src.utils.tf_utils import print_tensors, normalize
 
 
 class FlattenedDomain:

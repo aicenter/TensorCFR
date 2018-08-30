@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.utils.tensor_utils import print_tensors, masked_assign
+from src.utils.tf_utils import print_tensors, masked_assign
 
 
 def masked_assign_via_tf_where():

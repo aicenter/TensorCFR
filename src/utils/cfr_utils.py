@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import INT_DTYPE, TERMINAL_NODE, INNER_NODE, REACH_PROBABILITY_OF_ROOT, FLOAT_DTYPE
-from src.utils.tensor_utils import print_tensors, scatter_nd_sum
+from src.utils.tf_utils import print_tensors, scatter_nd_sum
 
 
 def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, for_player=None, acting_players=None):

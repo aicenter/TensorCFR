@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from src.commons.constants import SMALL_ERROR_TOLERANCE
-from src.utils.tensor_utils import expanded_multiply, print_tensors
+from src.utils.tf_utils import expanded_multiply, print_tensors
 
 
 class TestExpandedMultiply(tf.test.TestCase):

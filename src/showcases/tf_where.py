@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.utils.tensor_utils import print_tensors
+from src.utils.tf_utils import print_tensors
 
 count_of_actions = 3
 shape3x3 = [count_of_actions, count_of_actions]

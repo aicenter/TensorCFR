@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.utils.tensor_utils import print_tensors
+from src.utils.tf_utils import print_tensors
 
 a = tf.constant(0.8, dtype=tf.float64)
 b = tf.constant(0.1, dtype=tf.float64)

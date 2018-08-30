@@ -6,7 +6,7 @@ import tensorflow as tf
 from src.commons.constants import INFOSET_FOR_TERMINAL_NODES
 from src.utils.cfr_utils import get_parents_from_action_counts, get_node_types_from_action_counts, \
 	distribute_strategies_to_nodes, distribute_strategies_to_inner_nodes, expand_to_2D_via_action_counts
-from src.utils.tensor_utils import print_tensors
+from src.utils.tf_utils import print_tensors
 
 
 class TestCFRUtils(tf.test.TestCase):

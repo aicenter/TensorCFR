@@ -84,3 +84,9 @@ def scatter_nd_sum(indices, updates, shape, name="scatter_nd_sum"):
 	# TODO unittest
 	# TODO write a docstring
 	return tf.scatter_nd(indices=indices, updates=updates, shape=shape, name=name)
+
+
+def get_default_config_proto():
+	default_config_proto = tf.ConfigProto()
+	# default_config_proto.device_count = {'GPU': 0},  # uncomment to run on CPU
+	return default_config_proto

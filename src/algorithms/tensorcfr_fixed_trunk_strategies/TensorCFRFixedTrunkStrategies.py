@@ -1080,7 +1080,7 @@ class TensorCFRFixedTrunkStrategies:
 					self.store_final_average_strategies()
 
 	def get_data_id_header(self):
-		return "[data_id #{}\t time: {}\t memory: {:,} kB]".format(
+		return "[data_id #{}\t time: {}\t RAM: {:,} bytes]".format(
 			self.data_id,
 			get_current_timestamp(),
 			get_memory_usage()

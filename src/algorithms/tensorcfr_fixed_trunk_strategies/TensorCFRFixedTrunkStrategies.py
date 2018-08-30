@@ -1168,9 +1168,7 @@ class TensorCFRFixedTrunkStrategies:
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 		cfr_step_op = self.do_cfr_step()
 
-		with tf.Session(
-			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-		) as self.session:
+		with tf.Session(config=get_default_config_proto()) as self.session:
 			for self.data_id in range(dataset_size):
 				self.session.run(tf.global_variables_initializer())
 				print(self.get_data_id_header())

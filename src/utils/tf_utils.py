@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 
-from src.commons.constants import DEFAULT_GPU_ALLOW_GROWTH
+from src.commons.constants import DEFAULT_GPU_ALLOW_GROWTH, DEFAULT_GPU_MEM_FRACTION
 
 
 def print_tensor(sess, tensor):
@@ -92,5 +92,5 @@ def get_default_config_proto():
 	default_config_proto = tf.ConfigProto()
 	# default_config_proto.device_count = {'GPU': 0},  # uncomment to run on CPU
 	default_config_proto.gpu_options.allow_growth = DEFAULT_GPU_ALLOW_GROWTH
-	default_config_proto.gpu_options.per_process_gpu_memory_fraction = 0.45
+	default_config_proto.gpu_options.per_process_gpu_memory_fraction = DEFAULT_GPU_MEM_FRACTION
 	return default_config_proto

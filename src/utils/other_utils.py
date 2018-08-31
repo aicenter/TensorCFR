@@ -42,9 +42,9 @@ def get_dataset_parameters(domain_name):
 	}
 
 
-def print_dataset_parameters(domain_name, starting_seed, dataset_size):
+def print_dataset_parameters(dataset_parameters):
 	print("###################################")
-	print("domain name: {}".format(domain_name))
-	print("starting seed: {}".format(starting_seed))
-	print("dataset size: {}".format(dataset_size))
+	print("domain name: {}".format(dataset_parameters["domain_name"]))
+	print("starting seed: {}".format(dataset_parameters["starting_seed"]))
+	print("dataset size: {}".format(dataset_parameters["dataset_size"]))
 	print("###################################")

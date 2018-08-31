@@ -12,8 +12,7 @@ ACTIVATE_FILE = True
 if __name__ == '__main__' and ACTIVATE_FILE:
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	dataset_parameters = get_dataset_parameters("IIGS6_gambit_flattened")
-	print_dataset_parameters(dataset_parameters["domain_name"], dataset_parameters["starting_seed"],
-	                         dataset_parameters["dataset_size"])
+	print_dataset_parameters(dataset_parameters)
 
 	domain = get_domain_by_name(dataset_parameters["domain_name"])
 	print(get_current_timestamp())

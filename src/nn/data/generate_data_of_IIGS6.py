@@ -11,6 +11,7 @@ ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
+	domain_name = "IIGS6_gambit_flattened"
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 
 	parser = argparse.ArgumentParser()
@@ -19,8 +20,13 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	args = parser.parse_args()
 	dataset_size = args.size
 	starting_seed = args.seed
+	print("###################################\n")
+	print("domain name: {}".format(domain_name))
+	print("starting seed: {}".format(starting_seed))
+	print("dataset size: {}".format(dataset_size))
+	print("###################################\n")
 
-	domain = get_domain_by_name("IIGS6_gambit_flattened")
+	domain = get_domain_by_name(domain_name)
 	print(get_current_timestamp())
 	tensorcfr = TensorCFRFixedTrunkStrategies(
 		domain,

@@ -12,9 +12,15 @@ if __name__ == '__main__':
 		trunk_depth=2
 	)
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	tensorcfr.generate_dataset_single_session(
+	tensorcfr.generate_dataset_at_trunk_depth(
 		# dataset_for_nodes=False,
 		dataset_size=4,
 		dataset_directory=script_directory + "/out",
 		seed=SEED_FOR_TESTING
 	)
+	# tensorcfr.generate_dataset_single_session(
+	# 	# dataset_for_nodes=False,
+	# 	dataset_size=4,
+	# 	dataset_directory=script_directory + "/out",
+	# 	seed=SEED_FOR_TESTING
+	# )

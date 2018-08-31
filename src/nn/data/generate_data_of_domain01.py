@@ -14,7 +14,7 @@ if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	tensorcfr.generate_dataset_single_session(
 		# dataset_for_nodes=False,
-		dataset_size=3,
+		dataset_size=4,
 		dataset_directory=script_directory + "/out",
 		seed=SEED_FOR_TESTING
 	)

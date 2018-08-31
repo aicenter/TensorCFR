@@ -956,7 +956,7 @@ class TensorCFRFixedTrunkStrategies:
 				seed=seed,
 				trunk_depth=self.trunk_depth,
 			)
-			return "Initializing strategies to random distributions...\n", {
+			return "Initializing strategies to random distributions using seed {}...\n".format(seed), {
 				self.domain.initial_infoset_strategies[level]: np_random_strategies[level]
 				for level in range(self.domain.acting_depth)
 			}
@@ -1090,7 +1090,7 @@ class TensorCFRFixedTrunkStrategies:
 	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 	def generate_dataset_at_trunk_depth(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
-	                                    seed=None):
+	                                    dataset_seed_to_start=None):
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,
@@ -1099,15 +1099,11 @@ class TensorCFRFixedTrunkStrategies:
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 		cfr_step_op = self.do_cfr_step()
 
-		for self.dataset_seed in range(dataset_size):
-			if seed is not None:
-				seed_of_iteration = seed + self.dataset_seed   # TODO modify here: data_id was replaced by dataset_seed_directly
-			else:
-				seed_of_iteration = None
+		for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
 			with tf.variable_scope("initialization"):
 				setup_messages, feed_dictionary = self.set_up_feed_dictionary(
 					method="random",
-					seed=seed_of_iteration
+					seed=self.dataset_seed
 				)
 				print("{} {}".format(
 					self.get_data_id_header(),

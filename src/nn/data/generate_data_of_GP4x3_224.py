@@ -21,6 +21,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	tensorcfr.generate_dataset_at_trunk_depth(
 		dataset_size=DEFAULT_DATASET_SIZE,
 		dataset_directory=script_directory + "/out",
-		seed=SEED_FOR_TESTING
+		dataset_seed_to_start=SEED_FOR_TESTING
 	)
 	print(get_current_timestamp())

@@ -27,3 +27,11 @@ def get_memory_usage_using_os():
 		return int(out_list[1])
 	else:
 		return None
+
+
+def print_dataset_parameters(domain_name, starting_seed, dataset_size):
+	print("###################################")
+	print("domain name: {}".format(domain_name))
+	print("starting seed: {}".format(starting_seed))
+	print("dataset size: {}".format(dataset_size))
+	print("###################################")

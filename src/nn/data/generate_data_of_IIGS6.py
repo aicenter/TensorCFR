@@ -17,11 +17,12 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	)
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 
-	for starting_seed in range(1000):
+	dataset_size = 1000
+	for starting_seed in range(dataset_size):
 		print(get_current_timestamp())
 		tensorcfr.generate_dataset_at_trunk_depth(
 			dataset_size=1,
-			dataset_directory=script_directory + "/out/IIGS6/1000_datapoints/{}".format(get_current_timestamp()),
+			dataset_directory=script_directory + "/out/IIGS6/{}_datapoints/{}".format(dataset_size, get_current_timestamp()),
 			dataset_seed_to_start=starting_seed
 		)
 		print(get_current_timestamp())

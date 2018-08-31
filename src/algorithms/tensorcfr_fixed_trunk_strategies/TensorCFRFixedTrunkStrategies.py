@@ -52,7 +52,7 @@ class TensorCFRFixedTrunkStrategies:
 		self.trunk_depth_infoset_cfvs = None
 		self.trunk_depth_nodal_expected_values = None
 		self.cfr_parameters = {}
-		self.data_id = None
+		self.dataset_seed = None
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
@@ -853,7 +853,7 @@ class TensorCFRFixedTrunkStrategies:
 			axis=-1,
 			name="infoset_indices_lvl{}".format(self.boundary_level)
 		)
-		data_id_column = self.data_id * tf.ones_like(trunk_depth_infoset_indices)
+		data_id_column = self.dataset_seed * tf.ones_like(trunk_depth_infoset_indices)   # TODO remove `data_id_column`
 		concat_trunk_info_tensors = tf.concat(
 			[
 				data_id_column,
@@ -1005,7 +1005,8 @@ class TensorCFRFixedTrunkStrategies:
 			csv_file,
 			self.session.run(self.get_trunk_info_of_infosets()),
 			fmt="%7d,\t %7d,\t %.4f,\t %+.4f",
-			header="data_id,\t IS_id,\t range,\t CFV" if self.data_id == 0 else "",
+			header="dataset_seed,\t IS_id,\t range,\t CFV" if self.dataset_seed == 0 else "",   # TODO remove `data_id_column`
+			# TODO remove condition
 		)
 
 	def store_trunk_info_of_nodes(self, dataset_basename, dataset_directory=""):
@@ -1016,7 +1017,7 @@ class TensorCFRFixedTrunkStrategies:
 		dataset_subdirectory = "{}/{}".format(dataset_directory, dataset_basename)
 		if not os.path.exists(dataset_subdirectory):
 			os.makedirs(dataset_subdirectory)
-		csv_filename = '{}/nodal_dataset_{}.csv'.format(dataset_subdirectory, self.data_id)
+		csv_filename = '{}/nodal_dataset_{}.csv'.format(dataset_subdirectory, self.dataset_seed)   # TODO add `dataset_seed` to name
 		print("{} Generating dataset at the trunk-boundary and storing to '{}'...".format(
 			self.get_data_id_header(),
 			csv_filename,
@@ -1080,8 +1081,8 @@ class TensorCFRFixedTrunkStrategies:
 					self.store_final_average_strategies()
 
 	def get_data_id_header(self):
-		return "[data_id #{}\t time: {}\t RAM: {:,} bytes]".format(
-			self.data_id,
+		return "[dataset_seed #{}\t time: {}\t RAM: {:,} bytes]".format(
+			self.dataset_seed,
 			get_current_timestamp(),
 			get_memory_usage()
 		)
@@ -1098,9 +1099,9 @@ class TensorCFRFixedTrunkStrategies:
 		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 		cfr_step_op = self.do_cfr_step()
 
-		for self.data_id in range(dataset_size):
+		for self.dataset_seed in range(dataset_size):
 			if seed is not None:
-				seed_of_iteration = seed + self.data_id
+				seed_of_iteration = seed + self.dataset_seed   # TODO modify here: data_id was replaced by dataset_seed_directly
 			else:
 				seed_of_iteration = None
 			with tf.variable_scope("initialization"):
@@ -1168,11 +1169,11 @@ class TensorCFRFixedTrunkStrategies:
 		cfr_step_op = self.do_cfr_step()
 
 		with tf.Session(config=get_default_config_proto()) as self.session:
-			for self.data_id in range(dataset_size):
+			for self.dataset_seed in range(dataset_size):
 				self.session.run(tf.global_variables_initializer())
 				print(self.get_data_id_header())
 				if seed is not None:
-					seed_of_iteration = seed + self.data_id
+					seed_of_iteration = seed + self.dataset_seed   # TODO modify here: data_id was replaced by dataset_seed_directly
 				else:
 					seed_of_iteration = None
 
@@ -1212,11 +1213,11 @@ class TensorCFRFixedTrunkStrategies:
 		all_cfr_steps = self.do_all_cfr_steps(total_steps)
 
 		with tf.Session(config=get_default_config_proto()) as self.session:
-			for self.data_id in range(dataset_size):
+			for self.dataset_seed in range(dataset_size):
 				self.session.run(tf.global_variables_initializer())
 				print(self.get_data_id_header())
 				if seed is not None:
-					seed_of_iteration = seed + self.data_id
+					seed_of_iteration = seed + self.dataset_seed   # TODO modify here: data_id was replaced by dataset_seed_directly
 				else:
 					seed_of_iteration = None
 

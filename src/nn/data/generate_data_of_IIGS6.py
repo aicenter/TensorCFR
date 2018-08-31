@@ -23,7 +23,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		print(get_current_timestamp())
 		tensorcfr.generate_dataset_at_trunk_depth(
 			dataset_size=1,
-			dataset_directory=script_directory + "/out/IIGS6/{}_datapoints/{}".format(dataset_size, get_current_timestamp()),
+			dataset_directory=script_directory + "/out/IIGS6/{}_datasets/{}".format(dataset_size, get_current_timestamp()),
 			dataset_seed_to_start=starting_seed
 		)
 		print(get_current_timestamp())

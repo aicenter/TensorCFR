@@ -10,11 +10,11 @@ ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
-	domain = get_domain_by_name("IIGS6_gambit_flattened")
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 
 	dataset_size = 1000
 	for starting_seed in range(dataset_size):
+		domain = get_domain_by_name("IIGS6_gambit_flattened")
 		print(get_current_timestamp())
 		tensorcfr = TensorCFRFixedTrunkStrategies(
 			domain,

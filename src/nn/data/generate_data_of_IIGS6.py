@@ -2,10 +2,6 @@
 import argparse
 import os
 
-from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
-from src.domains.available_domains import get_domain_by_name
-from src.utils.other_utils import get_current_timestamp
-
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
 ACTIVATE_FILE = True
 
@@ -20,11 +16,11 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	args = parser.parse_args()
 	dataset_size = args.size
 	starting_seed = args.seed
-	print("###################################\n")
+	print("###################################")
 	print("domain name: {}".format(domain_name))
 	print("starting seed: {}".format(starting_seed))
 	print("dataset size: {}".format(dataset_size))
-	print("###################################\n")
+	print("###################################")
 
 	domain = get_domain_by_name(domain_name)
 	print(get_current_timestamp())

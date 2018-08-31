@@ -836,7 +836,7 @@ class TensorCFRFixedTrunkStrategies:
 		else:
 			raise ValueError('Trunk depth {} has to be positive to get nodal values.'.format(self.trunk_depth))
 
-	def get_trunk_info_to_store(self):
+	def get_trunk_info_of_infosets(self):
 		if self.trunk_depth <= 0:
 			return None
 
@@ -1000,10 +1000,10 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending
-		print_tensors(self.session, [self.get_trunk_info_to_store()]),
+		print_tensors(self.session, [self.get_trunk_info_of_infosets()]),
 		np.savetxt(
 			csv_file,
-			self.session.run(self.get_trunk_info_to_store()),
+			self.session.run(self.get_trunk_info_of_infosets()),
 			fmt="%7d,\t %7d,\t %.4f,\t %+.4f",
 			header="data_id,\t IS_id,\t range,\t CFV" if self.data_id == 0 else "",
 		)

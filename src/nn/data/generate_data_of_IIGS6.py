@@ -23,10 +23,9 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	print(get_current_timestamp())
 	tensorcfr.generate_dataset_at_trunk_depth(
 		dataset_size=1,
-		dataset_directory=script_directory + "/out/{}/{}_datasets/{}".format(
+		dataset_directory=script_directory + "/out/{}/{}_datasets".format(
 			dataset_parameters["domain_name"],
 			dataset_parameters["dataset_size"],
-			get_current_timestamp()
 		),
 		dataset_seed_to_start=dataset_parameters["starting_seed"]
 	)

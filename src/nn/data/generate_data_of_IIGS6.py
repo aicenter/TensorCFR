@@ -11,14 +11,15 @@ ACTIVATE_FILE = True
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	domain = get_domain_by_name("IIGS6_gambit_flattened")
-	tensorcfr = TensorCFRFixedTrunkStrategies(
-		domain,
-		trunk_depth=10
-	)
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 
 	dataset_size = 1000
 	for starting_seed in range(dataset_size):
+		print(get_current_timestamp())
+		tensorcfr = TensorCFRFixedTrunkStrategies(
+			domain,
+			trunk_depth=10
+		)
 		print(get_current_timestamp())
 		tensorcfr.generate_dataset_at_trunk_depth(
 			dataset_size=1,

@@ -1090,7 +1090,7 @@ class TensorCFRFixedTrunkStrategies:
 	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 	def generate_dataset_at_trunk_depth(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
-	                                    dataset_seed_to_start=None):
+	                                    dataset_seed_to_start=0):
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,

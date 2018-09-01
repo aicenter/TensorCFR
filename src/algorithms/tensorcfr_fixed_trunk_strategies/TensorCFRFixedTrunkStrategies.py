@@ -52,6 +52,8 @@ class TensorCFRFixedTrunkStrategies:
 		self.trunk_depth_infoset_cfvs = None
 		self.trunk_depth_nodal_expected_values = None
 		self.cfr_parameters = {}
+		self.basename_from_cfr_parameters = None
+		self.cfr_step_op = None
 		self.dataset_seed = None
 
 	@staticmethod

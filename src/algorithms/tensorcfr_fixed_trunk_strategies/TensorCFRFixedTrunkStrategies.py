@@ -1101,10 +1101,7 @@ class TensorCFRFixedTrunkStrategies:
 					dataset_directory=dataset_directory
 				)
 
-	# TODO remove and leave only `generate_dataset_tf_while_loop()`
-	def generate_dataset_multiple_sessions(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                       dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
-	                                       dataset_seed_to_start=0):
+	def set_up_dataset_generation(self, delay, total_steps):
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,
@@ -1112,6 +1109,12 @@ class TensorCFRFixedTrunkStrategies:
 		}
 		self.set_basename_from_cfr_parameters()
 		self.cfr_step_op = self.do_cfr_step()
+
+	# TODO remove and leave only `generate_dataset_tf_while_loop()`
+	def generate_dataset_multiple_sessions(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
+	                                       dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
+	                                       dataset_seed_to_start=0):
+		self.set_up_dataset_generation(delay, total_steps)
 
 		for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
 			with tf.variable_scope("initialization"):
@@ -1160,13 +1163,7 @@ class TensorCFRFixedTrunkStrategies:
 	def generate_dataset_single_session(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
 	                                    seed=None):
-		self.cfr_parameters = {
-			"total_steps"    : total_steps,
-			"averaging_delay": delay,
-			"trunk_depth"    : self.trunk_depth,
-		}
-		self.set_basename_from_cfr_parameters()
-		self.cfr_step_op = self.do_cfr_step()
+		self.set_up_dataset_generation(delay, total_steps)
 
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			for self.dataset_seed in range(dataset_size):
@@ -1199,7 +1196,6 @@ class TensorCFRFixedTrunkStrategies:
 			"trunk_depth"    : self.trunk_depth,
 		}
 		self.set_basename_from_cfr_parameters()
-
 		all_cfr_steps = self.do_all_cfr_steps(total_steps)
 
 		with tf.Session(config=get_default_config_proto()) as self.session:

@@ -220,14 +220,10 @@ class FlattenedDomain:
 		normalized_random_weights = [None] * total_size
 		tf_random_strategies = [None] * total_size
 
+		tf.set_random_seed(seed)
 		for level in trunk_levels:
-			if seed is not None:
-				seed_for_level = seed + level  # to ensure different random tensors at each level
-			else:
-				seed_for_level = None
 			random_weights[level] = tf.random_uniform(
 				shape=tf.shape(self.initial_infoset_strategies[level]),
-				seed=seed_for_level,
 				name="random_weights_lvl{}".format(level)
 			)
 			mask_of_valid_actions[level] = tf.logical_and(

@@ -965,18 +965,17 @@ class TensorCFRFixedTrunkStrategies:
 		else:
 			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
-	def get_basename_from_cfr_parameters(self):
-		basename_from_cfr_parameters = "{}-{}-{}".format(
+	def set_basename_from_cfr_parameters(self):
+		self.basename_from_cfr_parameters = "{}-{}-{}".format(
 			self.domain.domain_name,
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
 			",".join(
 				("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
 				 for key, value in sorted(self.cfr_parameters.items()))).replace("/", "-")
 		)
-		return basename_from_cfr_parameters
 
 	def set_log_directory(self):
-		self.log_directory = "logs/" + self.get_basename_from_cfr_parameters()
+		self.log_directory = "logs/" + self.basename_from_cfr_parameters
 		if not os.path.exists(self.log_directory):
 			os.mkdir(self.log_directory)
 
@@ -1111,7 +1110,7 @@ class TensorCFRFixedTrunkStrategies:
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,
 		}
-		self.basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
+		self.set_basename_from_cfr_parameters()
 		self.cfr_step_op = self.do_cfr_step()
 
 		for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
@@ -1166,7 +1165,7 @@ class TensorCFRFixedTrunkStrategies:
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,
 		}
-		self.basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
+		self.set_basename_from_cfr_parameters()
 		self.cfr_step_op = self.do_cfr_step()
 
 		with tf.Session(config=get_default_config_proto()) as self.session:
@@ -1199,7 +1198,7 @@ class TensorCFRFixedTrunkStrategies:
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,
 		}
-		self.basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
+		self.set_basename_from_cfr_parameters()
 
 		all_cfr_steps = self.do_all_cfr_steps(total_steps)
 

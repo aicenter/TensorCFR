@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 size_of_generation=${1:-1}
 num_generations=${2:-1000}
 seed_offset=${3:-0}

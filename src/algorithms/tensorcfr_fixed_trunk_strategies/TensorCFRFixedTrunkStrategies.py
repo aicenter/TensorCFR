@@ -1087,6 +1087,19 @@ class TensorCFRFixedTrunkStrategies:
 			get_memory_usage()
 		)
 
+	def store_trunk_info(self, dataset_directory, dataset_for_nodes):
+		if self.trunk_depth > 0:
+			if dataset_for_nodes:
+				self.store_trunk_info_of_nodes(
+					dataset_basename=self.basename_from_cfr_parameters,
+					dataset_directory=dataset_directory
+				)
+			else:
+				self.store_trunk_info_of_infosets(
+					dataset_basename=self.basename_from_cfr_parameters,
+					dataset_directory=dataset_directory
+				)
+
 	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 	def generate_dataset_multiple_sessions(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                       dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
@@ -1096,8 +1109,8 @@ class TensorCFRFixedTrunkStrategies:
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,
 		}
-		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
-		cfr_step_op = self.do_cfr_step()
+		self.basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
+		self.cfr_step_op = self.do_cfr_step()
 
 		for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
 			with tf.variable_scope("initialization"):
@@ -1114,18 +1127,8 @@ class TensorCFRFixedTrunkStrategies:
 				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
-					self.session.run(cfr_step_op)
-				if self.trunk_depth > 0:
-					if dataset_for_nodes:
-						self.store_trunk_info_of_nodes(
-							dataset_basename=basename_from_cfr_parameters,
-							dataset_directory=dataset_directory
-						)
-					else:
-						self.store_trunk_info_of_infosets(
-							dataset_basename=basename_from_cfr_parameters,
-							dataset_directory=dataset_directory
-						)
+					self.session.run(self.cfr_step_op)
+				self.store_trunk_info(dataset_directory, dataset_for_nodes)
 
 	def randomize_strategies(self, seed):  # TODO unittest
 		"""
@@ -1161,8 +1164,8 @@ class TensorCFRFixedTrunkStrategies:
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,
 		}
-		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
-		cfr_step_op = self.do_cfr_step()
+		self.basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
+		self.cfr_step_op = self.do_cfr_step()
 
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			for self.dataset_seed in range(dataset_size):
@@ -1181,20 +1184,10 @@ class TensorCFRFixedTrunkStrategies:
 				# self.print_debug_info()
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
-					self.session.run(cfr_step_op)
+					self.session.run(self.cfr_step_op)
 				# print("after:")
 				# self.print_debug_info()
-				if self.trunk_depth > 0:
-					if dataset_for_nodes:
-						self.store_trunk_info_of_nodes(
-							dataset_basename=basename_from_cfr_parameters,
-							dataset_directory=dataset_directory
-						)
-					else:
-						self.store_trunk_info_of_infosets(
-							dataset_basename=basename_from_cfr_parameters,
-							dataset_directory=dataset_directory
-						)
+				self.store_trunk_info(dataset_directory, dataset_for_nodes)
 
 	def generate_dataset_tf_while_loop(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                   dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
@@ -1204,7 +1197,7 @@ class TensorCFRFixedTrunkStrategies:
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,
 		}
-		basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
+		self.basename_from_cfr_parameters = self.get_basename_from_cfr_parameters()
 
 		all_cfr_steps = self.do_all_cfr_steps(total_steps)
 
@@ -1225,18 +1218,7 @@ class TensorCFRFixedTrunkStrategies:
 				self.session.run(all_cfr_steps)
 				print("after:")
 				self.print_debug_info()
-
-				if self.trunk_depth > 0:
-					if dataset_for_nodes:
-						self.store_trunk_info_of_nodes(
-							dataset_basename=basename_from_cfr_parameters,
-							dataset_directory=dataset_directory
-						)
-					else:
-						self.store_trunk_info_of_infosets(
-							dataset_basename=basename_from_cfr_parameters,
-							dataset_directory=dataset_directory
-						)
+				self.store_trunk_info(dataset_directory, dataset_for_nodes)
 
 
 if __name__ == '__main__':

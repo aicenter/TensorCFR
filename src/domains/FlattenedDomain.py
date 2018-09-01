@@ -8,7 +8,7 @@ from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERA
 	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT, SEED_FOR_TESTING
 from src.utils.cfr_utils import get_parents_from_action_counts
 from src.utils.gambit_flattened_domains.loader import GambitLoader
-from src.utils.tf_utils import print_tensors, normalize
+from src.utils.tf_utils import print_tensors, normalize, get_default_config_proto
 
 
 class FlattenedDomain:
@@ -262,9 +262,7 @@ class FlattenedDomain:
 		trunk_levels = range(trunk_depth)
 		tf_random_strategies = self.get_tf_random_strategies(seed, trunk_depth)
 
-		with tf.Session(
-			# config=tf.ConfigProto(device_count={'GPU': 0})  # uncomment to run on CPU
-		) as tmp_session:
+		with tf.Session(config=get_default_config_proto()) as tmp_session:
 			tmp_session.run(tf.global_variables_initializer())
 			np_strategies = [
 				tmp_session.run(

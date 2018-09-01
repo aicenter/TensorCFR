@@ -17,7 +17,7 @@ if __name__ == '__main__':
 		trunk_depth=2
 	)
 	print(get_current_timestamp())
-	tensorcfr.generate_dataset_at_trunk_depth(
+	tensorcfr.generate_dataset_multiple_sessions(
 		dataset_size=dataset_parameters["dataset_size"],
 		dataset_directory=script_directory + "/out/{}/{}_datasets".format(
 			dataset_parameters["domain_name"],

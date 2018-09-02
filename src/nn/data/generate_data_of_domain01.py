@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
 	print(get_current_timestamp())
 	dataset_generation_method = DEFAULT_DATAGEN_METHOD
-	if dataset_generation_method == DATAGEN_MULTISESSIONS:  # TODO else branch
+	if dataset_generation_method == DATAGEN_MULTISESSIONS:
 		tensorcfr.generate_dataset_multiple_sessions(
 			dataset_size=dataset_parameters["dataset_size"],
 			dataset_directory=script_directory + "/out/{}/{}_datasets".format(
@@ -38,6 +38,8 @@ if __name__ == '__main__':
 			),
 			dataset_seed_to_start=dataset_parameters["starting_seed"]
 		)
+	else:
+		raise ValueError("Invalid value {} for 'dataset_generation_method'.".format(dataset_generation_method))
 	print(get_current_timestamp())
 
 	# tensorcfr.generate_dataset_tf_while_loop(

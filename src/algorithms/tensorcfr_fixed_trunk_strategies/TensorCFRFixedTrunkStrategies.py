@@ -1165,15 +1165,15 @@ class TensorCFRFixedTrunkStrategies:
 	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 	def generate_dataset_single_session(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
-	                                    seed=None):
+	                                    dataset_seed_to_start=0):
 		self.set_up_dataset_generation(delay, total_steps)
 
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			for self.dataset_seed in range(dataset_size):
 				self.session.run(tf.global_variables_initializer())
 				print(self.get_data_id_header())
-				if seed is not None:
-					seed_of_iteration = seed + self.dataset_seed   # TODO modify here: data_id was replaced by dataset_seed_directly
+				if dataset_seed_to_start is not None:
+					seed_of_iteration = dataset_seed_to_start + self.dataset_seed   # TODO modify here: data_id was replaced by dataset_seed_directly
 				else:
 					seed_of_iteration = None
 

@@ -25,7 +25,7 @@ if __name__ == '__main__':
 		# dataset_for_nodes=False,
 		dataset_size=2,
 		dataset_directory=script_directory + "/out",
-		seed=SEED_FOR_TESTING
+		dataset_seed_to_start=SEED_FOR_TESTING
 	)
 	print(get_current_timestamp())
 	# tensorcfr.generate_dataset_tf_while_loop(

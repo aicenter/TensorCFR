@@ -2,7 +2,7 @@
 import os
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
-from src.commons.constants import DATASET_GENERATION_METHOD, DATAGEN_MULTISESSIONS, DATAGEN_SINGLESESSIONS
+from src.commons.constants import DEFAULT_DATAGEN_METHOD, DATAGEN_MULTISESSIONS, DATAGEN_SINGLESESSIONS
 from src.domains.available_domains import get_domain_by_name
 from src.utils.other_utils import get_current_timestamp, print_dataset_parameters, get_dataset_parameters
 
@@ -19,7 +19,7 @@ if __name__ == '__main__':
 	)
 
 	print(get_current_timestamp())
-	if DATASET_GENERATION_METHOD == DATAGEN_MULTISESSIONS:
+	if DEFAULT_DATAGEN_METHOD == DATAGEN_MULTISESSIONS:  # TODO else branch
 		tensorcfr.generate_dataset_multiple_sessions(
 			dataset_size=dataset_parameters["dataset_size"],
 			dataset_directory=script_directory + "/out/{}/{}_datasets".format(
@@ -28,7 +28,7 @@ if __name__ == '__main__':
 			),
 			dataset_seed_to_start=dataset_parameters["starting_seed"]
 		)
-	elif DATASET_GENERATION_METHOD == DATAGEN_SINGLESESSIONS:
+	elif DEFAULT_DATAGEN_METHOD == DATAGEN_SINGLESESSIONS:
 		tensorcfr.generate_dataset_single_session(
 			dataset_size=dataset_parameters["dataset_size"],
 			dataset_directory=script_directory + "/out/{}/{}_datasets".format(

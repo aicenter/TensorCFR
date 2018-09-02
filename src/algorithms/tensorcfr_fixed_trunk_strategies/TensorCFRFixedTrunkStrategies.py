@@ -1175,13 +1175,9 @@ class TensorCFRFixedTrunkStrategies:
 				self.session.run(
 					self.randomize_strategies(seed=self.dataset_seed)
 				)
-				# print("before:")
-				# self.print_debug_info()
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(self.cfr_step_op)
-				# print("after:")
-				# self.print_debug_info()
 				self.store_trunk_info(dataset_directory, dataset_for_nodes)
 
 	def generate_dataset_tf_while_loop(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

@@ -26,7 +26,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	print(get_current_timestamp())
 	tensorcfr.generate_dataset_single_session(
 		# dataset_for_nodes=False,
-		dataset_size=200,
+		dataset_size=200,   # TODO replace by calling `generate_data_of_IIGS6.py` with commandline right arguments
 		dataset_directory=script_directory + "/out/IIGS6/50_datapoints",
 	)
 	print(get_current_timestamp())

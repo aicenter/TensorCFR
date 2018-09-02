@@ -50,3 +50,7 @@ PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__f
 SEED_FOR_TESTING = 1337
 DEFAULT_DATASET_SIZE = 1
 DEFAULT_GPU_ALLOW_GROWTH = True
+
+# constants for dataset generation
+DATAGEN_MULTISESSIONS = 0
+DATASET_GENERATION_METHOD = DATAGEN_MULTISESSIONS

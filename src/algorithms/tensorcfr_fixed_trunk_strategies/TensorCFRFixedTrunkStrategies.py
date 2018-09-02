@@ -1113,7 +1113,6 @@ class TensorCFRFixedTrunkStrategies:
 		self.set_up_cfr_parameters(delay, total_steps)
 		self.cfr_step_op = self.do_cfr_step()
 
-	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 	def generate_dataset_multiple_sessions(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                       dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
 	                                       dataset_seed_to_start=0):
@@ -1162,7 +1161,6 @@ class TensorCFRFixedTrunkStrategies:
 			]
 		return ops_randomize_strategies
 
-	# TODO remove and leave only `generate_dataset_tf_while_loop()`
 	def generate_dataset_single_session(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
 	                                    dataset_seed_to_start=0):
@@ -1180,6 +1178,12 @@ class TensorCFRFixedTrunkStrategies:
 					self.session.run(self.cfr_step_op)
 				self.store_trunk_info(dataset_directory, dataset_for_nodes)
 
+	# TODO fix this generation method:
+	#   - uncomment print_debug_info()
+	#   - run
+	#   - check if `cfr_step` counter increased or not
+	#   - add `DATAGEN_TF_WHILE_LOOP = DATAGEN_SINGLESESSIONS + 1` to `constants.py` if necessary
+	# TODO pick only one of the 3 `generate_*()` methods and rename to `generate_dataset()`
 	def generate_dataset_tf_while_loop(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                   dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
 	                                   dataset_seed_to_start=0):

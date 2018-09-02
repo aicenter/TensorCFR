@@ -996,7 +996,7 @@ class TensorCFRFixedTrunkStrategies:
 			os.mkdir(dataset_directory)
 		csv_filename = '{}/infoset_dataset_{}.csv'.format(dataset_directory, dataset_basename)
 		print("{} Generating dataset at the trunk-boundary and storing to '{}'...".format(
-			self.get_data_id_header(),
+			self.get_data_generation_header(),
 			csv_filename
 		))
 
@@ -1020,7 +1020,7 @@ class TensorCFRFixedTrunkStrategies:
 			os.makedirs(dataset_subdirectory)
 		csv_filename = '{}/nodal_dataset_seed_{}.csv'.format(dataset_subdirectory, self.dataset_seed)
 		print("{} Generating dataset at the trunk-boundary and storing to '{}'...".format(
-			self.get_data_id_header(),
+			self.get_data_generation_header(),
 			csv_filename,
 		))
 
@@ -1081,7 +1081,7 @@ class TensorCFRFixedTrunkStrategies:
 				if storing_strategies:
 					self.store_final_average_strategies()
 
-	def get_data_id_header(self):
+	def get_data_generation_header(self):
 		return "[dataset_seed #{}\t time: {}\t RAM: {:,} bytes]".format(
 			self.dataset_seed,
 			get_current_timestamp(),
@@ -1126,7 +1126,7 @@ class TensorCFRFixedTrunkStrategies:
 					seed=self.dataset_seed
 				)
 				print("{} {}".format(
-					self.get_data_id_header(),
+					self.get_data_generation_header(),
 					setup_messages
 				))
 
@@ -1171,7 +1171,7 @@ class TensorCFRFixedTrunkStrategies:
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
 				self.session.run(tf.global_variables_initializer())
-				print(self.get_data_id_header())
+				print(self.get_data_generation_header())
 				self.session.run(
 					self.randomize_strategies(seed=self.dataset_seed)
 				)
@@ -1193,7 +1193,7 @@ class TensorCFRFixedTrunkStrategies:
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			for self.dataset_seed in range(dataset_size):
 				self.session.run(tf.global_variables_initializer())
-				print(self.get_data_id_header())
+				print(self.get_data_generation_header())
 				if seed is not None:
 					seed_of_iteration = seed + self.dataset_seed   # TODO modify here: data_id was replaced by dataset_seed_directly
 				else:

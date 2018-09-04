@@ -7,7 +7,7 @@ import tensorflow as tf
 from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERAGING_DELAY, INT_DTYPE, FLOAT_DTYPE, \
 	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT, SEED_FOR_TESTING
 from src.utils.cfr_utils import get_parents_from_action_counts
-from src.utils.gambit_flattened_domains.loader import GambitLoader
+from src.utils.gambit_flattened_domains.loader import GambitLoader, GambitLoaderCached
 from src.utils.tf_utils import print_tensors, normalize, get_default_config_proto
 
 
@@ -194,6 +194,20 @@ class FlattenedDomain:
 	@classmethod
 	def init_from_gambit_file(cls, path_to_gambitfile, domain_name="from_gambit"):
 		domain_numpy_tensors = GambitLoader(path_to_gambitfile)
+		return cls(
+			domain_name,
+			domain_numpy_tensors.domain_parameters,
+			domain_numpy_tensors.number_of_nodes_actions,
+			domain_numpy_tensors.node_to_infoset,
+			domain_numpy_tensors.utilities,
+			domain_numpy_tensors.infoset_acting_players,
+			domain_numpy_tensors.initial_infoset_strategies,
+			information_set_mapping_to_gtlibrary=domain_numpy_tensors.information_set_mapping_to_gtlibrary
+		)
+
+	@classmethod
+	def init_from_npz_file(cls, path_to_gambitfile, domain_name="from_gambit"):
+		domain_numpy_tensors = GambitLoaderCached(path_to_gambitfile)
 		return cls(
 			domain_name,
 			domain_numpy_tensors.domain_parameters,

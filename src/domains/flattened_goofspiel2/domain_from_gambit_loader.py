@@ -5,20 +5,20 @@ import tensorflow as tf
 from src.domains.FlattenedDomain import FlattenedDomain
 
 
+path_to_domain_filename = os.path.join(
+	os.path.dirname(
+		os.path.abspath(
+			__file__)
+	),
+	'..',
+	'..',
+	'..',
+	'doc',
+	'goofspiel',
+	'II-GS2.efg'
+)
 def get_flattened_goofspiel2():   # TODO rename to _13cards
-	path_to_domain_filename = os.path.join(
-			os.path.dirname(
-					os.path.abspath(
-							__file__)
-			),
-			'..',
-			'..',
-			'..',
-			'doc',
-			'goofspiel',
-			'II-GS2.efg'
-	)
-	return FlattenedDomain.init_from_gambit_file(path_to_domain_filename, domain_name="II-GS2_gambit_flattened")
+	return FlattenedDomain.init_from_npz_file(path_to_domain_filename, domain_name="II-GS2_gambit_flattened")
 
 
 if __name__ == '__main__':

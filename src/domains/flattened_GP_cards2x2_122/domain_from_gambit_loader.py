@@ -18,7 +18,7 @@ def get_flattened_GP_cards2x2_122():
 			'poker',
 			'GP_cards2x2_122.gbt'
 	)
-	return FlattenedDomain.init_from_gambit_file(path_to_domain_filename, domain_name="GP_cards2x2_122_gambit_flattened")
+	return FlattenedDomain.init_from_npz_file(path_to_domain_filename, domain_name="GP_cards2x2_122_gambit_flattened")
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix

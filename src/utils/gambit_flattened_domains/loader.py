@@ -282,8 +282,7 @@ class GambitLoaderCached(GambitLoader):
 			self.utilities = loaded['utilities']
 			self.infoset_acting_players = loaded['infoset_acting_players']
 			self.initial_infoset_strategies = loaded['initial_infoset_strategies']
-			self.infoset_acting_players = loaded['infoset_acting_players']
-			self.initial_infoset_strategies = loaded['initial_infoset_strategies']
+			self.information_set_mapping_to_gtlibrary = loaded['information_set_mapping_to_gtlibrary']
 
 	def _extract_clean_filename(self, filename):
 		""" docstring """
@@ -299,6 +298,12 @@ if __name__ == '__main__':
 			'doc',
 			'domain01_via_gambit.efg'
 	)
+	goofspiel_efg = os.path.join(
+		common_constants.PROJECT_ROOT,
+		'doc',
+		'goofspiel',
+		'IIGS6_s1_bf_ft.gbt'
+	)
 	hunger_games_efg = os.path.join(
 		common_constants.PROJECT_ROOT,
 		'doc',
@@ -313,6 +318,7 @@ if __name__ == '__main__':
 	)
 	efg_files = [
 		domain01_efg,
+		goofspiel_efg,
 		hunger_games_efg,
 		hunger_games_2_efg
 	]
@@ -326,45 +332,41 @@ if __name__ == '__main__':
 	# 	GambitLoader(efg_file, domain_name).show()
 	# 	print("___________________________________\n")
 
-	domain = GambitLoader(domain01_efg)
-
-	domain_name = domain.domain_name
-	domain_parameters = domain.domain_parameters
-	number_of_nodes_actions = domain.number_of_nodes_actions
-	node_to_infoset = domain.node_to_infoset
-	utilities = domain.utilities
-	infoset_acting_players = domain.infoset_acting_players
-	initial_infoset_strategies = domain.initial_infoset_strategies
-	information_set_mapping_to_gtlibrary = domain.information_set_mapping_to_gtlibrary
-
-	np.savez_compressed(
-		'domain_pokus.npz',
-		domain_name=domain_name,
-		domain_parameters=domain_parameters,
-		number_of_nodes_actions=number_of_nodes_actions,
-		node_to_infoset=node_to_infoset,
-		utilities=utilities,
-		infoset_acting_players=infoset_acting_players,
-		initial_infoset_strategies=initial_infoset_strategies,
-		information_set_mapping_to_gtlibrary=information_set_mapping_to_gtlibrary,
-	)
-
-
-	print(infoset_acting_players)
-	print(initial_infoset_strategies)
+	# domain = GambitLoader(domain01_efg)
+	#
+	# domain_name = domain.domain_name
+	# domain_parameters = domain.domain_parameters
+	# number_of_nodes_actions = domain.number_of_nodes_actions
+	# node_to_infoset = domain.node_to_infoset
+	# utilities = domain.utilities
+	# infoset_acting_players = domain.infoset_acting_players
+	# initial_infoset_strategils
+	# information_set_mapping_to_gtlibrary = domain.information_set_mapping_to_gtlibrary
+	#
+	# np.savez_compressed(
+	# 	'domain_pokus.npz',
+	# 	domain_name=domain_name,
+	# 	domain_parameters=domain_parameters,
+	# 	number_of_nodes_actions=number_of_nodes_actions,
+	# 	node_to_infoset=node_to_infoset,
+	# 	utilities=utilities,
+	# 	infoset_acting_players=infoset_acting_players,
+	# 	initial_infoset_strategies=initial_infoset_strategies,
+	# 	information_set_mapping_to_gtlibrary=information_set_mapping_to_gtlibrary,
+	# )
 
 
-	domain = GambitLoaderCached(domain01_efg)
+	domain = GambitLoaderCached(goofspiel_efg)
 
 
 
-	loaded = np.load('domain_pokus.npz')
-
-	print(np.array_equal(domain_name, loaded['domain_name']))
-	print(np.array_equal(domain_parameters, loaded['domain_parameters']))
-	print(np.array_equal(number_of_nodes_actions, loaded['number_of_nodes_actions']))
-	print(np.array_equal(node_to_infoset, loaded['node_to_infoset']))
-	print(np.array_equal(utilities, loaded['utilities']))
-	print(np.array_equal(information_set_mapping_to_gtlibrary, loaded['information_set_mapping_to_gtlibrary']))
-
-
+	# loaded = np.load('domain_pokus.npz')
+	#
+	# print(np.array_equal(domain_name, loaded['domain_name']))
+	# print(np.array_equal(domain_parameters, loaded['domain_parameters']))
+	# print(np.array_equal(number_of_nodes_actions, loaded['number_of_nodes_actions']))
+	# print(np.array_equal(node_to_infoset, loaded['node_to_infoset']))
+	# print(np.array_equal(utilities, loaded['utilities']))
+	# print(np.array_equal(information_set_mapping_to_gtlibrary, loaded['information_set_mapping_to_gtlibrary']))
+	#
+	#

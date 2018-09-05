@@ -192,8 +192,8 @@ class FlattenedDomain:
 		]
 
 	@classmethod
-	def init_from_gambit_file(cls, path_to_gambitfile, domain_name="from_gambit"):
-		domain_numpy_tensors = GambitLoader(path_to_gambitfile)
+	def init_from_gambit_file(cls, path_to_gambit_file, domain_name="from_gambit"):
+		domain_numpy_tensors = GambitLoader(path_to_gambit_file)
 		return cls(
 			domain_name,
 			domain_numpy_tensors.domain_parameters,
@@ -206,8 +206,8 @@ class FlattenedDomain:
 		)
 
 	@classmethod
-	def init_from_npz_file(cls, path_to_gambitfile, domain_name="from_gambit"):
-		domain_numpy_tensors = GambitLoaderCached(path_to_gambitfile)
+	def init_from_hkl_file(cls, path_to_gambit_file, domain_name="from_gambit"):
+		domain_numpy_tensors = GambitLoaderCached(path_to_gambit_file)
 		return cls(
 			domain_name,
 			domain_numpy_tensors.domain_parameters,

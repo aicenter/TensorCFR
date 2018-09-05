@@ -18,7 +18,7 @@ def get_flattened_matching_pennies_from_gambit():
 		'matching_pennies',
 		'matching_pennies_via_gambit.efg'
 	)
-	return FlattenedDomain.init_from_npz_file(path_to_domain_filename, domain_name="flattened_matching_pennies_gambit")
+	return FlattenedDomain.init_from_hkl_file(path_to_domain_filename, domain_name="flattened_matching_pennies_gambit")
 
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ def get_flattened_domain01_from_gambit():
 			'doc',
 			'domain01_via_gambit.efg'
 	)
-	return FlattenedDomain.init_from_npz_file(path_to_domain_filename, domain_name="flattened_domain01_gambit")
+	return FlattenedDomain.init_from_hkl_file(path_to_domain_filename, domain_name="flattened_domain01_gambit")
 
 
 if __name__ == '__main__':

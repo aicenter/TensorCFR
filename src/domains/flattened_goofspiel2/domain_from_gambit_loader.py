@@ -18,7 +18,7 @@ path_to_domain_filename = os.path.join(
 	'II-GS2.efg'
 )
 def get_flattened_goofspiel2():   # TODO rename to _13cards
-	return FlattenedDomain.init_from_npz_file(path_to_domain_filename, domain_name="II-GS2_gambit_flattened")
+	return FlattenedDomain.init_from_hkl_file(path_to_domain_filename, domain_name="II-GS2_gambit_flattened")
 
 
 if __name__ == '__main__':

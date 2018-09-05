@@ -18,7 +18,7 @@ def get_flattened_goofspiel2_2cards():
 			'goofspiel',
 			'II-GS2.efg'      # TODO change here to `*_2cards.efg`
 	)
-	return FlattenedDomain.init_from_npz_file(path_to_domain_filename, domain_name="II-GS2_gambit_flattened")
+	return FlattenedDomain.init_from_hkl_file(path_to_domain_filename, domain_name="II-GS2_gambit_flattened")
 
 
 if __name__ == '__main__':

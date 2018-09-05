@@ -1041,6 +1041,7 @@ class TensorCFRFixedTrunkStrategies:
 			"averaging_delay": delay,
 			"trunk_depth"    : self.trunk_depth,
 		}
+		self.set_up_cfr_parameters(delay, total_steps)
 		self.set_log_directory()
 		if profiling:
 			self.log_directory += "-profiling"

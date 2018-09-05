@@ -1,2 +1,3 @@
 psutil
 tensorflow==1.5.0
+hickle==3.2.2

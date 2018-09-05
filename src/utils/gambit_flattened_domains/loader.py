@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import copy
 import os
-from pprint import pprint
-
 import numpy as np
+import hickle as hkl
+from pprint import pprint
 
 from src.commons import constants as common_constants
 from src.utils.gambit_flattened_domains import constants
@@ -254,42 +254,69 @@ class GambitLoader:
 
 
 class GambitLoaderCached(GambitLoader):
-	def __init__(self, file, domain_name="from_gambit"):
-		filename_clean = self._extract_clean_filename(file)
-		filename_npz = filename_clean + '.npz'
+	def __init__(self, path, domain_name="from_gambit"):
+		if not os.path.isfile(path):
+			raise FileNotFoundError
 
-		if not os.path.isfile(filename_npz):
-			super().__init__(file, domain_name)
+		self.cached_dir_name = 'cached_hkl'
+		self.cached_file_suffix = 'hkl'
 
-			np.savez_compressed(
-				filename_npz,
-				domain_name=self.domain_name,
-				domain_parameters=self.domain_parameters,
-				number_of_nodes_actions=self.number_of_nodes_actions,
-				node_to_infoset=self.node_to_infoset,
-				utilities=self.utilities,
-				infoset_acting_players=self.infoset_acting_players,
-				initial_infoset_strategies=self.initial_infoset_strategies,
-				information_set_mapping_to_gtlibrary=self.information_set_mapping_to_gtlibrary,
-			)
+		path_to_hkl = self._get_path_to_cached_hkl(path)
+
+		if not os.path.isfile(path_to_hkl):
+			super().__init__(path, domain_name)
+			self._save_hkl(path_to_hkl)
 		else:
-			loaded = np.load(filename_npz)
+			self._load_hkl(path_to_hkl)
 
-			self.domain_name = loaded['domain_name']
-			self.domain_parameters = loaded['domain_parameters']
-			self.number_of_nodes_actions = loaded['number_of_nodes_actions']
-			self.node_to_infoset = loaded['node_to_infoset']
-			self.utilities = loaded['utilities']
-			self.infoset_acting_players = loaded['infoset_acting_players']
-			self.initial_infoset_strategies = loaded['initial_infoset_strategies']
-			self.information_set_mapping_to_gtlibrary = loaded['information_set_mapping_to_gtlibrary']
-
-	def _extract_clean_filename(self, filename):
+	def _extract_clean_filename(self, path):
 		""" docstring """
-		last_pathname_item = filename.split(os.sep)[-1]
+		last_pathname_item = path.split(os.sep)[-1]
 		return last_pathname_item.split('.')[0]
 
+	def _get_path_to_cached_hkl(self, path):
+		gambit_file_m_time = os.path.getmtime(path)
 
+		path_list = path.split(os.sep)
+		path_list[0] = os.sep
+		path_to_gambit_file_folder = path_list[:len(path_list) - 1]
+		path_to_gambit_file_cached_folder = copy.deepcopy(path_to_gambit_file_folder)
+		path_to_gambit_file_cached_folder.append(self.cached_dir_name)
+
+		if not os.path.exists(os.path.join(*path_to_gambit_file_cached_folder)):
+			os.makedirs(os.path.join(*path_to_gambit_file_cached_folder))
+
+		filename_without_suffix = (path_list[-1]).split('.')[:-1]
+		filename_npz = '{}__{}.{}'.format('.'.join(filename_without_suffix), str(gambit_file_m_time), self.cached_file_suffix)
+
+		path_to_gambit_file_cached_folder.append(filename_npz)
+		return os.path.join(*path_to_gambit_file_cached_folder)
+
+	def _load_hkl(self, path_to_hkl):
+		loaded = hkl.load(path_to_hkl)
+
+		self.domain_name = loaded['domain_name']
+		self.domain_parameters = loaded['domain_parameters']
+		self.number_of_nodes_actions = loaded['number_of_nodes_actions']
+		self.node_to_infoset = loaded['node_to_infoset']
+		self.utilities = loaded['utilities']
+		self.infoset_acting_players = loaded['infoset_acting_players']
+		self.initial_infoset_strategies = loaded['initial_infoset_strategies']
+		self.information_set_mapping_to_gtlibrary = loaded['information_set_mapping_to_gtlibrary']
+
+	def _save_hkl(self, path_to_hkl):
+		data = {
+			'domain_name': self.domain_name,
+			'domain_parameters': self.domain_parameters,
+			'number_of_nodes_actions': self.number_of_nodes_actions,
+			'node_to_infoset': self.node_to_infoset,
+			'utilities': self.utilities,
+			'infoset_acting_players': self.infoset_acting_players,
+			'initial_infoset_strategies': self.initial_infoset_strategies,
+			'information_set_mapping_to_gtlibrary': self.information_set_mapping_to_gtlibrary,
+		}
+
+		hkl.dump(data, path_to_hkl, mode='w', compression='gzip')
 
 
 if __name__ == '__main__':
@@ -332,41 +359,4 @@ if __name__ == '__main__':
 	# 	GambitLoader(efg_file, domain_name).show()
 	# 	print("___________________________________\n")
 
-	# domain = GambitLoader(domain01_efg)
-	#
-	# domain_name = domain.domain_name
-	# domain_parameters = domain.domain_parameters
-	# number_of_nodes_actions = domain.number_of_nodes_actions
-	# node_to_infoset = domain.node_to_infoset
-	# utilities = domain.utilities
-	# infoset_acting_players = domain.infoset_acting_players
-	# initial_infoset_strategils
-	# information_set_mapping_to_gtlibrary = domain.information_set_mapping_to_gtlibrary
-	#
-	# np.savez_compressed(
-	# 	'domain_pokus.npz',
-	# 	domain_name=domain_name,
-	# 	domain_parameters=domain_parameters,
-	# 	number_of_nodes_actions=number_of_nodes_actions,
-	# 	node_to_infoset=node_to_infoset,
-	# 	utilities=utilities,
-	# 	infoset_acting_players=infoset_acting_players,
-	# 	initial_infoset_strategies=initial_infoset_strategies,
-	# 	information_set_mapping_to_gtlibrary=information_set_mapping_to_gtlibrary,
-	# )
-
-
 	domain = GambitLoaderCached(goofspiel_efg)
-
-
-
-	# loaded = np.load('domain_pokus.npz')
-	#
-	# print(np.array_equal(domain_name, loaded['domain_name']))
-	# print(np.array_equal(domain_parameters, loaded['domain_parameters']))
-	# print(np.array_equal(number_of_nodes_actions, loaded['number_of_nodes_actions']))
-	# print(np.array_equal(node_to_infoset, loaded['node_to_infoset']))
-	# print(np.array_equal(utilities, loaded['utilities']))
-	# print(np.array_equal(information_set_mapping_to_gtlibrary, loaded['information_set_mapping_to_gtlibrary']))
-	#
-	#

@@ -325,12 +325,6 @@ if __name__ == '__main__':
 			'doc',
 			'domain01_via_gambit.efg'
 	)
-	goofspiel_efg = os.path.join(
-		common_constants.PROJECT_ROOT,
-		'doc',
-		'goofspiel',
-		'IIGS6_s1_bf_ft.gbt'
-	)
 	hunger_games_efg = os.path.join(
 		common_constants.PROJECT_ROOT,
 		'doc',
@@ -345,18 +339,14 @@ if __name__ == '__main__':
 	)
 	efg_files = [
 		domain01_efg,
-		goofspiel_efg,
 		hunger_games_efg,
 		hunger_games_2_efg
 	]
 	domain_names = [
 		"domain01",
-		"goofspiel_efg",
 		"hunger_games",
 		"hunger_games_2"
 	]
-	# for efg_file, domain_name in zip(efg_files, domain_names):
-	# 	GambitLoader(efg_file, domain_name).show()
-	# 	print("___________________________________\n")
-
-	domain = GambitLoaderCached(goofspiel_efg)
+	for efg_file, domain_name in zip(efg_files, domain_names):
+		GambitLoader(efg_file, domain_name).show()
+		print("___________________________________\n")

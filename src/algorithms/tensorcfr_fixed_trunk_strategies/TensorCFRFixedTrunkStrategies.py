@@ -965,6 +965,14 @@ class TensorCFRFixedTrunkStrategies:
 		else:
 			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))
 
+	def set_up_cfr_parameters(self, delay, total_steps):
+		self.cfr_parameters = {
+			"total_steps"    : total_steps,
+			"averaging_delay": delay,
+			"trunk_depth"    : self.trunk_depth,
+		}
+		self.set_basename_from_cfr_parameters()
+
 	def set_basename_from_cfr_parameters(self):
 		self.basename_from_cfr_parameters = "{}-{}-{}".format(
 			self.domain.domain_name,
@@ -1101,14 +1109,6 @@ class TensorCFRFixedTrunkStrategies:
 					dataset_basename=self.basename_from_cfr_parameters,
 					dataset_directory=dataset_directory
 				)
-
-	def set_up_cfr_parameters(self, delay, total_steps):
-		self.cfr_parameters = {
-			"total_steps"    : total_steps,
-			"averaging_delay": delay,
-			"trunk_depth"    : self.trunk_depth,
-		}
-		self.set_basename_from_cfr_parameters()
 
 	def set_up_dataset_generation(self, delay, total_steps):
 		self.set_up_cfr_parameters(delay, total_steps)

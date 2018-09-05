@@ -33,7 +33,7 @@ def get_memory_usage_using_os():
 def get_dataset_parameters(domain_name):
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--seed", help="dataset seed", nargs='?', type=int, default=0)
-	parser.add_argument("--size", help="size of one dataset (given the seed)", nargs='?', type=int, default=1000)
+	parser.add_argument("--size", help="size of one dataset (given the seed)", nargs='?', type=int, default=4)
 	args = parser.parse_args()
 	return {
 		"domain_name": domain_name,

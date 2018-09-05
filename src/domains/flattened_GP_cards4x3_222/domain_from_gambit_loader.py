@@ -21,7 +21,11 @@ def get_flattened_GP_cards4x3_222():
 	return FlattenedDomain.init_from_gambit_file(path_to_domain_filename, domain_name="GP_cards4x3_222_gambit_flattened")
 
 
-if __name__ == '__main__':
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
+ACTIVATE_FILE = False
+
+
+if __name__ == '__main__' and ACTIVATE_FILE:
 	poker = get_flattened_GP_cards4x3_222()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

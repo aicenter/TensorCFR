@@ -1062,7 +1062,15 @@ class TensorCFRFixedTrunkStrategies:
 		csv_file.close()
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                     storing_strategies=False, profiling=False):
+	                                     storing_strategies=False, profiling=False, register_strategies_on_step=list()):
+		# a list of returned average strategies
+		# the parameter `register_strategies_on_step` is used to determine which strategy export
+		return_average_strategies = list()
+
+		# if the `register_strategies_on_step` list is empty, register just the last iteration
+		if len(register_strategies_on_step) == 0:
+			register_strategies_on_step.append(total_steps - 1)
+
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
 			"averaging_delay": delay,
@@ -1106,8 +1114,15 @@ class TensorCFRFixedTrunkStrategies:
 					else:
 						self.session.run(cfr_step_op)
 
+					# if step in register_strategies_on_step:
+					# 	# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
+					# 	return_average_strategies.append(
+					# 		{"step": step,
+					# 		 "average_strategy": [self.session.run(x) for x in average_infoset_strategies]})
+
 				if storing_strategies:
 					self.store_final_average_strategies()
+		return return_average_strategies
 
 	def get_data_generation_header(self):
 		return "[dataset_seed #{}\t time: {}\t RAM: {:,} bytes]".format(

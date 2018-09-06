@@ -1001,7 +1001,7 @@ class TensorCFRFixedTrunkStrategies:
 	def set_log_directory(self):
 		self.log_directory = "logs/" + self.basename_from_cfr_parameters
 		if not os.path.exists(self.log_directory):
-			os.mkdir(self.log_directory)
+			os.makedirs(self.log_directory)
 
 	def store_final_average_strategies(self):
 		print_tensors(self.session, self.average_infoset_strategies)
@@ -1114,11 +1114,12 @@ class TensorCFRFixedTrunkStrategies:
 					else:
 						self.session.run(cfr_step_op)
 
-					# if step in register_strategies_on_step:
-					# 	# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
-					# 	return_average_strategies.append(
-					# 		{"step": step,
-					# 		 "average_strategy": [self.session.run(x) for x in average_infoset_strategies]})
+					if step in register_strategies_on_step:
+						# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
+						# self.set_average_infoset_strategies()
+						return_average_strategies.append(
+							{"step": step,
+							 "average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]})
 
 				if storing_strategies:
 					self.store_final_average_strategies()
@@ -1257,6 +1258,8 @@ if __name__ == '__main__':
 	)
 	tensorcfr_instance.cfr_strategies_after_fixed_trunk(
 		# total_steps=10,
+		# storing_strategies=True,
 		# profiling=True,
 		# delay=0
+		register_strategies_on_step=[1, 500, 999]
 	)

@@ -1221,7 +1221,6 @@ if __name__ == '__main__':
 	)
 	tensorcfr_instance.cfr_strategies_after_fixed_trunk(
 		# total_steps=10,
-		storing_strategies=True,
 		# profiling=True,
 		# delay=0
 	)

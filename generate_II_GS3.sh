@@ -9,6 +9,6 @@ do
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	seed=$((seed_offset + generation * size_of_generation))
 	echo "Generation #$generation of size $size_of_generation, starting with dataset_seed $seed:"
-	time CUDA_VISIBLE_DEVICES=0 python3.6 -m src.nn.data.generate_data_of_IIGS3 --seed $seed --size $size_of_generation
+	time CUDA_VISIBLE_DEVICES=0 python3.6 -m src.nn.data.generate_data_of_IIGS3_scalar_util --seed $seed --size $size_of_generation
 	echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 done

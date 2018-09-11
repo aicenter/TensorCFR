@@ -15,6 +15,7 @@ FLATTENED_GOOFSPIEL2_GAMBIT = "II-GS2_gambit_flattened"   # for 13 cards
 FLATTENED_GOOFSPIEL2_2CARDS_GAMBIT = "II-GS2_2_cards_gambit_flattened"   # TODO
 GOOFSPIEL3_GAMBIT = "II-GS3_via_gambit"
 FLATTENED_GOOFSPIEL3_GAMBIT = "II-GS3_gambit_flattened"
+FLATTENED_GOOFSPIEL3_SCALAR_UTIL_GAMBIT = "II-GS3_scalar_util_gambit_flattened"
 GOOFSPIEL5_GAMBIT = "IIGS5_s1_bf_ft_via_gambit"
 FLATTENED_GOOFSPIEL5_GAMBIT = "IIGS5_gambit_flattened"
 GOOFSPIEL6_GAMBIT = "IIGS6_s1_bf_ft_via_gambit"
@@ -41,6 +42,7 @@ AVAILABLE_DOMAINS = [
 	FLATTENED_GOOFSPIEL2_GAMBIT,
 	GOOFSPIEL3_GAMBIT,
 	FLATTENED_GOOFSPIEL3_GAMBIT,
+	FLATTENED_GOOFSPIEL3_SCALAR_UTIL_GAMBIT
 ]
 DOMAINS_WITH_LARGE_GAMBIT_FILES = [
 	GOOFSPIEL5_GAMBIT,
@@ -99,6 +101,9 @@ def get_domain_by_name(name):
 	elif name == FLATTENED_GOOFSPIEL3_GAMBIT:
 		from src.domains.flattened_goofspiel3.domain_from_gambit_loader import get_flattened_goofspiel3
 		return get_flattened_goofspiel3()
+	elif name == FLATTENED_GOOFSPIEL3_SCALAR_UTIL_GAMBIT:
+		from src.domains.flattened_goofspiel3_scalar_util.domain_from_gambit_loader import get_flattened_goofspiel3_scalar_util
+		return get_flattened_goofspiel3_scalar_util()
 	elif name == GOOFSPIEL3_GAMBIT:
 		from src.domains.goofspiel3.domain_from_gambit_loader import get_domain_goofspiel3
 		return get_domain_goofspiel3()

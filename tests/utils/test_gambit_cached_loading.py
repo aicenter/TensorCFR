@@ -21,16 +21,28 @@ class TestGambitCachedLoading(tf.test.TestCase):
 		self.levels = self.domain_from_hkl_load1.levels
 
 	def test_1(self):
+		domain_1 = self.domain_from_hkl_load1
+		domain_2 = self.domain_from_hkl_load2
+
 		with self.test_session() as sess:
-			self.assertAllEqual(self.domain_from_hkl_load1.utilities, self.domain_from_gambit.utilities)
-			self.assertAllEqual(self.domain_from_hkl_load1.node_to_infoset, self.domain_from_gambit.node_to_infoset)
+			# list
+			self.assertAllEqual(domain_1.action_counts, domain_2.action_counts)
 
+			# list of tf.Variables
+			self.assertAllEqual(domain_1.utilities, domain_2.utilities)
+			self.assertAllEqual(domain_1.node_to_infoset, domain_2.node_to_infoset)
+			self.assertAllEqual(domain_1.cumulative_infoset_strategies, domain_2.cumulative_infoset_strategies)
+
+			# list of tf.Tensors
 			for level in range(self.levels):
-				self.assertAllEqual(sess.run(self.domain_from_hkl_load1.action_counts_of_inner_nodes[level]),
-									sess.run(self.domain_from_gambit.action_counts_of_inner_nodes[level]))
+				self.assertAllEqual(sess.run(domain_1.action_counts_of_inner_nodes[level]),
+									sess.run(domain_2.action_counts_of_inner_nodes[level]))
 
-				self.assertAllEqual(sess.run(self.domain_from_hkl_load1.mask_of_inner_nodes[level]),
-									sess.run(self.domain_from_gambit.mask_of_inner_nodes[level]))
+				self.assertAllEqual(sess.run(domain_1.mask_of_inner_nodes[level]),
+									sess.run(domain_2.mask_of_inner_nodes[level]))
+
+				self.assertAllEqual(sess.run(domain_1.action_counts_of_inner_nodes[level]),
+									sess.run(domain_2.action_counts_of_inner_nodes[level]))
 
 if __name__ == '__main__':
 	tf.test.main()

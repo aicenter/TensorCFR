@@ -1,11 +1,12 @@
 import os
-import tensorflow as tf
+import unittest
+import numpy as np
 
 from src.commons.constants import PROJECT_ROOT
-from src.domains.FlattenedDomain import FlattenedDomain
+from src.utils.gambit_flattened_domains.loader import GambitLoader, GambitLoaderCached
 
 
-class TestGambitCachedLoading(tf.test.TestCase):
+class TestGambitCachedLoading(unittest.TestCase):
 	def setUp(self):
 		path_to_domain_filename = os.path.join(
 			PROJECT_ROOT,
@@ -14,37 +15,25 @@ class TestGambitCachedLoading(tf.test.TestCase):
 			'II-GS2.efg'
 		)
 
-		self.domain_from_hkl_load1 = FlattenedDomain.init_from_hkl_file(path_to_domain_filename)
-		self.domain_from_hkl_load2 = FlattenedDomain.init_from_hkl_file(path_to_domain_filename)
-		self.domain_from_gambit = FlattenedDomain.init_from_hkl_file(path_to_domain_filename)
+		self.domain_from_hkl_load1 = GambitLoaderCached(path_to_domain_filename)
+		self.domain_from_hkl_load2 = GambitLoaderCached(path_to_domain_filename)
+		self.domain_from_gambit = GambitLoader(path_to_domain_filename)
 
-		self.levels = self.domain_from_hkl_load1.levels
+		self.levels = self.domain_from_gambit.number_of_levels
+		print(self.levels)
 
 	def test_1(self):
-		domain_1 = self.domain_from_hkl_load1
-		domain_2 = self.domain_from_hkl_load2
+		domain1 = self.domain_from_hkl_load1
+		domain2 = self.domain_from_hkl_load2
 
-		with self.test_session() as sess:
-			# list
-			self.assertAllEqual(domain_1.action_counts, domain_2.action_counts)
-			self.assertAllEqual(domain_1.domain_parameters, domain_2.domain_parameters)
-			self.assertAllEqual(domain_1.max_actions_per_levels, domain_2.max_actions_per_levels)
+		# list
+		np.testing.assert_array_equal(domain1.domain_parameters, domain2.domain_parameters)
+		# list of lists
+		np.testing.assert_array_equal(domain1.node_to_infoset, domain2.node_to_infoset)
+		np.testing.assert_array_equal(domain1.number_of_nodes_actions, domain2.number_of_nodes_actions)
+		np.testing.assert_array_equal(domain1.utilities, domain2.utilities)
 
-			# list of tf.Variables
-			self.assertAllEqual(domain_1.utilities, domain_2.utilities)
-			self.assertAllEqual(domain_1.node_to_infoset, domain_2.node_to_infoset)
-			self.assertAllEqual(domain_1.cumulative_infoset_strategies, domain_2.cumulative_infoset_strategies)
 
-			# list of tf.Tensors
-			for level in range(self.levels):
-				self.assertAllEqual(sess.run(domain_1.action_counts_of_inner_nodes[level]),
-									sess.run(domain_2.action_counts_of_inner_nodes[level]))
-
-				self.assertAllEqual(sess.run(domain_1.mask_of_inner_nodes[level]),
-									sess.run(domain_2.mask_of_inner_nodes[level]))
-
-				self.assertAllEqual(sess.run(domain_1.action_counts_of_inner_nodes[level]),
-									sess.run(domain_2.action_counts_of_inner_nodes[level]))
 
 if __name__ == '__main__':
-	tf.test.main()
+	unittest.main()

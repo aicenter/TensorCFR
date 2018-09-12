@@ -27,6 +27,8 @@ class TestGambitCachedLoading(tf.test.TestCase):
 		with self.test_session() as sess:
 			# list
 			self.assertAllEqual(domain_1.action_counts, domain_2.action_counts)
+			self.assertAllEqual(domain_1.domain_parameters, domain_2.domain_parameters)
+			self.assertAllEqual(domain_1.max_actions_per_levels, domain_2.max_actions_per_levels)
 
 			# list of tf.Variables
 			self.assertAllEqual(domain_1.utilities, domain_2.utilities)

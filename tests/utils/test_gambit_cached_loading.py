@@ -17,14 +17,11 @@ class TestGambitCachedLoading(unittest.TestCase):
 
 		self.domain_from_hkl_load1 = GambitLoaderCached(path_to_domain_filename)
 		self.domain_from_hkl_load2 = GambitLoaderCached(path_to_domain_filename)
-		self.domain_from_gambit = GambitLoader(path_to_domain_filename)
+		self.domain_from_gambit= GambitLoader(path_to_domain_filename)
 
 		self.levels = self.domain_from_gambit.number_of_levels
 
-	def test_1(self):
-		domain1 = self.domain_from_hkl_load1
-		domain2 = self.domain_from_hkl_load2
-
+	def compare_two_domains(self, domain1, domain2):
 		# dict
 		self.assertEqual(domain1.information_set_mapping_to_gtlibrary, domain2.information_set_mapping_to_gtlibrary)
 		# list
@@ -40,6 +37,15 @@ class TestGambitCachedLoading(unittest.TestCase):
 		# int
 		self.assertEqual(domain1.number_of_levels, domain2.number_of_levels)
 		self.assertEqual(domain1.number_of_players, domain2.number_of_players)
+
+	def test_1(self):
+		self.compare_two_domains(self.domain_from_hkl_load1, self.domain_from_hkl_load2)
+
+	def test_2(self):
+		self.compare_two_domains(self.domain_from_gambit, self.domain_from_hkl_load1)
+
+	def test_3(self):
+		self.compare_two_domains(self.domain_from_gambit, self.domain_from_hkl_load2)
 
 
 if __name__ == '__main__':

@@ -11,5 +11,5 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	generate_data(
 		"II-GS3_scalar_util_gambit_flattened",
 		script_directory=os.path.dirname(os.path.abspath(__file__)),
-		trunk_depth=4
+		trunk_depth=7
 	)

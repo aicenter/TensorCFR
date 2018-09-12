@@ -20,19 +20,26 @@ class TestGambitCachedLoading(unittest.TestCase):
 		self.domain_from_gambit = GambitLoader(path_to_domain_filename)
 
 		self.levels = self.domain_from_gambit.number_of_levels
-		print(self.levels)
 
 	def test_1(self):
 		domain1 = self.domain_from_hkl_load1
 		domain2 = self.domain_from_hkl_load2
 
+		# dict
+		self.assertEqual(domain1.information_set_mapping_to_gtlibrary, domain2.information_set_mapping_to_gtlibrary)
 		# list
 		np.testing.assert_array_equal(domain1.domain_parameters, domain2.domain_parameters)
 		# list of lists
 		np.testing.assert_array_equal(domain1.node_to_infoset, domain2.node_to_infoset)
 		np.testing.assert_array_equal(domain1.number_of_nodes_actions, domain2.number_of_nodes_actions)
 		np.testing.assert_array_equal(domain1.utilities, domain2.utilities)
-
+		# list of Numpy arrays
+		for level in range(self.levels):
+			np.testing.assert_array_equal(domain1.infoset_acting_players[level], domain2.infoset_acting_players[level])
+			np.testing.assert_array_equal(domain1.initial_infoset_strategies[level], domain2.initial_infoset_strategies[level])
+		# int
+		self.assertEqual(domain1.number_of_levels, domain2.number_of_levels)
+		self.assertEqual(domain1.number_of_players, domain2.number_of_players)
 
 
 if __name__ == '__main__':

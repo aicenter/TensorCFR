@@ -5,7 +5,7 @@ import re
 
 import numpy as np
 import tensorflow as tf
-from pympler import muppy, summary, tracker
+from pympler import muppy, summary, tracker, asizeof
 
 from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
 	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE, ALL_PLAYERS
@@ -886,6 +886,10 @@ class TensorCFRFixedTrunkStrategies:
 			axis=-1,
 			name="node_to_infoset_lvl{}".format(self.boundary_level)
 		)
+
+		print("inner_node_to_infoset ", asizeof.asizeof(inner_node_to_infoset))
+		print(type(inner_node_to_infoset))
+
 		nodal_enumerations = [
 			tf.range(
 				len(action_counts_in_a_level),
@@ -894,25 +898,45 @@ class TensorCFRFixedTrunkStrategies:
 			)
 			for level, action_counts_in_a_level in enumerate(self.domain.action_counts)
 		]
+
+		print("nodal_enumerations ", asizeof.asizeof(nodal_enumerations))
+		print(type(nodal_enumerations))
+
 		inner_nodal_enumerations = self.domain.mask_out_values_in_terminal_nodes(
 			nodal_enumerations,
 			name="nodal_enumeration"
 		)
+
+		print("inner_nodal_enumerations ", asizeof.asizeof(inner_nodal_enumerations))
+		print(type(inner_nodal_enumerations))
+
+
 		inner_nodal_indices = tf.expand_dims(
 			inner_nodal_enumerations[self.boundary_level],
 			axis=-1,
 			name="inner_nodal_indices_lvl{}".format(self.boundary_level)
 		)
+
+		print("inner_nodal_indices ", asizeof.asizeof(inner_nodal_indices))
+		print(type(inner_nodal_indices))
+
 		inner_nodal_reaches_for_all_players = tf.expand_dims(
 			self.get_nodal_reaches_at_trunk_depth(),
 			axis=-1,
 			name="inner_nodal_reaches_for_all_players_lvl{}".format(self.boundary_level)
 		)
+
+		print("inner_nodal_reaches_for_all_players ", asizeof.asizeof(inner_nodal_reaches_for_all_players))
+		print(type(inner_nodal_reaches_for_all_players))
+
 		inner_nodal_expected_values = tf.expand_dims(
 			self.get_nodal_expected_values_at_trunk_depth(),
 			axis=-1,
 			name="inner_nodal_expected_values_lvl{}".format(self.boundary_level)
 		)
+
+		print("inner_nodal_expected_values ", asizeof.asizeof(inner_nodal_expected_values))
+		print(type(inner_nodal_expected_values))
 
 		concat_trunk_info_tensors = tf.concat(
 			[
@@ -924,6 +948,11 @@ class TensorCFRFixedTrunkStrategies:
 			axis=-1,
 			name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
 		)
+
+		print("concat_trunk_info_tensors ", asizeof.asizeof(concat_trunk_info_tensors))
+		print(type(concat_trunk_info_tensors))
+
+
 		return concat_trunk_info_tensors
 
 	def print_debug_info(self):
@@ -998,8 +1027,8 @@ class TensorCFRFixedTrunkStrategies:
 				delimiter=',',
 			)
 
-	def store_trunk_info_of_infosets(self, dataset_basename, dataset_directory=""):
-		self.session.run(self.assign_avg_strategies_to_current_strategies())
+	def store_trunk_info_of_infosets(self, session, dataset_basename, dataset_directory=""):
+		session.run(self.assign_avg_strategies_to_current_strategies())
 
 		if not os.path.exists(dataset_directory):
 			os.mkdir(dataset_directory)
@@ -1010,17 +1039,17 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending
-		print_tensors(self.session, [self.get_trunk_info_of_infosets()]),
+		print_tensors(session, [self.get_trunk_info_of_infosets()]),
 		np.savetxt(
 			csv_file,
-			self.session.run(self.get_trunk_info_of_infosets()),
+			session.run(self.get_trunk_info_of_infosets()),
 			fmt="%7d,\t %7d,\t %.4f,\t %+.4f",
 			header="dataset_seed,\t IS_id,\t range,\t CFV" if self.dataset_seed == 0 else "",   # TODO remove `data_id_column`
 			# TODO remove condition
 		)
 
-	def store_trunk_info_of_nodes(self, dataset_basename, dataset_directory=""):
-		self.session.run(self.assign_avg_strategies_to_current_strategies())
+	def store_trunk_info_of_nodes(self, session, dataset_basename, dataset_directory=""):
+		session.run(self.assign_avg_strategies_to_current_strategies())
 
 		if not os.path.exists(dataset_directory):
 			os.makedirs(dataset_directory)
@@ -1035,13 +1064,19 @@ class TensorCFRFixedTrunkStrategies:
 
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending
 		trunk_info_of_nodes = self.get_trunk_info_of_nodes()
-		print_tensors(self.session, [trunk_info_of_nodes]),
+
+		pokus = trunk_info_of_nodes.eval(session=session)
+
+		print("Graph get operations ", len(session.graph.get_operations()) )
+
+		# print_tensors(session, [trunk_info_of_nodes]),
 		np.savetxt(
 			csv_file,
-			self.session.run(trunk_info_of_nodes),
+			pokus,
 			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f",
 			header="nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value"
 		)
+		csv_file.close()
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     storing_strategies=False, profiling=False):
@@ -1098,18 +1133,21 @@ class TensorCFRFixedTrunkStrategies:
 			get_memory_usage()
 		)
 
-	def store_trunk_info(self, dataset_directory, dataset_for_nodes):
+	def store_trunk_info(self, session, dataset_directory, dataset_for_nodes):
 		if self.trunk_depth > 0:
 			if dataset_for_nodes:
 				self.store_trunk_info_of_nodes(
+					session,
 					dataset_basename=self.basename_from_cfr_parameters,
 					dataset_directory=dataset_directory
 				)
 			else:
-				self.store_trunk_info_of_infosets(
-					dataset_basename=self.basename_from_cfr_parameters,
-					dataset_directory=dataset_directory
-				)
+				pass
+				# self.store_trunk_info_of_infosets(
+				# 	session,
+				# 	dataset_basename=self.basename_from_cfr_parameters,
+				# 	dataset_directory=dataset_directory
+				# )
 
 	def set_up_dataset_generation(self, delay, total_steps):
 		self.set_up_cfr_parameters(delay, total_steps)
@@ -1145,11 +1183,11 @@ class TensorCFRFixedTrunkStrategies:
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					session.run(self.cfr_step_op)
-				# self.store_trunk_info(dataset_directory, dataset_for_nodes)
+				self.store_trunk_info(session, dataset_directory, dataset_for_nodes) # this leaking 4MB
 
-			print("summary.summarize")
-			sum = summary.summarize(muppy.get_objects())
-			summary.print_(sum, limit=30)
+			# print("summary.summarize")
+			# sum = summary.summarize(muppy.get_objects())
+			# summary.print_(sum, limit=30)
 			print("tr.print_diff")
 			tr.print_diff()
 

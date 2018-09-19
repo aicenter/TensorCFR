@@ -8,6 +8,7 @@ if __name__ == '__main__':
 		names=["private_card1", "private_card2", "round1", "round2"],
 		# delimiter=";|,",
 	)
+	# TODO join two CSV files
 	print("features:")
 	print(features)
 
@@ -19,3 +20,6 @@ if __name__ == '__main__':
 	)
 	print("sorted features:")
 	print(sorted_features)
+
+	# TODO reorder columns
+	# TODO write to a CSV

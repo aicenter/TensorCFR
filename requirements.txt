@@ -5,3 +5,4 @@ tensorflow-gpu==1.5.0
 coverage
 hickle==3.2.2
 pandas
+h5py

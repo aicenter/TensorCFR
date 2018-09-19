@@ -3,7 +3,8 @@
 import pandas as pd
 
 if __name__ == '__main__':
-	csv_filename = "IIGS3_1_3_false_true_lvl7.csv"
+	csv_basename = "IIGS3_1_3_false_true_lvl7"
+	csv_filename = "{}.csv".format(csv_basename)
 	features = pd.read_csv(
 		csv_filename,
 		names=["private_card1", "private_card2", "round1", "round2"],

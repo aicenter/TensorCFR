@@ -11,4 +11,5 @@ if __name__ == '__main__':
 		delimiter=";|,",
 	)
 	print(features)
-	print(features.groupby(['round1', 'round2']).size())
+	public_states_sizes = features.groupby(['round1', 'round2']).size()
+	print(public_states_sizes)

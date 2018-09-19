@@ -11,5 +11,11 @@ if __name__ == '__main__':
 		delimiter=";|,",
 	)
 	print(features)
+
 	public_states_sizes = features.groupby(['round1', 'round2']).size()
+	csv_output_filename = "{}_public_states_sizes.csv".format(csv_basename)
+	public_states_sizes.to_csv(
+		csv_output_filename,
+		header=True
+	)
 	print(public_states_sizes)

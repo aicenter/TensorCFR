@@ -60,4 +60,9 @@ if __name__ == '__main__':
 	print("sorted_concatenated: ")
 	print(sorted_concatenated)
 
+	print("###################################")
+
+	np_dataset = sorted_concatenated.values
+	print(np_dataset)
+
 	# TODO write to a CSV

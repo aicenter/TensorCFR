@@ -6,3 +6,4 @@ coverage
 hickle==3.2.2
 pandas
 h5py
+pympler

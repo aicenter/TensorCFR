@@ -41,7 +41,13 @@ if __name__ == '__main__':
 		[features, reaches_to_values],
 		axis=1,
 		# sort=True
-	)
+	)[[
+		"round1", "round2",
+		"private_card1", "private_card2",
+		"node_to_infoset",
+		"nodal_reach",
+		"nodal_expected_value"]
+	]
 	print("concatenated:")
 	print(concatenated)
 
@@ -54,5 +60,4 @@ if __name__ == '__main__':
 	print("sorted_concatenated: ")
 	print(sorted_concatenated)
 
-	# TODO reorder columns
 	# TODO write to a CSV

@@ -29,7 +29,8 @@ if __name__ == '__main__':
 		reaches_to_values_filename,
 		names=["nodal_index", "node_to_infoset", "nodal_reach", "nodal_expected_value"],
 		delimiter=",",
-		skiprows=1
+		skiprows=1,
+		index_col=0
 	)
 	print("reaches_to_values:")
 	print(reaches_to_values)

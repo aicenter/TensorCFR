@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
+import os
+
 import pandas as pd
 
 if __name__ == '__main__':
-	csv_basename = "IIGS3_1_3_false_true_lvl7"
+	script_directory = os.path.dirname(os.path.abspath(__file__))
+	csv_basename = "{}/IIGS3_1_3_false_true_lvl7".format(script_directory)
 	csv_filename = "{}.csv".format(csv_basename)
 	features = pd.read_csv(
 		csv_filename,

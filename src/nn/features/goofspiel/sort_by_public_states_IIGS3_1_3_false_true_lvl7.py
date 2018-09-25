@@ -26,8 +26,9 @@ if __name__ == '__main__':
 	print("reaches_to_values_filename == {}".format(reaches_to_values_filename))
 	reaches_to_values = pd.read_csv(
 		reaches_to_values_filename,
-		# names=["nodal_index", "node_to_infoset", "nodal_reach", "nodal_expected_value"],
+		names=["nodal_index", "node_to_infoset", "nodal_reach", "nodal_expected_value"],
 		delimiter=",",
+		skiprows=1
 	)
 	print("reaches_to_values:")
 	print(reaches_to_values)

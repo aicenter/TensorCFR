@@ -6,6 +6,8 @@ import pandas as pd
 
 if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
+	pd.set_option('display.max_columns', 500)
+	pd.set_option('display.width', 1000)
 
 	features_basename = "IIGS3_1_3_false_true_lvl7"
 	features_filename = "{}/{}.csv".format(script_directory, features_basename)
@@ -39,5 +41,5 @@ if __name__ == '__main__':
 	print("sorted features:")
 	print(sorted_features)
 
-# TODO reorder columns
-# TODO write to a CSV
+	# TODO reorder columns
+	# TODO write to a CSV

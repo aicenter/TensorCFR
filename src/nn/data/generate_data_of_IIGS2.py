@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import os
 
-from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 from src.nn.data.generate_data import generate_data
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = True
+ACTIVATE_FILE = False
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:

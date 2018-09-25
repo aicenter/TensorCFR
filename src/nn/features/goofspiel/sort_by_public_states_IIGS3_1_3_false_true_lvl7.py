@@ -46,12 +46,6 @@ if __name__ == '__main__':
 
 	print("###################################")
 
-	sorted_features = features.sort_values(
-		['round1', 'round2'],
-		kind='mergesort'
-	)
-	print("sorted features:")
-	print(sorted_features)
 	sorted_concatenated = concatenated.sort_values(
 		['round1', 'round2'],
 		kind='mergesort'

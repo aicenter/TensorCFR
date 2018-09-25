@@ -52,6 +52,12 @@ if __name__ == '__main__':
 	)
 	print("sorted features:")
 	print(sorted_features)
+	sorted_concatenated = concatenated.sort_values(
+		['round1', 'round2'],
+		kind='mergesort'
+	)
+	print("sorted_concatenated: ")
+	print(sorted_concatenated)
 
 	# TODO reorder columns
 	# TODO write to a CSV

@@ -6,8 +6,9 @@ import pandas as pd
 
 if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	features_basename = "{}/IIGS3_1_3_false_true_lvl7".format(script_directory)
-	features_filename = "{}.csv".format(features_basename)
+
+	features_basename = "IIGS3_1_3_false_true_lvl7"
+	features_filename = "{}/{}.csv".format(script_directory, features_basename)
 	features = pd.read_csv(
 		features_filename,
 		names=["private_card1", "private_card2", "round1", "round2"],

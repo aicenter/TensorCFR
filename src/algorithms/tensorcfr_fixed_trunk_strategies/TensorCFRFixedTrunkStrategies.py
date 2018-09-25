@@ -57,6 +57,12 @@ class TensorCFRFixedTrunkStrategies:
 		self.cfr_step_op = None
 		self.dataset_seed = None
 
+		self.nodal_enumerations = None
+		self.inner_nodal_enumerations = None
+		self.concat_trunk_info_tensors = None
+		self.ops_randomize_strategies = None
+		self.ops_assign_strategies = None
+
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
 		with tf.variable_scope("get_the_other_player"):
@@ -658,17 +664,18 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		with tf.variable_scope("assign_avg_strategies_to_current_strategies"):
-			ops_assign_strategies = [None] * self.domain.acting_depth
-			for level, avg_strategy in enumerate(self.average_infoset_strategies):
-				with tf.variable_scope("level{}".format(level)):
-					ops_assign_strategies[level] = masked_assign(
-						ref=self.domain.current_infoset_strategies[level],
-						mask=self.domain.infosets_of_non_chance_player[level],
-						value=avg_strategy,
-						name="assign_avg_strategies_to_current_strategies_lvl{}".format(level)
-					)
-		return ops_assign_strategies
+		if self.ops_assign_strategies is None: # TODO uncomment this line and
+			with tf.variable_scope("assign_avg_strategies_to_current_strategies"):
+				self.ops_assign_strategies = [None] * self.domain.acting_depth
+				for level, avg_strategy in enumerate(self.average_infoset_strategies):
+					with tf.variable_scope("level{}".format(level)):
+						self.ops_assign_strategies[level] = masked_assign(
+							ref=self.domain.current_infoset_strategies[level],
+							mask=self.domain.infosets_of_non_chance_player[level],
+							value=avg_strategy,
+							name="assign_avg_strategies_to_current_strategies_lvl{}".format(level)
+						)
+		return self.ops_assign_strategies
 
 	def combine_infoset_values_based_on_owners(self, tensor_of_player1, tensor_of_player2, level,
 	                                           name="infoset_cf_values"):
@@ -874,86 +881,66 @@ class TensorCFRFixedTrunkStrategies:
 		)
 		return masked_out_trunk_info_tensors
 
-	def get_trunk_info_of_nodes(self):
+	def get_trunk_info_of_nodes(self, session):
 		if self.trunk_depth <= 0:
 			return None
 
-		inner_node_to_infoset = tf.expand_dims(
-			tf.cast(
-				self.domain.inner_node_to_infoset[self.boundary_level],
-				dtype=FLOAT_DTYPE
-			),
-			axis=-1,
-			name="node_to_infoset_lvl{}".format(self.boundary_level)
-		)
-
-		print("inner_node_to_infoset ", asizeof.asizeof(inner_node_to_infoset))
-		print(type(inner_node_to_infoset))
-
-		nodal_enumerations = [
-			tf.range(
-				len(action_counts_in_a_level),
-				dtype=FLOAT_DTYPE,
-				name="nodal_enumeration_lvl{}".format(level)
+		if self.concat_trunk_info_tensors is None:
+			inner_node_to_infoset = tf.expand_dims(
+				tf.cast(
+					self.domain.inner_node_to_infoset[self.boundary_level],
+					dtype=FLOAT_DTYPE
+				),
+				axis=-1,
+				name="node_to_infoset_lvl{}".format(self.boundary_level)
 			)
-			for level, action_counts_in_a_level in enumerate(self.domain.action_counts)
-		]
 
-		print("nodal_enumerations ", asizeof.asizeof(nodal_enumerations))
-		print(type(nodal_enumerations))
+			if self.nodal_enumerations is None:
+				self.nodal_enumerations = [
+					tf.range(
+						len(action_counts_in_a_level),
+						dtype=FLOAT_DTYPE,
+						name="nodal_enumeration_lvl{}".format(level)
+					)
+					for level, action_counts_in_a_level in enumerate(self.domain.action_counts)
+				]
 
-		inner_nodal_enumerations = self.domain.mask_out_values_in_terminal_nodes(
-			nodal_enumerations,
-			name="nodal_enumeration"
-		)
+			if self.inner_nodal_enumerations is None:
+				self.inner_nodal_enumerations = self.domain.mask_out_values_in_terminal_nodes(
+					self.nodal_enumerations,
+					name="nodal_enumeration"
+				)
 
-		print("inner_nodal_enumerations ", asizeof.asizeof(inner_nodal_enumerations))
-		print(type(inner_nodal_enumerations))
+			inner_nodal_indices = tf.expand_dims(
+				self.inner_nodal_enumerations[self.boundary_level],
+				axis=-1,
+				name="inner_nodal_indices_lvl{}".format(self.boundary_level)
+			)
 
+			inner_nodal_reaches_for_all_players = tf.expand_dims(
+				self.get_nodal_reaches_at_trunk_depth(),
+				axis=-1,
+				name="inner_nodal_reaches_for_all_players_lvl{}".format(self.boundary_level)
+			)
 
-		inner_nodal_indices = tf.expand_dims(
-			inner_nodal_enumerations[self.boundary_level],
-			axis=-1,
-			name="inner_nodal_indices_lvl{}".format(self.boundary_level)
-		)
+			inner_nodal_expected_values = tf.expand_dims(
+				self.get_nodal_expected_values_at_trunk_depth(),
+				axis=-1,
+				name="inner_nodal_expected_values_lvl{}".format(self.boundary_level)
+			)
 
-		print("inner_nodal_indices ", asizeof.asizeof(inner_nodal_indices))
-		print(type(inner_nodal_indices))
+			self.concat_trunk_info_tensors = tf.concat(
+				[
+					inner_nodal_indices,
+					inner_node_to_infoset,
+					inner_nodal_reaches_for_all_players,
+					inner_nodal_expected_values
+				],
+				axis=-1,
+				name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
+			)  # pridat if na self.concat_trunk_info_tensors pro celou funkci
 
-		inner_nodal_reaches_for_all_players = tf.expand_dims(
-			self.get_nodal_reaches_at_trunk_depth(),
-			axis=-1,
-			name="inner_nodal_reaches_for_all_players_lvl{}".format(self.boundary_level)
-		)
-
-		print("inner_nodal_reaches_for_all_players ", asizeof.asizeof(inner_nodal_reaches_for_all_players))
-		print(type(inner_nodal_reaches_for_all_players))
-
-		inner_nodal_expected_values = tf.expand_dims(
-			self.get_nodal_expected_values_at_trunk_depth(),
-			axis=-1,
-			name="inner_nodal_expected_values_lvl{}".format(self.boundary_level)
-		)
-
-		print("inner_nodal_expected_values ", asizeof.asizeof(inner_nodal_expected_values))
-		print(type(inner_nodal_expected_values))
-
-		concat_trunk_info_tensors = tf.concat(
-			[
-				inner_nodal_indices,
-				inner_node_to_infoset,
-				inner_nodal_reaches_for_all_players,
-				inner_nodal_expected_values
-			],
-			axis=-1,
-			name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
-		)
-
-		print("concat_trunk_info_tensors ", asizeof.asizeof(concat_trunk_info_tensors))
-		print(type(concat_trunk_info_tensors))
-
-
-		return concat_trunk_info_tensors
+		return self.concat_trunk_info_tensors
 
 	def print_debug_info(self):
 		print_tensors(self.session, [self.domain.cfr_step])
@@ -1063,16 +1050,13 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending
-		trunk_info_of_nodes = self.get_trunk_info_of_nodes()
-
-		pokus = trunk_info_of_nodes.eval(session=session)
-
-		print("Graph get operations ", len(session.graph.get_operations()) )
+		trunk_info_of_nodes = self.get_trunk_info_of_nodes(session)
 
 		# print_tensors(session, [trunk_info_of_nodes]),
+
 		np.savetxt(
 			csv_file,
-			pokus,
+			session.run(trunk_info_of_nodes),
 			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f",
 			header="nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value"
 		)
@@ -1136,18 +1120,19 @@ class TensorCFRFixedTrunkStrategies:
 	def store_trunk_info(self, session, dataset_directory, dataset_for_nodes):
 		if self.trunk_depth > 0:
 			if dataset_for_nodes:
+				print("store_trunk_info IF")
 				self.store_trunk_info_of_nodes(
 					session,
 					dataset_basename=self.basename_from_cfr_parameters,
 					dataset_directory=dataset_directory
 				)
 			else:
-				pass
-				# self.store_trunk_info_of_infosets(
-				# 	session,
-				# 	dataset_basename=self.basename_from_cfr_parameters,
-				# 	dataset_directory=dataset_directory
-				# )
+				print("store_trunk_info ELSE")
+				self.store_trunk_info_of_infosets(
+					session,
+					dataset_basename=self.basename_from_cfr_parameters,
+					dataset_directory=dataset_directory
+				)
 
 	def set_up_dataset_generation(self, delay, total_steps):
 		self.set_up_cfr_parameters(delay, total_steps)
@@ -1179,11 +1164,22 @@ class TensorCFRFixedTrunkStrategies:
 				))
 
 			with tf.Session(config=get_default_config_proto()) as session:
+				print("AFTER session init - number of operations {}, graph size {}".format(len(session.graph.get_operations()), asizeof.asized(session.graph)))
 				session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+
+				print("AFTER global_variables_initializer - number of operations {}, graph size {}".format(len(session.graph.get_operations()), asizeof.asized(session.graph)))
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					session.run(self.cfr_step_op)
+
+				print("AFTER cfr_step_op - number of operations {} ".format(len(session.graph.get_operations())))
 				self.store_trunk_info(session, dataset_directory, dataset_for_nodes) # this leaking 4MB
+				print("AFTER store_trunk_info - number of operations {}, graph size {}".format(
+					len(session.graph.get_operations()),
+					asizeof.asized(session.graph)
+				))
+				writer = tf.summary.FileWriter("log/IIGS2_pokus_0_{}".format(self.dataset_seed), session.graph)
+				writer.close()
 
 			# print("summary.summarize")
 			# sum = summary.summarize(muppy.get_objects())
@@ -1200,38 +1196,92 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		tf_uniform_strategies = self.get_infoset_uniform_strategies()
-		with tf.variable_scope("randomize_strategies"):
-			tf_random_strategies = self.domain.get_tf_random_strategies(
-				seed=seed,
-				trunk_depth=self.trunk_depth
-			)
-			ops_randomize_strategies = [
-				tf.assign(
-					current_strategies_per_level,
-					value=tf_random_strategies[level] if level in range(self.trunk_depth)
-					else tf_uniform_strategies[level]
+
+		if self.ops_randomize_strategies is None:
+			tf_uniform_strategies = self.get_infoset_uniform_strategies()
+			with tf.variable_scope("randomize_strategies"):
+				tf_random_strategies = self.domain.get_tf_random_strategies(
+					seed=seed,
+					trunk_depth=self.trunk_depth
 				)
-				for level, current_strategies_per_level in enumerate(self.domain.current_infoset_strategies)
-			]
-		return ops_randomize_strategies
+				self.ops_randomize_strategies = [
+					tf.assign(
+						current_strategies_per_level,
+						value=tf_random_strategies[level] if level in range(self.trunk_depth)
+						else tf_uniform_strategies[level]
+					)
+					for level, current_strategies_per_level in enumerate(self.domain.current_infoset_strategies)
+				]
+		return self.ops_randomize_strategies
 
 	def generate_dataset_single_session(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                    dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
 	                                    dataset_seed_to_start=0):
 		self.set_up_dataset_generation(delay, total_steps)
 
+		tr = tracker.SummaryTracker()
+		# call multiple times to calibrate
+		tr.print_diff()
+		tr.print_diff()
+		tr.print_diff()
+
+		tmp_cnt = 0
+
+		global_variables_initializer_op = tf.global_variables_initializer()
+
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
-				self.session.run(tf.global_variables_initializer())
+				tmp_cnt += 1
+				print(tmp_cnt, " ---------------------------------")
+
+				self.session.run(global_variables_initializer_op)
+
+				print("AFTER tf.global_variables_initializer - number of operations {}, graph size {}".format(
+					len(self.session.graph.get_operations()),
+					asizeof.asized(self.session.graph)
+				))
+				print("tr.print_diff")
+				tr.print_diff()
+
 				print(self.get_data_generation_header())
+				print("AFTER self.get_data_generation_header - number of operations {}, graph size {}".format(
+					len(self.session.graph.get_operations()),
+					asizeof.asized(self.session.graph)
+				))
+				print("tr.print_diff")
+				tr.print_diff()
+
 				self.session.run(
 					self.randomize_strategies(seed=self.dataset_seed)
 				)
+
+				print("AFTER self.randomize_strategies - number of operations {}, graph size {}".format(
+					len(self.session.graph.get_operations()),
+					asizeof.asized(self.session.graph)
+				))
+				print("tr.print_diff")
+				tr.print_diff()
+
+
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(self.cfr_step_op)
-				self.store_trunk_info(dataset_directory, dataset_for_nodes)
+
+				print("AFTER cfr_step_op - number of operations {}, graph size {}".format(
+					len(self.session.graph.get_operations()),
+					asizeof.asized(self.session.graph)
+				))
+				print("tr.print_diff")
+				tr.print_diff()
+
+				self.store_trunk_info(self.session, dataset_directory, dataset_for_nodes)
+
+				print("AFTER self.store_trunk_info - number of operations {}, graph size {}".format(
+					len(self.session.graph.get_operations()),
+					asizeof.asized(self.session.graph)
+				))
+				print("tr.print_diff")
+				tr.print_diff()
 
 	# TODO fix this generation method:
 	#   - uncomment print_debug_info()

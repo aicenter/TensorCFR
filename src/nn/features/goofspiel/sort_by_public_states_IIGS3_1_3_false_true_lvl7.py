@@ -18,6 +18,17 @@ if __name__ == '__main__':
 	print(features)
 
 	# TODO join two CSV files
+	seed = 0
+	reaches_to_values_basename = "nodal_dataset_seed_{}".format(seed)
+	reaches_to_values_filename = "{}/{}.csv".format(script_directory, reaches_to_values_basename)
+	print("reaches_to_values_filename == {}".format(reaches_to_values_filename))
+	reaches_to_values = pd.read_csv(
+		reaches_to_values_filename,
+		# names=["nodal_index", "node_to_infoset", "nodal_reach", "nodal_expected_value"],
+		delimiter=",",
+	)
+	print("reaches_to_values:")
+	print(reaches_to_values)
 
 	print("###################################")
 

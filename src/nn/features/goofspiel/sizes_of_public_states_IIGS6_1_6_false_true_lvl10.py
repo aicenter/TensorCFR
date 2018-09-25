@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+import os
 
 import pandas as pd
 
 if __name__ == '__main__':
+	script_directory = os.path.dirname(os.path.abspath(__file__))
 	csv_basename = "IIGS6_1_6_false_true_lvl10"
-	csv_filename = "{}.csv".format(csv_basename)
+	csv_filename = os.path.join(script_directory, "{}.csv".format(csv_basename))
 	features = pd.read_csv(
 		csv_filename,
 		names=["private_card1", "private_card2", "private_card3", "round1", "round2", "round3"],

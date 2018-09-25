@@ -2,6 +2,7 @@
 
 import os
 
+import numpy as np
 import pandas as pd
 
 if __name__ == '__main__':
@@ -78,5 +79,7 @@ if __name__ == '__main__':
 	# TODO load this from a CSV file
 	public_state_sizes = [6, 3, 3, 3, 2, 7, 3, 7, 2]
 	print("public_state_sizes: {}".format(public_state_sizes))
+	prefix_sums = np.cumsum(public_state_sizes)
+	print("prefix_sums: {}".format(prefix_sums))
 
 	# TODO write to a CSV

@@ -19,7 +19,8 @@ if __name__ == '__main__':
 	print("features:")
 	print(features)
 
-	# TODO join two CSV files
+	print("###################################")
+
 	seed = 0
 	reaches_to_values_basename = "nodal_dataset_seed_{}".format(seed)
 	reaches_to_values_filename = "{}/{}.csv".format(script_directory, reaches_to_values_basename)
@@ -32,6 +33,16 @@ if __name__ == '__main__':
 	)
 	print("reaches_to_values:")
 	print(reaches_to_values)
+
+	print("###################################")
+
+	concatenated = pd.concat(
+		[features, reaches_to_values],
+		axis=1,
+		# sort=True
+	)
+	print("concatenated:")
+	print(concatenated)
 
 	print("###################################")
 

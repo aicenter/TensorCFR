@@ -20,8 +20,7 @@ def generate_data(domain_name, script_directory, trunk_depth):
 	)
 	print(get_current_timestamp())
 
-	#dataset_generation_method = DEFAULT_DATAGEN_METHOD
-	dataset_generation_method = DATAGEN_MULTISESSIONS
+	dataset_generation_method = DEFAULT_DATAGEN_METHOD
 	if dataset_generation_method == DATAGEN_MULTISESSIONS:
 		tensorcfr.generate_dataset_multiple_sessions(
 			dataset_size=dataset_parameters["dataset_size"],

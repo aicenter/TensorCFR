@@ -65,4 +65,18 @@ if __name__ == '__main__':
 	np_dataset = sorted_concatenated.values
 	print(np_dataset)
 
+	# round1 round2 size
+	# 0 0 6
+	# 	1 3
+	# 	2 3
+	# 1 0 3
+	# 	1 2
+	# 	2 7
+	# 2 0 3
+	# 	1 7
+	# 	2 2
+	# TODO load this from a CSV file
+	public_state_sizes = [6, 3, 3, 3, 2, 7, 3, 7, 2]
+	print("public_state_sizes: {}".format(public_state_sizes))
+
 	# TODO write to a CSV

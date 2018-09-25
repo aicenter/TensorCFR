@@ -1236,52 +1236,52 @@ class TensorCFRFixedTrunkStrategies:
 
 				self.session.run(global_variables_initializer_op)
 
-				print("AFTER tf.global_variables_initializer - number of operations {}, graph size {}".format(
-					len(self.session.graph.get_operations()),
-					asizeof.asized(self.session.graph)
-				))
-				print("tr.print_diff")
-				tr.print_diff()
+				# print("AFTER tf.global_variables_initializer - number of operations {}, graph size {}".format(
+				# 	len(self.session.graph.get_operations()),
+				# 	asizeof.asized(self.session.graph)
+				# ))
+				# print("tr.print_diff")
+				# tr.print_diff()
 
 				print(self.get_data_generation_header())
-				print("AFTER self.get_data_generation_header - number of operations {}, graph size {}".format(
-					len(self.session.graph.get_operations()),
-					asizeof.asized(self.session.graph)
-				))
-				print("tr.print_diff")
-				tr.print_diff()
+				# print("AFTER self.get_data_generation_header - number of operations {}, graph size {}".format(
+				# 	len(self.session.graph.get_operations()),
+				# 	asizeof.asized(self.session.graph)
+				# ))
+				# print("tr.print_diff")
+				# tr.print_diff()
 
 				self.session.run(
 					self.randomize_strategies(seed=self.dataset_seed)
 				)
 
-				print("AFTER self.randomize_strategies - number of operations {}, graph size {}".format(
-					len(self.session.graph.get_operations()),
-					asizeof.asized(self.session.graph)
-				))
-				print("tr.print_diff")
-				tr.print_diff()
+				# print("AFTER self.randomize_strategies - number of operations {}, graph size {}".format(
+				# 	len(self.session.graph.get_operations()),
+				# 	asizeof.asized(self.session.graph)
+				# ))
+				# print("tr.print_diff")
+				# tr.print_diff()
 
 
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(self.cfr_step_op)
 
-				print("AFTER cfr_step_op - number of operations {}, graph size {}".format(
-					len(self.session.graph.get_operations()),
-					asizeof.asized(self.session.graph)
-				))
-				print("tr.print_diff")
-				tr.print_diff()
+				# print("AFTER cfr_step_op - number of operations {}, graph size {}".format(
+				# 	len(self.session.graph.get_operations()),
+				# 	asizeof.asized(self.session.graph)
+				# ))
+				# print("tr.print_diff")
+				# tr.print_diff()
 
 				self.store_trunk_info(self.session, dataset_directory, dataset_for_nodes)
 
-				print("AFTER self.store_trunk_info - number of operations {}, graph size {}".format(
-					len(self.session.graph.get_operations()),
-					asizeof.asized(self.session.graph)
-				))
-				print("tr.print_diff")
-				tr.print_diff()
+				# print("AFTER self.store_trunk_info - number of operations {}, graph size {}".format(
+				# 	len(self.session.graph.get_operations()),
+				# 	asizeof.asized(self.session.graph)
+				# ))
+				# print("tr.print_diff")
+				# tr.print_diff()
 
 	# TODO fix this generation method:
 	#   - uncomment print_debug_info()

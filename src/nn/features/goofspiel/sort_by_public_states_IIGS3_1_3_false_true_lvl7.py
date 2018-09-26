@@ -5,6 +5,27 @@ import os
 import numpy as np
 import pandas as pd
 
+
+def split_by_public_states():
+	# round1 round2 size
+	# 0 0 6
+	# 	1 3
+	# 	2 3
+	# 1 0 3
+	# 	1 2
+	# 	2 7
+	# 2 0 3
+	# 	1 7
+	# 	2 2
+	public_state_sizes = [6, 3, 3, 3, 2, 7, 3, 7, 2]  # TODO load this from a CSV file
+	print("public_state_sizes: {}".format(public_state_sizes))
+	start_indices = np.cumsum([0] + public_state_sizes)
+	print("start_indices: {}".format(start_indices))
+	for i, size in enumerate(public_state_sizes):
+		print("sorted_concatenated #{}:".format(i))
+		print(sorted_concatenated[start_indices[i]:start_indices[i] + size])
+
+
 if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	pd.set_option('display.max_columns', 500)
@@ -66,23 +87,6 @@ if __name__ == '__main__':
 	np_dataset = sorted_concatenated.values
 	print(np_dataset)
 
-	# round1 round2 size
-	# 0 0 6
-	# 	1 3
-	# 	2 3
-	# 1 0 3
-	# 	1 2
-	# 	2 7
-	# 2 0 3
-	# 	1 7
-	# 	2 2
-	public_state_sizes = [6, 3, 3, 3, 2, 7, 3, 7, 2]    # TODO load this from a CSV file
-	print("public_state_sizes: {}".format(public_state_sizes))
-	start_indices = np.cumsum([0] + public_state_sizes)
-	print("start_indices: {}".format(start_indices))
-
-	for i, size in enumerate(public_state_sizes):
-		print("sorted_concatenated #{}:".format(i))
-		print(sorted_concatenated[start_indices[i]:start_indices[i] + size])
+	split_by_public_states()
 
 	# TODO write to a CSV

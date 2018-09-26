@@ -5,7 +5,6 @@ import re
 
 import numpy as np
 import tensorflow as tf
-from pympler import muppy, summary, tracker, asizeof
 
 from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
 	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE, ALL_PLAYERS
@@ -1120,14 +1119,12 @@ class TensorCFRFixedTrunkStrategies:
 	def store_trunk_info(self, session, dataset_directory, dataset_for_nodes):
 		if self.trunk_depth > 0:
 			if dataset_for_nodes:
-				print("store_trunk_info IF")
 				self.store_trunk_info_of_nodes(
 					session,
 					dataset_basename=self.basename_from_cfr_parameters,
 					dataset_directory=dataset_directory
 				)
 			else:
-				print("store_trunk_info ELSE")
 				self.store_trunk_info_of_infosets(
 					session,
 					dataset_basename=self.basename_from_cfr_parameters,
@@ -1146,13 +1143,6 @@ class TensorCFRFixedTrunkStrategies:
 		tr = None
 
 		for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
-			if self.dataset_seed == dataset_seed_to_start:
-				tr = tracker.SummaryTracker()
-				# call multiple times to calibrate
-				tr.print_diff()
-				tr.print_diff()
-				tr.print_diff()
-
 			with tf.variable_scope("initialization"):
 				setup_messages, feed_dictionary = self.set_up_feed_dictionary(
 					method="random",
@@ -1164,28 +1154,9 @@ class TensorCFRFixedTrunkStrategies:
 				))
 
 			with tf.Session(config=get_default_config_proto()) as session:
-				print("AFTER session init - number of operations {}, graph size {}".format(len(session.graph.get_operations()), asizeof.asized(session.graph)))
-				session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-
-				print("AFTER global_variables_initializer - number of operations {}, graph size {}".format(len(session.graph.get_operations()), asizeof.asized(session.graph)))
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					session.run(self.cfr_step_op)
-
-				print("AFTER cfr_step_op - number of operations {} ".format(len(session.graph.get_operations())))
-				self.store_trunk_info(session, dataset_directory, dataset_for_nodes) # this leaking 4MB
-				print("AFTER store_trunk_info - number of operations {}, graph size {}".format(
-					len(session.graph.get_operations()),
-					asizeof.asized(session.graph)
-				))
-				writer = tf.summary.FileWriter("log/IIGS2_pokus_0_{}".format(self.dataset_seed), session.graph)
-				writer.close()
-
-			# print("summary.summarize")
-			# sum = summary.summarize(muppy.get_objects())
-			# summary.print_(sum, limit=30)
-			print("tr.print_diff")
-			tr.print_diff()
 
 	def randomize_strategies(self, seed):  # TODO unittest
 		"""
@@ -1219,69 +1190,23 @@ class TensorCFRFixedTrunkStrategies:
 	                                    dataset_seed_to_start=0):
 		self.set_up_dataset_generation(delay, total_steps)
 
-		tr = tracker.SummaryTracker()
-		# call multiple times to calibrate
-		tr.print_diff()
-		tr.print_diff()
-		tr.print_diff()
-
-		tmp_cnt = 0
-
 		global_variables_initializer_op = tf.global_variables_initializer()
 
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
-				tmp_cnt += 1
-				print(tmp_cnt, " ---------------------------------")
-
 				self.session.run(global_variables_initializer_op)
 
-				# print("AFTER tf.global_variables_initializer - number of operations {}, graph size {}".format(
-				# 	len(self.session.graph.get_operations()),
-				# 	asizeof.asized(self.session.graph)
-				# ))
-				# print("tr.print_diff")
-				# tr.print_diff()
-
 				print(self.get_data_generation_header())
-				# print("AFTER self.get_data_generation_header - number of operations {}, graph size {}".format(
-				# 	len(self.session.graph.get_operations()),
-				# 	asizeof.asized(self.session.graph)
-				# ))
-				# print("tr.print_diff")
-				# tr.print_diff()
 
 				self.session.run(
 					self.randomize_strategies(seed=self.dataset_seed)
 				)
 
-				# print("AFTER self.randomize_strategies - number of operations {}, graph size {}".format(
-				# 	len(self.session.graph.get_operations()),
-				# 	asizeof.asized(self.session.graph)
-				# ))
-				# print("tr.print_diff")
-				# tr.print_diff()
-
-
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(self.cfr_step_op)
 
-				# print("AFTER cfr_step_op - number of operations {}, graph size {}".format(
-				# 	len(self.session.graph.get_operations()),
-				# 	asizeof.asized(self.session.graph)
-				# ))
-				# print("tr.print_diff")
-				# tr.print_diff()
-
 				self.store_trunk_info(self.session, dataset_directory, dataset_for_nodes)
-
-				# print("AFTER self.store_trunk_info - number of operations {}, graph size {}".format(
-				# 	len(self.session.graph.get_operations()),
-				# 	asizeof.asized(self.session.graph)
-				# ))
-				# print("tr.print_diff")
-				# tr.print_diff()
 
 	# TODO fix this generation method:
 	#   - uncomment print_debug_info()

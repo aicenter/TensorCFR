@@ -76,7 +76,10 @@ if __name__ == '__main__':
 	print("###################################")
 
 	sorted_concatenated = concatenated.sort_values(
-		['round1', 'round2'],
+		[
+			"round1", "round2",
+			"private_card1", "private_card2",
+		],
 		kind='mergesort'
 	)
 	print("sorted_concatenated: ")
@@ -84,9 +87,9 @@ if __name__ == '__main__':
 
 	print("###################################")
 
-	np_dataset = sorted_concatenated.values
-	print(np_dataset)
+	# np_dataset = sorted_concatenated.values
+	# print(np_dataset)
 
 	split_by_public_states()
 
-	# TODO write to a CSV
+	# TODO write to an npz

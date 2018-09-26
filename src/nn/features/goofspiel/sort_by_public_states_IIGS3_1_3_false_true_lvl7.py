@@ -68,8 +68,8 @@ if __name__ == '__main__':
 		"private_card1", "private_card2",
 		"node_to_infoset",
 		"nodal_reach",
-		"nodal_expected_value"]
-	]
+		"nodal_expected_value"
+	]]
 	print("concatenated:")
 	print(concatenated)
 
@@ -87,9 +87,16 @@ if __name__ == '__main__':
 
 	print("###################################")
 
-	# np_dataset = sorted_concatenated.values
-	# print(np_dataset)
+	np_dataset = sorted_concatenated.values
+	print(np_dataset)
+	print("input:")
+	np_features = np_dataset[:, :-1]
+	print(np_features)
+	print("targets:")
+	np_targets = np_dataset[:, -1]
+	print(np_targets)
+# np.savez_compressed(np_dataset[-1])
 
-	split_by_public_states()
+# split_by_public_states()
 
-	# TODO write to an npz
+# TODO write to an npz

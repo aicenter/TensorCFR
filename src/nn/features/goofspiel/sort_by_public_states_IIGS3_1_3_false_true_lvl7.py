@@ -76,10 +76,13 @@ if __name__ == '__main__':
 	# 2 0 3
 	# 	1 7
 	# 	2 2
-	# TODO load this from a CSV file
-	public_state_sizes = [6, 3, 3, 3, 2, 7, 3, 7, 2]
+	public_state_sizes = [6, 3, 3, 3, 2, 7, 3, 7, 2]    # TODO load this from a CSV file
 	print("public_state_sizes: {}".format(public_state_sizes))
-	prefix_sums = np.cumsum(public_state_sizes)
-	print("prefix_sums: {}".format(prefix_sums))
+	start_indices = np.cumsum([0] + public_state_sizes)
+	print("start_indices: {}".format(start_indices))
+
+	for i, size in enumerate(public_state_sizes):
+		print("sorted_concatenated #{}:".format(i))
+		print(sorted_concatenated[start_indices[i]:start_indices[i] + size])
 
 	# TODO write to a CSV

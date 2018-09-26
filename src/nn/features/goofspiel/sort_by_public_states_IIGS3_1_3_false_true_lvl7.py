@@ -89,14 +89,20 @@ if __name__ == '__main__':
 
 	np_dataset = sorted_concatenated.values
 	print(np_dataset)
-	print("input:")
+	print("features:")
 	np_features = np_dataset[:, :-1]
 	print(np_features)
 	print("targets:")
 	np_targets = np_dataset[:, -1]
 	print(np_targets)
-	dataset_filename = "{}/{}_numpy_dataset".format(script_directory, features_basename)
+	dataset_filename = "{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
 	np.savez_compressed(dataset_filename, features=np_features, targets=np_targets)
+
+	dataset = np.load(dataset_filename)
+	print("diff between reloaded features:")
+	print(np_features - dataset["features"])
+	print("diff between reloaded targets:")
+	print(np_targets - dataset["targets"])
 
 # split_by_public_states()
 

@@ -95,7 +95,8 @@ if __name__ == '__main__':
 	print("targets:")
 	np_targets = np_dataset[:, -1]
 	print(np_targets)
-# np.savez_compressed(np_dataset[-1])
+	dataset_filename = "{}/{}_numpy_dataset".format(script_directory, features_basename)
+	np.savez_compressed(dataset_filename, features=np_features, targets=np_targets)
 
 # split_by_public_states()
 

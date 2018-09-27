@@ -28,8 +28,6 @@ def get_reaches_to_values_dataframe():
 		skiprows=1,
 		index_col=0
 	)
-	print("reaches_to_values:")
-	print(reaches_to_values_dataframe.head())
 	return reaches_to_values_dataframe
 
 
@@ -44,8 +42,6 @@ def get_concatenated_dataframe(features_dataframe, reaches_to_values_dataframe):
 		"nodal_reach",
 		"nodal_expected_value"
 	]]
-	print("concatenated:")
-	print(concatenated_dataframe.head())
 	return concatenated_dataframe
 
 
@@ -57,8 +53,8 @@ def get_sorted_dataframes(concatenated_dataframe):
 		],
 		kind='mergesort'
 	)
-	# print("sorted: ")
-	# print(sorted_dataframe)
+	print("sorted: ")
+	print(sorted_dataframe.head())
 	return sorted_dataframe
 
 

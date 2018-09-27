@@ -29,7 +29,7 @@ def get_reaches_to_values_dataframe():
 		index_col=0
 	)
 	print("reaches_to_values:")
-	print(reaches_to_values_dataframe)
+	print(reaches_to_values_dataframe.head())
 	return reaches_to_values_dataframe
 
 
@@ -49,8 +49,8 @@ def get_concatenated_dataframe(features_dataframe, reaches_to_values_dataframe):
 	return concatenated_dataframe
 
 
-def get_sorted_dataframes():
-	sorted_dataframe = concatenated.sort_values(
+def get_sorted_dataframes(concatenated_dataframe):
+	sorted_dataframe = concatenated_dataframe.sort_values(
 		[
 			"round1", "round2",
 			"private_card1", "private_card2",
@@ -89,20 +89,13 @@ if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	features_basename = "IIGS3_1_3_false_true_lvl7"
 	features = get_features_dataframe()
-
-	print("###################################")
 	filenames = get_files_in_directory_recursively(rootdir="{}/reach_value_datasets".format(script_directory))
-	seed = 0
-	reaches_to_values_basename = "nodal_dataset_seed_{}".format(seed)
-	reaches_to_values_filename = "{}/{}.csv".format(script_directory, reaches_to_values_basename)
-	print("reaches_to_values_filename == {}".format(reaches_to_values_filename))
-	reaches_to_values = get_reaches_to_values_dataframe()
-	print("###################################")
-	concatenated = get_concatenated_dataframe(features, reaches_to_values)
-	print("###################################")
-	sorted_concatenated = get_sorted_dataframes()
-	print("###################################")
-	save_to_npz(
-		sorted_concatenated,
-		dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
-	)
+	for reaches_to_values_filename in filenames:
+		print("reaches_to_values_filename == {}".format(reaches_to_values_filename))
+		reaches_to_values = get_reaches_to_values_dataframe()
+		concatenated = get_concatenated_dataframe(features, reaches_to_values)
+		sorted_concatenated = get_sorted_dataframes(concatenated)
+		# save_to_npz(
+		# 	sorted_concatenated,
+		# 	dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
+		# )

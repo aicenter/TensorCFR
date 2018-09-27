@@ -5,6 +5,8 @@ import os
 import numpy as np
 import pandas as pd
 
+from src.utils.other_utils import get_files_in_directory_recursively
+
 
 def get_features_dataframe():
 	features_filename = "{}/{}.csv".format(script_directory, features_basename)
@@ -89,6 +91,7 @@ if __name__ == '__main__':
 	features = get_features_dataframe()
 
 	print("###################################")
+	filenames = get_files_in_directory_recursively(rootdir="{}/reach_value_datasets".format(script_directory))
 	seed = 0
 	reaches_to_values_basename = "nodal_dataset_seed_{}".format(seed)
 	reaches_to_values_filename = "{}/{}.csv".format(script_directory, reaches_to_values_basename)

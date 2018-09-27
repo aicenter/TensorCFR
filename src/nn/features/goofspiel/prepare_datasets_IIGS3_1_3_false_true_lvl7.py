@@ -54,6 +54,19 @@ def get_concatenated_dataframe():
 	return concatenated_dataframe
 
 
+def get_sorted_dataframes():
+	sorted_dataframe = concatenated.sort_values(
+		[
+			"round1", "round2",
+			"private_card1", "private_card2",
+		],
+		kind='mergesort'
+	)
+	print("sorted: ")
+	print(sorted_dataframe)
+	return sorted_dataframe
+
+
 if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	pd.set_option('display.max_columns', 500)
@@ -84,15 +97,7 @@ if __name__ == '__main__':
 
 	print("###################################")
 
-	sorted_concatenated = concatenated.sort_values(
-		[
-			"round1", "round2",
-			"private_card1", "private_card2",
-		],
-		kind='mergesort'
-	)
-	print("sorted_concatenated: ")
-	print(sorted_concatenated)
+	sorted_concatenated = get_sorted_dataframes()
 
 	print("###################################")
 

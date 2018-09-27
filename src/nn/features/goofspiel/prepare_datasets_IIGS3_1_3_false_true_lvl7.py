@@ -18,6 +18,19 @@ def get_features_dataframe():
 	return features_dataframe
 
 
+def get_reaches_to_values_dataframe():
+	reaches_to_values_dataframe = pd.read_csv(
+		reaches_to_values_filename,
+		names=["nodal_index", "node_to_infoset", "nodal_reach", "nodal_expected_value"],
+		delimiter=",",
+		skiprows=1,
+		index_col=0
+	)
+	print("reaches_to_values:")
+	print(reaches_to_values_dataframe)
+	return reaches_to_values_dataframe
+
+
 def get_concatenated_dataframe():
 	concatenated_dataframe = pd.concat(
 		[features, reaches_to_values],
@@ -80,15 +93,7 @@ if __name__ == '__main__':
 	reaches_to_values_basename = "nodal_dataset_seed_{}".format(seed)
 	reaches_to_values_filename = "{}/{}.csv".format(script_directory, reaches_to_values_basename)
 	print("reaches_to_values_filename == {}".format(reaches_to_values_filename))
-	reaches_to_values = pd.read_csv(
-		reaches_to_values_filename,
-		names=["nodal_index", "node_to_infoset", "nodal_reach", "nodal_expected_value"],
-		delimiter=",",
-		skiprows=1,
-		index_col=0
-	)
-	print("reaches_to_values:")
-	print(reaches_to_values)
+	reaches_to_values = get_reaches_to_values_dataframe()
 	print("###################################")
 	concatenated = get_concatenated_dataframe()
 	print("###################################")

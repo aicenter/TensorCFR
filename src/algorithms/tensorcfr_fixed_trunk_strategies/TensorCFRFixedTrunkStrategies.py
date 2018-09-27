@@ -880,7 +880,7 @@ class TensorCFRFixedTrunkStrategies:
 		)
 		return masked_out_trunk_info_tensors
 
-	def get_trunk_info_of_nodes(self, session):
+	def get_trunk_info_of_nodes(self):
 		if self.trunk_depth <= 0:
 			return None
 
@@ -1049,13 +1049,14 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending
-		trunk_info_of_nodes = self.get_trunk_info_of_nodes(session)
+		trunk_info_of_nodes = self.get_trunk_info_of_nodes()
 
-		# print_tensors(session, [trunk_info_of_nodes]),
+		#print_tensors(session, [trunk_info_of_nodes]),
+		data_to_store = session.run(trunk_info_of_nodes)
 
 		np.savetxt(
 			csv_file,
-			session.run(trunk_info_of_nodes),
+			data_to_store,
 			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f",
 			header="nodal_index,\t node_to_infoset,\t nodal_reach,\t nodal_expected_value"
 		)

@@ -69,15 +69,13 @@ def save_to_npz(pandas_dataframe, dataset_filename):
 
 
 if __name__ == '__main__':
-	script_directory = os.path.dirname(os.path.abspath(__file__))
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
-
+	script_directory = os.path.dirname(os.path.abspath(__file__))
 	features_basename = "IIGS3_1_3_false_true_lvl7"
 	features = get_features_dataframe()
 
 	print("###################################")
-
 	seed = 0
 	reaches_to_values_basename = "nodal_dataset_seed_{}".format(seed)
 	reaches_to_values_filename = "{}/{}.csv".format(script_directory, reaches_to_values_basename)
@@ -91,17 +89,11 @@ if __name__ == '__main__':
 	)
 	print("reaches_to_values:")
 	print(reaches_to_values)
-
 	print("###################################")
-
 	concatenated = get_concatenated_dataframe()
-
 	print("###################################")
-
 	sorted_concatenated = get_sorted_dataframes()
-
 	print("###################################")
-
 	save_to_npz(
 		sorted_concatenated,
 		dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)

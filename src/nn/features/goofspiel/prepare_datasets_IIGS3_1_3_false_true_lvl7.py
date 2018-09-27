@@ -67,6 +67,27 @@ def get_sorted_dataframes():
 	return sorted_dataframe
 
 
+def load_from_npz(dataset_filename, np_features, np_targets):
+	dataset = np.load(dataset_filename)
+	print("diff between reloaded features:")
+	print(np_features - dataset["features"])
+	print("diff between reloaded targets:")
+	print(np_targets - dataset["targets"])
+
+
+def save_to_npz(pandas_dataframe, dataset_filename):
+	np_dataset = pandas_dataframe.values
+	print(np_dataset)
+	print("features:")
+	np_features = np_dataset[:, :-1]
+	print(np_features)
+	print("targets:")
+	np_targets = np_dataset[:, -1]
+	print(np_targets)
+	np.savez_compressed(dataset_filename, features=np_features, targets=np_targets)
+	load_from_npz(dataset_filename, np_features, np_targets)
+
+
 if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	pd.set_option('display.max_columns', 500)
@@ -101,22 +122,10 @@ if __name__ == '__main__':
 
 	print("###################################")
 
-	np_dataset = sorted_concatenated.values
-	print(np_dataset)
-	print("features:")
-	np_features = np_dataset[:, :-1]
-	print(np_features)
-	print("targets:")
-	np_targets = np_dataset[:, -1]
-	print(np_targets)
-	dataset_filename = "{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
-	np.savez_compressed(dataset_filename, features=np_features, targets=np_targets)
-
-	dataset = np.load(dataset_filename)
-	print("diff between reloaded features:")
-	print(np_features - dataset["features"])
-	print("diff between reloaded targets:")
-	print(np_targets - dataset["targets"])
+	save_to_npz(
+		sorted_concatenated,
+		dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
+	)
 
 # split_by_public_states()
 

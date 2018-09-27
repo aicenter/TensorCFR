@@ -45,7 +45,7 @@ def get_concatenated_dataframe(features_dataframe, reaches_to_values_dataframe):
 		"nodal_expected_value"
 	]]
 	print("concatenated:")
-	print(concatenated_dataframe)
+	print(concatenated_dataframe.head())
 	return concatenated_dataframe
 
 
@@ -57,8 +57,8 @@ def get_sorted_dataframes(concatenated_dataframe):
 		],
 		kind='mergesort'
 	)
-	print("sorted: ")
-	print(sorted_dataframe)
+	# print("sorted: ")
+	# print(sorted_dataframe)
 	return sorted_dataframe
 
 

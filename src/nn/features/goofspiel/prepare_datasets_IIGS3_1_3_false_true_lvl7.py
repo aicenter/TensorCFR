@@ -31,9 +31,9 @@ def get_reaches_to_values_dataframe():
 	return reaches_to_values_dataframe
 
 
-def get_concatenated_dataframe():
+def get_concatenated_dataframe(features_dataframe, reaches_to_values_dataframe):
 	concatenated_dataframe = pd.concat(
-		[features, reaches_to_values],
+		[features_dataframe, reaches_to_values_dataframe],
 		axis=1,
 	)[[
 		"round1", "round2",
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 	print("reaches_to_values_filename == {}".format(reaches_to_values_filename))
 	reaches_to_values = get_reaches_to_values_dataframe()
 	print("###################################")
-	concatenated = get_concatenated_dataframe()
+	concatenated = get_concatenated_dataframe(features, reaches_to_values)
 	print("###################################")
 	sorted_concatenated = get_sorted_dataframes()
 	print("###################################")

@@ -48,3 +48,11 @@ def print_dataset_parameters(dataset_parameters):
 	print("starting seed: {}".format(dataset_parameters["starting_seed"]))
 	print("dataset size: {}".format(dataset_parameters["dataset_size"]))
 	print("###################################")
+
+
+def get_files_in_directory_recursively(rootdir):
+	filenames = []
+	for root, dirs, files in os.walk(rootdir):
+		for file in files:
+			filenames += [("{}/{}".format(root, file))]
+	return filenames

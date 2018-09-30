@@ -88,6 +88,16 @@ if __name__ == '__main__':
 	features_basename = "IIGS3_1_3_false_true_lvl7"
 	features = get_features_dataframe()
 	filenames = get_files_in_directory_recursively(rootdir="{}/reach_value_datasets".format(script_directory))
+
+	n_files = len(filenames)
+	n_nodes = features.shape[0]
+	feature_dim = len(FEATURE_COLUMNS)
+	target_dim = len(TARGET_COLUMNS)
+	print("{} files x {} nodes x {} feature_dim".format(n_files, n_nodes, feature_dim))
+	np_features = np.zeros((n_files, n_nodes, feature_dim))  # shape [#seed_of_the_batch, #nodes, #features]
+	print("{} files x {} nodes x {} target_dim".format(n_files, n_nodes, target_dim))
+	np_targets = np.zeros((n_files, n_nodes, target_dim))  # shape [#seed_of_the_batch, #nodes, #targets]
+
 	for reaches_to_values_filename in filenames:
 		print("reaches_to_values_filename == {}".format(reaches_to_values_filename))
 		reaches_to_values = get_reaches_to_values_dataframe()

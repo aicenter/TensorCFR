@@ -60,14 +60,6 @@ def get_sorted_dataframes(concatenated_dataframe):
 	return sorted_dataframe
 
 
-def load_from_npz(dataset_filename, np_features, np_targets):
-	dataset = np.load(dataset_filename)
-	print("diff between reloaded features:")
-	print(np_features - dataset["features"])
-	print("diff between reloaded targets:")
-	print(np_targets - dataset["targets"])
-
-
 def store_as_np_arrays(pandas_dataframe, dataset_filename):
 	np_dataset = pandas_dataframe.values
 	print(np_dataset)
@@ -78,7 +70,6 @@ def store_as_np_arrays(pandas_dataframe, dataset_filename):
 	np_targets = np_dataset[:, -1]
 	print(np_targets)
 	np.savez_compressed(dataset_filename, features=np_features, targets=np_targets)
-	load_from_npz(dataset_filename, np_features, np_targets)
 
 
 if __name__ == '__main__':
@@ -107,7 +98,7 @@ if __name__ == '__main__':
 	print(np_targets)
 	print("np_targets.shape == {}".format(np_targets.shape))
 
-	# save_to_npz( # TODO
-	# 	sorted_concatenated,
-	# 	dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
-	# )
+	save_to_npz( # TODO
+		sorted_concatenated,
+		dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
+	)

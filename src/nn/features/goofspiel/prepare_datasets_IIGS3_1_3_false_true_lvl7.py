@@ -62,10 +62,8 @@ def get_sorted_dataframes(concatenated_dataframe):
 
 def verify_npz(filename, features, targets):
 	dataset = np.load(filename)
-	print("diff between reloaded features:")
-	print(features - dataset["features"])
-	print("diff between reloaded targets:")
-	print(targets - dataset["targets"])
+	np.testing.assert_array_equal(features, dataset["features"])
+	np.testing.assert_array_equal(targets, dataset["targets"])
 
 
 if __name__ == '__main__':

@@ -7,6 +7,14 @@ import pandas as pd
 
 from src.utils.other_utils import get_files_in_directory_recursively
 
+FEATURE_COLUMNS = [
+	"round1", "round2",
+	"private_card1", "private_card2",
+	"node_to_infoset",
+	"nodal_reach"
+]
+TARGET_COLUMNS = ["nodal_expected_value"]
+
 
 def get_features_dataframe():
 	features_filename = "{}/{}.csv".format(script_directory, features_basename)
@@ -35,13 +43,7 @@ def get_concatenated_dataframe(features_dataframe, reaches_to_values_dataframe):
 	concatenated_dataframe = pd.concat(
 		[features_dataframe, reaches_to_values_dataframe],
 		axis=1,
-	)[[
-		"round1", "round2",
-		"private_card1", "private_card2",
-		"node_to_infoset",
-		"nodal_reach",
-		"nodal_expected_value"
-	]]
+	)[FEATURE_COLUMNS + TARGET_COLUMNS]
 	return concatenated_dataframe
 
 

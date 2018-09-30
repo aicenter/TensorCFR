@@ -60,18 +60,6 @@ def get_sorted_dataframes(concatenated_dataframe):
 	return sorted_dataframe
 
 
-def store_as_np_arrays(pandas_dataframe, dataset_filename):
-	np_dataset = pandas_dataframe.values
-	print(np_dataset)
-	print("features:")
-	np_features = np_dataset[:, :-1]
-	print(np_features)
-	print("targets:")
-	np_targets = np_dataset[:, -1]
-	print(np_targets)
-	np.savez_compressed(dataset_filename, features=np_features, targets=np_targets)
-
-
 if __name__ == '__main__':
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
@@ -98,7 +86,5 @@ if __name__ == '__main__':
 	print(np_targets)
 	print("np_targets.shape == {}".format(np_targets.shape))
 
-	save_to_npz( # TODO
-		sorted_concatenated,
-		dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
-	)
+	dataset_filename = "{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
+	np.savez_compressed(dataset_filename, features=np_features, targets=np_targets)

@@ -98,8 +98,8 @@ if __name__ == '__main__':
 	print("{} files x {} nodes x {} target_dim".format(n_files, n_nodes, target_dim))
 	np_targets = np.zeros((n_files, n_nodes, target_dim))  # shape [#seed_of_the_batch, #nodes, #targets]
 
-	for reaches_to_values_filename in filenames:
-		print("reaches_to_values_filename == {}".format(reaches_to_values_filename))
+	for i, reaches_to_values_filename in enumerate(filenames):
+		print("#{}-th reaches_to_values_filename == {}".format(i, reaches_to_values_filename))
 		reaches_to_values = get_reaches_to_values_dataframe()
 		concatenated = get_concatenated_dataframe(features, reaches_to_values)
 		sorted_concatenated = get_sorted_dataframes(concatenated)

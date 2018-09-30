@@ -60,6 +60,14 @@ def get_sorted_dataframes(concatenated_dataframe):
 	return sorted_dataframe
 
 
+def verify_npz(filename, features, targets):
+	dataset = np.load(filename)
+	print("diff between reloaded features:")
+	print(features - dataset["features"])
+	print("diff between reloaded targets:")
+	print(targets - dataset["targets"])
+
+
 if __name__ == '__main__':
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
@@ -88,3 +96,4 @@ if __name__ == '__main__':
 
 	dataset_filename = "{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
 	np.savez_compressed(dataset_filename, features=np_features, targets=np_targets)
+	verify_npz(dataset_filename, np_features, np_targets)

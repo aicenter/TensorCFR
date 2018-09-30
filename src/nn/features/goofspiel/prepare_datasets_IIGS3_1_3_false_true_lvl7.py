@@ -89,24 +89,24 @@ if __name__ == '__main__':
 	features = get_features_dataframe()
 	filenames = get_files_in_directory_recursively(rootdir="{}/reach_value_datasets".format(script_directory))
 
-	n_files = len(filenames)
-	n_nodes = features.shape[0]
-	feature_dim = len(FEATURE_COLUMNS)
-	target_dim = len(TARGET_COLUMNS)
-	print("{} files x {} nodes x {} feature_dim".format(n_files, n_nodes, feature_dim))
-	np_features = np.zeros((n_files, n_nodes, feature_dim))  # shape [#seed_of_the_batch, #nodes, #features]
-	print("{} files x {} nodes x {} target_dim".format(n_files, n_nodes, target_dim))
-	np_targets = np.zeros((n_files, n_nodes, target_dim))  # shape [#seed_of_the_batch, #nodes, #targets]
-
+	feature_arrays, target_arrays = [], []
 	for i, reaches_to_values_filename in enumerate(filenames):
 		print("#{}-th reaches_to_values_filename == {}".format(i, reaches_to_values_filename))
 		reaches_to_values = get_reaches_to_values_dataframe()
 		concatenated = get_concatenated_dataframe(features, reaches_to_values)
 		sorted_concatenated = get_sorted_dataframes(concatenated)
-		store_as_np_arrays(
-			sorted_concatenated,
-			dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
-		)
+
+		np_dataset = sorted_concatenated.values
+		feature_arrays.append(np_dataset[:, :-1])
+		target_arrays.append(np_dataset[:, -1])
+
+	np_features = np.stack(feature_arrays)  # shape [#seed_of_the_batch, #nodes, #features]
+	print(np_features)
+	print("np_features.shape == {}".format(np_features.shape))
+	np_targets = np.stack(target_arrays)  # shape [#seed_of_the_batch, #nodes]
+	print(np_targets)
+	print("np_targets.shape == {}".format(np_targets.shape))
+
 	# save_to_npz( # TODO
 	# 	sorted_concatenated,
 	# 	dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)

@@ -68,7 +68,7 @@ def load_from_npz(dataset_filename, np_features, np_targets):
 	print(np_targets - dataset["targets"])
 
 
-def save_to_npz(pandas_dataframe, dataset_filename):
+def store_as_np_arrays(pandas_dataframe, dataset_filename):
 	np_dataset = pandas_dataframe.values
 	print(np_dataset)
 	print("features:")
@@ -103,7 +103,11 @@ if __name__ == '__main__':
 		reaches_to_values = get_reaches_to_values_dataframe()
 		concatenated = get_concatenated_dataframe(features, reaches_to_values)
 		sorted_concatenated = get_sorted_dataframes(concatenated)
-		# save_to_npz(
-		# 	sorted_concatenated,
-		# 	dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
-		# )
+		store_as_np_arrays(
+			sorted_concatenated,
+			dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
+		)
+	# save_to_npz( # TODO
+	# 	sorted_concatenated,
+	# 	dataset_filename="{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
+	# )

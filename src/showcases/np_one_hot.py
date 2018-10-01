@@ -11,7 +11,11 @@ if __name__ == '__main__':
 		[
 			[0.00000e+00, 0.00000e+00, 0.00000e+00, 1.00000e+00, 1.21300e-03],
 			[0.00000e+00, 0.00000e+00, 0.00000e+00, 2.00000e+00, 3.27100e-03],
-			[0.00000e+00, 0.00000e+00, 1.00000e+00, 0.00000e+00, 4.97500e-02]
+			[0.00000e+00, 0.00000e+00, 1.00000e+00, 0.00000e+00, 4.97500e-02],
+			[0.00000e+00, 0.00000e+00, 1.00000e+00, 2.00000e+00, 6.64000e-04],
+			[0.00000e+00, 0.00000e+00, 2.00000e+00, 0.00000e+00, 1.19360e-02],
+			[0.00000e+00, 0.00000e+00, 2.00000e+00, 1.00000e+00, 3.96000e-02],
+			[0.00000e+00, 1.00000e+00, 0.00000e+00, 2.00000e+00, 4.25580e-02]
 		]
 	)
 	indices = (features[:, :4]).astype(int)
@@ -23,4 +27,4 @@ if __name__ == '__main__':
 	print("features:\n{}".format(features))
 	print("indices:\n{}".format(indices))
 	# print("one_hot_features:\n{}".format(one_hot_features))
-	print("one_hot_flattened_eatures:\n{}".format(one_hot_flattened_features))
+	print("one_hot_flattened_features:\n{}".format(one_hot_flattened_features))

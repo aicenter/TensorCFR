@@ -7,6 +7,7 @@ import pandas as pd
 
 from src.utils.other_utils import get_files_in_directory_recursively
 
+FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
 FEATURE_COLUMNS = [
 	"round1", "round2",
 	"private_card1", "private_card2",
@@ -16,7 +17,7 @@ TARGET_COLUMNS = ["nodal_expected_value"]
 
 
 def get_features_dataframe():
-	features_filename = "{}/{}.csv".format(script_directory, features_basename)
+	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
 	features_dataframe = pd.read_csv(
 		features_filename,
 		names=["private_card1", "private_card2", "round1", "round2"],
@@ -69,8 +70,7 @@ if __name__ == '__main__':
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	features_basename = "IIGS3_1_3_false_true_lvl7"
-	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
+	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
 
 	features = get_features_dataframe()
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)

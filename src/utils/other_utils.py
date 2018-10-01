@@ -4,6 +4,7 @@ import datetime
 import os
 import subprocess
 
+import numpy as np
 import psutil
 
 
@@ -56,3 +57,7 @@ def get_files_in_directory_recursively(rootdir):
 		for file in files:
 			filenames += [("{}/{}".format(root, file))]
 	return filenames
+
+
+def one_hot(a, num_classes):
+	return np.squeeze(np.eye(num_classes)[a.reshape(-1)])

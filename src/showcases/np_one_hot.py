@@ -2,12 +2,9 @@
 
 import numpy as np
 
+from src.utils.other_utils import one_hot
+
 N_CLASSES = 3
-
-
-def one_hot(a, num_classes):
-	return np.squeeze(np.eye(num_classes)[a.reshape(-1)])
-
 
 if __name__ == '__main__':
 	features = np.array(

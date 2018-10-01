@@ -66,15 +66,14 @@ def verify_npz(filename, features, targets):
 	np.testing.assert_array_equal(targets, dataset["targets"])
 
 
-if __name__ == '__main__':
+def prepare_dataset():
+	global script_directory, reaches_to_values_filename
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
-
 	features = get_features_dataframe()
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)
-
 	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
 	if not filenames:
 		print("No files in {}".format(dataset_dir))
@@ -99,3 +98,7 @@ if __name__ == '__main__':
 
 		np.savez_compressed(npz_filename, features=np_features, targets=np_targets)
 		verify_npz(npz_filename, np_features, np_targets)
+
+
+if __name__ == '__main__':
+	prepare_dataset()

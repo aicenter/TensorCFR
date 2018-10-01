@@ -10,7 +10,6 @@ from src.utils.other_utils import get_files_in_directory_recursively
 FEATURE_COLUMNS = [
 	"round1", "round2",
 	"private_card1", "private_card2",
-	"node_to_infoset",
 	"nodal_reach"
 ]
 TARGET_COLUMNS = ["nodal_expected_value"]

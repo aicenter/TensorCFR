@@ -15,6 +15,12 @@ if __name__ == '__main__':
 		]
 	)
 	indices = (features[:, :4]).astype(int)
+	one_hot_features = one_hot(indices, N_CLASSES)
+	rows = indices.shape[0]
+	columns = indices.shape[1]
+	one_hot_flattened_features = one_hot_features.reshape(rows, columns * N_CLASSES)
+
 	print(features)
 	print(indices)
-	print(one_hot(indices, N_CLASSES))
+	print(one_hot_features)
+	print(one_hot_flattened_features)

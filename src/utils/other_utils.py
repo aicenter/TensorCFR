@@ -64,7 +64,7 @@ def one_hot(a, num_classes):
 
 
 def get_one_hot_flattened(features3D, n_classes):
-	indices = (features3D[:, :, :4]).astype(int)
+	indices = (features3D[..., :4]).astype(int)
 	one_hot_features = one_hot(indices, n_classes)
 	one_hot_shape = list(indices.shape)
 	one_hot_shape[-1] *= n_classes

@@ -21,15 +21,15 @@ if __name__ == '__main__':
 	# Assume that each row of `features` corresponds to the same row as `labels`.
 	assert features.shape[0] == targets.shape[0]
 
-	features_placeholder = tf.placeholder(features.dtype, features.shape, name="features")
-	targets_placeholder = tf.placeholder(targets.dtype, targets.shape, name="targets")
+	features_placeholder, targets_placeholder = tf.placeholder(features.dtype, features.shape, name="features"), \
+	                                            tf.placeholder(targets.dtype, targets.shape, name="targets")
 
-	features_dataset = tf.data.Dataset.from_tensor_slices(features_placeholder)
-	targets_dataset = tf.data.Dataset.from_tensor_slices(targets_placeholder)
-	feature_iterator = features_dataset.make_initializable_iterator()
-	target_iterator = targets_dataset.make_initializable_iterator()
-	features_batch = feature_iterator.get_next(name="features_batch")
-	targets_batch = target_iterator.get_next(name="targets_batch")
+	features_dataset, targets_dataset = tf.data.Dataset.from_tensor_slices(features_placeholder), \
+	                                    tf.data.Dataset.from_tensor_slices(targets_placeholder)
+	feature_iterator, target_iterator = features_dataset.make_initializable_iterator(), \
+	                                    targets_dataset.make_initializable_iterator()
+	features_batch, targets_batch = feature_iterator.get_next(name="features_batch"), \
+	                                target_iterator.get_next(name="targets_batch")
 
 	with tf.Session(config=get_default_config_proto()) as sess:
 		sess.run(feature_iterator.initializer, feed_dict={features_placeholder: features})

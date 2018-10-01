@@ -46,7 +46,7 @@ def get_concatenated_dataframe(features_dataframe, reaches_to_values_dataframe):
 	return concatenated_dataframe
 
 
-def get_sorted_dataframes(concatenated_dataframe):
+def get_sorted_dataframes(concatenated_dataframe):  # sort by lexicographically by public states and infosets
 	sorted_dataframe = concatenated_dataframe.sort_values(
 		[
 			"round1", "round2",

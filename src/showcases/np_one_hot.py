@@ -38,8 +38,9 @@ if __name__ == '__main__':
 			]
 		]
 	)
-	one_hot_flattened_features = get_one_hot_flattened(features3D, N_CLASSES)
+	slice_1hot_feats = slice(4)
+	one_hot_flattened_features = get_one_hot_flattened(features3D, N_CLASSES, slice_1hot_feats)
 
 	print("features:\n{}".format(features3D))
-	print("indices:\n{}".format((features3D[..., :4]).astype(int)))
+	print("indices:\n{}".format((features3D[..., slice_1hot_feats]).astype(int)))
 	print("one_hot_flattened_features:\n{}".format(one_hot_flattened_features))

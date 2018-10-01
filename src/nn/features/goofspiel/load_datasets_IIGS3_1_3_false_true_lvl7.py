@@ -7,6 +7,7 @@ import os
 import numpy as np
 import tensorflow as tf
 
+from src.nn.features.goofspiel.prepare_datasets_IIGS3_1_3_false_true_lvl7 import prepare_dataset
 from src.utils.tf_utils import get_default_config_proto, print_tensors
 
 FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
@@ -14,6 +15,8 @@ FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
 if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
+	if not os.path.isfile(npz_filename):
+		prepare_dataset()
 	with np.load(npz_filename) as data:
 		features = data["features"]
 		targets = data["targets"]

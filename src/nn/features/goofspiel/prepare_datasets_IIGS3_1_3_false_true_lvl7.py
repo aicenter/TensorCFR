@@ -70,10 +70,12 @@ if __name__ == '__main__':
 	pd.set_option('display.width', 1000)
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	features_basename = "IIGS3_1_3_false_true_lvl7"
+	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
+
 	features = get_features_dataframe()
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)
-	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
 
+	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
 	if not filenames:
 		print("No files in {}".format(dataset_dir))
 	else:
@@ -95,6 +97,5 @@ if __name__ == '__main__':
 		print(np_targets)
 		print("np_targets.shape == {}".format(np_targets.shape))
 
-		dataset_filename = "{}/{}_numpy_dataset.npz".format(script_directory, features_basename)
-		np.savez_compressed(dataset_filename, features=np_features, targets=np_targets)
-		verify_npz(dataset_filename, np_features, np_targets)
+		np.savez_compressed(npz_filename, features=np_features, targets=np_targets)
+		verify_npz(npz_filename, np_features, np_targets)

@@ -63,9 +63,9 @@ def one_hot(a, num_classes):
 	return np.squeeze(np.eye(num_classes)[a.reshape(-1)])
 
 
-def get_one_hot_flattened(features, n_classes):
-	indices = (features[:, :4]).astype(int)
+def get_one_hot_flattened(features3D, n_classes):
+	indices = (features3D[:, :, :4]).astype(int)
 	one_hot_features = one_hot(indices, n_classes)
-	rows = indices.shape[0]
-	columns = indices.shape[1]
-	return one_hot_features.reshape(rows, columns * n_classes)
+	one_hot_shape = list(indices.shape)
+	one_hot_shape[-1] *= n_classes
+	return one_hot_features.reshape(one_hot_shape)

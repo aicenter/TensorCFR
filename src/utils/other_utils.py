@@ -37,8 +37,8 @@ def get_dataset_parameters(domain_name):
 	parser.add_argument("--size", help="size of one dataset (given the seed)", nargs='?', type=int, default=4)
 	args = parser.parse_args()
 	return {
-		"domain_name": domain_name,
-		"dataset_size": args.size,
+		"domain_name"  : domain_name,
+		"dataset_size" : args.size,
 		"starting_seed": args.seed
 	}
 
@@ -61,3 +61,11 @@ def get_files_in_directory_recursively(rootdir):
 
 def one_hot(a, num_classes):
 	return np.squeeze(np.eye(num_classes)[a.reshape(-1)])
+
+
+def get_one_hot_flattened(features, n_classes):
+	indices = (features[:, :4]).astype(int)
+	one_hot_features = one_hot(indices, n_classes)
+	rows = indices.shape[0]
+	columns = indices.shape[1]
+	return one_hot_features.reshape(rows, columns * n_classes)

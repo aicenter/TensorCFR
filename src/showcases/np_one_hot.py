@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from src.utils.other_utils import one_hot
+from src.utils.other_utils import get_one_hot_flattened
 
 N_CLASSES = 3
 
@@ -18,13 +18,8 @@ if __name__ == '__main__':
 			[0.00000e+00, 1.00000e+00, 0.00000e+00, 2.00000e+00, 4.25580e-02]
 		]
 	)
-	indices = (features[:, :4]).astype(int)
-	one_hot_features = one_hot(indices, N_CLASSES)
-	rows = indices.shape[0]
-	columns = indices.shape[1]
-	one_hot_flattened_features = one_hot_features.reshape(rows, columns * N_CLASSES)
+	one_hot_flattened_features = get_one_hot_flattened(features, N_CLASSES)
 
 	print("features:\n{}".format(features))
-	print("indices:\n{}".format(indices))
-	# print("one_hot_features:\n{}".format(one_hot_features))
+	print("indices:\n{}".format((features[:, :4]).astype(int)))
 	print("one_hot_flattened_features:\n{}".format(one_hot_flattened_features))

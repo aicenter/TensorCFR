@@ -20,7 +20,7 @@ if __name__ == '__main__':
 	columns = indices.shape[1]
 	one_hot_flattened_features = one_hot_features.reshape(rows, columns * N_CLASSES)
 
-	print(features)
-	print(indices)
-	print(one_hot_features)
-	print(one_hot_flattened_features)
+	print("features:\n{}".format(features))
+	print("indices:\n{}".format(indices))
+	# print("one_hot_features:\n{}".format(one_hot_features))
+	print("one_hot_flattened_eatures:\n{}".format(one_hot_flattened_features))

@@ -30,9 +30,9 @@ def get_features_dataframe():
 	return features_dataframe
 
 
-def get_reaches_to_values_dataframe():
+def get_reaches_to_values_dataframe(filename):
 	reaches_to_values_dataframe = pd.read_csv(
-		reaches_to_values_filename,
+		filename,
 		names=["nodal_index", "node_to_infoset", "nodal_reach", "nodal_expected_value"],
 		delimiter=",",
 		skiprows=1,
@@ -69,7 +69,7 @@ def verify_npz(filename, features, targets):
 
 
 def prepare_dataset():
-	global script_directory, reaches_to_values_filename
+	global script_directory   # TODO
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
 	np.set_printoptions(edgeitems=20, suppress=True)
@@ -84,7 +84,7 @@ def prepare_dataset():
 		feature_arrays, target_arrays = [], []
 		for i, reaches_to_values_filename in enumerate(filenames):
 			print("#{}-th reaches_to_values_filename == {}".format(i, reaches_to_values_filename))
-			reaches_to_values = get_reaches_to_values_dataframe()
+			reaches_to_values = get_reaches_to_values_dataframe(reaches_to_values_filename)
 			concatenated = get_concatenated_dataframe(features, reaches_to_values)
 			sorted_concatenated = get_sorted_dataframes(concatenated)
 

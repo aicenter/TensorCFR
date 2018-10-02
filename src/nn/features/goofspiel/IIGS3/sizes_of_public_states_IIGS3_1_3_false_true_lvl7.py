@@ -9,7 +9,9 @@ if __name__ == '__main__':
 	csv_filename = os.path.join(script_directory, "{}.csv".format(csv_basename))
 	features = get_features_dataframe(csv_filename)  # TODO
 
-	public_states_sizes = features.groupby(['round1', 'round2']).size()
+	grouped_features = features.groupby(['round1', 'round2'])
+	print("grouped_features:\n{}.".format(grouped_features.head()))
+	public_states_sizes = grouped_features.size()
 	csv_output_filename = "{}_public_states_sizes.csv".format(csv_basename)
 	public_states_sizes.to_csv(
 		csv_output_filename,

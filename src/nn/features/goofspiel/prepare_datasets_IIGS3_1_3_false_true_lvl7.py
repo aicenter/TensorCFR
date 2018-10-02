@@ -18,10 +18,9 @@ TARGET_COLUMNS = ["nodal_expected_value"]
 SLICE_1HOT_FEATS = slice(4)
 
 
-def get_features_dataframe():
-	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
+def get_features_dataframe(filename):
 	features_dataframe = pd.read_csv(
-		features_filename,
+		filename,
 		names=["private_card1", "private_card2", "round1", "round2"],
 		delimiter=";|,",
 	)
@@ -73,10 +72,13 @@ def prepare_dataset():
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
 	np.set_printoptions(edgeitems=20, suppress=True)
+
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
-	features = get_features_dataframe()
+	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)
+	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
+
+	features = get_features_dataframe(features_filename)
 	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
 	if not filenames:
 		print("No files in {}".format(dataset_dir))

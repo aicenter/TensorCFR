@@ -92,12 +92,14 @@ def prepare_dataset():
 			feature_arrays.append(np_dataset[:, :-1])
 			target_arrays.append(np_dataset[:, -1])
 
-		np_features = np.stack(feature_arrays)  # shape [#seed_of_the_batch, #nodes, #features]
-		np_features = get_one_hot_flattened(
-			np_features,
+		raw_features = np.stack(feature_arrays)  # shape [#seed_of_the_batch, #nodes, #features]
+		one_hot_features = get_one_hot_flattened(
+			raw_features,
 			n_classes=N_CARDS,
 			slice_1hot_feats=SLICE_1HOT_FEATS
 		)
+		reaches = np.expand_dims(raw_features[..., -1], axis=-1)
+		np_features = np.concatenate((one_hot_features, reaches), axis=-1)
 		print("np_features:\n{}".format(np_features))
 		print("np_features.shape == {}".format(np_features.shape))
 		np_targets = np.stack(target_arrays)  # shape [#seed_of_the_batch, #nodes]

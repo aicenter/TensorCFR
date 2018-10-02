@@ -8,6 +8,7 @@ import pandas as pd
 from src.utils.other_utils import get_files_in_directory_recursively
 
 FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
+N_CARDS = 3
 FEATURE_COLUMNS = [
 	"round1", "round2",
 	"private_card1", "private_card2",

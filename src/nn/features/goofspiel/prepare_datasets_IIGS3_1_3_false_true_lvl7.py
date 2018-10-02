@@ -68,7 +68,6 @@ def verify_npz(filename, features, targets):
 
 
 def prepare_dataset():
-	global script_directory   # TODO
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
 	np.set_printoptions(edgeitems=20, suppress=True)

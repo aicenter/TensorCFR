@@ -5,6 +5,7 @@ import os
 import subprocess
 
 import numpy as np
+import pandas as pd
 import psutil
 
 
@@ -69,3 +70,14 @@ def get_one_hot_flattened(features, n_classes, slice_1hot_feats):
 	one_hot_shape = list(indices.shape)
 	one_hot_shape[-1] *= n_classes
 	return one_hot_features.reshape(one_hot_shape)
+
+
+def get_features_dataframe(filename):
+	features_dataframe = pd.read_csv(
+		filename,
+		names=["private_card1", "private_card2", "round1", "round2"],
+		delimiter=";|,",
+	)
+	print("features:")
+	print(features_dataframe)
+	return features_dataframe

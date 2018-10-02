@@ -7,7 +7,7 @@ import os
 import numpy as np
 import tensorflow as tf
 
-from src.nn.features.goofspiel.npz_datasets_IIGS3_1_3_false_true_lvl7 import prepare_dataset
+from src.nn.features.goofspiel.IIGS3.npz_datasets_IIGS3_1_3_false_true_lvl7 import prepare_dataset
 from src.utils.tf_utils import get_default_config_proto, print_tensors
 
 FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"

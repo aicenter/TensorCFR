@@ -6,7 +6,8 @@ from pandas import DataFrame
 
 from src.utils.other_utils import get_features_dataframe
 
-if __name__ == '__main__':
+
+def get_node_to_public_state(verbose=False):
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	csv_basename = "IIGS3_1_3_false_true_lvl7"
 	csv_filename = os.path.join(script_directory, "{}.csv".format(csv_basename))
@@ -23,7 +24,15 @@ if __name__ == '__main__':
 		for _ in range(size)
 	])
 
-	print("grouped_features:\n{}.".format(grouped_features.head()))
-	print("df_public_states_sizes:\n{}\n".format(df_public_states_sizes))
-	print("np_public_states_sizes:\n{}\n".format(np_public_states_sizes))
-	print("node_to_public_state:\n{}\n".format(node_to_public_state))
+	if verbose:
+		print("grouped_features:\n{}.".format(grouped_features.head()))
+		print("df_public_states_sizes:\n{}\n".format(df_public_states_sizes))
+		print("np_public_states_sizes:\n{}\n".format(np_public_states_sizes))
+		print("node_to_public_state:\n{}\n".format(node_to_public_state))
+
+	return node_to_public_state
+
+
+if __name__ == '__main__':
+	node_to_public_state_mapping = get_node_to_public_state(verbose=True)
+	print("node_to_public_state_mapping:\n{}\n".format(node_to_public_state_mapping))

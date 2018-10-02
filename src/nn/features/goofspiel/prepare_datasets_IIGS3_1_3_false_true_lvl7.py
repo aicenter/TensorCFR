@@ -5,7 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from src.utils.other_utils import get_files_in_directory_recursively
+from src.utils.other_utils import get_files_in_directory_recursively, get_one_hot_flattened
 
 FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
 N_CARDS = 3
@@ -15,6 +15,7 @@ FEATURE_COLUMNS = [
 	"nodal_reach"
 ]
 TARGET_COLUMNS = ["nodal_expected_value"]
+SLICE_1HOT_FEATS = slice(4)
 
 
 def get_features_dataframe():
@@ -92,10 +93,15 @@ def prepare_dataset():
 			target_arrays.append(np_dataset[:, -1])
 
 		np_features = np.stack(feature_arrays)  # shape [#seed_of_the_batch, #nodes, #features]
-		print(np_features)
+		np_features = get_one_hot_flattened(
+			np_features,
+			n_classes=N_CARDS,
+			slice_1hot_feats=SLICE_1HOT_FEATS
+		)
+		print("np_features:\n{}".format(np_features))
 		print("np_features.shape == {}".format(np_features.shape))
 		np_targets = np.stack(target_arrays)  # shape [#seed_of_the_batch, #nodes]
-		print(np_targets)
+		print("np_targets:\n{}".format(np_targets))
 		print("np_targets.shape == {}".format(np_targets.shape))
 
 		np.savez_compressed(npz_filename, features=np_features, targets=np_targets)

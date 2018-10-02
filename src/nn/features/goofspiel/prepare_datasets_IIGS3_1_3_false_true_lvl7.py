@@ -72,7 +72,7 @@ def prepare_dataset():
 	global script_directory, reaches_to_values_filename
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
-	np.set_printoptions(edgeitems=13)
+	np.set_printoptions(edgeitems=13, suppress=True)
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
 	features = get_features_dataframe()

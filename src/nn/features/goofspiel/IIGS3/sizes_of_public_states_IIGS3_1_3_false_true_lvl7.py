@@ -1,18 +1,13 @@
 #!/usr/bin/env python3
 import os
 
-import pandas as pd
+from src.utils.other_utils import get_features_dataframe
 
 if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	csv_basename = "IIGS3_1_3_false_true_lvl7"
 	csv_filename = os.path.join(script_directory, "{}.csv".format(csv_basename))
-	features = pd.read_csv(
-		csv_filename,
-		names=["private_card1", "private_card2", "round1", "round2"],
-		delimiter=";|,",
-	)
-	print(features)
+	features = get_features_dataframe(csv_filename)  # TODO
 
 	public_states_sizes = features.groupby(['round1', 'round2']).size()
 	csv_output_filename = "{}_public_states_sizes.csv".format(csv_basename)

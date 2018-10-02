@@ -349,7 +349,7 @@ logs/
 cached_hkl/
 *.hkl
 /src/nn/features/goofspiel/IIGS3/IIGS3_1_3_false_true_lvl7_public_states_sizes.csv
-/src/nn/features/goofspiel/IIGS3/IIGS6_1_6_false_true_lvl10_public_states_sizes.csv
+/src/nn/features/goofspiel/IIGS6/IIGS6_1_6_false_true_lvl10_public_states_sizes.csv
 /src/showcases/hdf5/dset.h5
 /src/showcases/hdf5/group.h5
 /src/showcases/hdf5/cmprss.h5

@@ -68,6 +68,9 @@ def verify_npz(filename, features, targets):
 
 
 def prepare_dataset():
+	"""
+	:return: A boolean `True` if `dataset_dir` contains any files and `npz` is created.
+	"""
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
 	np.set_printoptions(edgeitems=20, suppress=True)
@@ -81,6 +84,7 @@ def prepare_dataset():
 	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
 	if not filenames:
 		print("No files in {}".format(dataset_dir))
+		return False
 	else:
 		feature_arrays, target_arrays = [], []
 		for i, reaches_to_values_filename in enumerate(filenames):
@@ -109,6 +113,7 @@ def prepare_dataset():
 
 		np.savez_compressed(npz_filename, features=np_features, targets=np_targets)
 		verify_npz(npz_filename, np_features, np_targets)
+		return True
 
 
 if __name__ == '__main__':

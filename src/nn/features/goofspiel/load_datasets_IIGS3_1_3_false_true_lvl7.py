@@ -18,32 +18,36 @@ if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
 	if not os.path.isfile(npz_filename):
-		prepare_dataset()
-	with np.load(npz_filename) as data:
-		features = data["features"]
-		targets = data["targets"]
+		npz_created = prepare_dataset()
+	else:
+		npz_created = True
 
-	# Assume that each row of `features` corresponds to the same row as `labels`.
-	assert features.shape[0] == targets.shape[0]
+	if npz_created:
+		with np.load(npz_filename) as data:
+			features = data["features"]
+			targets = data["targets"]
 
-	features_placeholder, targets_placeholder = tf.placeholder(features.dtype, features.shape, name="features"), \
-	                                            tf.placeholder(targets.dtype, targets.shape, name="targets")
+		# Assume that each row of `features` corresponds to the same row as `labels`.
+		assert features.shape[0] == targets.shape[0]
 
-	features_dataset, targets_dataset = tf.data.Dataset.from_tensor_slices(features_placeholder), \
-	                                    tf.data.Dataset.from_tensor_slices(targets_placeholder)
-	feature_iterator, target_iterator = features_dataset.make_initializable_iterator(), \
-	                                    targets_dataset.make_initializable_iterator()
-	features_batch, targets_batch = feature_iterator.get_next(name="features_batch"), \
-	                                target_iterator.get_next(name="targets_batch")
+		features_placeholder, targets_placeholder = tf.placeholder(features.dtype, features.shape, name="features"), \
+																								tf.placeholder(targets.dtype, targets.shape, name="targets")
 
-	with tf.Session(config=get_default_config_proto()) as sess:
-		sess.run(feature_iterator.initializer, feed_dict={features_placeholder: features})
-		sess.run(target_iterator.initializer, feed_dict={targets_placeholder: targets})
-		batch_index = 0
-		while True:
-			try:
-				print("Batch #{}:".format(batch_index))
-				print_tensors(sess, [features_batch, targets_batch])
-			except tf.errors.OutOfRangeError:
-				break
-			batch_index += 1
+		features_dataset, targets_dataset = tf.data.Dataset.from_tensor_slices(features_placeholder), \
+																				tf.data.Dataset.from_tensor_slices(targets_placeholder)
+		feature_iterator, target_iterator = features_dataset.make_initializable_iterator(), \
+																				targets_dataset.make_initializable_iterator()
+		features_batch, targets_batch = feature_iterator.get_next(name="features_batch"), \
+																		target_iterator.get_next(name="targets_batch")
+
+		with tf.Session(config=get_default_config_proto()) as sess:
+			sess.run(feature_iterator.initializer, feed_dict={features_placeholder: features})
+			sess.run(target_iterator.initializer, feed_dict={targets_placeholder: targets})
+			batch_index = 0
+			while True:
+				try:
+					print("Batch #{}:".format(batch_index))
+					print_tensors(sess, [features_batch, targets_batch])
+				except tf.errors.OutOfRangeError:
+					break
+				batch_index += 1

@@ -39,6 +39,7 @@ if __name__ == '__main__':
 																				targets_dataset.make_initializable_iterator()
 		features_batch, targets_batch = feature_iterator.get_next(name="features_batch"), \
 																		target_iterator.get_next(name="targets_batch")
+		batch_means = tf.reduce_mean(features_batch, axis=0)
 
 		with tf.Session(config=get_default_config_proto()) as sess:
 			sess.run(feature_iterator.initializer, feed_dict={features_placeholder: features})
@@ -48,6 +49,16 @@ if __name__ == '__main__':
 				try:
 					print("Batch #{}:".format(batch_index))
 					print_tensors(sess, [features_batch, targets_batch])
+				except tf.errors.OutOfRangeError:
+					break
+				batch_index += 1
+
+			sess.run(feature_iterator.initializer, feed_dict={features_placeholder: features})
+			batch_index = 0
+			while True:
+				try:
+					print("Batch #{}:".format(batch_index))
+					print_tensors(sess, [batch_means])
 				except tf.errors.OutOfRangeError:
 					break
 				batch_index += 1

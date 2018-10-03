@@ -7,6 +7,7 @@ import os
 import numpy as np
 import tensorflow as tf
 
+from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_lvl7 import get_node_to_public_state
 from src.nn.features.goofspiel.IIGS3.npz_datasets_IIGS3_1_3_false_true_lvl7 import prepare_dataset
 from src.utils.tf_utils import get_default_config_proto, print_tensors
 
@@ -40,6 +41,10 @@ if __name__ == '__main__':
 		features_batch, targets_batch = feature_iterator.get_next(name="features_batch"), \
 																		target_iterator.get_next(name="targets_batch")
 		batch_means = tf.reduce_mean(features_batch, axis=0)
+		node_to_public_state = tf.constant(
+			get_node_to_public_state(),
+			name="node_to_public_state"
+		)
 
 		with tf.Session(config=get_default_config_proto()) as sess:
 			sess.run(feature_iterator.initializer, feed_dict={features_placeholder: features})
@@ -62,3 +67,5 @@ if __name__ == '__main__':
 				except tf.errors.OutOfRangeError:
 					break
 				batch_index += 1
+
+			print_tensors(sess, [node_to_public_state])

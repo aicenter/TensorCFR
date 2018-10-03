@@ -13,10 +13,11 @@ N_CARDS = 3
 FEATURE_COLUMNS = [
 	"round1", "round2",
 	"private_card1", "private_card2",
+	"opponent_card1", "opponent_card2",
 	"nodal_reach"
 ]
 TARGET_COLUMNS = ["nodal_expected_value"]
-SLICE_1HOT_FEATS = slice(4)
+SLICE_1HOT_FEATS = slice(6)
 
 
 def get_reaches_to_values_dataframe(filename):

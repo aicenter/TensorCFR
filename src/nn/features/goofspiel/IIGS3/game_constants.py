@@ -2,6 +2,11 @@
 
 FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
 N_CARDS = 3
+NAMES_OF_FEATURE_CSV = [
+	"private_card1", "private_card2",
+	"opponent_card1", "opponent_card2",
+	"round1", "round2"
+]
 FEATURE_COLUMNS = [
 	"round1", "round2",
 	"private_card1", "private_card2",

@@ -478,14 +478,15 @@ class TensorCFRFixedTrunkStrategies:
 				strategies_matched_to_regrets = [None] * (self.levels - 1)
 				for level in range(self.acting_depth):
 					with tf.variable_scope("level{}".format(level)):
+						positive_cumulative_regret_value = self.domain.positive_cumulative_regrets[level].read_value()
 						sums_of_regrets = tf.reduce_sum(
-							self.domain.positive_cumulative_regrets[level].read_value(),
+							positive_cumulative_regret_value,
 							axis=-1,
 							keepdims=True,
 							name="sums_of_regrets_lvl{}".format(level)
 						)
 						normalized_regrets = tf.divide(
-							self.domain.positive_cumulative_regrets[level].read_value(),
+							positive_cumulative_regret_value,
 							sums_of_regrets,
 							name="normalized_regrets_lvl{}".format(level)
 						)
@@ -1264,8 +1265,9 @@ if __name__ == '__main__':
 	# domain_ = get_domain_by_name("flattened_hunger_games")
 	# domain_ = get_domain_by_name("flattened_hunger_games_2")
 	# domain_ = get_domain_by_name("flattened_domain01_via_gambit")
+	# domain_ = get_domain_by_name("flattened_matching_pennies_via_gambit")
 	# domain_ = get_domain_by_name("II-GS2_gambit_flattened")
-	domain_ = get_domain_by_name("flattened_matching_pennies_via_gambit")
+	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
 	# domain_ = get_domain_by_name("IIGS5_gambit_flattened")
 	# domain_ = get_domain_by_name("IIGS6_gambit_flattened")
 

@@ -75,7 +75,11 @@ def get_one_hot_flattened(features, n_classes, slice_1hot_feats):
 def get_features_dataframe(filename):
 	features_dataframe = pd.read_csv(
 		filename,
-		names=["private_card1", "private_card2", "round1", "round2"],
+		names=[
+			"private_card1", "private_card2",
+			"opponent_card1", "opponent_card2",
+			"round1", "round2"
+		],
 		delimiter=";|,",
 	)
 	print("features:")

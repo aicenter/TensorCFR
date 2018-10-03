@@ -5,13 +5,13 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame
 
-from src.nn.features.goofspiel.IIGS3.game_constants import NAMES_OF_FEATURE_CSV
+from src.nn.features.goofspiel.IIGS3.game_constants import NAMES_OF_FEATURE_CSV, FEATURES_BASENAME
 from src.utils.other_utils import get_features_dataframe
 
 
 def get_node_to_public_state(verbose=False):
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	csv_basename = "IIGS3_1_3_false_true_lvl7"
+	csv_basename = FEATURES_BASENAME
 	csv_filename = os.path.join(script_directory, "{}.csv".format(csv_basename))
 	features = get_features_dataframe(csv_filename, names=NAMES_OF_FEATURE_CSV)
 

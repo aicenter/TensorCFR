@@ -2,6 +2,7 @@
 import os
 
 import numpy as np
+import pandas as pd
 from pandas import DataFrame
 
 from src.utils.other_utils import get_features_dataframe
@@ -34,5 +35,7 @@ def get_node_to_public_state(verbose=False):
 
 
 if __name__ == '__main__':
-	node_to_public_state_mapping = get_node_to_public_state(verbose=True)
+	pd.set_option('display.max_columns', 500)
+	pd.set_option('display.width', 1000)
+	node_to_public_state_mapping = get_node_to_public_state()
 	print("node_to_public_state_mapping:\n{}\n".format(node_to_public_state_mapping))

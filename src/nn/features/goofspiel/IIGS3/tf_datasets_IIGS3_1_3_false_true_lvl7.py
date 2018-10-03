@@ -11,8 +11,7 @@ from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_
 from src.nn.features.goofspiel.IIGS3.npz_datasets_IIGS3_1_3_false_true_lvl7 import prepare_dataset
 from src.utils.tf_utils import get_default_config_proto, print_tensors
 
-# FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
-FEATURES_BASENAME = "IIGS3_history"
+FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
 
 if __name__ == '__main__':
 	np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)

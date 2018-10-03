@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, N_CARDS, FEATURE_COLUMNS, TARGET_COLUMNS, \
-	SLICE_1HOT_FEATS
+	SLICE_1HOT_FEATS, NAMES_OF_FEATURE_CSV
 from src.utils.other_utils import get_files_in_directory_recursively, get_one_hot_flattened, get_features_dataframe
 
 
@@ -58,7 +58,7 @@ def prepare_dataset():
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)
 	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
 
-	features = get_features_dataframe(features_filename)
+	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
 	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
 	if not filenames:
 		print("No files in {}".format(dataset_dir))

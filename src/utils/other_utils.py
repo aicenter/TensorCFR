@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import psutil
 
+NAMES_OF_FEATURE_CSV = ["private_card1", "private_card2", "opponent_card1", "opponent_card2", "round1", "round2"]
+
 
 def get_current_timestamp():
 	return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
@@ -72,14 +74,10 @@ def get_one_hot_flattened(features, n_classes, slice_1hot_feats):
 	return one_hot_features.reshape(one_hot_shape)
 
 
-def get_features_dataframe(filename):
+def get_features_dataframe(filename, names=NAMES_OF_FEATURE_CSV):
 	features_dataframe = pd.read_csv(
 		filename,
-		names=[
-			"private_card1", "private_card2",
-			"opponent_card1", "opponent_card2",
-			"round1", "round2"
-		],
+		names=names,
 		delimiter=";|,",
 	)
 	print("features:")

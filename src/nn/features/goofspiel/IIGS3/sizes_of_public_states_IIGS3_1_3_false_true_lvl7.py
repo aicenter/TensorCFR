@@ -7,7 +7,7 @@ if __name__ == '__main__':
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	csv_basename = "IIGS3_1_3_false_true_lvl7"
 	csv_filename = os.path.join(script_directory, "{}.csv".format(csv_basename))
-	features = get_features_dataframe(csv_filename)  # TODO
+	features = get_features_dataframe(csv_filename)
 
 	grouped_features = features.groupby(['round1', 'round2'])
 	print("grouped_features:\n{}.".format(grouped_features.head()))

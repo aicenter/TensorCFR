@@ -7,11 +7,10 @@ import os
 import numpy as np
 import tensorflow as tf
 
+from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME
 from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_lvl7 import get_node_to_public_state
 from src.nn.features.goofspiel.IIGS3.npz_datasets_IIGS3_1_3_false_true_lvl7 import prepare_dataset
 from src.utils.tf_utils import get_default_config_proto, print_tensors
-
-FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
 
 if __name__ == '__main__':
 	np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)

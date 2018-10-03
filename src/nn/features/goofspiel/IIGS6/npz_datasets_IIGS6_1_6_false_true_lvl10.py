@@ -39,12 +39,6 @@ def get_sorted_dataframes(concatenated_dataframe):  # sort by lexicographically 
 	return sorted_dataframe
 
 
-def verify_npz(filename, features, targets):
-	dataset = np.load(filename)
-	np.testing.assert_array_equal(features, dataset["features"])
-	np.testing.assert_array_equal(targets, dataset["targets"])
-
-
 def prepare_dataset():
 	"""
 	:return: A boolean `True` if `dataset_dir` contains any files and `npz` is created.
@@ -90,7 +84,6 @@ def prepare_dataset():
 		print("np_targets.shape == {}".format(np_targets.shape))
 
 		np.savez_compressed(npz_filename, features=np_features, targets=np_targets)
-		verify_npz(npz_filename, np_features, np_targets)
 		return True
 
 

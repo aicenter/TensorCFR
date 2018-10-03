@@ -366,16 +366,17 @@ class TensorCFRFixedTrunkStrategies:
 			player_name = "player{}".format(for_player)
 		nodal_cf_values = self.get_nodal_cf_values(for_player=for_player)
 		infoset_actions_cf_values, infoset_cf_values = [], []
-		for level in range(self.acting_depth):
-			infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
-				values_in_children=nodal_cf_values[level + 1],
-				action_counts=self.action_counts[level],
-				parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
-				infoset_strategy=self.domain.current_infoset_strategies[level],
-				name="cf_values_lvl{}_for_{}".format(level, player_name)
-			)
-			infoset_cf_values.append(infoset_cf_value)
-			infoset_actions_cf_values.append(infoset_action_cf_value)
+		with tf.variable_scope("infoset_actions_cf_values"):
+			for level in range(self.acting_depth):
+				infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
+					values_in_children=nodal_cf_values[level + 1],
+					action_counts=self.action_counts[level],
+					parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
+					infoset_strategy=self.domain.current_infoset_strategies[level],
+					name="cf_values_lvl{}_for_{}".format(level, player_name)
+				)
+				infoset_cf_values.append(infoset_cf_value)
+				infoset_actions_cf_values.append(infoset_action_cf_value)
 		return infoset_actions_cf_values, infoset_cf_values
 
 	def get_infoset_mask_non_imaginary_children(self):  # TODO unittest
@@ -1264,13 +1265,13 @@ if __name__ == '__main__':
 	# domain_ = get_domain_by_name("flattened_hunger_games_2")
 	# domain_ = get_domain_by_name("flattened_domain01_via_gambit")
 	# domain_ = get_domain_by_name("II-GS2_gambit_flattened")
-	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
+	domain_ = get_domain_by_name("flattened_matching_pennies_via_gambit")
 	# domain_ = get_domain_by_name("IIGS5_gambit_flattened")
 	# domain_ = get_domain_by_name("IIGS6_gambit_flattened")
 
 	tensorcfr_instance = TensorCFRFixedTrunkStrategies(
 		domain_,
-		trunk_depth=4
+		trunk_depth=0 # 4
 	)
 	tensorcfr_instance.cfr_strategies_after_fixed_trunk(
 		# total_steps=10,

@@ -5,18 +5,9 @@ import os
 import numpy as np
 import pandas as pd
 
+from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, N_CARDS, FEATURE_COLUMNS, TARGET_COLUMNS, \
+	SLICE_1HOT_FEATS
 from src.utils.other_utils import get_files_in_directory_recursively, get_one_hot_flattened, get_features_dataframe
-
-FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
-N_CARDS = 3
-FEATURE_COLUMNS = [
-	"round1", "round2",
-	"private_card1", "private_card2",
-	"opponent_card1", "opponent_card2",
-	"nodal_reach"
-]
-TARGET_COLUMNS = ["nodal_expected_value"]
-SLICE_1HOT_FEATS = slice(6)
 
 
 def get_reaches_to_values_dataframe(filename):

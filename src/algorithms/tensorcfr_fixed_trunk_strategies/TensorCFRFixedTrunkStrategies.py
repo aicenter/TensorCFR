@@ -663,7 +663,7 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-		if self.ops_assign_strategies is None: # TODO uncomment this line and
+		if self.ops_assign_strategies is None:
 			with tf.variable_scope("assign_avg_strategies_to_current_strategies"):
 				self.ops_assign_strategies = [None] * self.domain.acting_depth
 				for level, avg_strategy in enumerate(self.average_infoset_strategies):

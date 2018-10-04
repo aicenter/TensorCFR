@@ -1149,10 +1149,12 @@ class TensorCFRFixedTrunkStrategies:
 					setup_messages
 				))
 
-			with tf.Session(config=get_default_config_proto()) as session:
+			with tf.Session(config=get_default_config_proto()) as self.session:
+				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
-					session.run(self.cfr_step_op)
+					self.session.run(self.cfr_step_op)
+				self.store_trunk_info(dataset_directory, dataset_for_nodes)
 
 	def randomize_strategies(self, seed):  # TODO unittest
 		"""

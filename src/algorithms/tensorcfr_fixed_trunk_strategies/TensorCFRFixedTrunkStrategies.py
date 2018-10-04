@@ -1013,8 +1013,8 @@ class TensorCFRFixedTrunkStrategies:
 				delimiter=',',
 			)
 
-	def store_trunk_info_of_infosets(self, session, dataset_basename, dataset_directory=""):
-		session.run(self.assign_avg_strategies_to_current_strategies())
+	def store_trunk_info_of_infosets(self, dataset_basename, dataset_directory=""):
+		self.session.run(self.assign_avg_strategies_to_current_strategies())
 
 		if not os.path.exists(dataset_directory):
 			os.mkdir(dataset_directory)
@@ -1025,17 +1025,17 @@ class TensorCFRFixedTrunkStrategies:
 		))
 
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending
-		print_tensors(session, [self.get_trunk_info_of_infosets()]),
+		print_tensors(self.session, [self.get_trunk_info_of_infosets()]),
 		np.savetxt(
 			csv_file,
-			session.run(self.get_trunk_info_of_infosets()),
+			self.session.run(self.get_trunk_info_of_infosets()),
 			fmt="%7d,\t %7d,\t %.4f,\t %+.4f",
 			header="dataset_seed,\t IS_id,\t range,\t CFV" if self.dataset_seed == 0 else "",   # TODO remove `data_id_column`
 			# TODO remove condition
 		)
 
-	def store_trunk_info_of_nodes(self, session, dataset_basename, dataset_directory=""):
-		session.run(self.assign_avg_strategies_to_current_strategies())
+	def store_trunk_info_of_nodes(self, dataset_basename, dataset_directory=""):
+		self.session.run(self.assign_avg_strategies_to_current_strategies())
 
 		if not os.path.exists(dataset_directory):
 			os.makedirs(dataset_directory)
@@ -1051,8 +1051,7 @@ class TensorCFRFixedTrunkStrategies:
 		csv_file = open(csv_filename, 'ab')  # binary mode for appending
 		trunk_info_of_nodes = self.get_trunk_info_of_nodes()
 
-		#print_tensors(session, [trunk_info_of_nodes]),
-		data_to_store = session.run(trunk_info_of_nodes)
+		data_to_store = self.session.run(trunk_info_of_nodes)
 
 		np.savetxt(
 			csv_file,
@@ -1117,17 +1116,15 @@ class TensorCFRFixedTrunkStrategies:
 			get_memory_usage()
 		)
 
-	def store_trunk_info(self, session, dataset_directory, dataset_for_nodes):
+	def store_trunk_info(self, dataset_directory, dataset_for_nodes):
 		if self.trunk_depth > 0:
 			if dataset_for_nodes:
 				self.store_trunk_info_of_nodes(
-					session,
 					dataset_basename=self.basename_from_cfr_parameters,
 					dataset_directory=dataset_directory
 				)
 			else:
 				self.store_trunk_info_of_infosets(
-					session,
 					dataset_basename=self.basename_from_cfr_parameters,
 					dataset_directory=dataset_directory
 				)
@@ -1207,7 +1204,7 @@ class TensorCFRFixedTrunkStrategies:
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(self.cfr_step_op)
 
-				self.store_trunk_info(self.session, dataset_directory, dataset_for_nodes)
+				self.store_trunk_info(dataset_directory, dataset_for_nodes)
 
 	# TODO fix this generation method:
 	#   - uncomment print_debug_info()

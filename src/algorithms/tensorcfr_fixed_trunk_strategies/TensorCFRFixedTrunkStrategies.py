@@ -1165,7 +1165,6 @@ class TensorCFRFixedTrunkStrategies:
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).
 		"""
-
 		if self.ops_randomize_strategies is None:
 			tf_uniform_strategies = self.get_infoset_uniform_strategies()
 			with tf.variable_scope("randomize_strategies"):
@@ -1189,21 +1188,16 @@ class TensorCFRFixedTrunkStrategies:
 		self.set_up_dataset_generation(delay, total_steps)
 
 		global_variables_initializer_op = tf.global_variables_initializer()
-
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
 				self.session.run(global_variables_initializer_op)
-
 				print(self.get_data_generation_header())
-
 				self.session.run(
 					self.randomize_strategies(seed=self.dataset_seed)
 				)
-
 				for _ in range(total_steps):
 					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
 					self.session.run(self.cfr_step_op)
-
 				self.store_trunk_info(dataset_directory, dataset_for_nodes)
 
 	# TODO fix this generation method:

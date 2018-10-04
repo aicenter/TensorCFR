@@ -1138,8 +1138,6 @@ class TensorCFRFixedTrunkStrategies:
 	                                       dataset_seed_to_start=0):
 		self.set_up_dataset_generation(delay, total_steps)
 
-		tr = None
-
 		for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
 			with tf.variable_scope("initialization"):
 				setup_messages, feed_dictionary = self.set_up_feed_dictionary(

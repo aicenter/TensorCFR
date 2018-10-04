@@ -937,7 +937,7 @@ class TensorCFRFixedTrunkStrategies:
 				],
 				axis=-1,
 				name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
-			)  # pridat if na self.concat_trunk_info_tensors pro celou funkci
+			)
 
 		return self.concat_trunk_info_tensors
 

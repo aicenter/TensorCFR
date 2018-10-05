@@ -3,9 +3,6 @@
 import os
 
 import numpy as np
-import tensorflow as tf
-
-from src.utils.tf_utils import get_default_config_proto, print_tensors
 
 
 class DatasetFromNPZ:
@@ -47,41 +44,19 @@ if __name__ == "__main__":
 	np.random.seed(42)
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=1, type=int, help="Batch size.")
-	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
+	parser.add_argument("--batch_size", default=3, type=int, help="Batch size.")
+	parser.add_argument("--epochs", default=2, type=int, help="Number of epochs.")
 	args = parser.parse_args()
 
 	train_file = "{}/train.npz".format(script_directory)
 	train = DatasetFromNPZ(train_file)
 
-	# TODO
-	# for i in range(args.epochs):
-	# 	while not train.epoch_finished():
-	# 		features, targets = train.next_batch(args.batch_size)
-	# 		raise NotImplementedError("Show train dataset")  # TODO
-
-	# TODO
-	features = train.features
-	targets = train.targets
-
-	features_placeholder, targets_placeholder = tf.placeholder(features.dtype, features.shape, name="features"), \
-																							tf.placeholder(targets.dtype, targets.shape, name="targets")
-
-	features_dataset, targets_dataset = tf.data.Dataset.from_tensor_slices(features_placeholder), \
-																			tf.data.Dataset.from_tensor_slices(targets_placeholder)
-	feature_iterator, target_iterator = features_dataset.make_initializable_iterator(), \
-																			targets_dataset.make_initializable_iterator()
-	features_batch, targets_batch = feature_iterator.get_next(name="features_batch"), \
-																	target_iterator.get_next(name="targets_batch")
-
-	with tf.Session(config=get_default_config_proto()) as sess:
-		sess.run(feature_iterator.initializer, feed_dict={features_placeholder: features})
-		sess.run(target_iterator.initializer, feed_dict={targets_placeholder: targets})
-		batch_index = 0
-		while True:
-			try:
-				print("Batch #{}:".format(batch_index))
-				print_tensors(sess, [features_batch, targets_batch])
-			except tf.errors.OutOfRangeError:
-				break
-			batch_index += 1
+	for epoch in range(args.epochs):
+		print("Epoch #{}:".format(epoch))
+		batch = 0
+		while not train.epoch_finished():
+			print("Batch #{}:".format(batch))
+			features, targets = train.next_batch(args.batch_size)
+			print("Features:\n{}".format(features))
+			print("Targets:\n{}".format(targets))
+			batch += 1

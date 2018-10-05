@@ -361,4 +361,7 @@ cached_hkl/
 /src/nn/data/*.npz
 /src/nn/data/IIGS3/*.npz
 /src/nn/data/IIGS3/train.npz
-/src/nn/data/IIGS3_1_3_false_true_lvl7_test_dataset.npz
+/src/nn/data/IIGS3/IIGS3_1_3_false_true_lvl7_numpy_dataset.npz
+src/nn/features/goofspiel/IIGS3/reach_value_datasets/
+src/nn/features/goofspiel/IIGS6/reach_value_datasets.tar.gz
+src/nn/features/goofspiel/IIGS6/reach_value_datasets/

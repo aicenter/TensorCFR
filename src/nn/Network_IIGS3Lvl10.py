@@ -22,7 +22,6 @@ class Network:
 			# Inputs
 			self.features = tf.placeholder(tf.float32, [None, self.HEIGHT, self.WIDTH, 1], name="features")
 			self.targets = tf.placeholder(tf.int64, [None], name="targets")
-			self.is_training = tf.placeholder(tf.bool, [], name="is_training")
 
 			# Computation
 			latest_layer = self.features
@@ -51,11 +50,8 @@ class Network:
 					# - The convolutional layer should not use any activation and no biases.
 					conv_layer = tf.layers.conv2d(inputs=latest_layer, filters=int(specs[1]), kernel_size=int(specs[2]),
 					                              strides=int(specs[3]), padding=specs[4], activation=None, use_bias=False)
-					# - The output of the convolutional layer is passed to batch_normalization layer, which
-					#   should specify `training=True` during training and `training=False` during inference.
-					batchnorm_layer = tf.layers.batch_normalization(inputs=conv_layer, training=self.is_training)
-					# - The output of the batch_normalization layer is passed through tf.nn.relu.
-					latest_layer = tf.nn.relu(batchnorm_layer, name=layer_name)
+					# - The output of the convolutional layer is passed through tf.nn.relu.
+					latest_layer = tf.nn.relu(conv_layer, name=layer_name)
 
 			# Store result in `features`.
 			features = latest_layer
@@ -93,17 +89,15 @@ class Network:
 
 	def train(self, features, targets):
 		self.session.run([self.training, self.summaries["train"]],
-		                 {self.features   : features, self.targets: targets,
-		                  self.is_training: True})
+		                 {self.features   : features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
 		accuracy, _ = self.session.run([self.accuracy, self.summaries[dataset]],
-		                               {self.features   : features, self.targets: targets,
-		                                self.is_training: False})
+		                               {self.features   : features, self.targets: targets})
 		return accuracy
 
 	def predict(self, features):
-		return self.session.run(self.predictions, {self.features: features, self.is_training: False})
+		return self.session.run(self.predictions, {self.features: features})
 
 
 if __name__ == "__main__":

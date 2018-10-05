@@ -17,7 +17,7 @@ class Network:
 		self.session = tf.Session(graph=graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
 		                                                             intra_op_parallelism_threads=threads))
 
-	def construct(self, args, batches_per_epoch):
+	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
 			self.features = tf.placeholder(tf.float32, [None, self.HEIGHT, self.WIDTH, 1], name="features")

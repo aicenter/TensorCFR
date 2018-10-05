@@ -8,7 +8,7 @@ from src.commons.constants import SEED_FOR_TESTING
 
 
 class Network:
-	WIDTH = 28
+	FEATURES_DIM = 3 * (2 + 2 + 2) + 1    # 6x 1-of-3-hot encodings (3 per hierarchy) + reach probability
 	TARGETS_DIM = 1
 
 	def __init__(self, threads, seed=42):
@@ -21,7 +21,7 @@ class Network:
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
-			self.features = tf.placeholder(tf.float32, [None, self.WIDTH, 1], name="features")
+			self.features = tf.placeholder(tf.float32, [None, self.FEATURES_DIM], name="features")
 			self.targets = tf.placeholder(tf.int64, [None], name="targets")
 
 			# Computation

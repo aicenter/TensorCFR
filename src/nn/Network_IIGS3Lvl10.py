@@ -114,10 +114,8 @@ if __name__ == "__main__":
 	                                        source_url="https://ufal.mff.cuni.cz/~straka/courses/npfl114/1718/mnist-gan/")
 
 	# Construct the network
-	batches_per_epoch = mnist.train.num_examples // args.batch_size
-
 	network = Network(threads=args.threads)
-	network.construct(args, batches_per_epoch)
+	network.construct(args)
 
 	# Train
 	for i in range(args.epochs):

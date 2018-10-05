@@ -101,17 +101,19 @@ class Network:
 			with summary_writer.as_default():
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
 
-	def train(self, images, labels):
-		self.session.run([self.training, self.summaries["train"]], {self.features   : images, self.targets: labels,
-		                                                            self.is_training: True})
+	def train(self, features, targets):
+		self.session.run([self.training, self.summaries["train"]],
+		                 {self.features   : features, self.targets: targets,
+		                  self.is_training: True})
 
-	def evaluate(self, dataset, images, labels):
-		accuracy, _ = self.session.run([self.accuracy, self.summaries[dataset]], {self.features   : images, self.targets: labels,
-		                                                                          self.is_training: False})
+	def evaluate(self, dataset, features, targets):
+		accuracy, _ = self.session.run([self.accuracy, self.summaries[dataset]],
+		                               {self.features   : features, self.targets: targets,
+		                                self.is_training: False})
 		return accuracy
 
-	def predict(self, images):
-		return self.session.run(self.predictions, {self.features: images, self.is_training: False})
+	def predict(self, features):
+		return self.session.run(self.predictions, {self.features: features, self.is_training: False})
 
 
 if __name__ == "__main__":

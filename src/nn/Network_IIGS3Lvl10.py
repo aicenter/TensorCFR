@@ -4,6 +4,8 @@
 import numpy as np
 import tensorflow as tf
 
+from src.commons.constants import SEED_FOR_TESTING
+
 
 class Network:
 	WIDTH = 28
@@ -87,7 +89,7 @@ if __name__ == "__main__":
 	import re
 
 	# Fix random seed
-	np.random.seed(42)
+	np.random.seed(SEED_FOR_TESTING)
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()

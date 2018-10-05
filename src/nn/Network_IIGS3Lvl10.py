@@ -33,9 +33,6 @@ class Network:
 			for l in range(depth):
 				layer_name = "layer{}-{}".format(l, cnn_desc[l])
 				specs = cnn_desc[l].split('-')
-				if specs[0] == 'F':
-					# - F: Flatten inputs
-					latest_layer = tf.layers.flatten(inputs=latest_layer, name=layer_name)
 				if specs[0] == 'R':
 					# - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: R-100
 					latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
@@ -94,7 +91,9 @@ if __name__ == "__main__":
 	# Parse arguments
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--batch_size", default=50, type=int, help="Batch size.")
-	parser.add_argument("--cnn", default=None, type=str, help="Description of the CNN architecture.")
+	parser.add_argument("--cnn", default=None, type=str, help="Description of the CNN architecture.")   # TODO remove
+	# TODO extractor
+	# TODO regressor
 	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 
@@ -109,7 +108,7 @@ if __name__ == "__main__":
 	if not os.path.exists("logs"):
 		os.mkdir("logs")  # TF 1.6 will do this by itself
 
-	# Load the data
+	# Load the data TODO
 	from tensorflow.examples.tutorials import mnist
 
 	mnist = mnist.input_data.read_data_sets("mnist-gan", reshape=False, seed=42,

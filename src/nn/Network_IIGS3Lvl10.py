@@ -38,10 +38,7 @@ class Network:
 					latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
 					                               name=layer_name)
 
-			# Store result in `features`.
-			features = latest_layer
-
-			output_layer = tf.layers.dense(features, self.LABELS, activation=None, name="output_layer")
+			output_layer = tf.layers.dense(latest_layer, self.LABELS, activation=None, name="output_layer")
 			self.predictions = tf.argmax(output_layer, axis=1)
 
 			# Training

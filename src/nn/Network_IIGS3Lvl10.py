@@ -10,7 +10,7 @@ from src.commons.constants import SEED_FOR_TESTING
 class Network:
 	WIDTH = 28
 	HEIGHT = 28
-	LABELS = 10
+	TARGETS_DIM = 1
 
 	def __init__(self, threads, seed=42):
 		# Create an empty graph and a session
@@ -38,7 +38,7 @@ class Network:
 					latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
 					                               name=layer_name)
 
-			output_layer = tf.layers.dense(latest_layer, self.LABELS, activation=None, name="output_layer")
+			output_layer = tf.layers.dense(latest_layer, self.TARGETS_DIM, activation=None, name="output_layer")
 			self.predictions = tf.argmax(output_layer, axis=1)
 
 			# Training

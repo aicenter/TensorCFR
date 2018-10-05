@@ -123,7 +123,7 @@ if __name__ == "__main__":
 		while mnist.train.epochs_completed == i:
 			print("Epoch #{} \t Batch #{}".format(i, j))
 			j += 1
-			images, labels = mnist.train.next_batch(args.batch_size)
-			network.train(images, labels)
+			features, targets = mnist.train.next_batch(args.batch_size)
+			network.train(features, targets)
 
 		network.evaluate("dev", mnist.validation.features, mnist.validation.targets)

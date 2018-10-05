@@ -16,7 +16,7 @@ if __name__ == '__main__':
 	np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
+	npz_filename = "{}/train.npz".format(script_directory, FEATURES_BASENAME)
 	if not os.path.isfile(npz_filename):
 		npz_created = prepare_dataset()
 	else:

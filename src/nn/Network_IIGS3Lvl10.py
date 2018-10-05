@@ -9,7 +9,6 @@ from src.commons.constants import SEED_FOR_TESTING
 
 class Network:
 	WIDTH = 28
-	HEIGHT = 28
 	TARGETS_DIM = 1
 
 	def __init__(self, threads, seed=42):
@@ -22,7 +21,7 @@ class Network:
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
-			self.features = tf.placeholder(tf.float32, [None, self.HEIGHT, self.WIDTH, 1], name="features")
+			self.features = tf.placeholder(tf.float32, [None, self.WIDTH, 1], name="features")
 			self.targets = tf.placeholder(tf.int64, [None], name="targets")
 
 			# Computation

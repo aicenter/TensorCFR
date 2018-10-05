@@ -27,7 +27,7 @@ if __name__ == '__main__':
 			features = data["features"]
 			targets = data["targets"]
 
-		# Assume that each row of `features` corresponds to the same row as `labels`.
+		# Assume that each row of `features` corresponds to the same row as `targets`.
 		assert features.shape[0] == targets.shape[0]
 
 		features_placeholder, targets_placeholder = tf.placeholder(features.dtype, features.shape, name="features"), \

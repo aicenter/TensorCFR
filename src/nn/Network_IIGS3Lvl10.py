@@ -52,13 +52,7 @@ class Network:
 			# Training
 			loss = tf.losses.sparse_softmax_cross_entropy(self.targets, output_layer, scope="loss")
 			global_step = tf.train.create_global_step()
-			# - You need to update the moving averages of mean and variance in the batch normalization
-			#   layer during each training batch. Such update operations can be obtained using
-			#   `tf.get_collection(tf.GraphKeys.UPDATE_OPS)` and utilized either directly in `session.run`,
-			#   or (preferably) attached to `self.train` using `tf.control_dependencies`.
-			update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-			with tf.control_dependencies(update_ops):
-				self.training = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="training")
+			self.training = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="training")
 
 			# Summaries
 			self.accuracy = tf.reduce_mean(tf.cast(tf.equal(self.targets, self.predictions), tf.float32))

@@ -12,7 +12,7 @@ class Network:
 	FEATURES_DIM = 3 * (2 + 2 + 2) + 1    # 6x 1-of-3-hot encodings (3 per hierarchy) + reach probability
 	TARGETS_DIM = 1
 
-	def __init__(self, threads, seed=42):
+	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session
 		graph = tf.Graph()
 		graph.seed = seed
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 	# Load the data TODO
 	from tensorflow.examples.tutorials import mnist
 
-	mnist = mnist.input_data.read_data_sets("mnist-gan", reshape=False, seed=42,
+	mnist = mnist.input_data.read_data_sets("mnist-gan", reshape=False, seed=SEED_FOR_TESTING,
 	                                        source_url="https://ufal.mff.cuni.cz/~straka/courses/npfl114/1718/mnist-gan/")
 
 	# Construct the network

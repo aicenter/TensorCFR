@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
+
+import os
+
 import numpy as np
+import tensorflow as tf
+
+from src.utils.tf_utils import get_default_config_proto, print_tensors
 
 
 class DatasetFromNPZ:
@@ -36,32 +42,46 @@ class DatasetFromNPZ:
 if __name__ == "__main__":
 	import argparse
 
-	# Fix random seed
+	np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
+	script_directory = os.path.dirname(os.path.abspath(__file__))
 	np.random.seed(42)
 
-	# Parse arguments
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--batch_size", default=256, type=int, help="Batch size.")
 	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
-	parser.add_argument("--train_file", default="./IIGS3/train.npz",
-	                    help="Filename of train dataset.")
 	args = parser.parse_args()
 
-	# Load the data
-	# train = DatasetFromNPZ(args.train_file)
-	train = DatasetFromNPZ("IIGS3_1_3_false_true_lvl7_numpy_dataset.npz")
-	# dev = DatasetFromNPZ("fashion-masks-dev.npz")   TODO
-	# test = DatasetFromNPZ("fashion-masks-test.npz", shuffle_batches=False) TODO
+	train_file = "{}/train.npz".format(script_directory)
+	train = DatasetFromNPZ(train_file)
 
-	batches_per_epoch = len(train._features) // args.batch_size
+	# TODO
+	# for i in range(args.epochs):
+	# 	while not train.epoch_finished():
+	# 		features, targets = train.next_batch(args.batch_size)
+	# 		raise NotImplementedError("Show train dataset")  # TODO
 
-	for i in range(args.epochs):
-		while not train.epoch_finished():
-			features, targets = train.next_batch(args.batch_size)
-			raise NotImplementedError("Show train dataset")  # TODO
-		# raise NotImplementedError("Show dev dataset")  # TODO
+	# TODO
+	features = train.features
+	targets = train.targets
 
-	# with open("{}/fashion_masks_test.txt".format(args.logdir), "w") as test_file:
-	# 	while not test.epoch_finished():
-	# 		features, _ = test.next_batch(args.batch_size)
-	# 		raise NotImplementedError("Show test dataset")  # TODO
+	features_placeholder, targets_placeholder = tf.placeholder(features.dtype, features.shape, name="features"), \
+																							tf.placeholder(targets.dtype, targets.shape, name="targets")
+
+	features_dataset, targets_dataset = tf.data.Dataset.from_tensor_slices(features_placeholder), \
+																			tf.data.Dataset.from_tensor_slices(targets_placeholder)
+	feature_iterator, target_iterator = features_dataset.make_initializable_iterator(), \
+																			targets_dataset.make_initializable_iterator()
+	features_batch, targets_batch = feature_iterator.get_next(name="features_batch"), \
+																	target_iterator.get_next(name="targets_batch")
+
+	with tf.Session(config=get_default_config_proto()) as sess:
+		sess.run(feature_iterator.initializer, feed_dict={features_placeholder: features})
+		sess.run(target_iterator.initializer, feed_dict={targets_placeholder: targets})
+		batch_index = 0
+		while True:
+			try:
+				print("Batch #{}:".format(batch_index))
+				print_tensors(sess, [features_batch, targets_batch])
+			except tf.errors.OutOfRangeError:
+				break
+			batch_index += 1

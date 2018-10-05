@@ -356,3 +356,5 @@ cached_hkl/
 /src/showcases/hdf5/test.h5
 /src/nn/features/goofspiel/IIGS3/IIGS3_1_3_false_true_lvl7_numpy_dataset.npz
 /src/nn/features/goofspiel/IIGS6/IIGS6_1_6_false_true_lvl10_numpy_dataset.npz
+/src/nn/mnist_competition.py
+/src/nn/fashion_masks_nas.py

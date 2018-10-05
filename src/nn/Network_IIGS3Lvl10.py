@@ -20,12 +20,12 @@ class Network:
 	def construct(self, args, batches_per_epoch, decay_rate):
 		with self.session.graph.as_default():
 			# Inputs
-			self.images = tf.placeholder(tf.float32, [None, self.HEIGHT, self.WIDTH, 1], name="features")
-			self.labels = tf.placeholder(tf.int64, [None], name="targets")
+			self.features = tf.placeholder(tf.float32, [None, self.HEIGHT, self.WIDTH, 1], name="features")
+			self.targets = tf.placeholder(tf.int64, [None], name="targets")
 			self.is_training = tf.placeholder(tf.bool, [], name="is_training")
 
 			# Computation
-			latest_layer = self.images
+			latest_layer = self.features
 			# Add layers described in the args.cnn. Layers are separated by a comma and can be:
 			cnn_desc = args.cnn.split(',')
 			depth = len(cnn_desc)
@@ -72,7 +72,7 @@ class Network:
 			self.predictions = tf.argmax(output_layer, axis=1)
 
 			# Training
-			loss = tf.losses.sparse_softmax_cross_entropy(self.labels, output_layer, scope="loss")
+			loss = tf.losses.sparse_softmax_cross_entropy(self.targets, output_layer, scope="loss")
 			global_step = tf.train.create_global_step()
 			learning_rate = tf.train.exponential_decay(args.learning_rate, global_step, batches_per_epoch, decay_rate,
 			                                           staircase=True)
@@ -85,7 +85,7 @@ class Network:
 				self.training = tf.train.AdamOptimizer(learning_rate).minimize(loss, global_step=global_step, name="training")
 
 			# Summaries
-			self.accuracy = tf.reduce_mean(tf.cast(tf.equal(self.labels, self.predictions), tf.float32))
+			self.accuracy = tf.reduce_mean(tf.cast(tf.equal(self.targets, self.predictions), tf.float32))
 			summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
 			self.summaries = {}
 			with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):
@@ -102,16 +102,16 @@ class Network:
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
 
 	def train(self, images, labels):
-		self.session.run([self.training, self.summaries["train"]], {self.images: images, self.labels: labels,
-																																self.is_training: True})
+		self.session.run([self.training, self.summaries["train"]], {self.features   : images, self.targets: labels,
+		                                                            self.is_training: True})
 
 	def evaluate(self, dataset, images, labels):
-		accuracy, _ = self.session.run([self.accuracy, self.summaries[dataset]], {self.images: images, self.labels: labels,
+		accuracy, _ = self.session.run([self.accuracy, self.summaries[dataset]], {self.features   : images, self.targets: labels,
 		                                                                          self.is_training: False})
 		return accuracy
 
 	def predict(self, images):
-		return self.session.run(self.predictions, {self.images: images, self.is_training: False})
+		return self.session.run(self.predictions, {self.features: images, self.is_training: False})
 
 
 if __name__ == "__main__":

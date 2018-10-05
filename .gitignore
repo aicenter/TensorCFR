@@ -360,3 +360,5 @@ cached_hkl/
 /src/nn/fashion_masks_nas.py
 /src/nn/data/*.npz
 /src/nn/data/IIGS3/*.npz
+/src/nn/data/IIGS3/train.npz
+/src/nn/data/IIGS3_1_3_false_true_lvl7_test_dataset.npz

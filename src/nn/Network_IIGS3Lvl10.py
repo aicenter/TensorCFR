@@ -42,16 +42,6 @@ class Network:
 					# - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: R-100
 					latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
 					                               name=layer_name)
-				if specs[0] == 'CB':
-					# - CB-filters-kernel_size-stride-padding: Add a convolutional layer with BatchNorm
-					#   and ReLU activation and specified number of filters, kernel size, stride and padding.
-					#   Example: CB-10-3-1-same
-					# To correctly implement BatchNorm:
-					# - The convolutional layer should not use any activation and no biases.
-					conv_layer = tf.layers.conv2d(inputs=latest_layer, filters=int(specs[1]), kernel_size=int(specs[2]),
-					                              strides=int(specs[3]), padding=specs[4], activation=None, use_bias=False)
-					# - The output of the convolutional layer is passed through tf.nn.relu.
-					latest_layer = tf.nn.relu(conv_layer, name=layer_name)
 
 			# Store result in `features`.
 			features = latest_layer

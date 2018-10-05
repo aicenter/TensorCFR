@@ -31,10 +31,6 @@ class Network:
 			for l in range(depth):
 				layer_name = "layer{}-{}".format(l, cnn_desc[l])
 				specs = cnn_desc[l].split('-')
-				if specs[0] == 'M':
-					# - M-kernel_size-stride: Add max pooling with specified size and stride. Example: M-3-2
-					latest_layer = tf.layers.max_pooling2d(inputs=latest_layer, pool_size=int(specs[1]), strides=int(specs[2]),
-					                                       name=layer_name)
 				if specs[0] == 'F':
 					# - F: Flatten inputs
 					latest_layer = tf.layers.flatten(inputs=latest_layer, name=layer_name)

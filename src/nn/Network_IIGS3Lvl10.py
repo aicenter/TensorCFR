@@ -17,7 +17,7 @@ class Network:
 		self.session = tf.Session(graph=graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
 		                                                             intra_op_parallelism_threads=threads))
 
-	def construct(self, args, batches_per_epoch, decay_rate):
+	def construct(self, args, batches_per_epoch):
 		with self.session.graph.as_default():
 			# Inputs
 			self.features = tf.placeholder(tf.float32, [None, self.HEIGHT, self.WIDTH, 1], name="features")
@@ -74,15 +74,13 @@ class Network:
 			# Training
 			loss = tf.losses.sparse_softmax_cross_entropy(self.targets, output_layer, scope="loss")
 			global_step = tf.train.create_global_step()
-			learning_rate = tf.train.exponential_decay(args.learning_rate, global_step, batches_per_epoch, decay_rate,
-			                                           staircase=True)
 			# - You need to update the moving averages of mean and variance in the batch normalization
 			#   layer during each training batch. Such update operations can be obtained using
 			#   `tf.get_collection(tf.GraphKeys.UPDATE_OPS)` and utilized either directly in `session.run`,
 			#   or (preferably) attached to `self.train` using `tf.control_dependencies`.
 			update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 			with tf.control_dependencies(update_ops):
-				self.training = tf.train.AdamOptimizer(learning_rate).minimize(loss, global_step=global_step, name="training")
+				self.training = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="training")
 
 			# Summaries
 			self.accuracy = tf.reduce_mean(tf.cast(tf.equal(self.targets, self.predictions), tf.float32))
@@ -132,8 +130,6 @@ if __name__ == "__main__":
 	parser.add_argument("--cnn", default=None, type=str, help="Description of the CNN architecture.")
 	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
-	parser.add_argument("--learning_rate", default=0.001, type=float, help="Initial learning rate.")
-	parser.add_argument("--learning_rate_final", default=None, type=float, help="Final learning rate.")
 
 	args = parser.parse_args()
 
@@ -153,15 +149,10 @@ if __name__ == "__main__":
 	                                        source_url="https://ufal.mff.cuni.cz/~straka/courses/npfl114/1718/mnist-gan/")
 
 	# Construct the network
-	# set up decay rate
-	if args.learning_rate_final is not None:
-		decay_rate = np.power(args.learning_rate_final / args.learning_rate, 1 / (args.epochs - 1))
-	else:
-		decay_rate = 1.0
 	batches_per_epoch = mnist.train.num_examples // args.batch_size
 
 	network = Network(threads=args.threads)
-	network.construct(args, batches_per_epoch, decay_rate)
+	network.construct(args, batches_per_epoch)
 
 	# Train
 	for i in range(args.epochs):

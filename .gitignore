@@ -359,3 +359,4 @@ cached_hkl/
 /src/nn/mnist_competition.py
 /src/nn/fashion_masks_nas.py
 /src/nn/data/*.npz
+/src/nn/data/IIGS3/*.npz

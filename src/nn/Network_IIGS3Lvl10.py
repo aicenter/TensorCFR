@@ -57,14 +57,6 @@ class Network:
 					# - The output of the batch_normalization layer is passed through tf.nn.relu.
 					latest_layer = tf.nn.relu(batchnorm_layer, name=layer_name)
 
-				# # Implement dropout on the hidden layer using tf.layers.dropout,
-				# # with using dropout date of args.dropout. The dropout must be active only
-				# # during training -- use `self.is_training` placeholder to control the
-				# # `training` argument of tf.layers.dropout. Store the result to `hidden_layer_dropout`.
-				# hidden_layer_dropout = tf.layers.dropout(hidden_layer, rate=args.dropout, training=self.is_training,
-				# 																				 name="hidden_layer_dropout")
-				# # output_layer = tf.layers.dense(hidden_layer_dropout, self.LABELS, activation=None, name="output_layer")
-
 			# Store result in `features`.
 			features = latest_layer
 
@@ -126,7 +118,6 @@ if __name__ == "__main__":
 	# Parse arguments
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--batch_size", default=50, type=int, help="Batch size.")
-	parser.add_argument("--dropout", default=0.6, type=float, help="Dropout rate.")
 	parser.add_argument("--cnn", default=None, type=str, help="Description of the CNN architecture.")
 	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")

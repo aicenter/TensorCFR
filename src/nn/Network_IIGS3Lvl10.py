@@ -50,7 +50,7 @@ class Network:
 			self.training = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="training")
 
 			# Summaries
-			self.accuracy = tf.reduce_mean(tf.cast(tf.equal(self.targets, self.predictions), tf.float32))
+			self.accuracy = tf.reduce_mean(tf.abs(self.targets - self.predictions), tf.float32)   # TODO ask Vilo
 			summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
 			self.summaries = {}
 			with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):

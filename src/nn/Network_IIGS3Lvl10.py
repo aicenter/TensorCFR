@@ -42,7 +42,7 @@ class Network:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
 			output_layer = tf.layers.dense(latest_layer, self.TARGETS_DIM, activation=None, name="output_layer")
-			self.predictions = tf.argmax(output_layer, axis=1)
+			self.predictions = output_layer
 
 			# Training
 			loss = tf.losses.sparse_softmax_cross_entropy(self.targets, output_layer, scope="loss")

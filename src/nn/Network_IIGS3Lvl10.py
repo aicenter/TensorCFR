@@ -35,24 +35,32 @@ class Network:
 				layer_name = "extractor_layer{}-{}".format(l, extractor_desc[l])
 				specs = extractor_desc[l].split('-')
 				if specs[0] == 'R':   # TODO add tf.keras.layers.PReLU
-					# - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: "R-100"
-					latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
-					                               name=layer_name)
+					# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
+					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
+					# share layers by mapping from inputs to outputs
+					for game_node in range(self.NODES):
+						latest_layer[:, game_node, :] = shared_layer(latest_layer[:, game_node, :])
+
+					# TODO remove
+					#  - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: "R-100"
+					# latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
+					#                                name=layer_name)
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
+			# TODO modify for `shared_layer`
 			# Add layers described in the args.regressor. Layers are separated by a comma.
-			regressor_desc = args.regressor.split(',')
-			regressor_depth = len(regressor_desc)
-			for l in range(regressor_depth):
-				layer_name = "regressor_layer{}-{}".format(l, regressor_desc[l])
-				specs = regressor_desc[l].split('-')
-				if specs[0] == 'R':   # TODO add tf.keras.layers.PReLU
-					# - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: "R-100"
-					latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
-					                               name=layer_name)
-				else:
-					raise ValueError("Invalid regressor specification '{}'".format(specs))
+			# regressor_desc = args.regressor.split(',')
+			# regressor_depth = len(regressor_desc)
+			# for l in range(regressor_depth):
+			# 	layer_name = "regressor_layer{}-{}".format(l, regressor_desc[l])
+			# 	specs = regressor_desc[l].split('-')
+			# 	if specs[0] == 'R':   # TODO add tf.keras.layers.PReLU
+			# 		# - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: "R-100"
+			# 		latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
+			# 		                               name=layer_name)
+			# 	else:
+			# 		raise ValueError("Invalid regressor specification '{}'".format(specs))
 
 			# Add final layers to predict nodal equilibrial expected values.
 			self.predictions = tf.layers.dense(latest_layer, self.TARGETS_DIM, activation=None, name="output_layer")

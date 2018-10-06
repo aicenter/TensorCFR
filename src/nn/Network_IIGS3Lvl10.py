@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING
+from src.nn.data.IIGS3.DatasetFromNPZ import DatasetFromNPZ
 
 
 class Network:
@@ -130,23 +131,23 @@ if __name__ == "__main__":
 	if not os.path.exists("logs"):
 		os.mkdir("logs")  # TF 1.6 will do this by itself
 
-	# Load the data TODO
-	from tensorflow.examples.tutorials import mnist
-
-	mnist = mnist.input_data.read_data_sets("mnist-gan", reshape=False, seed=SEED_FOR_TESTING,
-	                                        source_url="https://ufal.mff.cuni.cz/~straka/courses/npfl114/1718/mnist-gan/")
+	# Load the data
+	script_directory = os.path.dirname(os.path.abspath(__file__))
+	train_file = "{}/data/IIGS3/train.npz".format(script_directory)
+	trainset = DatasetFromNPZ(train_file)
+	# TODO devset
 
 	# Construct the network
 	network = Network(threads=args.threads)
 	network.construct(args)
 
 	# Train
-	for i in range(args.epochs):
-		j = 0
-		while mnist.train.epochs_completed == i:
-			print("Epoch #{} \t Batch #{}".format(i, j))
-			j += 1
-			features, targets = mnist.train.next_batch(args.batch_size)
+	for epoch in range(args.epochs):
+		print("Epoch #{}:".format(epoch))
+		while not trainset.epoch_finished():
+			print("Batch #{}:".format(trainset.batch_id))
+			features, targets = trainset.next_batch(args.batch_size)
+			print("Features:\n{}".format(features))
+			print("Targets:\n{}".format(targets))
 			network.train(features, targets)
-
-		network.evaluate("dev", mnist.validation.features, mnist.validation.targets)
+		# network.evaluate("dev", mnist.validation.features, mnist.validation.targets)  # TODO devset

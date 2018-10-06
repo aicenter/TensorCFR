@@ -67,12 +67,11 @@ class Network:
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
 
 	def train(self, features, targets):
-		self.session.run([self.training, self.summaries["train"]],
-		                 {self.features   : features, self.targets: targets})
+		self.session.run([self.training, self.summaries["train"]], {self.features: features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
 		accuracy, _ = self.session.run([self.accuracy, self.summaries[dataset]],
-		                               {self.features   : features, self.targets: targets})
+		                               {self.features: features, self.targets: targets})
 		return accuracy
 
 	def predict(self, features):

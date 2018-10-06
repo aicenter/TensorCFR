@@ -29,7 +29,7 @@ class Network:
 			latest_layer = self.features
 
 			# Add layers described in the args.extractor. Layers are separated by a comma.
-			extractor_desc = args.extractor.split(',')    # TODO regressor
+			extractor_desc = args.extractor.split(',')
 			extractor_depth = len(extractor_desc)
 			for l in range(extractor_depth):
 				layer_name = "extractor_layer{}-{}".format(l, extractor_desc[l])
@@ -41,6 +41,20 @@ class Network:
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
+			# Add layers described in the args.regressor. Layers are separated by a comma.
+			regressor_desc = args.regressor.split(',')
+			regressor_depth = len(regressor_desc)
+			for l in range(regressor_depth):
+				layer_name = "regressor_layer{}-{}".format(l, regressor_desc[l])
+				specs = regressor_desc[l].split('-')
+				if specs[0] == 'R':   # TODO add tf.keras.layers.PReLU
+					# - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: "R-100"
+					latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
+					                               name=layer_name)
+				else:
+					raise ValueError("Invalid regressor specification '{}'".format(specs))
+
+			# Add final layers to predict nodal equilibrial expected values.
 			self.predictions = tf.layers.dense(latest_layer, self.TARGETS_DIM, activation=None, name="output_layer")
 
 			# Training
@@ -92,7 +106,8 @@ if __name__ == "__main__":
 	parser.add_argument("--batch_size", default=50, type=int, help="Batch size.")
 	parser.add_argument("--extractor", default="R-{}".format(Network.FEATURES_DIM), type=str,
 	                    help="Description of the feature extactor architecture.")
-	# TODO regressor
+	parser.add_argument("--regressor", default="R-{}".format(Network.FEATURES_DIM), type=str,
+	                    help="Description of the value regressor architecture.")
 	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 

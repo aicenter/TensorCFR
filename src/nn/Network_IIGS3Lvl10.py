@@ -44,7 +44,8 @@ class Network:
 			self.predictions = tf.layers.dense(latest_layer, self.TARGETS_DIM, activation=None, name="output_layer")
 
 			# Training
-			loss = tf.losses.mean_squared_error(self.targets, self.predictions, scope="mse_loss")
+			# loss = tf.losses.mean_squared_error(self.targets, self.predictions, scope="mse_loss")
+			loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
 			global_step = tf.train.create_global_step()
 			self.training = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="training")
 

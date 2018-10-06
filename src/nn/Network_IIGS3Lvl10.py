@@ -27,16 +27,19 @@ class Network:
 
 			# Computation
 			latest_layer = self.features
-			# Add layers described in the args.cnn. Layers are separated by a comma and can be:
-			cnn_desc = args.cnn.split(',')
-			depth = len(cnn_desc)
-			for l in range(depth):
-				layer_name = "layer{}-{}".format(l, cnn_desc[l])
-				specs = cnn_desc[l].split('-')
-				if specs[0] == 'R':
-					# - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: R-100
+
+			# Add layers described in the args.extractor. Layers are separated by a comma.
+			extractor_desc = args.extractor.split(',')    # TODO regressor
+			extractor_depth = len(extractor_desc)
+			for l in range(extractor_depth):
+				layer_name = "extractor_layer{}-{}".format(l, extractor_desc[l])
+				specs = extractor_desc[l].split('-')
+				if specs[0] == 'R':   # TODO add tf.keras.layers.PReLU
+					# - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: "R-100"
 					latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
 					                               name=layer_name)
+				else:
+					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
 			output_layer = tf.layers.dense(latest_layer, self.TARGETS_DIM, activation=None, name="output_layer")
 			self.predictions = tf.argmax(output_layer, axis=1)
@@ -88,8 +91,7 @@ if __name__ == "__main__":
 	# Parse arguments
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--batch_size", default=50, type=int, help="Batch size.")
-	parser.add_argument("--cnn", default=None, type=str, help="Description of the CNN architecture.")   # TODO remove
-	# TODO extractor
+	parser.add_argument("--extractor", default=None, type=str, help="Description of the feature extactor architecture.")  # TODO set `default`
 	# TODO regressor
 	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")

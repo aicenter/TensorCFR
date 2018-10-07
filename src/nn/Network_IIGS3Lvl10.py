@@ -28,7 +28,7 @@ class Network:
 
 			# Computation
 			with tf.name_scope("input"):
-				latest_shared_layer = [
+				self.latest_shared_layer = [
 					tf.identity(
 						self.features[:, game_node, :],
 						name="features_of_node{}".format(game_node)
@@ -42,12 +42,16 @@ class Network:
 			for l in range(extractor_depth):
 				layer_name = "extractor_layer{}-{}".format(l, extractor_desc[l])
 				specs = extractor_desc[l].split('-')
-				if specs[0] == 'R':   # TODO add tf.keras.layers.PReLU
-					# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
+
+				# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
+				if specs[0] == 'R':
 					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
-					# share layers by mapping from inputs to outputs
 					for game_node in range(self.NODES):
-						latest_layer[:, game_node, :] = shared_layer(latest_layer[:, game_node, :])
+						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
+					raise ValueError("Stop code")
+
+				# TODO add tf.keras.layers.PReLU
+
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 

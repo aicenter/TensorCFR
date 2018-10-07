@@ -102,7 +102,6 @@ class Network:
 				self.predictions = tf.squeeze(tf.stack(self.predictions, axis=1), name="predictions")
 
 			# Training
-			# loss = tf.losses.mean_squared_error(self.targets, self.predictions, scope="mse_loss")
 			loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
 			global_step = tf.train.create_global_step()
 			self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")

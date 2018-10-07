@@ -41,11 +41,6 @@ class Network:
 					# share layers by mapping from inputs to outputs
 					for game_node in range(self.NODES):
 						latest_layer[:, game_node, :] = shared_layer(latest_layer[:, game_node, :])
-
-					# TODO remove
-					#  - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: "R-100"
-					# latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
-					#                                name=layer_name)
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 

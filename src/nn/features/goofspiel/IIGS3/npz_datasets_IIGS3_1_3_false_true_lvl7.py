@@ -56,7 +56,7 @@ def prepare_dataset():
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)
-	npz_filename = "{}/{}_numpy_dataset.npz".format(script_directory, FEATURES_BASENAME)
+	npz_basename = "{}/{}".format(script_directory, FEATURES_BASENAME)
 
 	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
 	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
@@ -85,12 +85,37 @@ def prepare_dataset():
 		np_features = np.concatenate((one_hot_features, reaches), axis=-1)
 		print("np_features:\n{}".format(np_features))
 		print("np_features.shape == {}".format(np_features.shape))
+
 		np_targets = np.stack(target_arrays)  # shape [#seed_of_the_batch, #nodes]
 		print("np_targets:\n{}".format(np_targets))
 		print("np_targets.shape == {}".format(np_targets.shape))
 
-		np.savez_compressed(npz_filename, features=np_features, targets=np_targets)
-		verify_npz(npz_filename, np_features, np_targets)
+		# split dataset to train/dev/test
+		trainset_ratio = 0.64
+		devset_ratio = 0.2
+		dataset_size = len(filenames)
+		split_train = int(trainset_ratio * dataset_size)
+		split_dev = int((trainset_ratio + devset_ratio) * dataset_size)
+
+		train_features, train_targets = np_features[:split_train], np_targets[:split_train]
+		dev_features, dev_targets = np_features[split_train:split_dev], np_targets[split_train:split_dev]
+		test_features, test_targets = np_features[split_dev:], np_targets[split_dev:]
+
+		# store trainset
+		train_file = "{}_train.npz".format(npz_basename)
+		np.savez_compressed(train_file, features=train_features, targets=train_targets)
+		verify_npz(train_file, train_features, train_targets)
+
+		# store devset
+		dev_file = "{}_dev.npz".format(npz_basename)
+		np.savez_compressed(dev_file, features=dev_features, targets=dev_targets)
+		verify_npz(dev_file, dev_features, dev_targets)
+
+		# store testset
+		test_file = "{}_test.npz".format(npz_basename)
+		np.savez_compressed(test_file, features=test_features, targets=test_targets)
+		verify_npz(test_file, test_features, test_targets)
+
 		return True
 
 

@@ -85,7 +85,7 @@ class Network:
 			# loss = tf.losses.mean_squared_error(self.targets, self.predictions, scope="mse_loss")
 			loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
 			global_step = tf.train.create_global_step()
-			self.training = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="training")
+			self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
 
 			# Summaries
 			with tf.name_scope("summaries"):
@@ -106,7 +106,7 @@ class Network:
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
 
 	def train(self, features, targets):
-		self.session.run([self.training, self.summaries["train"]], {self.features: features, self.targets: targets})
+		self.session.run([self.optimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
 		l1_error, _ = self.session.run([self.l1_error, self.summaries[dataset]],

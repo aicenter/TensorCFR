@@ -20,7 +20,7 @@ class Network:
 		self.session = tf.Session(graph=graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
 		                                                             intra_op_parallelism_threads=threads))
 
-	def construct_feature_extractor(self, args, features, targets):
+	def construct_feature_extractor(self, args):
 		"""
 		Add layers described in the args.extractor. Layers are separated by a comma.
 
@@ -40,17 +40,12 @@ class Network:
 					for game_node in range(self.NODES):
 						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
 
-					# with tf.Session(config=get_default_config_proto()) as tmp_session:
-					# 	print_tensors(tmp_session, self.latest_shared_layer,
-					# 	              feed_dict={self.features: features, self.targets: targets})
-					# raise ValueError("Stop code")
-
 				# TODO add tf.keras.layers.PReLU
 
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
-	def construct(self, args, features, targets):   # TODO
+	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
 			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NODES, self.FEATURES_DIM], name="input_features")
@@ -66,7 +61,7 @@ class Network:
 					for game_node in range(self.NODES)
 				]
 
-			self.construct_feature_extractor(args, features, targets)   # TODO remove features and targets from parameters
+			self.construct_feature_extractor(args)
 			# TODO architecture for regressor
 
 			# Add final layers to predict nodal equilibrial expected values.
@@ -156,7 +151,7 @@ if __name__ == "__main__":
 	# Construct the network
 	network = Network(threads=args.threads)
 	features, targets = trainset.next_batch(args.batch_size)    # TODO
-	network.construct(args, features, targets)
+	network.construct(args)
 
 	# Train
 	for epoch in range(args.epochs):

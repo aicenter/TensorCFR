@@ -51,22 +51,10 @@ class Network:
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
-			# TODO modify for `shared_layer`
-			# Add layers described in the args.regressor. Layers are separated by a comma.
-			# regressor_desc = args.regressor.split(',')
-			# regressor_depth = len(regressor_desc)
-			# for l in range(regressor_depth):
-			# 	layer_name = "regressor_layer{}-{}".format(l, regressor_desc[l])
-			# 	specs = regressor_desc[l].split('-')
-			# 	if specs[0] == 'R':   # TODO add tf.keras.layers.PReLU
-			# 		# - R-hidden_layer_size: Add a dense layer with ReLU activation and specified size. Ex: "R-100"
-			# 		latest_layer = tf.layers.dense(inputs=latest_layer, units=int(specs[1]), activation=tf.nn.relu,
-			# 		                               name=layer_name)
-			# 	else:
-			# 		raise ValueError("Invalid regressor specification '{}'".format(specs))
+			# TODO architecture for regressor
 
 			# Add final layers to predict nodal equilibrial expected values.
-			self.predictions = tf.layers.dense(latest_layer, self.TARGETS_DIM, activation=None, name="output_layer")
+			self.predictions = tf.layers.dense(latest_shared_layer, self.TARGETS_DIM, activation=None, name="output_layer")
 
 			# Training
 			# loss = tf.losses.mean_squared_error(self.targets, self.predictions, scope="mse_loss")

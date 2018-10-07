@@ -21,4 +21,4 @@ with tf.Session() as sess:
 	)
 	print_tensors(sess, [values1, values1_reduced])
 	print(np_values2)
-	print(np_values2_reduced)   # TODO introduce feed_dict to `print_tensor()`
+	print(np_values2_reduced)

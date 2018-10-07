@@ -5,13 +5,13 @@ import tensorflow as tf
 from src.commons.constants import DEFAULT_GPU_ALLOW_GROWTH
 
 
-def print_tensor(sess, tensor):
-	print('"{}"\n {}\n'.format(tensor.name, sess.run(tensor)))
+def print_tensor(sess, tensor, feed_dict={}):
+	print('"{}"\n {}\n'.format(tensor.name, sess.run(tensor, feed_dict)))
 
 
-def print_tensors(sess, tensors_to_print):
+def print_tensors(sess, tensors_to_print, feed_dict={}):
 	for tensor_to_print in tensors_to_print:
-		print_tensor(sess, tensor_to_print)
+		print_tensor(sess, tensor_to_print, feed_dict)
 
 
 # noinspection PySimplifyBooleanCheck

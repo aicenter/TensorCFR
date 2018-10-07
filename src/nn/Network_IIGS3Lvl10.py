@@ -106,8 +106,9 @@ class Network:
 				loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
 				with tf.name_scope("l1_error"):
 					self.l1_error = tf.reduce_mean(tf.abs(self.targets - self.predictions))   # TODO ask Vilo
-			global_step = tf.train.create_global_step()
-			self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
+			with tf.name_scope("optimization"):
+				global_step = tf.train.create_global_step()
+				self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
 
 			# Summaries
 			with tf.name_scope("summaries"):

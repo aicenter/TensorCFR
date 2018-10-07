@@ -107,17 +107,17 @@ class Network:
 			self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
 
 			# Summaries
+			self.l1_error = tf.reduce_mean(tf.abs(self.targets - self.predictions))   # TODO ask Vilo
 			with tf.name_scope("summaries"):
-				self.l1_error = tf.reduce_mean(tf.abs(self.targets - self.predictions))   # TODO ask Vilo
 				summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
-				self.summaries = {}
-				with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):
-					self.summaries["train"] = [tf.contrib.summary.scalar("train/loss", loss),
-																		 tf.contrib.summary.scalar("train/l1_error", self.l1_error)]
-				with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
-					for dataset in ["dev", "test"]:
-						self.summaries[dataset] = [tf.contrib.summary.scalar(dataset + "/loss", loss),
-																			 tf.contrib.summary.scalar(dataset + "/l1_error", self.l1_error)]
+			self.summaries = {}
+			with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):
+				self.summaries["train"] = [tf.contrib.summary.scalar("train/loss", loss),
+																	 tf.contrib.summary.scalar("train/l1_error", self.l1_error)]
+			with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
+				for dataset in ["dev", "test"]:
+					self.summaries[dataset] = [tf.contrib.summary.scalar(dataset + "/loss", loss),
+																		 tf.contrib.summary.scalar(dataset + "/l1_error", self.l1_error)]
 
 			# Initialize variables
 			self.session.run(tf.global_variables_initializer())

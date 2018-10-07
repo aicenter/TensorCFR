@@ -157,7 +157,5 @@ if __name__ == "__main__":
 		while not trainset.epoch_finished():
 			print("Batch #{}:".format(trainset.batch_id))
 			features, targets = trainset.next_batch(args.batch_size)
-			print("Features:\n{}".format(features))
-			print("Targets:\n{}".format(targets))
 			network.train(features, targets)
 		# network.evaluate("dev", mnist.validation.features, mnist.validation.targets)  # TODO devset

@@ -81,16 +81,16 @@ class Network:
 			self.training = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="training")
 
 			# Summaries
-			self.accuracy = tf.reduce_mean(tf.abs(self.targets - self.predictions))   # TODO ask Vilo
+			self.l1_error = tf.reduce_mean(tf.abs(self.targets - self.predictions))   # TODO ask Vilo
 			summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
 			self.summaries = {}
 			with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):
 				self.summaries["train"] = [tf.contrib.summary.scalar("train/loss", loss),
-				                           tf.contrib.summary.scalar("train/accuracy", self.accuracy)]
+				                           tf.contrib.summary.scalar("train/l1_error", self.l1_error)]
 			with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
 				for dataset in ["dev", "test"]:
 					self.summaries[dataset] = [tf.contrib.summary.scalar(dataset + "/loss", loss),
-					                           tf.contrib.summary.scalar(dataset + "/accuracy", self.accuracy)]
+					                           tf.contrib.summary.scalar(dataset + "/l1_error", self.l1_error)]
 
 			# Initialize variables
 			self.session.run(tf.global_variables_initializer())
@@ -101,9 +101,9 @@ class Network:
 		self.session.run([self.training, self.summaries["train"]], {self.features: features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
-		accuracy, _ = self.session.run([self.accuracy, self.summaries[dataset]],
+		l1_error, _ = self.session.run([self.l1_error, self.summaries[dataset]],
 		                               {self.features: features, self.targets: targets})
-		return accuracy
+		return l1_error
 
 	def predict(self, features):
 		return self.session.run(self.predictions, {self.features: features})

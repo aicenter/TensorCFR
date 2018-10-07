@@ -24,7 +24,7 @@ class Network:
 		with self.session.graph.as_default():
 			# Inputs
 			self.features = tf.placeholder(tf.float32, [None, self.NODES, self.FEATURES_DIM], name="input_features")
-			self.targets = tf.placeholder(tf.int64, [None], name="targets")
+			self.targets = tf.placeholder(tf.int64, [None, self.NODES], name="targets")
 
 			# Computation
 			latest_layer = self.features

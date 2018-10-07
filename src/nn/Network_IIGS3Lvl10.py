@@ -25,7 +25,7 @@ class Network:
 		extractor_desc = args.extractor.split(',')
 		extractor_depth = len(extractor_desc)
 		for l in range(extractor_depth):
-			layer_name = "extractor_layer{}-{}".format(l, extractor_desc[l])
+			layer_name = "extractor_layer{}_{}".format(l, extractor_desc[l])
 			specs = extractor_desc[l].split('-')
 
 			# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"

@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=1, type=int, help="Batch size.")
+	parser.add_argument("--batch_size", default=10, type=int, help="Batch size.")
 	parser.add_argument("--extractor", default="R-{}".format(Network.FEATURES_DIM), type=str,
 	                    help="Description of the feature extactor architecture.")
 	parser.add_argument("--regressor", default="R-{}".format(Network.FEATURES_DIM), type=str,

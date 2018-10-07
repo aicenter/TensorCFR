@@ -34,10 +34,10 @@ class Network:
 				for game_node in range(self.NODES):
 					self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
 
-				with tf.Session(config=get_default_config_proto()) as tmp_session:
-					print_tensors(tmp_session, self.latest_shared_layer,
-					              feed_dict={self.features: features, self.targets: targets})
-				raise ValueError("Stop code")
+				# with tf.Session(config=get_default_config_proto()) as tmp_session:
+				# 	print_tensors(tmp_session, self.latest_shared_layer,
+				# 	              feed_dict={self.features: features, self.targets: targets})
+				# raise ValueError("Stop code")
 
 			# TODO add tf.keras.layers.PReLU
 
@@ -64,8 +64,15 @@ class Network:
 			# TODO architecture for regressor
 
 			# Add final layers to predict nodal equilibrial expected values.
-			self.predictions = tf.layers.dense(self.latest_shared_layer, self.TARGETS_DIM, activation=None,
-			                                   name="output_layer")
+			shared_layer = tf.layers.Dense(self.TARGETS_DIM, activation=None)
+			self.predictions = [
+				tf.identity(
+					shared_layer(self.latest_shared_layer[game_node]),
+					name="prediction_of_node{}".format(game_node)
+				)
+				for game_node in range(self.NODES)
+			]
+			self.predictions = tf.squeeze(tf.stack(self.predictions, axis=1), name="predictions")
 
 			# Training
 			# loss = tf.losses.mean_squared_error(self.targets, self.predictions, scope="mse_loss")

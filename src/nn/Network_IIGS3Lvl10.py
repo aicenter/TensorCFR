@@ -6,6 +6,7 @@ import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING
 from src.nn.data.IIGS3.DatasetFromNPZ import DatasetFromNPZ
+from src.utils.tf_utils import get_default_config_proto, print_tensors
 
 
 class Network:
@@ -20,7 +21,31 @@ class Network:
 		self.session = tf.Session(graph=graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
 		                                                             intra_op_parallelism_threads=threads))
 
-	def construct(self, args):
+	def construct_feature_extractor(self, args, features, targets):
+		# Add layers described in the args.extractor. Layers are separated by a comma.
+		extractor_desc = args.extractor.split(',')
+		extractor_depth = len(extractor_desc)
+		for l in range(extractor_depth):
+			layer_name = "extractor_layer{}-{}".format(l, extractor_desc[l])
+			specs = extractor_desc[l].split('-')
+
+			# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
+			if specs[0] == 'R':
+				shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
+				for game_node in range(self.NODES):
+					self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
+
+				with tf.Session(config=get_default_config_proto()) as tmp_session:
+					print_tensors(tmp_session, self.latest_shared_layer,
+					              feed_dict={self.features: features, self.targets: targets})
+				raise ValueError("Stop code")
+
+			# TODO add tf.keras.layers.PReLU
+
+			else:
+				raise ValueError("Invalid extractor specification '{}'".format(specs))
+
+	def construct(self, args, features, targets):   # TODO
 		with self.session.graph.as_default():
 			# Inputs
 			self.features = tf.placeholder(tf.float32, [None, self.NODES, self.FEATURES_DIM], name="input_features")
@@ -36,29 +61,12 @@ class Network:
 					for game_node in range(self.NODES)
 				]
 
-			# Add layers described in the args.extractor. Layers are separated by a comma.
-			extractor_desc = args.extractor.split(',')
-			extractor_depth = len(extractor_desc)
-			for l in range(extractor_depth):
-				layer_name = "extractor_layer{}-{}".format(l, extractor_desc[l])
-				specs = extractor_desc[l].split('-')
-
-				# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
-				if specs[0] == 'R':
-					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
-					for game_node in range(self.NODES):
-						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
-					raise ValueError("Stop code")
-
-				# TODO add tf.keras.layers.PReLU
-
-				else:
-					raise ValueError("Invalid extractor specification '{}'".format(specs))
-
+			self.construct_feature_extractor(args, features, targets)   # TODO remove features and targets from parameters
 			# TODO architecture for regressor
 
 			# Add final layers to predict nodal equilibrial expected values.
-			self.predictions = tf.layers.dense(latest_shared_layer, self.TARGETS_DIM, activation=None, name="output_layer")
+			self.predictions = tf.layers.dense(self.latest_shared_layer, self.TARGETS_DIM, activation=None,
+			                                   name="output_layer")
 
 			# Training
 			# loss = tf.losses.mean_squared_error(self.targets, self.predictions, scope="mse_loss")
@@ -133,7 +141,8 @@ if __name__ == "__main__":
 
 	# Construct the network
 	network = Network(threads=args.threads)
-	network.construct(args)
+	features, targets = trainset.next_batch(args.batch_size)    # TODO
+	network.construct(args, features, targets)
 
 	# Train
 	for epoch in range(args.epochs):

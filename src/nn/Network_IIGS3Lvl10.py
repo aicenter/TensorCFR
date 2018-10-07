@@ -21,28 +21,34 @@ class Network:
 		                                                             intra_op_parallelism_threads=threads))
 
 	def construct_feature_extractor(self, args, features, targets):
-		# Add layers described in the args.extractor. Layers are separated by a comma.
-		extractor_desc = args.extractor.split(',')
-		extractor_depth = len(extractor_desc)
-		for l in range(extractor_depth):
-			layer_name = "extractor_layer{}_{}".format(l, extractor_desc[l])
-			specs = extractor_desc[l].split('-')
+		"""
+		Add layers described in the args.extractor. Layers are separated by a comma.
 
-			# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
-			if specs[0] == 'R':
-				shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
-				for game_node in range(self.NODES):
-					self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
+		:param args: Arguments from commandline
+		:return:
+		"""
+		with tf.name_scope("extractor"):
+			extractor_desc = args.extractor.split(',')
+			extractor_depth = len(extractor_desc)
+			for l in range(extractor_depth):
+				layer_name = "extractor_layer{}_{}".format(l, extractor_desc[l])
+				specs = extractor_desc[l].split('-')
 
-				# with tf.Session(config=get_default_config_proto()) as tmp_session:
-				# 	print_tensors(tmp_session, self.latest_shared_layer,
-				# 	              feed_dict={self.features: features, self.targets: targets})
-				# raise ValueError("Stop code")
+				# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
+				if specs[0] == 'R':
+					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
+					for game_node in range(self.NODES):
+						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
 
-			# TODO add tf.keras.layers.PReLU
+					# with tf.Session(config=get_default_config_proto()) as tmp_session:
+					# 	print_tensors(tmp_session, self.latest_shared_layer,
+					# 	              feed_dict={self.features: features, self.targets: targets})
+					# raise ValueError("Stop code")
 
-			else:
-				raise ValueError("Invalid extractor specification '{}'".format(specs))
+				# TODO add tf.keras.layers.PReLU
+
+				else:
+					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
 	def construct(self, args, features, targets):   # TODO
 		with self.session.graph.as_default():

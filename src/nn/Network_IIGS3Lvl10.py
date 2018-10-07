@@ -102,12 +102,14 @@ class Network:
 				self.predictions = tf.squeeze(tf.stack(self.predictions, axis=1), name="predictions")
 
 			# Training
-			loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
+			with tf.name_scope("metrics"):
+				loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
+				with tf.name_scope("l1_error"):
+					self.l1_error = tf.reduce_mean(tf.abs(self.targets - self.predictions))   # TODO ask Vilo
 			global_step = tf.train.create_global_step()
 			self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
 
 			# Summaries
-			self.l1_error = tf.reduce_mean(tf.abs(self.targets - self.predictions))   # TODO ask Vilo
 			with tf.name_scope("summaries"):
 				summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
 			self.summaries = {}

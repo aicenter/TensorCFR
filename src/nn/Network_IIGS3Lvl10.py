@@ -45,6 +45,31 @@ class Network:
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
+	def construct_value_regressor(self, args):
+		"""
+		Add layers described in the args.regressor. Layers are separated by a comma.
+
+		:param args: Arguments from commandline
+		:return:
+		"""
+		with tf.name_scope("regressor"):
+			regressor_desc = args.regressor.split(',')
+			regressor_depth = len(regressor_desc)
+			for l in range(regressor_depth):
+				layer_name = "regressor_layer{}_{}".format(l, regressor_desc[l])
+				specs = regressor_desc[l].split('-')
+
+				# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
+				if specs[0] == 'R':
+					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
+					for game_node in range(self.NODES):
+						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
+
+				# TODO add tf.keras.layers.PReLU
+
+				else:
+					raise ValueError("Invalid regressor specification '{}'".format(specs))
+
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
@@ -62,7 +87,7 @@ class Network:
 				]
 
 			self.construct_feature_extractor(args)
-			# TODO architecture for regressor
+			self.construct_value_regressor(args)
 
 			# Add final layers to predict nodal equilibrial expected values.
 			with tf.name_scope("output"):

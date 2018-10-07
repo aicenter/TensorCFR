@@ -175,7 +175,7 @@ if __name__ == "__main__":
 
 	# Construct the network
 	network = Network(threads=args.threads)
-	features, targets = trainset.next_batch(args.batch_size)    # TODO
+	features, targets = trainset.next_batch(args.batch_size)
 	network.construct(args)
 
 	# Train

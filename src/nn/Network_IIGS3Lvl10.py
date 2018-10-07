@@ -27,7 +27,14 @@ class Network:
 			self.targets = tf.placeholder(tf.int64, [None, self.NODES], name="targets")
 
 			# Computation
-			latest_layer = self.features
+			with tf.name_scope("input"):
+				latest_shared_layer = [
+					tf.identity(
+						self.features[:, game_node, :],
+						name="features_of_node{}".format(game_node)
+					)
+					for game_node in range(self.NODES)
+				]
 
 			# Add layers described in the args.extractor. Layers are separated by a comma.
 			extractor_desc = args.extractor.split(',')

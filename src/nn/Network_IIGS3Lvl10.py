@@ -4,9 +4,8 @@
 import numpy as np
 import tensorflow as tf
 
-from src.commons.constants import SEED_FOR_TESTING
+from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
 from src.nn.data.IIGS3.DatasetFromNPZ import DatasetFromNPZ
-from src.utils.tf_utils import get_default_config_proto, print_tensors
 
 
 class Network:
@@ -48,8 +47,8 @@ class Network:
 	def construct(self, args, features, targets):   # TODO
 		with self.session.graph.as_default():
 			# Inputs
-			self.features = tf.placeholder(tf.float32, [None, self.NODES, self.FEATURES_DIM], name="input_features")
-			self.targets = tf.placeholder(tf.int64, [None, self.NODES], name="targets")
+			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NODES, self.FEATURES_DIM], name="input_features")
+			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NODES], name="targets")
 
 			# Computation
 			with tf.name_scope("input"):

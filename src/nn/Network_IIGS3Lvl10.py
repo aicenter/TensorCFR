@@ -184,4 +184,8 @@ if __name__ == "__main__":
 			print("[epoch #{}, batch #{}] Training...".format(epoch, trainset.batch_id))
 			features, targets = trainset.next_batch(args.batch_size)
 			network.train(features, targets)
-		# network.evaluate("dev", mnist.validation.features, mnist.validation.targets)  # TODO devset
+
+		devset_error = network.evaluate("dev", devset.features, devset.targets)
+		print("[epoch #{}] L1 error on devset: {}".format(epoch, devset_error))
+
+	# TODO testset

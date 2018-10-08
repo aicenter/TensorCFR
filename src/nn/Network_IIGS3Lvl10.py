@@ -198,14 +198,12 @@ if __name__ == "__main__":
 	# Train
 	for epoch in range(args.epochs):
 		while not trainset.epoch_finished():
-			print("[epoch #{}, batch #{}] Training...".format(epoch, trainset.batch_id))
 			features, targets = trainset.next_batch(args.batch_size)
 			network.train(features, targets)
 
 		# Evaluate on development set
 		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
-		print("[epoch #{}] mean squared error on devset: {}".format(epoch, devset_error_mse))
-		print("[epoch #{}] L-infinity error on devset: {}".format(epoch, devset_error_infinity))
+		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
 
 	# Evaluate on test set
 	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)

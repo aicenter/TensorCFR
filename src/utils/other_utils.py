@@ -72,12 +72,13 @@ def get_one_hot_flattened(features, n_classes, slice_1hot_feats):
 	return one_hot_features.reshape(one_hot_shape)
 
 
-def get_features_dataframe(filename, names):
+def get_features_dataframe(filename, names, quiet=False):
 	features_dataframe = pd.read_csv(
 		filename,
 		names=names,
 		delimiter=";|,",
 	)
-	print("features:")
-	print(features_dataframe)
+	if not quiet:
+		print("features:")
+		print(features_dataframe)
 	return features_dataframe

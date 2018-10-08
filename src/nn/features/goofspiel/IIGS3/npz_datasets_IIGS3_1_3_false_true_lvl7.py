@@ -91,8 +91,8 @@ def prepare_dataset():
 		print("np_targets.shape == {}".format(np_targets.shape))
 
 		# split dataset to train/dev/test
-		trainset_ratio = 0.64
-		devset_ratio = 0.2
+		trainset_ratio = 0.8
+		devset_ratio = 0.1
 		dataset_size = len(filenames)
 		split_train = int(trainset_ratio * dataset_size)
 		split_dev = int((trainset_ratio + devset_ratio) * dataset_size)

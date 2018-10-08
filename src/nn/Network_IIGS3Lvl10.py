@@ -186,9 +186,9 @@ if __name__ == "__main__":
 
 	# Load the data
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	trainset = DatasetFromNPZ("{}/data/IIGS3/IIGS3_1_3_false_true_lvl7_train.npz".format(script_directory))
-	devset = DatasetFromNPZ("{}/data/IIGS3/IIGS3_1_3_false_true_lvl7_dev.npz".format(script_directory))
-	testset = DatasetFromNPZ("{}/data/IIGS3/IIGS3_1_3_false_true_lvl7_test.npz".format(script_directory))
+	trainset = DatasetFromNPZ("{}/data/IIGS3/80-10-10/IIGS3_1_3_false_true_lvl7_train.npz".format(script_directory))
+	devset = DatasetFromNPZ("{}/data/IIGS3/80-10-10/IIGS3_1_3_false_true_lvl7_dev.npz".format(script_directory))
+	testset = DatasetFromNPZ("{}/data/IIGS3/80-10-10/IIGS3_1_3_false_true_lvl7_test.npz".format(script_directory))
 
 	# Construct the network
 	network = Network(threads=args.threads)

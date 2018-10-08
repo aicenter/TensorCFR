@@ -109,8 +109,8 @@ class Network:
 			# Training
 			with tf.name_scope("metrics"):
 				loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
-				with tf.name_scope("l1_error"):
-					self.l1_error = tf.reduce_mean(tf.abs(self.targets - self.predictions))  # TODO ask Vilo
+				with tf.name_scope("mean_squared_error"):
+					self.mean_squared_error = tf.reduce_mean(tf.square(self.targets - self.predictions))
 			with tf.name_scope("optimization"):
 				global_step = tf.train.create_global_step()
 				self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
@@ -121,11 +121,11 @@ class Network:
 			self.summaries = {}
 			with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):
 				self.summaries["train"] = [tf.contrib.summary.scalar("train/loss", loss),
-				                           tf.contrib.summary.scalar("train/l1_error", self.l1_error)]
+				                           tf.contrib.summary.scalar("train/mean_squared_error", self.mean_squared_error)]
 			with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
 				for dataset in ["dev", "test"]:
 					self.summaries[dataset] = [tf.contrib.summary.scalar(dataset + "/loss", loss),
-					                           tf.contrib.summary.scalar(dataset + "/l1_error", self.l1_error)]
+					                           tf.contrib.summary.scalar(dataset + "/mean_squared_error", self.mean_squared_error)]
 
 			# Initialize variables
 			self.session.run(tf.global_variables_initializer())
@@ -136,9 +136,9 @@ class Network:
 		self.session.run([self.optimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
-		l1_error, _ = self.session.run([self.l1_error, self.summaries[dataset]],
-		                               {self.features: features, self.targets: targets})
-		return l1_error
+		mean_squared_error, _ = self.session.run([self.mean_squared_error, self.summaries[dataset]],
+		                                         {self.features: features, self.targets: targets})
+		return mean_squared_error
 
 	def predict(self, features):
 		return self.session.run(self.predictions, {self.features: features})

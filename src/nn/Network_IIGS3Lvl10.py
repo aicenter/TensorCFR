@@ -7,18 +7,23 @@ import tensorflow as tf
 from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
 from src.nn.data.IIGS3.DatasetFromNPZ import DatasetFromNPZ
 
+FIXED_RANDOMNESS = False
+
 
 class Network:
 	NODES = 36
-	FEATURES_DIM = 3 * (2 + 2 + 2) + 1    # 6x 1-of-3-hot encodings (3 per hierarchy) + reach probability
+	FEATURES_DIM = 3 * (2 + 2 + 2) + 1  # 6x 1-of-3-hot encodings (3 per hierarchy) + reach probability
 	TARGETS_DIM = 1
 
 	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session
 		graph = tf.Graph()
-		graph.seed = seed
-		self.session = tf.Session(graph=graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
-		                                                             intra_op_parallelism_threads=threads))
+		if FIXED_RANDOMNESS:
+			graph.seed = seed
+			self.session = tf.Session(graph=graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
+			                                                             intra_op_parallelism_threads=threads))
+		else:
+			self.session = tf.Session(graph=graph)
 
 	def construct_feature_extractor(self, args):
 		"""
@@ -105,7 +110,7 @@ class Network:
 			with tf.name_scope("metrics"):
 				loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
 				with tf.name_scope("l1_error"):
-					self.l1_error = tf.reduce_mean(tf.abs(self.targets - self.predictions))   # TODO ask Vilo
+					self.l1_error = tf.reduce_mean(tf.abs(self.targets - self.predictions))  # TODO ask Vilo
 			with tf.name_scope("optimization"):
 				global_step = tf.train.create_global_step()
 				self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
@@ -116,11 +121,11 @@ class Network:
 			self.summaries = {}
 			with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):
 				self.summaries["train"] = [tf.contrib.summary.scalar("train/loss", loss),
-																	 tf.contrib.summary.scalar("train/l1_error", self.l1_error)]
+				                           tf.contrib.summary.scalar("train/l1_error", self.l1_error)]
 			with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
 				for dataset in ["dev", "test"]:
 					self.summaries[dataset] = [tf.contrib.summary.scalar(dataset + "/loss", loss),
-																		 tf.contrib.summary.scalar(dataset + "/l1_error", self.l1_error)]
+					                           tf.contrib.summary.scalar(dataset + "/l1_error", self.l1_error)]
 
 			# Initialize variables
 			self.session.run(tf.global_variables_initializer())
@@ -145,8 +150,8 @@ if __name__ == "__main__":
 	import os
 	import re
 
-	# Fix random seed
-	np.random.seed(SEED_FOR_TESTING)
+	if FIXED_RANDOMNESS:
+		np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
@@ -190,4 +195,4 @@ if __name__ == "__main__":
 		devset_error = network.evaluate("dev", devset.features, devset.targets)
 		print("[epoch #{}] L1 error on devset: {}".format(epoch, devset_error))
 
-	# TODO testset
+# TODO testset

@@ -15,6 +15,7 @@ class NeuralNetwork_IIGS3Lvl10:
 	NODES = 36
 	FEATURES_DIM = 3 * (2 + 2 + 2) + 1  # 6x 1-of-3-hot encodings (3 per hierarchy) + reach probability
 	TARGETS_DIM = 1
+	NUM_PUBLIC_STATES = 3 ** 2              # i.e. 3^rounds
 
 	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session

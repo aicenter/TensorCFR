@@ -12,7 +12,7 @@ FIXED_RANDOMNESS = False
 
 
 class NeuralNetwork_IIGS3Lvl10:
-	NODES = 36
+	NUM_NODES = 36
 	FEATURES_DIM = 3 * (2 + 2 + 2) + 1  # 6x 1-of-3-hot encodings (3 per hierarchy) + reach probability
 	TARGETS_DIM = 1
 	NUM_PUBLIC_STATES = 3 ** 2              # i.e. 3^rounds
@@ -46,7 +46,7 @@ class NeuralNetwork_IIGS3Lvl10:
 				# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
 				if specs[0] == 'R':
 					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
-					for game_node in range(self.NODES):
+					for game_node in range(self.NUM_NODES):
 						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
 
 				# TODO add tf.keras.layers.PReLU
@@ -71,7 +71,7 @@ class NeuralNetwork_IIGS3Lvl10:
 				# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
 				if specs[0] == 'R':
 					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
-					for game_node in range(self.NODES):
+					for game_node in range(self.NUM_NODES):
 						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
 
 				# TODO add tf.keras.layers.PReLU
@@ -82,8 +82,8 @@ class NeuralNetwork_IIGS3Lvl10:
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
-			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NODES, self.FEATURES_DIM], name="input_features")
-			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NODES], name="targets")
+			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES, self.FEATURES_DIM], name="input_features")
+			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
 
 			# Computation
 			with tf.name_scope("input"):
@@ -92,7 +92,7 @@ class NeuralNetwork_IIGS3Lvl10:
 						self.features[:, game_node, :],
 						name="features_of_node{}".format(game_node)
 					)
-					for game_node in range(self.NODES)
+					for game_node in range(self.NUM_NODES)
 				]
 
 			self.construct_feature_extractor(args)
@@ -106,7 +106,7 @@ class NeuralNetwork_IIGS3Lvl10:
 						shared_layer(self.latest_shared_layer[game_node]),
 						name="prediction_of_node{}".format(game_node)
 					)
-					for game_node in range(self.NODES)
+					for game_node in range(self.NUM_NODES)
 				]
 				self.predictions = tf.squeeze(tf.stack(self.predictions, axis=1), name="predictions")
 

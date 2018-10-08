@@ -202,7 +202,8 @@ if __name__ == "__main__":
 			features, targets = trainset.next_batch(args.batch_size)
 			network.train(features, targets)
 
-		devset_error = network.evaluate("dev", devset.features, devset.targets)
-		print("[epoch #{}] L1 error on devset: {}".format(epoch, devset_error))
+		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
+		print("[epoch #{}] mean squared error on devset: {}".format(epoch, devset_error_mse))
+		print("[epoch #{}] L-infinity error on devset: {}".format(epoch, devset_error_infinity))
 
 # TODO testset

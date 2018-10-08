@@ -60,27 +60,21 @@ class NeuralNetwork_IIGS3Lvl10:
 
 		:return:
 		"""
-		self.public_states_lists = [[] for _ in range(self.NUM_PUBLIC_STATES)]
-		for game_node in range(self.NUM_NODES):
-			related_public_state = self._node_to_public_state[game_node]
-			self.public_states_lists[related_public_state].append(self.latest_shared_layer[game_node])
+		with tf.name_scope("context_pooling"):
+			self.public_states_lists = [[] for _ in range(self.NUM_PUBLIC_STATES)]
+			for game_node in range(self.NUM_NODES):
+				related_public_state = self._node_to_public_state[game_node]
+				self.public_states_lists[related_public_state].append(self.latest_shared_layer[game_node])
 
-		# TODO remove
-		# for i, public_state_list in enumerate(self.public_states_lists):
-		# 	print("\nPublic state #{} with {} nodes:".format(i, len(public_state_list)))
-		# 	for node in public_state_list:
-		# 		print(node.name)
+			# public_states_tensors = [[] for _ in range(self.NUM_PUBLIC_STATES)]
+			public_states_tensors = [None] * self.NUM_PUBLIC_STATES
+			public_state_means = [None] * self.NUM_PUBLIC_STATES
+			for i, public_state_list in enumerate(self.public_states_lists):
+				public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="public_state{}".format(i))
+				public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1, name="public_state_mean{}".format(i))
+				# TODO public_state_maxs
 
-		# public_states_tensors = [[] for _ in range(self.NUM_PUBLIC_STATES)]
-		public_states_tensors = [None] * self.NUM_PUBLIC_STATES
-		public_state_means = [None] * self.NUM_PUBLIC_STATES
-		for i, public_state_list in enumerate(self.public_states_lists):
-			public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="public_state{}".format(i))
-			public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1, name="public_state_mean{}".format(i))
-			# TODO public_state_maxs
-
-		# TODO concat
-		raise ValueError("Stop code")
+			# TODO concat
 
 	def construct_value_regressor(self, args):
 		"""

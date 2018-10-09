@@ -72,14 +72,15 @@ class NeuralNetwork_IIGS3Lvl10:
 			public_state_maxes = [None] * self.NUM_PUBLIC_STATES
 			context = [None] * self.NUM_PUBLIC_STATES
 			for i, public_state_list in enumerate(self.public_states_lists):
-				public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="public_state{}".format(i))
-				public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1, name="public_state_mean{}".format(i))
-				public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1, name="public_state_maxes{}".format(i))
-				context[i] = tf.concat(
-					[public_state_means[i], public_state_maxes[i]],
-					axis=-1,
-					name="context{}".format(i)
-				)
+				public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="nodes_of_public_state{}".format(i))
+				with tf.name_scope("public_state{}".format(i)):
+					public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1, name="public_state_mean{}".format(i))
+					public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1, name="public_state_maxes{}".format(i))
+					context[i] = tf.concat(
+						[public_state_means[i], public_state_maxes[i]],
+						axis=-1,
+						name="context{}".format(i)
+					)
 
 	def construct_value_regressor(self, args):
 		"""

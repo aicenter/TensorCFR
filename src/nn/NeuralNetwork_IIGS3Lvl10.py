@@ -61,11 +61,13 @@ class NeuralNetwork_IIGS3Lvl10:
 		:return:
 		"""
 		with tf.name_scope("context_pooling"):
+			# scatter nodes by public states
 			self.public_states_lists = [[] for _ in range(self.NUM_PUBLIC_STATES)]
 			for game_node in range(self.NUM_NODES):
 				related_public_state = self._node_to_public_state[game_node]
 				self.public_states_lists[related_public_state].append(self.latest_shared_layer[game_node])
 
+			# pooling operations
 			public_states_tensors = [None] * self.NUM_PUBLIC_STATES
 			public_state_means = [None] * self.NUM_PUBLIC_STATES
 			public_state_maxes = [None] * self.NUM_PUBLIC_STATES
@@ -80,6 +82,16 @@ class NeuralNetwork_IIGS3Lvl10:
 						axis=-1,
 						name="context{}".format(i)
 					)
+
+		with tf.name_scope("concat_context"):
+			# concatenate with extractor's outputs to form regressor's input
+			for game_node in range(self.NUM_NODES):
+				related_public_state = self._node_to_public_state[game_node]
+				self.latest_shared_layer[game_node] = tf.concat(
+					[self.latest_shared_layer[game_node], context[related_public_state]],
+					axis=-1,
+					name="features_with_context_of_node{}".format(game_node)
+				)
 
 	def construct_value_regressor(self, args):
 		"""

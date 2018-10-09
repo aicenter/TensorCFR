@@ -55,7 +55,7 @@ if __name__ == "__main__":
 	parser.add_argument("--epochs", default=2, type=int, help="Number of epochs.")
 	args = parser.parse_args()
 
-	train_file = "{}/train.npz".format(script_directory)
+	train_file = "{}/80-10-10/IIGS3_1_3_false_true_lvl7_train.npz".format(script_directory)
 	train = DatasetFromNPZ(train_file)
 
 	for epoch in range(args.epochs):

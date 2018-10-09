@@ -69,10 +69,11 @@ class NeuralNetwork_IIGS3Lvl10:
 			# public_states_tensors = [[] for _ in range(self.NUM_PUBLIC_STATES)]
 			public_states_tensors = [None] * self.NUM_PUBLIC_STATES
 			public_state_means = [None] * self.NUM_PUBLIC_STATES
+			public_state_maxes = [None] * self.NUM_PUBLIC_STATES
 			for i, public_state_list in enumerate(self.public_states_lists):
 				public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="public_state{}".format(i))
 				public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1, name="public_state_mean{}".format(i))
-				# TODO public_state_maxs
+				public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1, name="public_state_maxes{}".format(i))
 
 			# TODO concat
 

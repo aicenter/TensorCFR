@@ -48,9 +48,6 @@ class NeuralNetwork_IIGS3Lvl10:
 					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
 					for game_node in range(self.NUM_NODES):
 						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
-
-				# TODO add tf.keras.layers.PReLU
-
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
@@ -112,9 +109,6 @@ class NeuralNetwork_IIGS3Lvl10:
 					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
 					for game_node in range(self.NUM_NODES):
 						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
-
-				# TODO add tf.keras.layers.PReLU
-
 				else:
 					raise ValueError("Invalid regressor specification '{}'".format(specs))
 

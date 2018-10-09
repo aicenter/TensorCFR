@@ -198,6 +198,7 @@ if __name__ == "__main__":
 	import os
 	import re
 
+	np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 	if FIXED_RANDOMNESS:
 		np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
@@ -248,3 +249,7 @@ if __name__ == "__main__":
 	print()
 	print("mean squared error on testset: {}".format(testset_error_mse))
 	print("L-infinity error on testset: {}".format(testset_error_infinity))
+
+	print()
+	print("Predictions of initial 2 training examples:")
+	print(network.predict(trainset.features[:2]))

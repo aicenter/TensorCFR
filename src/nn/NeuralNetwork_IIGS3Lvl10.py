@@ -66,7 +66,6 @@ class NeuralNetwork_IIGS3Lvl10:
 				related_public_state = self._node_to_public_state[game_node]
 				self.public_states_lists[related_public_state].append(self.latest_shared_layer[game_node])
 
-			# public_states_tensors = [[] for _ in range(self.NUM_PUBLIC_STATES)]
 			public_states_tensors = [None] * self.NUM_PUBLIC_STATES
 			public_state_means = [None] * self.NUM_PUBLIC_STATES
 			public_state_maxes = [None] * self.NUM_PUBLIC_STATES

@@ -192,7 +192,11 @@ class NeuralNetwork_IIGS6Lvl10:
 		return self.session.run(self.predictions, {self.features: features})
 
 
-if __name__ == "__main__":
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
+ACTIVATE_FILE = False
+
+
+if __name__ == '__main__' and ACTIVATE_FILE:
 	import argparse
 	import datetime
 	import os

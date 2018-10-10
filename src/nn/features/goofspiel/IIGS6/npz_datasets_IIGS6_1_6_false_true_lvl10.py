@@ -56,7 +56,8 @@ def prepare_dataset():
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)
-	npz_basename = "{}/{}".format(script_directory, FEATURES_BASENAME)
+	output_directory = "../../../data/IIGS6Lvl10/80-10-10"
+	npz_basename = "{}/{}/{}".format(script_directory, output_directory, FEATURES_BASENAME)
 
 	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
 	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)

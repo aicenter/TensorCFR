@@ -18,13 +18,13 @@ class NeuralNetwork_IIGS6Lvl10:
 
 	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session
-		graph = tf.Graph()
+		self.graph = tf.Graph()
 		if FIXED_RANDOMNESS:
-			graph.seed = seed
-			self.session = tf.Session(graph=graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
+			self.graph.seed = seed
+			self.session = tf.Session(graph=self.graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
 			                                                             intra_op_parallelism_threads=threads))
 		else:
-			self.session = tf.Session(graph=graph)
+			self.session = tf.Session(graph=self.graph)
 		self._node_to_public_state = get_node_to_public_state()
 		print("node_to_public_state:\n{}".format(self._node_to_public_state))
 

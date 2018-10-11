@@ -13,7 +13,7 @@ def get_node_to_public_state(verbose=False):
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	csv_basename = FEATURES_BASENAME
 	csv_filename = os.path.join(script_directory, "{}.csv".format(csv_basename))
-	features = get_features_dataframe(csv_filename, names=NAMES_OF_FEATURE_CSV)
+	features = get_features_dataframe(csv_filename, names=NAMES_OF_FEATURE_CSV, quiet=True)
 
 	grouped_features = features.groupby(['round1', 'round2', 'round3'])
 	df_public_states_sizes = DataFrame(

@@ -168,8 +168,11 @@ class NeuralNetwork_IIGS6Lvl10:
 				global_step = tf.train.create_global_step()
 				print(">> global_step constructed")
 				print(">>> {} operations".format(len(self.graph.get_operations())))
-				self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
+				optimizer = tf.train.AdamOptimizer()
 				print(">> optimizer constructed")
+				print(">>> {} operations".format(len(self.graph.get_operations())))
+				self.loss_minimizer = optimizer.minimize(loss, global_step=global_step, name="loss_minimizer")
+				print(">> loss_minimizer constructed")
 				print(">>> {} operations".format(len(self.graph.get_operations())))
 			print(">> Optimization constructed")
 			print(">>> {} operations".format(len(self.graph.get_operations())))
@@ -207,7 +210,7 @@ class NeuralNetwork_IIGS6Lvl10:
 			print(">>> {} operations".format(len(self.graph.get_operations())))
 
 	def train(self, features, targets):
-		self.session.run([self.optimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
+		self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
 		mean_squared_error, l_infinity_error, _ = self.session.run(
@@ -239,7 +242,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	parser.add_argument("--batch_size", default=1, type=int, help="Batch size.")
 	parser.add_argument("--extractor", default="R-{}".format(5), type=str,
 	                    help="Description of the feature extactor architecture.")
-	parser.add_argument("--regressor", default="R-{}".format(5), type=str,
+	parser.add_argument("--regressor", default="R-{}".format(1), type=str,
 	                    help="Description of the value regressor architecture.")
 	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")

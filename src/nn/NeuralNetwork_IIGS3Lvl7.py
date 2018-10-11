@@ -153,7 +153,7 @@ class NeuralNetwork_IIGS3Lvl7:
 					self.l_infinity_error = tf.reduce_max(tf.abs(self.targets - self.predictions))
 			with tf.name_scope("optimization"):
 				global_step = tf.train.create_global_step()
-				self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
+				self.loss_minimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="loss_minimizer")
 
 			# Summaries
 			with tf.name_scope("summaries"):
@@ -179,7 +179,7 @@ class NeuralNetwork_IIGS3Lvl7:
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
 
 	def train(self, features, targets):
-		self.session.run([self.optimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
+		self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
 		mean_squared_error, l_infinity_error, _ = self.session.run(

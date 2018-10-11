@@ -7,6 +7,7 @@ import tensorflow as tf
 from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_lvl7 import get_node_to_public_state
+from src.utils.tf_utils import count_graph_operations
 
 FIXED_RANDOMNESS = False
 
@@ -19,13 +20,13 @@ class NeuralNetwork_IIGS3Lvl7:
 
 	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session
-		graph = tf.Graph()
+		self.graph = tf.Graph()
 		if FIXED_RANDOMNESS:
-			graph.seed = seed
-			self.session = tf.Session(graph=graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
-			                                                             intra_op_parallelism_threads=threads))
+			self.graph.seed = seed
+			self.session = tf.Session(graph=self.graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
+			                                                                  intra_op_parallelism_threads=threads))
 		else:
-			self.session = tf.Session(graph=graph)
+			self.session = tf.Session(graph=self.graph)
 		self._node_to_public_state = get_node_to_public_state()
 		print("node_to_public_state:\n{}".format(self._node_to_public_state))
 
@@ -53,7 +54,7 @@ class NeuralNetwork_IIGS3Lvl7:
 
 	def construct_context_pooling(self):
 		"""
-		Add layers to build context: means and maxs per each public state.
+		Add layers to build context: means and maxes per each public state.
 
 		:return:
 		"""
@@ -72,8 +73,10 @@ class NeuralNetwork_IIGS3Lvl7:
 			for i, public_state_list in enumerate(self.public_states_lists):
 				public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="nodes_of_public_state{}".format(i))
 				with tf.name_scope("public_state{}".format(i)):
-					public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1, name="public_state_mean{}".format(i))
-					public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1, name="public_state_maxes{}".format(i))
+					public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1,
+					                                       name="public_state_mean{}".format(i))
+					public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1,
+					                                      name="public_state_maxes{}".format(i))
 					context[i] = tf.concat(
 						[public_state_means[i], public_state_maxes[i]],
 						axis=-1,
@@ -117,6 +120,8 @@ class NeuralNetwork_IIGS3Lvl7:
 			# Inputs
 			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES, self.FEATURES_DIM], name="input_features")
 			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
+			print(">> Placeholder constructed")
+			self.print_operations_count()
 
 			# Computation
 			with tf.name_scope("input"):
@@ -127,10 +132,18 @@ class NeuralNetwork_IIGS3Lvl7:
 					)
 					for game_node in range(self.NUM_NODES)
 				]
+			print(">> Input constructed")
+			self.print_operations_count()
 
 			self.construct_feature_extractor(args)
+			print(">> Extractor constructed")
+			self.print_operations_count()
 			self.construct_context_pooling()
+			print(">> Context pooling constructed")
+			self.print_operations_count()
 			self.construct_value_regressor(args)
+			print(">> Regressor constructed")
+			self.print_operations_count()
 
 			# Add final layers to predict nodal equilibrial expected values.
 			with tf.name_scope("output"):
@@ -143,6 +156,8 @@ class NeuralNetwork_IIGS3Lvl7:
 					for game_node in range(self.NUM_NODES)
 				]
 				self.predictions = tf.squeeze(tf.stack(self.predictions, axis=1), name="predictions")
+			print(">> Output constructed")
+			self.print_operations_count()
 
 			# Training
 			with tf.name_scope("metrics"):
@@ -151,9 +166,21 @@ class NeuralNetwork_IIGS3Lvl7:
 					self.mean_squared_error = tf.reduce_mean(tf.square(self.targets - self.predictions))
 				with tf.name_scope("l_infinity_error"):
 					self.l_infinity_error = tf.reduce_max(tf.abs(self.targets - self.predictions))
+			print(">> Metrics constructed")
+			self.print_operations_count()
 			with tf.name_scope("optimization"):
 				global_step = tf.train.create_global_step()
-				self.loss_minimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="loss_minimizer")
+				print(">> global_step constructed")
+				self.print_operations_count()
+				optimizer = tf.train.AdamOptimizer()
+				# optimizer = tf.train.GradientDescentOptimizer(0.01)   # TODO try this
+				print(">> optimizer constructed")
+				self.print_operations_count()
+				self.loss_minimizer = optimizer.minimize(loss, global_step=global_step, name="loss_minimizer")
+				print(">> loss_minimizer constructed")
+				self.print_operations_count()
+			print(">> Optimization constructed")
+			self.print_operations_count()
 
 			# Summaries
 			with tf.name_scope("summaries"):
@@ -165,6 +192,8 @@ class NeuralNetwork_IIGS3Lvl7:
 					tf.contrib.summary.scalar("train/mean_squared_error", self.mean_squared_error),
 					tf.contrib.summary.scalar("train/l_infinity_error", self.l_infinity_error)
 				]
+			print(">> Summaries[train] constructed")
+			self.print_operations_count()
 			with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
 				for dataset in ["dev", "test"]:
 					self.summaries[dataset] = [
@@ -172,11 +201,17 @@ class NeuralNetwork_IIGS3Lvl7:
 						tf.contrib.summary.scalar(dataset + "/mean_squared_error", self.mean_squared_error),
 						tf.contrib.summary.scalar(dataset + "/l_infinity_error", self.l_infinity_error)
 					]
+			print(">> Summaries[dev/test] constructed")
+			self.print_operations_count()
 
 			# Initialize variables
 			self.session.run(tf.global_variables_initializer())
+			print(">> Session constructed")
+			self.print_operations_count()
 			with summary_writer.as_default():
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
+			print(">> Summary writer constructed")
+			self.print_operations_count()
 
 	def train(self, features, targets):
 		self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
@@ -190,6 +225,9 @@ class NeuralNetwork_IIGS3Lvl7:
 
 	def predict(self, features):
 		return self.session.run(self.predictions, {self.features: features})
+
+	def print_operations_count(self):
+		print(">>> {} operations".format(count_graph_operations(self.graph)))
 
 
 if __name__ == "__main__":
@@ -213,6 +251,7 @@ if __name__ == "__main__":
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 
 	args = parser.parse_args()
+	print("args: {}".format(args))
 
 	# Create logdir name
 	args.logdir = "logs/{}-{}-{}".format(

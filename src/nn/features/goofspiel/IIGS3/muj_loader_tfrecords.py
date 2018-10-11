@@ -25,19 +25,16 @@ import numpy as np
 # 	# Creates batches by randomly shuffling tensors
 # 	# images, labels = tf.train.shuffle_batch([image, label], batch_size=10, capacity=30, num_threads=1,
 # 	# 										min_after_dequeue=10)
+from tensorflow.python.framework.errors_impl import OutOfRangeError
+
 
 def parser(record):
 	keys_to_features = {
-		#"train/input": tf.FixedLenFeature((), tf.float32),
-		"target": tf.FixedLenFeature((), tf.float32)
+		'sample_input': tf.FixedLenFeature((7,), tf.float32),
+		'sample_target': tf.FixedLenFeature((1,), tf.float32)
 	}
 	parsed = tf.parse_single_example(record, keys_to_features)
-
-	#sample_input = tf.cast(parsed["train/input"], tf.float32)
-	# label = tf.cast(parsed["train/target"], tf.float32)
-	# return sample_input
-	return parsed["target"]# , parsed["train/target"]
-	#return parsed
+	return parsed["sample_input"], parsed["sample_target"]
 
 if __name__ == '__main__':
 	data_path = ['train_{}.tfrecord'.format(x) for x in range(1)]  # address to save the hdf5 file
@@ -47,23 +44,15 @@ if __name__ == '__main__':
 	# 	tf.contrib.data.map_and_batch(parser, 32)
 	# )
 	# dataset = dataset.prefetch(buffer_size=2)
-	print("TFRecord")
-	print(type(dataset))
-	print(dir(dataset))
-	print(dataset)
-	dataset = dataset.map(parser)
 
+	dataset = dataset.map(parser)
 	iterator = dataset.make_one_shot_iterator()
-	# sample_input, sample_target = iterator.get_next()
 	features = iterator.get_next()
 
-	# print(features[0])
-	# print(features[0].eval())
-	# print(type(features[0]))
-	# print(dir(features[0]))
-
-	with tf.Session() as sess:
-		# 	sess.run(tf.global_variables_initializer())
-		# print(sess.run(features[0]))
-		print(sess.run(features))
-		print(sess.run(features))
+	with tf.Session() as session:
+		while True:
+			try:
+				features_data = session.run(features)
+				print('Sample input ', features_data[0], ', sample target ', features_data[1])
+			except OutOfRangeError:
+				break

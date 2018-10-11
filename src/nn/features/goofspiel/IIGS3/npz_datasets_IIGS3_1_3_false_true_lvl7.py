@@ -121,25 +121,23 @@ def prepare_dataset():
 		return True
 
 def store_tfrecord(dataset, train_file):
-	# print('store_tfrecord')
-	# print(dataset[0, :])
-	#
-	# train_file = 'train_.tfrecords'
-
 	writer = tf.python_io.TFRecordWriter(train_file)
 
 	for x in dataset:
 		# per one line in the `dataset matrix`
-		input = x[:]
-		data_sample = {
-			#'train/input': tf.train.Feature(float_list=tf.train.FloatList(value=x.tolist())), # TODO funguje to i bez tolist()?
-			'target': tf.train.Feature(float_list=tf.train.FloatList(value=[33.0]))
+		sample_input = x[:-1]
+		sample_input = sample_input.tolist()
+
+		sample_target = [x[-1]]
+
+		sample = {
+			'sample_input': tf.train.Feature(float_list=tf.train.FloatList(value=sample_input)),
+			'sample_target': tf.train.Feature(float_list=tf.train.FloatList(value=sample_target))
 		}
 
-		example = tf.train.Example(features=tf.train.Features(feature=data_sample))
+		example = tf.train.Example(features=tf.train.Features(feature=sample))
 
 		writer.write(example.SerializeToString())
-		# break
 
 	writer.close()
 

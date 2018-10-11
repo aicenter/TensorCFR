@@ -4,6 +4,8 @@ import os
 
 import numpy as np
 import pandas as pd
+import tensorflow as tf
+
 
 from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, N_CARDS, FEATURE_COLUMNS, TARGET_COLUMNS, \
 	SLICE_1HOT_FEATS, NAMES_OF_FEATURE_CSV
@@ -118,6 +120,65 @@ def prepare_dataset():
 
 		return True
 
+def store_tfrecord(dataset, train_file):
+	# print('store_tfrecord')
+	# print(dataset[0, :])
+	#
+	# train_file = 'train_.tfrecords'
+
+	writer = tf.python_io.TFRecordWriter(train_file)
+
+	for x in dataset:
+		# per one line in the `dataset matrix`
+		input = x[:]
+		data_sample = {
+			#'train/input': tf.train.Feature(float_list=tf.train.FloatList(value=x.tolist())), # TODO funguje to i bez tolist()?
+			'target': tf.train.Feature(float_list=tf.train.FloatList(value=[33.0]))
+		}
+
+		example = tf.train.Example(features=tf.train.Features(feature=data_sample))
+
+		writer.write(example.SerializeToString())
+		# break
+
+	writer.close()
+
+	import sys
+	sys.stdout.flush()
+
+def muj_main():
+	script_dir = os.path.dirname(os.path.abspath(__file__))
+
+	features_filename = "{}/{}.csv".format(script_dir, FEATURES_BASENAME)
+
+	dataset_dir = "{}/reach_value_datasets".format(script_dir)
+
+
+	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
+	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
+
+	if not filenames:
+		print("No files in {}".format(dataset_dir))
+		return False
+	else:
+		feature_arrays, target_arrays = [], []
+		for i, reaches_to_values_filename in enumerate(filenames):
+			print("#{}-th reaches_to_values_filename == {}".format(i, reaches_to_values_filename))
+
+			reaches_to_values = get_reaches_to_values_dataframe(reaches_to_values_filename)
+
+			concatenated = get_concatenated_dataframe(features, reaches_to_values)
+
+			sorted_concatenated = get_sorted_dataframes(concatenated)
+
+			np_dataset = sorted_concatenated.values
+
+
+			output_filename = 'train_{}.tfrecord'.format(i)
+
+			store_tfrecord(np_dataset, output_filename)
+			# break
 
 if __name__ == '__main__':
-	prepare_dataset()
+	# prepare_dataset()
+	muj_main()

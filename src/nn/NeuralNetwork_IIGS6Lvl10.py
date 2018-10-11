@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
+from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS6.node_to_public_states_IIGS6_1_6_false_true_lvl10 import get_node_to_public_state
 from src.utils.tf_utils import count_graph_operations
 
@@ -266,34 +267,34 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		os.mkdir("logs")  # TF 1.6 will do this by itself
 
 	# Load the data
-	# script_directory = os.path.dirname(os.path.abspath(__file__))
-	# dataset_directory = "data/IIGS6Lvl10/80-10-10"
-	# npz_basename = "IIGS6_1_6_false_true_lvl10"
-	# trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
-	# devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
-	# testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
+	script_directory = os.path.dirname(os.path.abspath(__file__))
+	dataset_directory = "data/IIGS6Lvl10/80-10-10"
+	npz_basename = "IIGS6_1_6_false_true_lvl10"
+	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
+	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
+	testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
 
 	# Construct the network
 	network = NeuralNetwork_IIGS6Lvl10(threads=args.threads)
-	# features, targets = trainset.next_batch(args.batch_size)
+	features, targets = trainset.next_batch(args.batch_size)
 	network.construct(args)
 
-# Train
-# for epoch in range(args.epochs):
-# 	while not trainset.epoch_finished():
-# 		features, targets = trainset.next_batch(args.batch_size)
-# 		network.train(features, targets)
-#
-# 	# Evaluate on development set
-# 	devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
-# 	print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
-#
-# # Evaluate on test set
-# testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
-# print()
-# print("mean squared error on testset: {}".format(testset_error_mse))
-# print("L-infinity error on testset: {}".format(testset_error_infinity))
-#
-# print()
-# print("Predictions of initial 2 training examples:")
-# print(network.predict(trainset.features[:2]))
+	# Train
+	for epoch in range(args.epochs):
+		while not trainset.epoch_finished():
+			features, targets = trainset.next_batch(args.batch_size)
+			network.train(features, targets)
+
+		# Evaluate on development set
+		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
+		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+
+	# Evaluate on test set
+	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
+	print()
+	print("mean squared error on testset: {}".format(testset_error_mse))
+	print("L-infinity error on testset: {}".format(testset_error_infinity))
+
+	print()
+	print("Predictions of initial 2 training examples:")
+	print(network.predict(trainset.features[:2]))

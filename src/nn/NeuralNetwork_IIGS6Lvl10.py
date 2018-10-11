@@ -15,7 +15,7 @@ class NeuralNetwork_IIGS6Lvl10:
 	NUM_NODES = 14400
 	FEATURES_DIM = 6 * (3 + 3 + 3) + 1  # 9x 1-of-6-hot encodings (3 per hierarchy) + reach probability
 	TARGETS_DIM = 1
-	NUM_PUBLIC_STATES = 3 ** 3              # i.e. 3^#rounds
+	NUM_PUBLIC_STATES = 3 ** 3  # i.e. 3^#rounds
 
 	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session
@@ -23,7 +23,7 @@ class NeuralNetwork_IIGS6Lvl10:
 		if FIXED_RANDOMNESS:
 			self.graph.seed = seed
 			self.session = tf.Session(graph=self.graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
-			                                                             intra_op_parallelism_threads=threads))
+			                                                                  intra_op_parallelism_threads=threads))
 		else:
 			self.session = tf.Session(graph=self.graph)
 		self._node_to_public_state = get_node_to_public_state()
@@ -72,8 +72,10 @@ class NeuralNetwork_IIGS6Lvl10:
 			for i, public_state_list in enumerate(self.public_states_lists):
 				public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="nodes_of_public_state{}".format(i))
 				with tf.name_scope("public_state{}".format(i)):
-					public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1, name="public_state_mean{}".format(i))
-					public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1, name="public_state_maxes{}".format(i))
+					public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1,
+					                                       name="public_state_mean{}".format(i))
+					public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1,
+					                                      name="public_state_maxes{}".format(i))
 					context[i] = tf.concat(
 						[public_state_means[i], public_state_maxes[i]],
 						axis=-1,
@@ -179,7 +181,6 @@ class NeuralNetwork_IIGS6Lvl10:
 			print(">> Optimization constructed")
 			self.print_operations_count()
 
-
 			# Summaries
 			with tf.name_scope("summaries"):
 				summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
@@ -231,7 +232,6 @@ class NeuralNetwork_IIGS6Lvl10:
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
 ACTIVATE_FILE = True
 
-
 if __name__ == '__main__' and ACTIVATE_FILE:
 	import argparse
 	import datetime
@@ -278,22 +278,22 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	# features, targets = trainset.next_batch(args.batch_size)
 	network.construct(args)
 
-	# Train
-	# for epoch in range(args.epochs):
-	# 	while not trainset.epoch_finished():
-	# 		features, targets = trainset.next_batch(args.batch_size)
-	# 		network.train(features, targets)
-	#
-	# 	# Evaluate on development set
-	# 	devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
-	# 	print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
-	#
-	# # Evaluate on test set
-	# testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
-	# print()
-	# print("mean squared error on testset: {}".format(testset_error_mse))
-	# print("L-infinity error on testset: {}".format(testset_error_infinity))
-	#
-	# print()
-	# print("Predictions of initial 2 training examples:")
-	# print(network.predict(trainset.features[:2]))
+# Train
+# for epoch in range(args.epochs):
+# 	while not trainset.epoch_finished():
+# 		features, targets = trainset.next_batch(args.batch_size)
+# 		network.train(features, targets)
+#
+# 	# Evaluate on development set
+# 	devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
+# 	print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+#
+# # Evaluate on test set
+# testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
+# print()
+# print("mean squared error on testset: {}".format(testset_error_mse))
+# print("L-infinity error on testset: {}".format(testset_error_infinity))
+#
+# print()
+# print("Predictions of initial 2 training examples:")
+# print(network.predict(trainset.features[:2]))

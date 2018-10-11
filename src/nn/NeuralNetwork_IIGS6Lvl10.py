@@ -230,7 +230,7 @@ class NeuralNetwork_IIGS6Lvl10:
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = True
+ACTIVATE_FILE = False
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	import argparse

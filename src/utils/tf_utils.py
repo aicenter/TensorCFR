@@ -95,3 +95,7 @@ def get_default_config_proto():
 		gpu_options={'allow_growth': DEFAULT_GPU_ALLOW_GROWTH}
 	)
 	return default_config_proto
+
+
+def count_graph_operations(tf_graph):
+	return len(tf_graph.get_operations())

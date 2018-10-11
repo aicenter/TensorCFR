@@ -6,6 +6,7 @@ import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
 from src.nn.features.goofspiel.IIGS6.node_to_public_states_IIGS6_1_6_false_true_lvl10 import get_node_to_public_state
+from src.utils.tf_utils import count_graph_operations
 
 FIXED_RANDOMNESS = False
 
@@ -117,7 +118,7 @@ class NeuralNetwork_IIGS6Lvl10:
 			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES, self.FEATURES_DIM], name="input_features")
 			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
 			print(">> Placeholder constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 
 			# Computation
 			with tf.name_scope("input"):
@@ -129,17 +130,17 @@ class NeuralNetwork_IIGS6Lvl10:
 					for game_node in range(self.NUM_NODES)
 				]
 			print(">> Input constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 
 			self.construct_feature_extractor(args)
 			print(">> Extractor constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 			self.construct_context_pooling()
 			print(">> Context pooling constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 			self.construct_value_regressor(args)
 			print(">> Regressor constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 
 			# Add final layers to predict nodal equilibrial expected values.
 			with tf.name_scope("output"):
@@ -153,7 +154,7 @@ class NeuralNetwork_IIGS6Lvl10:
 				]
 				self.predictions = tf.squeeze(tf.stack(self.predictions, axis=1), name="predictions")
 			print(">> Output constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 
 			# Training
 			with tf.name_scope("metrics"):
@@ -163,19 +164,20 @@ class NeuralNetwork_IIGS6Lvl10:
 				with tf.name_scope("l_infinity_error"):
 					self.l_infinity_error = tf.reduce_max(tf.abs(self.targets - self.predictions))
 			print(">> Metrics constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 			with tf.name_scope("optimization"):
 				global_step = tf.train.create_global_step()
 				print(">> global_step constructed")
-				print(">>> {} operations".format(len(self.graph.get_operations())))
-				optimizer = tf.train.AdamOptimizer()
+				self.print_operations_count()
+				# optimizer = tf.train.AdamOptimizer()
+				optimizer = tf.train.GradientDescentOptimizer(0.01)   # TODO try this
 				print(">> optimizer constructed")
-				print(">>> {} operations".format(len(self.graph.get_operations())))
+				self.print_operations_count()
 				self.loss_minimizer = optimizer.minimize(loss, global_step=global_step, name="loss_minimizer")
 				print(">> loss_minimizer constructed")
-				print(">>> {} operations".format(len(self.graph.get_operations())))
+				self.print_operations_count()
 			print(">> Optimization constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 
 
 			# Summaries
@@ -189,7 +191,7 @@ class NeuralNetwork_IIGS6Lvl10:
 					tf.contrib.summary.scalar("train/l_infinity_error", self.l_infinity_error)
 				]
 			print(">> Summaries[train] constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 			with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
 				for dataset in ["dev", "test"]:
 					self.summaries[dataset] = [
@@ -198,16 +200,16 @@ class NeuralNetwork_IIGS6Lvl10:
 						tf.contrib.summary.scalar(dataset + "/l_infinity_error", self.l_infinity_error)
 					]
 			print(">> Summaries[dev/test] constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 
 			# Initialize variables
 			self.session.run(tf.global_variables_initializer())
 			print(">> Session constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 			with summary_writer.as_default():
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
 			print(">> Summary writer constructed")
-			print(">>> {} operations".format(len(self.graph.get_operations())))
+			self.print_operations_count()
 
 	def train(self, features, targets):
 		self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
@@ -222,9 +224,12 @@ class NeuralNetwork_IIGS6Lvl10:
 	def predict(self, features):
 		return self.session.run(self.predictions, {self.features: features})
 
+	def print_operations_count(self):
+		print(">>> {} operations".format(count_graph_operations(self.graph)))
+
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
@@ -239,8 +244,9 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
+	# TODO increase NN's hyperparams
 	parser.add_argument("--batch_size", default=1, type=int, help="Batch size.")
-	parser.add_argument("--extractor", default="R-{}".format(5), type=str,
+	parser.add_argument("--extractor", default="R-{}".format(1), type=str,
 	                    help="Description of the feature extactor architecture.")
 	parser.add_argument("--regressor", default="R-{}".format(1), type=str,
 	                    help="Description of the value regressor architecture.")

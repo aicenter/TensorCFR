@@ -116,6 +116,8 @@ class NeuralNetwork_IIGS6Lvl10:
 			# Inputs
 			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES, self.FEATURES_DIM], name="input_features")
 			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
+			print(">> Placeholder constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 
 			# Computation
 			with tf.name_scope("input"):
@@ -126,10 +128,18 @@ class NeuralNetwork_IIGS6Lvl10:
 					)
 					for game_node in range(self.NUM_NODES)
 				]
+			print(">> Input constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 
 			self.construct_feature_extractor(args)
+			print(">> Extractor constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 			self.construct_context_pooling()
+			print(">> Context pooling constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 			self.construct_value_regressor(args)
+			print(">> Regressor constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 
 			# Add final layers to predict nodal equilibrial expected values.
 			with tf.name_scope("output"):
@@ -142,6 +152,8 @@ class NeuralNetwork_IIGS6Lvl10:
 					for game_node in range(self.NUM_NODES)
 				]
 				self.predictions = tf.squeeze(tf.stack(self.predictions, axis=1), name="predictions")
+			print(">> Output constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 
 			# Training
 			with tf.name_scope("metrics"):
@@ -150,9 +162,18 @@ class NeuralNetwork_IIGS6Lvl10:
 					self.mean_squared_error = tf.reduce_mean(tf.square(self.targets - self.predictions))
 				with tf.name_scope("l_infinity_error"):
 					self.l_infinity_error = tf.reduce_max(tf.abs(self.targets - self.predictions))
+			print(">> Metrics constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 			with tf.name_scope("optimization"):
 				global_step = tf.train.create_global_step()
+				print(">> global_step constructed")
+				print(">>> {} operations".format(len(self.graph.get_operations())))
 				self.optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step, name="optimizer")
+				print(">> optimizer constructed")
+				print(">>> {} operations".format(len(self.graph.get_operations())))
+			print(">> Optimization constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
+
 
 			# Summaries
 			with tf.name_scope("summaries"):
@@ -164,6 +185,8 @@ class NeuralNetwork_IIGS6Lvl10:
 					tf.contrib.summary.scalar("train/mean_squared_error", self.mean_squared_error),
 					tf.contrib.summary.scalar("train/l_infinity_error", self.l_infinity_error)
 				]
+			print(">> Summaries[train] constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 			with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
 				for dataset in ["dev", "test"]:
 					self.summaries[dataset] = [
@@ -171,11 +194,17 @@ class NeuralNetwork_IIGS6Lvl10:
 						tf.contrib.summary.scalar(dataset + "/mean_squared_error", self.mean_squared_error),
 						tf.contrib.summary.scalar(dataset + "/l_infinity_error", self.l_infinity_error)
 					]
+			print(">> Summaries[dev/test] constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 
 			# Initialize variables
 			self.session.run(tf.global_variables_initializer())
+			print(">> Session constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 			with summary_writer.as_default():
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
+			print(">> Summary writer constructed")
+			print(">>> {} operations".format(len(self.graph.get_operations())))
 
 	def train(self, features, targets):
 		self.session.run([self.optimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
@@ -216,6 +245,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 
 	args = parser.parse_args()
+	print("args: {}".format(args))
 
 	# Create logdir name
 	args.logdir = "logs/{}-{}-{}".format(

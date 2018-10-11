@@ -245,7 +245,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
-	# TODO increase NN's hyperparams
 	parser.add_argument("--batch_size", default=1, type=int, help="Batch size.")
 	parser.add_argument("--extractor", default="R-{}".format(1), type=str,
 	                    help="Description of the feature extactor architecture.")

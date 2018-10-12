@@ -12,7 +12,7 @@ from src.utils.tf_utils import count_graph_operations
 FIXED_RANDOMNESS = False
 
 
-class NeuralNetwork_IIGS3Lvl7:
+class DenseNet_IIGS3Lvl7:
 	NUM_NODES = 36
 	FEATURES_DIM = 3 * (2 + 2 + 2) + 1  # 6x 1-of-3-hot encodings (3 per hierarchy) + reach probability
 	TARGETS_DIM = 1
@@ -243,9 +243,9 @@ if __name__ == "__main__":
 	# Parse arguments
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--batch_size", default=10, type=int, help="Batch size.")
-	parser.add_argument("--extractor", default="R-{}".format(NeuralNetwork_IIGS3Lvl7.FEATURES_DIM), type=str,
+	parser.add_argument("--extractor", default="R-{}".format(DenseNet_IIGS3Lvl7.FEATURES_DIM), type=str,
 	                    help="Description of the feature extactor architecture.")
-	parser.add_argument("--regressor", default="R-{}".format(NeuralNetwork_IIGS3Lvl7.FEATURES_DIM), type=str,
+	parser.add_argument("--regressor", default="R-{}".format(DenseNet_IIGS3Lvl7.FEATURES_DIM), type=str,
 	                    help="Description of the value regressor architecture.")
 	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
@@ -270,7 +270,7 @@ if __name__ == "__main__":
 	testset = DatasetFromNPZ("{}/{}/IIGS3_1_3_false_true_lvl7_test.npz".format(script_directory, dataset_directory))
 
 	# Construct the network
-	network = NeuralNetwork_IIGS3Lvl7(threads=args.threads)
+	network = DenseNet_IIGS3Lvl7(threads=args.threads)
 	features, targets = trainset.next_batch(args.batch_size)
 	network.construct(args)
 

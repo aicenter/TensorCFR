@@ -126,27 +126,19 @@ class ConvNet_IIGS3Lvl7:
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
-			self.input_features = tf.placeholder(
-				FLOAT_DTYPE,
-				[None, self.NUM_NODES, self.INPUT_FEATURES_DIM],
-				name="input_features"
-			)
-			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
-			print(">> Placeholder constructed")
+			with tf.name_scope("input_placeholders"):
+				self.input_features = tf.placeholder(
+					FLOAT_DTYPE,
+					[None, self.NUM_NODES, self.INPUT_FEATURES_DIM],
+					name="input_features"
+				)
+				self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
+			print(">> Input placeholders constructed")
 			self.print_operations_count()
+
+			self.latest_shared_layer = self.input_features
 
 			# Computation
-			with tf.name_scope("input"):
-				self.latest_shared_layer = [
-					tf.identity(
-						self.input_features[:, game_node, :],
-						name="features_of_node{}".format(game_node)
-					)
-					for game_node in range(self.NUM_NODES)
-				]
-			print(">> Input constructed")
-			self.print_operations_count()
-
 			self.construct_feature_extractor(args)
 			print(">> Extractor constructed")
 			self.print_operations_count()

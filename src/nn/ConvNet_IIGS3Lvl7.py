@@ -159,12 +159,16 @@ class ConvNet_IIGS3Lvl7:
 
 			# Add final layers to predict nodal equilibrial expected values.
 			with tf.name_scope("output"):
-				self.predictions = tf.layers.dense(
+				self.predictions = tf.layers.conv1d(
 					inputs=self.latest_layer,
-					units=self.TARGETS_DIM,
+					filters=self.TARGETS_DIM,
+					kernel_size=1,
 					activation=None,
+					data_format="channels_first",
 					name="predictions"
-				),
+				)
+				self.predictions = tf.squeeze(self.predictions)
+				print(">>> predictions constructed")
 			print(">> Output constructed")
 			self.print_operations_count()
 

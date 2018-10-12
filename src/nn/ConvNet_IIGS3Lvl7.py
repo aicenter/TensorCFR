@@ -167,6 +167,7 @@ class ConvNet_IIGS3Lvl7:
 					kernel_size=1,
 					activation=None,
 					data_format="channels_first",
+					name="conv1d_regression"
 				)
 				self.predictions = tf.squeeze(self.predictions, name="predictions")
 			print(">>> predictions constructed")

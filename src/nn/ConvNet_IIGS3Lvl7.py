@@ -138,19 +138,20 @@ class ConvNet_IIGS3Lvl7:
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
-			with tf.name_scope("input_placeholders"):
+			with tf.name_scope("input"):
 				self.input_features = tf.placeholder(
 					FLOAT_DTYPE,
 					[None, self.NUM_NODES, self.INPUT_FEATURES_DIM],
 					name="input_features"
 				)
-				self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
 				self.latest_layer = tf.transpose(    # channels first for GPU computation
 					self.input_features,
 					perm=[0, 2, 1],
 					name="input_channels_first_NCL"   # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
 				)
-			print(">> Input placeholders constructed")
+			print(">> Input constructed")
+			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
+			print(">> Targets constructed")
 			self.print_operations_count()
 
 			# Computation

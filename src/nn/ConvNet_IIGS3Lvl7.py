@@ -22,7 +22,7 @@ class ConvNet_IIGS3Lvl7:
 	FEATURES_DIM_PER_ROUND = PUBLIC_FEATURES_DIM + INFOSET_FEATURES_DIM + NODAL_FEATURES_DIM
 	REACH_PROB_DIM = 1
 
-	FEATURES_DIM = NUM_ROUNDS * FEATURES_DIM_PER_ROUND + REACH_PROB_DIM
+	INPUT_FEATURES_DIM = NUM_ROUNDS * FEATURES_DIM_PER_ROUND + REACH_PROB_DIM
 	TARGETS_DIM = 1
 	NUM_PUBLIC_STATES = 3 ** 2              # i.e. 3^rounds
 
@@ -126,7 +126,7 @@ class ConvNet_IIGS3Lvl7:
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
-			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES, self.FEATURES_DIM], name="input_features")
+			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES, self.INPUT_FEATURES_DIM], name="input_features")
 			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
 			print(">> Placeholder constructed")
 			self.print_operations_count()
@@ -250,10 +250,10 @@ if __name__ == "__main__":
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=10, type=int, help="Batch size.")
-	parser.add_argument("--extractor", default="R-{}".format(ConvNet_IIGS3Lvl7.FEATURES_DIM), type=str,
+	parser.add_argument("--batch_size", default=16, type=int, help="Batch size.")
+	parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
 	                    help="Description of the feature extactor architecture.")
-	parser.add_argument("--regressor", default="R-{}".format(ConvNet_IIGS3Lvl7.FEATURES_DIM), type=str,
+	parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
 	                    help="Description of the value regressor architecture.")
 	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")

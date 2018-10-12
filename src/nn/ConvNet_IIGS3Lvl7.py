@@ -54,8 +54,8 @@ class ConvNet_IIGS3Lvl7:
 
 				# - C-hidden_layer_size: 1D convolutional with ReLU activation and specified output size (channels). Ex: "C-100"
 				if specs[0] == 'C':
-					self.latest_shared_layer = tf.layers.conv1d(
-						inputs=self.latest_shared_layer,
+					self.latest_layer = tf.layers.conv1d(
+						inputs=self.latest_layer,
 						filters=int(specs[1]),
 						kernel_size=1,
 						activation=tf.nn.relu,
@@ -78,7 +78,7 @@ class ConvNet_IIGS3Lvl7:
 			self.public_states_lists = [[] for _ in range(self.NUM_PUBLIC_STATES)]
 			for game_node in range(self.NUM_NODES):
 				related_public_state = self._node_to_public_state[game_node]
-				self.public_states_lists[related_public_state].append(self.latest_shared_layer[game_node])
+				self.public_states_lists[related_public_state].append(self.latest_layer[game_node])
 
 			# pooling operations
 			public_states_tensors = [None] * self.NUM_PUBLIC_STATES
@@ -102,8 +102,8 @@ class ConvNet_IIGS3Lvl7:
 			# concatenate with extractor's outputs to form regressor's input
 			for game_node in range(self.NUM_NODES):
 				related_public_state = self._node_to_public_state[game_node]
-				self.latest_shared_layer[game_node] = tf.concat(
-					[self.latest_shared_layer[game_node], context[related_public_state]],
+				self.latest_layer[game_node] = tf.concat(
+					[self.latest_layer[game_node], context[related_public_state]],
 					axis=-1,
 					name="features_with_context_of_node{}".format(game_node)
 				)
@@ -126,7 +126,7 @@ class ConvNet_IIGS3Lvl7:
 				if specs[0] == 'R':
 					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
 					for game_node in range(self.NUM_NODES):
-						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
+						self.latest_layer[game_node] = shared_layer(self.latest_layer[game_node])
 				else:
 					raise ValueError("Invalid regressor specification '{}'".format(specs))
 
@@ -140,8 +140,7 @@ class ConvNet_IIGS3Lvl7:
 					name="input_features"
 				)
 				self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
-				# TODO rename to `latest_layer`
-				self.latest_shared_layer = tf.transpose(    # channels first for GPU computation
+				self.latest_layer = tf.transpose(    # channels first for GPU computation
 					self.input_features,
 					perm=[0, 2, 1],
 					name="input_channels_first_NCL"   # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
@@ -163,7 +162,7 @@ class ConvNet_IIGS3Lvl7:
 			# Add final layers to predict nodal equilibrial expected values.
 			with tf.name_scope("output"):
 				self.predictions = tf.layers.dense(
-					inputs=self.latest_shared_layer,
+					inputs=self.latest_layer,
 					units=self.TARGETS_DIM,
 					activation=None,
 					name="predictions"

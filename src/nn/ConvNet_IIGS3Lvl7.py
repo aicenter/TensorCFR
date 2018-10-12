@@ -47,10 +47,9 @@ class ConvNet_IIGS3Lvl7:
 		"""
 		with tf.name_scope("extractor"):
 			extractor_desc = args.extractor.split(',')
-			extractor_depth = len(extractor_desc)
-			for l in range(extractor_depth):
-				layer_name = "extractor_layer{}_{}".format(l, extractor_desc[l])
-				specs = extractor_desc[l].split('-')
+			for l, layer_desc in enumerate(extractor_desc):
+				layer_name = "extractor_layer{}_{}".format(l, layer_desc)
+				specs = layer_desc.split('-')
 
 				# - C-hidden_layer_size: 1D convolutional with ReLU activation and specified output size (channels). Ex: "C-100"
 				if specs[0] == 'C':
@@ -117,10 +116,9 @@ class ConvNet_IIGS3Lvl7:
 		"""
 		with tf.name_scope("regressor"):
 			regressor_desc = args.regressor.split(',')
-			regressor_depth = len(regressor_desc)
-			for l in range(regressor_depth):
-				layer_name = "regressor_layer{}_{}".format(l, regressor_desc[l])
-				specs = regressor_desc[l].split('-')
+			for l, layer_desc in enumerate(regressor_desc):
+				layer_name = "regressor_layer{}_{}".format(l, layer_desc)
+				specs = layer_desc.split('-')
 
 				# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
 				if specs[0] == 'R':

@@ -9,7 +9,7 @@ from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_lvl7 import get_node_to_public_state
 from src.utils.tf_utils import count_graph_operations
 
-FIXED_RANDOMNESS = True
+FIXED_RANDOMNESS = False
 
 
 class ConvNet_IIGS3Lvl7:
@@ -181,7 +181,7 @@ class ConvNet_IIGS3Lvl7:
 				with tf.name_scope("mean_squared_error"):
 					self.mean_squared_error = tf.reduce_mean(tf.squared_difference(self.targets, self.predictions))
 				with tf.name_scope("l_infinity_error"):
-					self.l_infinity_error = tf.reduce_max(tf.abs(self.targets - self.predictions))
+					self.l_infinity_error = tf.norm(self.targets - self.predictions, ord=np.inf)
 			print(">> Metrics constructed")
 			self.print_operations_count()
 			with tf.name_scope("optimization"):

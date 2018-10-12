@@ -52,11 +52,18 @@ class ConvNet_IIGS3Lvl7:
 				layer_name = "extractor_layer{}_{}".format(l, extractor_desc[l])
 				specs = extractor_desc[l].split('-')
 
-				# - R-hidden_layer_size: Add a shared dense layer with ReLU activation and specified size. Ex: "R-100"
-				if specs[0] == 'R':
-					shared_layer = tf.layers.Dense(units=int(specs[1]), activation=tf.nn.relu, name=layer_name)
-					for game_node in range(self.NUM_NODES):
-						self.latest_shared_layer[game_node] = shared_layer(self.latest_shared_layer[game_node])
+				# - C-hidden_layer_size: 1D convolutional with ReLU activation and specified output size (channels). Ex: "C-100"
+				if specs[0] == 'C':
+					self.latest_shared_layer = tf.layers.conv1d(
+						inputs=self.latest_shared_layer,
+						filters=int(specs[1]),
+						kernel_size=1,
+						activation=tf.nn.relu,
+						data_format="channels_first",
+						name=layer_name
+					)
+					print(">>> {} constructed".format(layer_name))
+
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 

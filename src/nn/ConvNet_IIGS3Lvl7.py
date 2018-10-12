@@ -179,8 +179,10 @@ class ConvNet_IIGS3Lvl7:
 			self.print_operations_count()
 
 			# Training
+			loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
+			print(">> loss constructed")
+			self.print_operations_count()
 			with tf.name_scope("metrics"):
-				loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
 				with tf.name_scope("mean_squared_error"):
 					self.mean_squared_error = tf.reduce_mean(tf.square(self.targets - self.predictions))
 				with tf.name_scope("l_infinity_error"):

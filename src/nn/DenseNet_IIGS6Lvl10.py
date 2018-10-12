@@ -14,7 +14,15 @@ FIXED_RANDOMNESS = False
 
 class DenseNet_IIGS6Lvl10:
 	NUM_NODES = 14400
-	FEATURES_DIM = 6 * (3 + 3 + 3) + 1  # 9x 1-of-6-hot encodings (3 per hierarchy) + reach probability
+	NUM_ROUNDS = 3
+
+	PUBLIC_FEATURES_DIM = 6   # TODO fix here to 3: modify `get_one_hot_flattened()`
+	INFOSET_FEATURES_DIM = 6
+	NODAL_FEATURES_DIM = 6
+	FEATURES_DIM_PER_ROUND = PUBLIC_FEATURES_DIM + INFOSET_FEATURES_DIM + NODAL_FEATURES_DIM
+	REACH_PROB_DIM = 1
+
+	FEATURES_DIM = NUM_ROUNDS * FEATURES_DIM_PER_ROUND + REACH_PROB_DIM
 	TARGETS_DIM = 1
 	NUM_PUBLIC_STATES = 3 ** 3  # i.e. 3^#rounds
 

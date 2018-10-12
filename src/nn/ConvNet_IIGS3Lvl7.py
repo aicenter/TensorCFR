@@ -140,15 +140,14 @@ class ConvNet_IIGS3Lvl7:
 					name="input_features"
 				)
 				self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
+				# TODO rename to `latest_layer`
+				self.latest_shared_layer = tf.transpose(    # channels first for GPU computation
+					self.input_features,
+					perm=[0, 2, 1],
+					name="input_channels_first_NCL"   # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
+				)
 			print(">> Input placeholders constructed")
 			self.print_operations_count()
-
-			# TODO rename to `latest_layer`
-			self.latest_shared_layer = tf.transpose(    # channels first for GPU computation
-				self.input_features,
-				perm=[0, 2, 1],
-				name="input_channels_first_NCL"   # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
-			)
 
 			# Computation
 			self.construct_feature_extractor(args)

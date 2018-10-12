@@ -189,7 +189,6 @@ class ConvNet_IIGS3Lvl7:
 				print(">> global_step constructed")
 				self.print_operations_count()
 				optimizer = tf.train.AdamOptimizer()
-				# optimizer = tf.train.GradientDescentOptimizer(0.01)   # TODO try this
 				print(">> optimizer constructed")
 				self.print_operations_count()
 				self.loss_minimizer = optimizer.minimize(loss, global_step=global_step, name="loss_minimizer")

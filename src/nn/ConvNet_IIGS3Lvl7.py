@@ -126,7 +126,11 @@ class ConvNet_IIGS3Lvl7:
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
-			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES, self.INPUT_FEATURES_DIM], name="input_features")
+			self.input_features = tf.placeholder(
+				FLOAT_DTYPE,
+				[None, self.NUM_NODES, self.INPUT_FEATURES_DIM],
+				name="input_features"
+			)
 			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
 			print(">> Placeholder constructed")
 			self.print_operations_count()
@@ -135,7 +139,7 @@ class ConvNet_IIGS3Lvl7:
 			with tf.name_scope("input"):
 				self.latest_shared_layer = [
 					tf.identity(
-						self.features[:, game_node, :],
+						self.input_features[:, game_node, :],
 						name="features_of_node{}".format(game_node)
 					)
 					for game_node in range(self.NUM_NODES)
@@ -222,17 +226,18 @@ class ConvNet_IIGS3Lvl7:
 			self.print_operations_count()
 
 	def train(self, features, targets):
-		self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
+		self.session.run([self.loss_minimizer, self.summaries["train"]],
+		                 {self.input_features: features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
 		mean_squared_error, l_infinity_error, _ = self.session.run(
 			[self.mean_squared_error, self.l_infinity_error, self.summaries[dataset]],
-			{self.features: features, self.targets: targets}
+			{self.input_features: features, self.targets: targets}
 		)
 		return mean_squared_error, l_infinity_error
 
 	def predict(self, features):
-		return self.session.run(self.predictions, {self.features: features})
+		return self.session.run(self.predictions, {self.input_features: features})
 
 	def print_operations_count(self):
 		print(">>> {} operations".format(count_graph_operations(self.graph)))

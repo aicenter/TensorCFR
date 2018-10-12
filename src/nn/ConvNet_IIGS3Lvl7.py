@@ -150,12 +150,12 @@ class ConvNet_IIGS3Lvl7:
 			self.construct_feature_extractor(args)
 			print(">> Extractor constructed")
 			self.print_operations_count()
-			self.construct_context_pooling()
-			print(">> Context pooling constructed")
-			self.print_operations_count()
-			self.construct_value_regressor(args)
-			print(">> Regressor constructed")
-			self.print_operations_count()
+			# self.construct_context_pooling()
+			# print(">> Context pooling constructed")
+			# self.print_operations_count()
+			# self.construct_value_regressor(args)
+			# print(">> Regressor constructed")
+			# self.print_operations_count()
 
 			# Add final layers to predict nodal equilibrial expected values.
 			with tf.name_scope("output"):

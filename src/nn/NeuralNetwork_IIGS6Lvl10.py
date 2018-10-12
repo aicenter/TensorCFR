@@ -226,7 +226,7 @@ class NeuralNetwork_IIGS6Lvl10:
 		return self.session.run(self.predictions, {self.features: features})
 
 	def print_operations_count(self):
-		print(">>> {} operations".format(count_graph_operations(self.graph)))
+		print(">>> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix

@@ -148,6 +148,20 @@ class ConvNet_IIGS3Lvl7:
 				else:
 					raise ValueError("Invalid regressor specification '{}'".format(specs))
 
+	def construct_predictions(self):
+		with tf.variable_scope("predictions"):
+			self.predictions = tf.layers.conv1d(
+				inputs=self.latest_layer,
+				filters=self.TARGETS_DIM,
+				kernel_size=1,
+				activation=None,
+				data_format="channels_first",
+				name="conv1d_regression"
+			)
+			self.predictions = tf.squeeze(self.predictions, name="predictions")
+		print(">>> predictions constructed")
+		self.print_operations_count()
+
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
@@ -165,18 +179,7 @@ class ConvNet_IIGS3Lvl7:
 			self.print_operations_count()
 
 			# Add final layers to predict nodal equilibrial expected values.
-			with tf.variable_scope("predictions"):
-				self.predictions = tf.layers.conv1d(
-					inputs=self.latest_layer,
-					filters=self.TARGETS_DIM,
-					kernel_size=1,
-					activation=None,
-					data_format="channels_first",
-					name="conv1d_regression"
-				)
-				self.predictions = tf.squeeze(self.predictions, name="predictions")
-			print(">>> predictions constructed")
-			self.print_operations_count()
+			self.construct_predictions()
 
 			# Training
 			loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")

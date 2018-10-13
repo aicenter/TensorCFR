@@ -186,6 +186,28 @@ class ConvNet_IIGS3Lvl7:
 		print(">> Optimization constructed")
 		self.print_operations_count()
 
+	def construct_summaries(self, args):
+		with tf.variable_scope("summaries"):
+			self.summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
+		self.summaries = {}
+		with self.summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):
+			self.summaries["train"] = [
+				tf.contrib.summary.scalar("train/loss", self.loss),
+				tf.contrib.summary.scalar("train/mean_squared_error", self.mean_squared_error),
+				tf.contrib.summary.scalar("train/l_infinity_error", self.l_infinity_error)
+			]
+		print(">> Summaries[train] constructed")
+		self.print_operations_count()
+		with self.summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
+			for dataset in ["dev", "test"]:
+				self.summaries[dataset] = [
+					tf.contrib.summary.scalar(dataset + "/loss", self.loss),
+					tf.contrib.summary.scalar(dataset + "/mean_squared_error", self.mean_squared_error),
+					tf.contrib.summary.scalar(dataset + "/l_infinity_error", self.l_infinity_error)
+				]
+		print(">> Summaries[dev/test] constructed")
+		self.print_operations_count()
+
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
@@ -209,32 +231,13 @@ class ConvNet_IIGS3Lvl7:
 			self.construct_training()
 
 			# Summaries
-			with tf.variable_scope("summaries"):
-				summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
-			self.summaries = {}
-			with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):
-				self.summaries["train"] = [
-					tf.contrib.summary.scalar("train/loss", self.loss),
-					tf.contrib.summary.scalar("train/mean_squared_error", self.mean_squared_error),
-					tf.contrib.summary.scalar("train/l_infinity_error", self.l_infinity_error)
-				]
-			print(">> Summaries[train] constructed")
-			self.print_operations_count()
-			with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
-				for dataset in ["dev", "test"]:
-					self.summaries[dataset] = [
-						tf.contrib.summary.scalar(dataset + "/loss", self.loss),
-						tf.contrib.summary.scalar(dataset + "/mean_squared_error", self.mean_squared_error),
-						tf.contrib.summary.scalar(dataset + "/l_infinity_error", self.l_infinity_error)
-					]
-			print(">> Summaries[dev/test] constructed")
-			self.print_operations_count()
+			self.construct_summaries(args)
 
 			# Initialize variables
 			self.session.run(tf.global_variables_initializer())
 			print(">> Session constructed")
 			self.print_operations_count()
-			with summary_writer.as_default():
+			with self.summary_writer.as_default():
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
 			print(">> Summary writer constructed")
 			self.print_operations_count()

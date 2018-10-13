@@ -6,7 +6,8 @@ import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
-from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_lvl7 import get_node_to_public_state
+from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_lvl7 import get_node_to_public_state, \
+	get_sizes_of_public_states
 from src.utils.tf_utils import count_graph_operations
 
 FIXED_RANDOMNESS = False
@@ -37,6 +38,8 @@ class ConvNet_IIGS3Lvl7:
 			self.session = tf.Session(graph=self.graph)
 		self._node_to_public_state = get_node_to_public_state()
 		print("node_to_public_state:\n{}".format(self._node_to_public_state))
+		self._sizes_of_public_states = get_sizes_of_public_states()
+		print("sizes_of_public_states:\n{}".format(self._sizes_of_public_states))
 
 	def construct_input(self):
 		with tf.variable_scope("input"):

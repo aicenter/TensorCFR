@@ -99,32 +99,24 @@ class ConvNet_IIGS3Lvl7:
 			)
 
 			# pooling operations
-			public_state_means = [
-				tf.reduce_mean(group, axis=-1, keepdims=True, name="mean_of_public_state{}".format(i))
-				for i, group in enumerate(groups_by_public_states)
-			]
-			public_state_maxes = [
-				tf.reduce_max(group, axis=-1, keepdims=True, name="max_of_public_state{}".format(i))
-				for i, group in enumerate(groups_by_public_states)
-			]
-			public_state_contexts = [
-				tf.concat(
-					[public_state_means[i], public_state_maxes[i]],
-					axis=1,
-					name="context_of_public_state{}".format(i)
-				)
-				for i in range(len(groups_by_public_states))
-			]
-			tiled_contexts = [
-				tf.tile(
-					context,
-					multiples=[1, 1, self._sizes_of_public_states[i]],
-					name="tiled_context_of_public_state{}".format(i)
-				)
-				for i, context in enumerate(public_state_contexts)
-			]
-
-		# 		with tf.variable_scope("public_state{}".format(i)): TODO
+			public_state_means = [None] * self.NUM_PUBLIC_STATES
+			public_state_maxes = [None] * self.NUM_PUBLIC_STATES
+			public_state_contexts = [None] * self.NUM_PUBLIC_STATES
+			tiled_contexts = [None] * self.NUM_PUBLIC_STATES
+			for i, group in enumerate(groups_by_public_states):
+				with tf.variable_scope("public_state{}".format(i)):
+					public_state_means[i] = tf.reduce_mean(group, axis=-1, keepdims=True, name="mean{}".format(i))
+					public_state_maxes[i] = tf.reduce_max(group, axis=-1, keepdims=True, name="max{}".format(i))
+					public_state_contexts[i] = tf.concat(
+						[public_state_means[i], public_state_maxes[i]],
+						axis=1,
+						name="context{}".format(i)
+					)
+					tiled_contexts[i] = tf.tile(
+						public_state_contexts[i],
+						multiples=[1, 1, self._sizes_of_public_states[i]],
+						name="tiled_context{}".format(i)
+					)
 
 		# concatenate with extractor's outputs to form regressor's input
 		with tf.variable_scope("concat_context"):

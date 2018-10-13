@@ -120,9 +120,6 @@ class ConvNet_IIGS3Lvl7:
 				)
 				for i in range(len(groups_by_public_states))
 			]
-			raise NotImplementedError
-
-			# TODO concat with representations
 
 		# 		with tf.variable_scope("public_state{}".format(i)): TODO
 		# 			context[i] = tf.concat(
@@ -131,15 +128,28 @@ class ConvNet_IIGS3Lvl7:
 		# 				name="context{}".format(i)
 		# 			)
 		#
-		# with tf.variable_scope("concat_context"):
-		# 	# concatenate with extractor's outputs to form regressor's input
-		# 	for game_node in range(self.NUM_NODES):
-		# 		related_public_state = self._node_to_public_state[game_node]
-		# 		self.latest_layer[game_node] = tf.concat(
-		# 			[self.latest_layer[game_node], context[related_public_state]],
-		# 			axis=-1,
-		# 			name="features_with_context_of_node{}".format(game_node)
-		# 		)
+
+		# TODO concat with representations
+		with tf.variable_scope("concat_context"):
+			# concatenate with extractor's outputs to form regressor's input
+			tiled_contexts = [
+				tf.tile(
+					context,
+					multiples=[1, 1, self._sizes_of_public_states[i]],
+					name="tiled_context_of_public_state{}".format(i)
+				)
+				for i, context in enumerate(public_state_contexts)
+			]
+
+			raise NotImplementedError
+
+			# for game_node in range(self.NUM_NODES):
+			# 	related_public_state = self._node_to_public_state[game_node]
+			# 	self.latest_layer[game_node] = tf.concat(
+			# 		[self.latest_layer[game_node], context[related_public_state]],
+			# 		axis=-1,
+			# 		name="features_with_context_of_node{}".format(game_node)
+			# 	)
 
 	def construct_value_regressor(self, args):
 		"""

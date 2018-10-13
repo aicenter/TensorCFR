@@ -111,21 +111,25 @@ class ConvNet_IIGS3Lvl7:
 				)
 				for i, group in enumerate(groups_by_public_states)
 			]
+			public_state_maxes = [
+				tf.reduce_max(
+					group,
+					axis=-1,
+					name="max_of_public_state{}".format(i)
+				)
+				for i, group in enumerate(groups_by_public_states)
+			]
 			raise NotImplementedError
 
-			# TODO maxes
 			# TODO concat contexts
 			# TODO concat with representations
 
 		# 	# pooling operations
 		# 	public_states_tensors = [None] * self.NUM_PUBLIC_STATES
-		# 	public_state_maxes = [None] * self.NUM_PUBLIC_STATES
 		# 	context = [None] * self.NUM_PUBLIC_STATES
 		# 	for i, public_state_list in enumerate(self.public_states_lists):
 		# 		public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="nodes_of_public_state{}".format(i))
 		# 		with tf.variable_scope("public_state{}".format(i)):
-		# 			public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1,
-		# 			                                      name="public_state_maxes{}".format(i))
 		# 			context[i] = tf.concat(
 		# 				[public_state_means[i], public_state_maxes[i]],
 		# 				axis=-1,

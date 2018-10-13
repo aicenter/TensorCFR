@@ -134,17 +134,14 @@ class ConvNet_IIGS3Lvl7:
 				)
 				for i, context in enumerate(public_state_contexts)
 			]
-			concatenated_with_contexts = [
-				tf.concat(
-					[representation, context],
-					axis=1,
-					name="features_context{}".format(i)
-				)
-				for i, (representation, context) in enumerate(zip(groups_by_public_states, tiled_contexts))
-			]
-			self.latest_layer = tf.concat(
-				values=concatenated_with_contexts,
+			full_context = tf.concat(
+				tiled_contexts,
 				axis=-1,
+				name="full_context"
+			)
+			self.latest_layer = tf.concat(
+				[self.latest_layer, full_context],
+				axis=1,
 				name="features_with_contexts"
 			)
 

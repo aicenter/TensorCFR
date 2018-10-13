@@ -45,7 +45,7 @@ class ConvNet_IIGS3Lvl7:
 		:param args: Arguments from commandline
 		:return:
 		"""
-		with tf.name_scope("extractor"):
+		with tf.variable_scope("extractor"):
 			extractor_desc = args.extractor.split(',')
 			for l, layer_desc in enumerate(extractor_desc):
 				specs = layer_desc.split('-')
@@ -70,7 +70,7 @@ class ConvNet_IIGS3Lvl7:
 
 		:return:
 		"""
-		with tf.name_scope("context_pooling"):
+		with tf.variable_scope("context_pooling"):
 			# scatter nodes by public states
 			self.public_states_lists = [[] for _ in range(self.NUM_PUBLIC_STATES)]
 			for game_node in range(self.NUM_NODES):
@@ -84,7 +84,7 @@ class ConvNet_IIGS3Lvl7:
 			context = [None] * self.NUM_PUBLIC_STATES
 			for i, public_state_list in enumerate(self.public_states_lists):
 				public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="nodes_of_public_state{}".format(i))
-				with tf.name_scope("public_state{}".format(i)):
+				with tf.variable_scope("public_state{}".format(i)):
 					public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1,
 					                                       name="public_state_mean{}".format(i))
 					public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1,
@@ -95,7 +95,7 @@ class ConvNet_IIGS3Lvl7:
 						name="context{}".format(i)
 					)
 
-		with tf.name_scope("concat_context"):
+		with tf.variable_scope("concat_context"):
 			# concatenate with extractor's outputs to form regressor's input
 			for game_node in range(self.NUM_NODES):
 				related_public_state = self._node_to_public_state[game_node]
@@ -112,7 +112,7 @@ class ConvNet_IIGS3Lvl7:
 		:param args: Arguments from commandline
 		:return:
 		"""
-		with tf.name_scope("regressor"):
+		with tf.variable_scope("regressor"):
 			regressor_desc = args.regressor.split(',')
 			for l, layer_desc in enumerate(regressor_desc):
 				specs = layer_desc.split('-')
@@ -134,7 +134,7 @@ class ConvNet_IIGS3Lvl7:
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
-			with tf.name_scope("input"):
+			with tf.variable_scope("input"):
 				self.input_features = tf.placeholder(
 					FLOAT_DTYPE,
 					[None, self.NUM_NODES, self.INPUT_FEATURES_DIM],
@@ -154,7 +154,7 @@ class ConvNet_IIGS3Lvl7:
 			self.construct_feature_extractor(args)
 			print(">> Extractor constructed")
 			self.print_operations_count()
-			# self.construct_context_pooling()
+			# self.construct_context_pooling()    # TODO make switchable via argparse option
 			# print(">> Context pooling constructed")
 			# self.print_operations_count()
 			self.construct_value_regressor(args)
@@ -162,7 +162,7 @@ class ConvNet_IIGS3Lvl7:
 			self.print_operations_count()
 
 			# Add final layers to predict nodal equilibrial expected values.
-			with tf.name_scope("predictions"):
+			with tf.variable_scope("predictions"):
 				self.predictions = tf.layers.conv1d(
 					inputs=self.latest_layer,
 					filters=self.TARGETS_DIM,
@@ -179,14 +179,14 @@ class ConvNet_IIGS3Lvl7:
 			loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
 			print(">> loss constructed")
 			self.print_operations_count()
-			with tf.name_scope("metrics"):
-				with tf.name_scope("mean_squared_error"):
+			with tf.variable_scope("metrics"):
+				with tf.variable_scope("mean_squared_error"):
 					self.mean_squared_error = tf.reduce_mean(tf.squared_difference(self.targets, self.predictions))
-				with tf.name_scope("l_infinity_error"):
+				with tf.variable_scope("l_infinity_error"):
 					self.l_infinity_error = tf.norm(self.targets - self.predictions, ord=np.inf)
 			print(">> Metrics constructed")
 			self.print_operations_count()
-			with tf.name_scope("optimization"):
+			with tf.variable_scope("optimization"):
 				global_step = tf.train.create_global_step()
 				print(">> global_step constructed")
 				self.print_operations_count()
@@ -200,7 +200,7 @@ class ConvNet_IIGS3Lvl7:
 			self.print_operations_count()
 
 			# Summaries
-			with tf.name_scope("summaries"):
+			with tf.variable_scope("summaries"):
 				summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
 			self.summaries = {}
 			with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):

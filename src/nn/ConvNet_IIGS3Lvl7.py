@@ -90,10 +90,21 @@ class ConvNet_IIGS3Lvl7:
 
 		:return:
 		"""
-		pass
-		# with tf.variable_scope("context_pooling"):
-		# 	# scatter nodes by public states
-		# 	self.public_states_lists = [[] for _ in range(self.NUM_PUBLIC_STATES)]
+		with tf.variable_scope("context_pooling"):
+			self.latest_layer = tf.identity(
+				self.latest_layer,
+				name="context_pooling"
+			)
+
+			groups_by_public_states = tf.split(
+				value=self.latest_layer,
+				num_or_size_splits=self._sizes_of_public_states,
+				axis=-1,     # NCL
+				name="split_by_public_states"
+			)
+
+			# scatter nodes by public states
+			# self.public_states_lists = [[] for _ in range(self.NUM_PUBLIC_STATES)]
 		# 	for game_node in range(self.NUM_NODES):
 		# 		related_public_state = self._node_to_public_state[game_node]
 		# 		self.public_states_lists[related_public_state].append(self.latest_layer[game_node])

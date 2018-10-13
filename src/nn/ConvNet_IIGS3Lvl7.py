@@ -162,6 +162,30 @@ class ConvNet_IIGS3Lvl7:
 		print(">>> predictions constructed")
 		self.print_operations_count()
 
+	def construct_training(self):
+		self.loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
+		print(">> loss constructed")
+		self.print_operations_count()
+		with tf.variable_scope("metrics"):
+			with tf.variable_scope("mean_squared_error"):
+				self.mean_squared_error = tf.reduce_mean(tf.squared_difference(self.targets, self.predictions))
+			with tf.variable_scope("l_infinity_error"):
+				self.l_infinity_error = tf.norm(self.targets - self.predictions, ord=np.inf)
+		print(">> Metrics constructed")
+		self.print_operations_count()
+		with tf.variable_scope("optimization"):
+			global_step = tf.train.create_global_step()
+			print(">> global_step constructed")
+			self.print_operations_count()
+			optimizer = tf.train.AdamOptimizer()
+			print(">> optimizer constructed")
+			self.print_operations_count()
+			self.loss_minimizer = optimizer.minimize(self.loss, global_step=global_step, name="loss_minimizer")
+			print(">> loss_minimizer constructed")
+			self.print_operations_count()
+		print(">> Optimization constructed")
+		self.print_operations_count()
+
 	def construct(self, args):
 		with self.session.graph.as_default():
 			# Inputs
@@ -182,28 +206,7 @@ class ConvNet_IIGS3Lvl7:
 			self.construct_predictions()
 
 			# Training
-			loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
-			print(">> loss constructed")
-			self.print_operations_count()
-			with tf.variable_scope("metrics"):
-				with tf.variable_scope("mean_squared_error"):
-					self.mean_squared_error = tf.reduce_mean(tf.squared_difference(self.targets, self.predictions))
-				with tf.variable_scope("l_infinity_error"):
-					self.l_infinity_error = tf.norm(self.targets - self.predictions, ord=np.inf)
-			print(">> Metrics constructed")
-			self.print_operations_count()
-			with tf.variable_scope("optimization"):
-				global_step = tf.train.create_global_step()
-				print(">> global_step constructed")
-				self.print_operations_count()
-				optimizer = tf.train.AdamOptimizer()
-				print(">> optimizer constructed")
-				self.print_operations_count()
-				self.loss_minimizer = optimizer.minimize(loss, global_step=global_step, name="loss_minimizer")
-				print(">> loss_minimizer constructed")
-				self.print_operations_count()
-			print(">> Optimization constructed")
-			self.print_operations_count()
+			self.construct_training()
 
 			# Summaries
 			with tf.variable_scope("summaries"):
@@ -211,7 +214,7 @@ class ConvNet_IIGS3Lvl7:
 			self.summaries = {}
 			with summary_writer.as_default(), tf.contrib.summary.record_summaries_every_n_global_steps(100):
 				self.summaries["train"] = [
-					tf.contrib.summary.scalar("train/loss", loss),
+					tf.contrib.summary.scalar("train/loss", self.loss),
 					tf.contrib.summary.scalar("train/mean_squared_error", self.mean_squared_error),
 					tf.contrib.summary.scalar("train/l_infinity_error", self.l_infinity_error)
 				]
@@ -220,7 +223,7 @@ class ConvNet_IIGS3Lvl7:
 			with summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
 				for dataset in ["dev", "test"]:
 					self.summaries[dataset] = [
-						tf.contrib.summary.scalar(dataset + "/loss", loss),
+						tf.contrib.summary.scalar(dataset + "/loss", self.loss),
 						tf.contrib.summary.scalar(dataset + "/mean_squared_error", self.mean_squared_error),
 						tf.contrib.summary.scalar(dataset + "/l_infinity_error", self.l_infinity_error)
 					]

@@ -115,11 +115,6 @@ class ConvNet_IIGS3Lvl7:
 				)
 				for i in range(len(groups_by_public_states))
 			]
-
-		# 		with tf.variable_scope("public_state{}".format(i)): TODO
-
-		with tf.variable_scope("concat_context"):
-			# concatenate with extractor's outputs to form regressor's input
 			tiled_contexts = [
 				tf.tile(
 					context,
@@ -128,6 +123,11 @@ class ConvNet_IIGS3Lvl7:
 				)
 				for i, context in enumerate(public_state_contexts)
 			]
+
+		# 		with tf.variable_scope("public_state{}".format(i)): TODO
+
+		# concatenate with extractor's outputs to form regressor's input
+		with tf.variable_scope("concat_context"):
 			full_context = tf.concat(
 				tiled_contexts,
 				axis=-1,

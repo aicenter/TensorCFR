@@ -105,17 +105,17 @@ class ConvNet_IIGS3Lvl7:
 
 			# pooling operations
 			public_state_means = [
-				tf.reduce_mean(group, axis=-1, name="mean_of_public_state{}".format(i))
+				tf.reduce_mean(group, axis=-1, keepdims=True, name="mean_of_public_state{}".format(i))
 				for i, group in enumerate(groups_by_public_states)
 			]
 			public_state_maxes = [
-				tf.reduce_max(group, axis=-1, name="max_of_public_state{}".format(i))
+				tf.reduce_max(group, axis=-1, keepdims=True, name="max_of_public_state{}".format(i))
 				for i, group in enumerate(groups_by_public_states)
 			]
 			public_state_contexts = [
 				tf.concat(
 					[public_state_means[i], public_state_maxes[i]],
-					axis=-1,
+					axis=1,
 					name="context_of_public_state{}".format(i)
 				)
 				for i in range(len(groups_by_public_states))

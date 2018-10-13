@@ -265,7 +265,11 @@ class ConvNet_IIGS3Lvl7:
 		print("--> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
 
 
-if __name__ == "__main__":
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
+ACTIVATE_FILE = False
+
+
+if __name__ == '__main__' and ACTIVATE_FILE:
 	import argparse
 	import datetime
 	import os

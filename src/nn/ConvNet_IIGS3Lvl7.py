@@ -129,7 +129,6 @@ class ConvNet_IIGS3Lvl7:
 		# 			)
 		#
 
-		# TODO concat with representations
 		with tf.variable_scope("concat_context"):
 			# concatenate with extractor's outputs to form regressor's input
 			tiled_contexts = [
@@ -140,16 +139,16 @@ class ConvNet_IIGS3Lvl7:
 				)
 				for i, context in enumerate(public_state_contexts)
 			]
+			concatenated_with_contexts = [
+				tf.concat(
+					[representation, context],
+					axis=1,
+					name="features_with_context_of_node{}".format(i)
+				)
+				for i, (representation, context) in enumerate(zip(groups_by_public_states, tiled_contexts))
+			]
 
 			raise NotImplementedError
-
-			# for game_node in range(self.NUM_NODES):
-			# 	related_public_state = self._node_to_public_state[game_node]
-			# 	self.latest_layer[game_node] = tf.concat(
-			# 		[self.latest_layer[game_node], context[related_public_state]],
-			# 		axis=-1,
-			# 		name="features_with_context_of_node{}".format(game_node)
-			# 	)
 
 	def construct_value_regressor(self, args):
 		"""

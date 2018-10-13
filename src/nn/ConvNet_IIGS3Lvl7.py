@@ -91,12 +91,6 @@ class ConvNet_IIGS3Lvl7:
 		:return:
 		"""
 		with tf.variable_scope("context_pooling"):
-			# TODO remove
-			self.latest_layer = tf.identity(
-				self.latest_layer,
-				name="context_pooling"
-			)
-
 			groups_by_public_states = tf.split(
 				value=self.latest_layer,
 				num_or_size_splits=self._sizes_of_public_states,

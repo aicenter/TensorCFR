@@ -50,9 +50,9 @@ class ConvNet_IIGS3Lvl7:
 				perm=[0, 2, 1],
 				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
 			)
-		print(">> Input constructed")
+		print("Input constructed")
 		self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
-		print(">> Targets constructed")
+		print("Targets constructed")
 		self.print_operations_count()
 
 	def construct_feature_extractor(self, args):
@@ -77,7 +77,7 @@ class ConvNet_IIGS3Lvl7:
 						data_format="channels_first",
 						name=layer_name
 					)
-					print(">>> {} constructed".format(layer_name))
+					print("{} constructed".format(layer_name))
 				else:
 					raise ValueError("Invalid extractor specification '{}'".format(specs))
 
@@ -145,7 +145,7 @@ class ConvNet_IIGS3Lvl7:
 						data_format="channels_first",
 						name=layer_name
 					)
-					print(">>> {} constructed".format(layer_name))
+					print("{} constructed".format(layer_name))
 				else:
 					raise ValueError("Invalid regressor specification '{}'".format(specs))
 
@@ -160,31 +160,31 @@ class ConvNet_IIGS3Lvl7:
 				name="conv1d_regression"
 			)
 			self.predictions = tf.squeeze(self.predictions, name="predictions")
-		print(">>> predictions constructed")
+		print("predictions constructed")
 		self.print_operations_count()
 
 	def construct_training(self):
 		with tf.variable_scope("metrics"):
 			self.loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
-			print(">> loss constructed")
+			print("loss constructed")
 			self.print_operations_count()
 			with tf.variable_scope("mean_squared_error"):
 				self.mean_squared_error = tf.reduce_mean(tf.squared_difference(self.targets, self.predictions))
 			with tf.variable_scope("l_infinity_error"):
 				self.l_infinity_error = tf.norm(self.targets - self.predictions, ord=np.inf)
-		print(">> Metrics constructed")
+		print("Metrics constructed")
 		self.print_operations_count()
 		with tf.variable_scope("optimization"):
 			global_step = tf.train.create_global_step()
-			print(">> global_step constructed")
+			print("global_step constructed")
 			self.print_operations_count()
 			optimizer = tf.train.AdamOptimizer()
-			print(">> optimizer constructed")
+			print("optimizer constructed")
 			self.print_operations_count()
 			self.loss_minimizer = optimizer.minimize(self.loss, global_step=global_step, name="loss_minimizer")
-			print(">> loss_minimizer constructed")
+			print("loss_minimizer constructed")
 			self.print_operations_count()
-		print(">> Optimization constructed")
+		print("Optimization constructed")
 		self.print_operations_count()
 
 	def construct_summaries(self, args):
@@ -197,7 +197,7 @@ class ConvNet_IIGS3Lvl7:
 				tf.contrib.summary.scalar("train/mean_squared_error", self.mean_squared_error),
 				tf.contrib.summary.scalar("train/l_infinity_error", self.l_infinity_error)
 			]
-		print(">> Summaries[train] constructed")
+		print("Summaries[train] constructed")
 		self.print_operations_count()
 		with self.summary_writer.as_default(), tf.contrib.summary.always_record_summaries():
 			for dataset in ["dev", "test"]:
@@ -206,7 +206,7 @@ class ConvNet_IIGS3Lvl7:
 					tf.contrib.summary.scalar(dataset + "/mean_squared_error", self.mean_squared_error),
 					tf.contrib.summary.scalar(dataset + "/l_infinity_error", self.l_infinity_error)
 				]
-		print(">> Summaries[dev/test] constructed")
+		print("Summaries[dev/test] constructed")
 		self.print_operations_count()
 
 	def construct(self, args):
@@ -216,13 +216,13 @@ class ConvNet_IIGS3Lvl7:
 
 			# Computation
 			self.construct_feature_extractor(args)
-			print(">> Extractor constructed")
+			print("Extractor constructed")
 			self.print_operations_count()
 			self.construct_context_pooling()
-			print(">> Context pooling constructed")
+			print("Context pooling constructed")
 			self.print_operations_count()
 			self.construct_value_regressor(args)
-			print(">> Regressor constructed")
+			print("Regressor constructed")
 			self.print_operations_count()
 
 			# Add final layers to predict nodal equilibrial expected values.
@@ -254,7 +254,7 @@ class ConvNet_IIGS3Lvl7:
 		return self.session.run(self.predictions, {self.input_features: features})
 
 	def print_operations_count(self):
-		print(">>> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
+		print("--> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
 
 
 if __name__ == "__main__":

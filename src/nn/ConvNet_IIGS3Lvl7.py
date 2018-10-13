@@ -235,6 +235,7 @@ class ConvNet_IIGS3Lvl7:
 			self.construct_summaries(args)
 
 			# Initialize variables
+			self.session.run(tf.global_variables_initializer())
 			with self.summary_writer.as_default():
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
 

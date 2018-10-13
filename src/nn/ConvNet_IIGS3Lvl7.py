@@ -119,7 +119,7 @@ class ConvNet_IIGS3Lvl7:
 					)
 
 		# concatenate with extractor's outputs to form regressor's input
-		with tf.variable_scope("concat_context"):
+		with tf.variable_scope("concatenate"):
 			full_context = tf.concat(
 				tiled_contexts,
 				axis=-1,

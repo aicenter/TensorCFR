@@ -254,7 +254,7 @@ class ConvNet_IIGS3Lvl7:
 		return self.session.run(self.predictions, {self.input_features: features})
 
 	def print_operations_count(self):
-		print(">>> {} operations".format(count_graph_operations(self.graph)))
+		print(">>> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
 
 
 if __name__ == "__main__":

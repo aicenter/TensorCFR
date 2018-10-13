@@ -91,6 +91,7 @@ class ConvNet_IIGS3Lvl7:
 		:return:
 		"""
 		with tf.variable_scope("context_pooling"):
+			# TODO remove
 			self.latest_layer = tf.identity(
 				self.latest_layer,
 				name="context_pooling"
@@ -122,12 +123,6 @@ class ConvNet_IIGS3Lvl7:
 			]
 
 		# 		with tf.variable_scope("public_state{}".format(i)): TODO
-		# 			context[i] = tf.concat(
-		# 				[public_state_means[i], public_state_maxes[i]],
-		# 				axis=-1,
-		# 				name="context{}".format(i)
-		# 			)
-		#
 
 		with tf.variable_scope("concat_context"):
 			# concatenate with extractor's outputs to form regressor's input
@@ -143,12 +138,15 @@ class ConvNet_IIGS3Lvl7:
 				tf.concat(
 					[representation, context],
 					axis=1,
-					name="features_with_context_of_node{}".format(i)
+					name="features_context{}".format(i)
 				)
 				for i, (representation, context) in enumerate(zip(groups_by_public_states, tiled_contexts))
 			]
-
-			raise NotImplementedError
+			self.latest_layer = tf.concat(
+				values=concatenated_with_contexts,
+				axis=-1,
+				name="features_with_contexts"
+			)
 
 	def construct_value_regressor(self, args):
 		"""

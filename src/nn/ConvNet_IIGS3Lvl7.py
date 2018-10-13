@@ -103,22 +103,27 @@ class ConvNet_IIGS3Lvl7:
 				name="split_by_public_states"
 			)
 
-			# scatter nodes by public states
-			# self.public_states_lists = [[] for _ in range(self.NUM_PUBLIC_STATES)]
-		# 	for game_node in range(self.NUM_NODES):
-		# 		related_public_state = self._node_to_public_state[game_node]
-		# 		self.public_states_lists[related_public_state].append(self.latest_layer[game_node])
-		#
+			public_state_means = [
+				tf.reduce_mean(
+					group,
+					axis=-1,
+					name="mean_of_public_state{}".format(i)
+				)
+				for i, group in enumerate(groups_by_public_states)
+			]
+			raise NotImplementedError
+
+			# TODO maxes
+			# TODO concat contexts
+			# TODO concat with representations
+
 		# 	# pooling operations
 		# 	public_states_tensors = [None] * self.NUM_PUBLIC_STATES
-		# 	public_state_means = [None] * self.NUM_PUBLIC_STATES
 		# 	public_state_maxes = [None] * self.NUM_PUBLIC_STATES
 		# 	context = [None] * self.NUM_PUBLIC_STATES
 		# 	for i, public_state_list in enumerate(self.public_states_lists):
 		# 		public_states_tensors[i] = tf.stack(public_state_list, axis=-1, name="nodes_of_public_state{}".format(i))
 		# 		with tf.variable_scope("public_state{}".format(i)):
-		# 			public_state_means[i] = tf.reduce_mean(public_states_tensors[i], axis=-1,
-		# 			                                       name="public_state_mean{}".format(i))
 		# 			public_state_maxes[i] = tf.reduce_max(public_states_tensors[i], axis=-1,
 		# 			                                      name="public_state_maxes{}".format(i))
 		# 			context[i] = tf.concat(

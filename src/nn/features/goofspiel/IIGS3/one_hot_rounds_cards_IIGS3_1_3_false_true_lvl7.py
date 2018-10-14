@@ -10,7 +10,7 @@ from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, N_
 from src.utils.other_utils import get_one_hot_flattened, get_features_dataframe
 
 
-def get_1hot_round_card_features_np(verbose=True):
+def get_1hot_round_card_features_np(verbose=False):
 	"""
 	:return: A numpy array of 1-hot encoded features of round results and cards.
 	"""
@@ -21,7 +21,7 @@ def get_1hot_round_card_features_np(verbose=True):
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
 
-	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
+	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV, quiet=not verbose)
 	one_hot_columns = FEATURE_COLUMNS[:-1]    # without the column of "reaches"
 	sorted_features = features.sort_values(
 		one_hot_columns,
@@ -55,4 +55,4 @@ def get_1hot_round_card_features_np(verbose=True):
 
 
 if __name__ == '__main__':
-	print("one_hot_features:\n{}".format(get_1hot_round_card_features_np()))
+	print("one_hot_features:\n{}".format(get_1hot_round_card_features_np(verbose=True)))

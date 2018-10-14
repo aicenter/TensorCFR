@@ -26,14 +26,15 @@ def get_1hot_round_card_features_np(verbose=True):
 		FEATURE_COLUMNS[:-1],
 		kind='mergesort'
 	)
+	np_features = sorted_features.values
 
 	if verbose:
 		print("sorted_features:\n{}".format(sorted_features))
+		print("np_features:\n{}".format(np_features))
 
 	raise NotImplementedError
 
 	# TODO
-	raise NotImplementedError
 	one_hot_features = get_one_hot_flattened(
 		features,   # TODO
 		n_classes=N_CARDS,

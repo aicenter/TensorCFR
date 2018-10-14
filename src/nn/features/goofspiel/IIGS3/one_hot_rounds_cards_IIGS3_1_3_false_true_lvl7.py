@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, N_CARDS, SLICE_1HOT_FEATS, \
-	NAMES_OF_FEATURE_CSV
+	NAMES_OF_FEATURE_CSV, FEATURE_COLUMNS
 from src.utils.other_utils import get_one_hot_flattened, get_features_dataframe
 
 
@@ -22,6 +22,12 @@ def get_1hot_round_card_features_np():
 	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
 
 	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
+	sorted_features = features.sort_values(
+		FEATURE_COLUMNS[:-1],
+		kind='mergesort'
+	)
+	print("sorted_features:\n{}".format(sorted_features))
+	raise NotImplementedError
 
 	# TODO
 	raise NotImplementedError

@@ -50,8 +50,9 @@ def get_1hot_round_card_features_np(verbose=True):
 		print("np_cards:\n{}".format(np_cards))
 		print("one_hot_rounds:\n{}".format(one_hot_rounds))
 		print("one_hot_cards:\n{}".format(one_hot_cards))
-		print("one_hot_features:\n{}".format(one_hot_features))
+
+	return one_hot_features
 
 
 if __name__ == '__main__':
-	get_1hot_round_card_features_np()
+	print("one_hot_features:\n{}".format(get_1hot_round_card_features_np()))

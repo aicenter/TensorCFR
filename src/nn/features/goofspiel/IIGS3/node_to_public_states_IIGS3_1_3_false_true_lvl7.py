@@ -45,5 +45,6 @@ def get_sizes_of_public_states(verbose=False):
 if __name__ == '__main__':
 	pd.set_option('display.max_columns', 500)
 	pd.set_option('display.width', 1000)
+	np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 	node_to_public_state_mapping = get_node_to_public_state(verbose=True)
 	print("node_to_public_state_mapping:\n{}\n".format(node_to_public_state_mapping))

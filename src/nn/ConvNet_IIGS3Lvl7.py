@@ -29,7 +29,7 @@ class ConvNet_IIGS3Lvl7:
 	TARGETS_DIM = 1
 	NUM_PUBLIC_STATES = 3 ** NUM_ROUNDS
 
-	def __init__(self, threads, batch_size, seed=SEED_FOR_TESTING):
+	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session
 		self.graph = tf.Graph()
 		if FIXED_RANDOMNESS:
@@ -38,9 +38,6 @@ class ConvNet_IIGS3Lvl7:
 			                                                                  intra_op_parallelism_threads=threads))
 		else:
 			self.session = tf.Session(graph=self.graph)
-
-		self._batch_size = batch_size
-		print("batch_size: {}".format(self._batch_size))
 
 		self._node_to_public_state = get_node_to_public_state()
 		print("node_to_public_state:\n{}".format(self._node_to_public_state))
@@ -53,7 +50,7 @@ class ConvNet_IIGS3Lvl7:
 		with tf.variable_scope("input"):
 			self.input_reaches = tf.placeholder(
 				FLOAT_DTYPE,
-				[self._batch_size, self.NUM_NODES],
+				[None, self.NUM_NODES],
 				name="input_reaches"
 			)
 			self.expanded_reaches = tf.expand_dims(
@@ -70,7 +67,7 @@ class ConvNet_IIGS3Lvl7:
 			print("one_hot_features.shape: {}".format(self._one_hot_features_tf.shape))
 			self.tiled_features = tf.tile(
 				tf.expand_dims(self._one_hot_features_tf, axis=0),
-				multiples=[self._batch_size, 1, 1],
+				multiples=[tf.shape(self.input_reaches)[0], 1, 1],
 				name="tiled_1hot_features"
 			)
 
@@ -85,7 +82,7 @@ class ConvNet_IIGS3Lvl7:
 				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
 			)
 		print("Input constructed")
-		self.targets = tf.placeholder(FLOAT_DTYPE, [self._batch_size, self.NUM_NODES], name="targets")
+		self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
 		print("Targets constructed")
 		self.print_operations_count()
 
@@ -341,7 +338,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
 
 	# Construct the network
-	network = ConvNet_IIGS3Lvl7(threads=args.threads, batch_size=args.batch_size)
+	network = ConvNet_IIGS3Lvl7(threads=args.threads)
 	network.construct(args)
 
 	# Train

@@ -79,13 +79,11 @@ class ConvNet_IIGS3Lvl7:
 				axis=-1,
 				name="full_input"
 			)
-			raise NotImplementedError
-
-			# self.latest_layer = tf.transpose(  # channels first for GPU computation
-			# 	self.input_reaches,
-			# 	perm=[0, 2, 1],
-			# 	name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
-			# )
+			self.latest_layer = tf.transpose(  # channels first for GPU computation
+				self.full_input,
+				perm=[0, 2, 1],
+				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
+			)
 		print("Input constructed")
 		self.targets = tf.placeholder(FLOAT_DTYPE, [self._batch_size, self.NUM_NODES], name="targets")
 		print("Targets constructed")

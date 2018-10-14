@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, N_CARDS, SLICE_1HOT_FEATS, \
-	NAMES_OF_FEATURE_CSV, FEATURE_COLUMNS, N_ROUNDS
+	NAMES_OF_FEATURE_CSV, FEATURE_COLUMNS, N_ROUNDS, N_ROUND_RESULTS
 from src.utils.other_utils import get_one_hot_flattened, get_features_dataframe
 
 
@@ -31,11 +31,18 @@ def get_1hot_round_card_features_np(verbose=True):
 	np_rounds = np_features[:, :N_ROUNDS]
 	np_cards = np_features[:, N_ROUNDS:]
 
+	one_hot_rounds = get_one_hot_flattened(
+		np_rounds,
+		n_classes=N_ROUND_RESULTS,
+		slice_1hot_feats=slice(N_ROUNDS)
+	)
+
 	if verbose:
 		print("sorted_features:\n{}".format(sorted_features))
 		print("np_features:\n{}".format(np_features))
 		print("np_rounds:\n{}".format(np_rounds))
 		print("np_cards:\n{}".format(np_cards))
+		print("one_hot_rounds:\n{}".format(one_hot_rounds))
 
 	raise NotImplementedError
 

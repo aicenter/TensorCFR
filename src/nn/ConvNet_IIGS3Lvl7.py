@@ -59,6 +59,7 @@ class ConvNet_IIGS3Lvl7:
 				axis=-1,
 				name="expanded_reaches"
 			)
+			self.current_batch_size = tf.shape(self.input_reaches)[0]
 
 			self.latest_layer = tf.transpose(  # channels first for GPU computation
 				self.input_reaches,

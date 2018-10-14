@@ -29,11 +29,13 @@ def get_1hot_round_card_features_np(verbose=True):
 	)[one_hot_columns]
 	np_features = sorted_features.values
 	np_rounds = np_features[:, :N_ROUNDS]
+	np_cards = np_features[:, N_ROUNDS:]
 
 	if verbose:
 		print("sorted_features:\n{}".format(sorted_features))
 		print("np_features:\n{}".format(np_features))
 		print("np_rounds:\n{}".format(np_rounds))
+		print("np_cards:\n{}".format(np_cards))
 
 	raise NotImplementedError
 

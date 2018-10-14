@@ -6,26 +6,26 @@ import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
-from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_lvl7 import get_node_to_public_state, \
+from src.nn.features.goofspiel.IIGS6.node_to_public_states_IIGS6_1_6_false_true_lvl10 import get_node_to_public_state, \
 	get_sizes_of_public_states
 from src.utils.tf_utils import count_graph_operations
 
 FIXED_RANDOMNESS = False
 
 
-class ConvNet_IIGS3Lvl7:
-	NUM_NODES = 36
-	NUM_ROUNDS = 2
+class ConvNet_IIGS6Lvl10:
+	NUM_NODES = 14400
+	NUM_ROUNDS = 3
 
-	PUBLIC_FEATURES_DIM = 3
-	INFOSET_FEATURES_DIM = 3
-	NODAL_FEATURES_DIM = 3
+	PUBLIC_FEATURES_DIM = 6   # TODO fix here to 3: modify `get_one_hot_flattened()`
+	INFOSET_FEATURES_DIM = 6
+	NODAL_FEATURES_DIM = 6
 	FEATURES_DIM_PER_ROUND = PUBLIC_FEATURES_DIM + INFOSET_FEATURES_DIM + NODAL_FEATURES_DIM
 	REACH_PROB_DIM = 1
 
 	INPUT_FEATURES_DIM = NUM_ROUNDS * FEATURES_DIM_PER_ROUND + REACH_PROB_DIM
 	TARGETS_DIM = 1
-	NUM_PUBLIC_STATES = 3 ** 2              # i.e. 3^rounds
+	NUM_PUBLIC_STATES = 3 ** NUM_ROUNDS
 
 	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session
@@ -266,7 +266,7 @@ class ConvNet_IIGS3Lvl7:
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
@@ -281,12 +281,12 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=16, type=int, help="Batch size.")
-	parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
+	parser.add_argument("--batch_size", default=8, type=int, help="Batch size.")
+	parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
 	                    help="Description of the feature extactor architecture.")
-	parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
+	parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
 	                    help="Description of the value regressor architecture.")
-	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
+	parser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 
 	args = parser.parse_args()
@@ -303,13 +303,14 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Load the data
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	dataset_directory = "data/IIGS3Lvl7/80-10-10"
-	trainset = DatasetFromNPZ("{}/{}/IIGS3_1_3_false_true_lvl7_train.npz".format(script_directory, dataset_directory))
-	devset = DatasetFromNPZ("{}/{}/IIGS3_1_3_false_true_lvl7_dev.npz".format(script_directory, dataset_directory))
-	testset = DatasetFromNPZ("{}/{}/IIGS3_1_3_false_true_lvl7_test.npz".format(script_directory, dataset_directory))
+	dataset_directory = "data/IIGS6Lvl10/80-10-10"
+	npz_basename = "IIGS6_1_6_false_true_lvl10"
+	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
+	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
+	testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
 
 	# Construct the network
-	network = ConvNet_IIGS3Lvl7(threads=args.threads)
+	network = ConvNet_IIGS6Lvl10(threads=args.threads)
 	features, targets = trainset.next_batch(args.batch_size)
 	network.construct(args)
 

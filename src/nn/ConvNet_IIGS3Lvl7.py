@@ -47,13 +47,13 @@ class ConvNet_IIGS3Lvl7:
 
 	def construct_input(self):
 		with tf.variable_scope("input"):
-			self.input_features = tf.placeholder(
+			self.input_reaches = tf.placeholder(
 				FLOAT_DTYPE,
-				[None, self.NUM_NODES, self.INPUT_FEATURES_DIM],
-				name="input_features"
+				[None, self.NUM_NODES],
+				name="input_reaches"
 			)
 			self.latest_layer = tf.transpose(  # channels first for GPU computation
-				self.input_features,
+				self.input_reaches,
 				perm=[0, 2, 1],
 				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
 			)
@@ -253,17 +253,17 @@ class ConvNet_IIGS3Lvl7:
 
 	def train(self, features, targets):
 		self.session.run([self.loss_minimizer, self.summaries["train"]],
-		                 {self.input_features: features, self.targets: targets})
+		                 {self.input_reaches: features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
 		mean_squared_error, l_infinity_error, _ = self.session.run(
 			[self.mean_squared_error, self.l_infinity_error, self.summaries[dataset]],
-			{self.input_features: features, self.targets: targets}
+			{self.input_reaches: features, self.targets: targets}
 		)
 		return mean_squared_error, l_infinity_error
 
 	def predict(self, features):
-		return self.session.run(self.predictions, {self.input_features: features})
+		return self.session.run(self.predictions, {self.input_reaches: features})
 
 	def print_operations_count(self):
 		print("--> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))

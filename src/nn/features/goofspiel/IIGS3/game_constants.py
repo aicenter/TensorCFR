@@ -3,6 +3,7 @@
 FEATURES_BASENAME = "IIGS3_1_3_false_true_lvl7"
 N_CARDS = 3
 N_ROUNDS = 2
+N_ROUND_RESULTS = 3    # WIN, LOSE, DRAW
 NAMES_OF_FEATURE_CSV = [
 	"private_card1", "private_card2",
 	"opponent_card1", "opponent_card2",

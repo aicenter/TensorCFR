@@ -25,7 +25,7 @@ class ConvNet_IIGS3Lvl7:
 
 	INPUT_FEATURES_DIM = NUM_ROUNDS * FEATURES_DIM_PER_ROUND + REACH_PROB_DIM
 	TARGETS_DIM = 1
-	NUM_PUBLIC_STATES = 3 ** 2              # i.e. 3^rounds
+	NUM_PUBLIC_STATES = 3 ** NUM_ROUNDS
 
 	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session

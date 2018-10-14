@@ -311,7 +311,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Construct the network
 	network = ConvNet_IIGS3Lvl7(threads=args.threads)
-	features, targets = trainset.next_batch(args.batch_size)
 	network.construct(args)
 
 	# Train

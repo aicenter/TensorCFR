@@ -73,7 +73,12 @@ class ConvNet_IIGS3Lvl7:
 				multiples=[self._batch_size, 1, 1],
 				name="tiled_1hot_features"
 			)
-			print("tiled_features.shape: {}".format(self.tiled_features.shape))
+
+			self.full_input = tf.concat(
+				[self.tiled_features, self.expanded_reaches],
+				axis=-1,
+				name="full_input"
+			)
 			raise NotImplementedError
 
 			# self.latest_layer = tf.transpose(  # channels first for GPU computation

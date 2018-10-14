@@ -49,7 +49,7 @@ class ConvNet_IIGS3Lvl7:
 		self._one_hot_features_np = get_1hot_round_card_features_np()
 		print("one_hot_features:\n{}".format(self._one_hot_features_np))
 		self._one_hot_features_tf = tf.constant(self._one_hot_features_np, name="one_hot_features")
-		print("one_hot_features.shape:\n{}".format(self._one_hot_features_tf.shape))
+		print("one_hot_features.shape: {}".format(self._one_hot_features_tf.shape))
 
 	def construct_input(self):
 		with tf.variable_scope("input"):

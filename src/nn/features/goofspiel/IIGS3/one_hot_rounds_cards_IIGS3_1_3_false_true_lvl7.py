@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, N_CARDS, SLICE_1HOT_FEATS, \
-	NAMES_OF_FEATURE_CSV, FEATURE_COLUMNS
+	NAMES_OF_FEATURE_CSV, FEATURE_COLUMNS, N_ROUNDS
 from src.utils.other_utils import get_one_hot_flattened, get_features_dataframe
 
 
@@ -28,10 +28,12 @@ def get_1hot_round_card_features_np(verbose=True):
 		kind='mergesort'
 	)[one_hot_columns]
 	np_features = sorted_features.values
+	np_rounds = np_features[:, :N_ROUNDS]
 
 	if verbose:
 		print("sorted_features:\n{}".format(sorted_features))
 		print("np_features:\n{}".format(np_features))
+		print("np_rounds:\n{}".format(np_rounds))
 
 	raise NotImplementedError
 

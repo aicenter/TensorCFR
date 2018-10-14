@@ -54,6 +54,12 @@ class ConvNet_IIGS3Lvl7:
 				[None, self.NUM_NODES],
 				name="input_reaches"
 			)
+			self.expanded_reaches = tf.expand_dims(
+				self.input_reaches,
+				axis=-1,
+				name="expanded_reaches"
+			)
+
 			self.latest_layer = tf.transpose(  # channels first for GPU computation
 				self.input_reaches,
 				perm=[0, 2, 1],

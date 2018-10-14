@@ -22,7 +22,7 @@ def get_1hot_round_card_features_np(verbose=True):
 	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
 
 	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
-	one_hot_columns = FEATURE_COLUMNS[:-1]
+	one_hot_columns = FEATURE_COLUMNS[:-1]    # without the column of "reaches"
 	sorted_features = features.sort_values(
 		one_hot_columns,
 		kind='mergesort'

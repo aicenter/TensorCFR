@@ -10,7 +10,7 @@ from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, N_
 from src.utils.other_utils import get_one_hot_flattened, get_features_dataframe
 
 
-def get_1hot_round_card_features_np():
+def get_1hot_round_card_features_np(verbose=True):
 	"""
 	:return: A numpy array of 1-hot encoded features of round results and cards.
 	"""
@@ -26,7 +26,10 @@ def get_1hot_round_card_features_np():
 		FEATURE_COLUMNS[:-1],
 		kind='mergesort'
 	)
-	print("sorted_features:\n{}".format(sorted_features))
+
+	if verbose:
+		print("sorted_features:\n{}".format(sorted_features))
+
 	raise NotImplementedError
 
 	# TODO

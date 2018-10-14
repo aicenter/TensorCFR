@@ -304,9 +304,10 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	# Load the data
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	dataset_directory = "data/IIGS3Lvl7/80-10-10"
-	trainset = DatasetFromNPZ("{}/{}/IIGS3_1_3_false_true_lvl7_train.npz".format(script_directory, dataset_directory))
-	devset = DatasetFromNPZ("{}/{}/IIGS3_1_3_false_true_lvl7_dev.npz".format(script_directory, dataset_directory))
-	testset = DatasetFromNPZ("{}/{}/IIGS3_1_3_false_true_lvl7_test.npz".format(script_directory, dataset_directory))
+	npz_basename = "IIGS3_1_3_false_true_lvl7"
+	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
+	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
+	testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
 
 	# Construct the network
 	network = ConvNet_IIGS3Lvl7(threads=args.threads)

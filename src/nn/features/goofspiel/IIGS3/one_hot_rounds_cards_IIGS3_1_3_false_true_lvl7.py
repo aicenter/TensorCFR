@@ -36,6 +36,11 @@ def get_1hot_round_card_features_np(verbose=True):
 		n_classes=N_ROUND_RESULTS,
 		slice_1hot_feats=slice(N_ROUNDS)
 	)
+	one_hot_cards = get_one_hot_flattened(
+		np_cards,
+		n_classes=N_CARDS,
+		slice_1hot_feats=slice(2 * N_ROUNDS)    # N_ROUNDS per each of the 2 players
+	)
 
 	if verbose:
 		print("sorted_features:\n{}".format(sorted_features))
@@ -43,6 +48,7 @@ def get_1hot_round_card_features_np(verbose=True):
 		print("np_rounds:\n{}".format(np_rounds))
 		print("np_cards:\n{}".format(np_cards))
 		print("one_hot_rounds:\n{}".format(one_hot_rounds))
+		print("one_hot_cards:\n{}".format(one_hot_cards))
 
 
 if __name__ == '__main__':

@@ -173,7 +173,8 @@ class ConvNet_IIGS6Lvl10:
 
 	def construct_training(self):
 		with tf.variable_scope("metrics"):
-			huber_loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
+			with tf.variable_scope("huber_loss"):
+				huber_loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
 			with tf.variable_scope("mean_squared_error"):
 				self.mean_squared_error = tf.reduce_mean(tf.squared_difference(self.targets, self.predictions))
 			with tf.variable_scope("l_infinity_error"):
@@ -267,7 +268,7 @@ class ConvNet_IIGS6Lvl10:
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:

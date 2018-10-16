@@ -173,13 +173,14 @@ class ConvNet_IIGS6Lvl10:
 
 	def construct_training(self):
 		with tf.variable_scope("metrics"):
-			self.loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
-			print("loss constructed")
-			self.print_operations_count()
+			huber_loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
 			with tf.variable_scope("mean_squared_error"):
 				self.mean_squared_error = tf.reduce_mean(tf.squared_difference(self.targets, self.predictions))
 			with tf.variable_scope("l_infinity_error"):
 				self.l_infinity_error = tf.norm(self.targets - self.predictions, ord=np.inf)
+			self.loss = huber_loss
+			print("loss constructed")
+			self.print_operations_count()
 		print("Metrics constructed")
 		self.print_operations_count()
 		with tf.variable_scope("optimization"):

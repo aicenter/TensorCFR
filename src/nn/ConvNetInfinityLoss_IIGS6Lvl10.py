@@ -2,6 +2,7 @@
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
 import numpy as np
+import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING
 from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
@@ -11,7 +12,11 @@ FIXED_RANDOMNESS = False
 
 
 class ConvNetInfinityLoss_IIGS6Lvl10(ConvNet_IIGS6Lvl10):
-	pass
+	def construct_loss(self):
+		with tf.variable_scope("loss"):
+			self.loss = self.huber_loss + self.l_infinity_error
+			print("loss (Huber + L-infinity) constructed")
+			self.print_operations_count()
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix

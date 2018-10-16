@@ -172,9 +172,10 @@ class ConvNet_IIGS6Lvl10:
 		self.print_operations_count()
 
 	def construct_loss(self):
-		self.loss = self.huber_loss
-		print("loss constructed")
-		self.print_operations_count()
+		with tf.variable_scope("loss"):
+			self.loss = self.huber_loss
+			print("loss constructed")
+			self.print_operations_count()
 
 	def construct_training(self):
 		with tf.variable_scope("metrics"):

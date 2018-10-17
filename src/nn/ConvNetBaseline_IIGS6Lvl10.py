@@ -13,32 +13,31 @@ FIXED_RANDOMNESS = False
 
 class ConvNetBaseline_IIGS6Lvl10(ConvNet_IIGS6Lvl10):
 	def construct_input(self):
-		self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
-		print("Targets constructed")
 		with tf.variable_scope("input"):
-			raise NotImplementedError
+			self.input_reaches = tf.placeholder(
+				FLOAT_DTYPE,
+				[None, self.NUM_NODES],
+				name="input_reaches"
+			)
 			self._one_hot_features_tf = tf.constant(
-				self._one_hot_features_np,    # TODO modify after sync with IIGS3
+				self._one_hot_features_np,
 				dtype=FLOAT_DTYPE,
 				name="one_hot_features"
 			)
 			print("one_hot_features.shape: {}".format(self._one_hot_features_tf.shape))
 			self.tiled_features = tf.tile(
 				tf.expand_dims(self._one_hot_features_tf, axis=0),
-				multiples=[tf.shape(self.targets)[0], 1, 1],
+				multiples=[tf.shape(self.input_reaches)[0], 1, 1],
 				name="tiled_1hot_features"
 			)
-
-			self.full_input = tf.identity(
-				self.tiled_features,
-				name="full_input"
-			)
 			self.latest_layer = tf.transpose(  # channels first for GPU computation
-				self.full_input,
+				self.tiled_features,
 				perm=[0, 2, 1],
 				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
 			)
 		print("Input constructed")
+		self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
+		print("Targets constructed")
 		self.print_operations_count()
 
 

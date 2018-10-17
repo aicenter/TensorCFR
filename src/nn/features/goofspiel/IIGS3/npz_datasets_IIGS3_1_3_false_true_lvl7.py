@@ -193,7 +193,7 @@ def muj_main():
 			)
 
 			for j in range(len(target_arrays)):
-				if samples_counter > 0 and (samples_counter%1000000) == 0:
+				if samples_counter > 0 and (samples_counter%1000) == 0:
 					tfrecord_files_counter += 1
 					writer.close()
 					writer = tf.python_io.TFRecordWriter('dataset_{}.tfrecord'.format(tfrecord_files_counter))

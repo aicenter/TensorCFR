@@ -4,30 +4,29 @@ from tensorflow.python.framework.errors_impl import OutOfRangeError
 
 
 NUMBER_DATASET_FILES = 35
-BATCH_SIZE = 8
+BATCH_SIZE = 1
 NUM_PARALLEL_CALLS = 2
 
 
 def _parser(record):
 	keys_to_features = {
-		'sample_input': tf.FixedLenFeature((18,), tf.float32),
-		'sample_target': tf.FixedLenFeature((1,), tf.float32)
+		'dataset_sample_input': tf.FixedLenFeature((36,), tf.float32),
+		'dataset_sample_target': tf.FixedLenFeature((36,), tf.float32)
 	}
 	parsed = tf.parse_single_example(record, keys_to_features)
 
 
-	return parsed["sample_input"], parsed["sample_target"]
+	return parsed["dataset_sample_input"], parsed["dataset_sample_target"]
 
 
 if __name__ == '__main__':
-	data_path = ['dataset_{}.tfrecord'.format(x) for x in range(NUMBER_DATASET_FILES)]
-
+	data_path = ['dataset_{}.tfrecord'.format(x) for x in range(1)]
 
 	with tf.variable_scope('dataset_loading'):
 		dataset = tf.data.TFRecordDataset(filenames=data_path)
-		dataset = dataset.repeat(2) # number of epochs
+		dataset = dataset.repeat(1) # number of epochs
 		dataset = dataset.map(_parser, num_parallel_calls=NUM_PARALLEL_CALLS)
-		dataset = dataset.batch(BATCH_SIZE)
+		#dataset = dataset.batch(BATCH_SIZE)
 		iterator = dataset.make_one_shot_iterator()
 		features = iterator.get_next()
 
@@ -36,8 +35,6 @@ if __name__ == '__main__':
 	# )
 	# dataset = dataset.prefetch(buffer_size=2)
 
-	m_nn_input = tf.placeholder(tf.float32, shape=(BATCH_SIZE, 18))
-	m_nn_target = tf.placeholder(tf.float32, shape=(BATCH_SIZE, 18))
 
 	with tf.Session() as session:
 		writer = tf.summary.FileWriter('log/', session.graph)
@@ -55,7 +52,7 @@ if __name__ == '__main__':
 				# Outputs features_data[0] (sample_input) with shape (BATCH_SIZE,7)
 				# and features_data[1] (sample_target) with shape (BATCH_SIZE,1)
 
-				# print('Sample input ', features_data[0], ', sample target ', features_data[1])
+				print('Sample input ', features_input, ', sample target ', features_target)
 			except OutOfRangeError:
 				# Ends the cycle if we run out of data samples
 				break

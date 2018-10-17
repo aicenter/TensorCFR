@@ -346,8 +346,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	# Train
 	for epoch in range(args.epochs):
 		while not trainset.epoch_finished():
-			features, targets = trainset.next_batch(args.batch_size)
-			network.train(features, targets)
+			reaches, targets = trainset.next_batch(args.batch_size)
+			network.train(reaches, targets)
 
 		# Evaluate on development set
 		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)

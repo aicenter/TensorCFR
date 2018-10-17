@@ -79,7 +79,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Load the data
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	dataset_directory = "data/IIGS6Lvl10/80-10-10"
+	dataset_directory = "data/IIGS6Lvl10/80-10-10_only_reaches"
 	npz_basename = "IIGS6_1_6_false_true_lvl10"
 	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
 	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))

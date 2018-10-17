@@ -29,7 +29,7 @@ class ConvNet_IIGS3Lvl7:
 	TARGETS_DIM = 1
 	NUM_PUBLIC_STATES = 3 ** NUM_ROUNDS
 
-	def __init__(self, threads, seed=SEED_FOR_TESTING):
+	def __init__(self, threads, seed=SEED_FOR_TESTING, verbose=True):
 		# Create an empty graph and a session
 		self.graph = tf.Graph()
 		if FIXED_RANDOMNESS:
@@ -40,11 +40,13 @@ class ConvNet_IIGS3Lvl7:
 			self.session = tf.Session(graph=self.graph)
 
 		self._node_to_public_state = get_node_to_public_state()
-		print("node_to_public_state:\n{}".format(self._node_to_public_state))
 		self._sizes_of_public_states = get_sizes_of_public_states()
-		print("sizes_of_public_states:\n{}".format(self._sizes_of_public_states))
 		self._one_hot_features_np = get_1hot_round_card_features_np()
-		print("one_hot_features:\n{}".format(self._one_hot_features_np))
+
+		if verbose:
+			print("node_to_public_state:\n{}".format(self._node_to_public_state))
+			print("sizes_of_public_states:\n{}".format(self._sizes_of_public_states))
+			print("one_hot_features:\n{}".format(self._one_hot_features_np))
 
 	def construct_input(self):
 		with tf.variable_scope("input"):

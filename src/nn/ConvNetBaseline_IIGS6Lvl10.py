@@ -2,8 +2,9 @@
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
 import numpy as np
+import tensorflow as tf
 
-from src.commons.constants import SEED_FOR_TESTING
+from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
 from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 
@@ -11,16 +12,38 @@ FIXED_RANDOMNESS = False
 
 
 class ConvNetBaseline_IIGS6Lvl10(ConvNet_IIGS6Lvl10):
-	# def construct_loss(self):
-	# 	with tf.variable_scope("loss"):
-	# 		self.loss = self.huber_loss + self.l_infinity_error
-	# 		print("loss (Huber + L-infinity) constructed")
-	# 		self.print_operations_count()
-	pass    # TODO implement
+	def construct_input(self):
+		self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
+		print("Targets constructed")
+		with tf.variable_scope("input"):
+			raise NotImplementedError
+			self._one_hot_features_tf = tf.constant(
+				self._one_hot_features_np,    # TODO modify after sync with IIGS3
+				dtype=FLOAT_DTYPE,
+				name="one_hot_features"
+			)
+			print("one_hot_features.shape: {}".format(self._one_hot_features_tf.shape))
+			self.tiled_features = tf.tile(
+				tf.expand_dims(self._one_hot_features_tf, axis=0),
+				multiples=[tf.shape(self.targets)[0], 1, 1],
+				name="tiled_1hot_features"
+			)
+
+			self.full_input = tf.identity(
+				self.tiled_features,
+				name="full_input"
+			)
+			self.latest_layer = tf.transpose(  # channels first for GPU computation
+				self.full_input,
+				perm=[0, 2, 1],
+				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
+			)
+		print("Input constructed")
+		self.print_operations_count()
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:

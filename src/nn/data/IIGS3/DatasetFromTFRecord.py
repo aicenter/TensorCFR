@@ -5,7 +5,7 @@ import os
 import numpy as np
 
 
-class DatasetFromNPZ:
+class DatasetFromTFRecord:
 	def __init__(self, filename, shuffle_batches=True):
 		self._batch_id = 0
 		with np.load(filename) as data:
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	train_file = "{}/80-10-10/IIGS3_1_3_false_true_lvl7_train.npz".format(script_directory)
-	train = DatasetFromNPZ(train_file)
+	train = DatasetFromTFRecord(train_file)
 
 	for epoch in range(args.epochs):
 		print("Epoch #{}:".format(epoch))

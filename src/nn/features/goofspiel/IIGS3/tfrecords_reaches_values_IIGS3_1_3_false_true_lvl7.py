@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 
 from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, FEATURE_COLUMNS, TARGET_COLUMNS, \
 	NAMES_OF_FEATURE_CSV
@@ -44,6 +45,23 @@ def verify_npz(filename, features, targets):
 	np.testing.assert_array_equal(features, dataset["features"])
 	np.testing.assert_array_equal(targets, dataset["targets"])
 
+def tfrecord_write(tfrecord_writer, data_input, data_target):
+	n = data_target.shape[0]
+	# loop through rows
+	for i in range(n):
+		# get one input and target
+		dataset_sample_input = data_input[i, :]
+		dataset_sample_target = data_target[i, :]
+		dataset_sample_input = dataset_sample_input.tolist()
+		dataset_sample_target = dataset_sample_target.tolist()
+		# create Tensorflow's structures for the TFRecord
+		dataset_sample = {
+			'dataset_sample_input': tf.train.Feature(float_list=tf.train.FloatList(value=dataset_sample_input)),
+			'dataset_sample_target': tf.train.Feature(float_list=tf.train.FloatList(value=dataset_sample_target))
+		}
+		example = tf.train.Example(features=tf.train.Features(feature=dataset_sample))
+		# write into the TFRecord
+		tfrecord_writer.write(example.SerializeToString())
 
 def prepare_dataset():
 	"""
@@ -64,7 +82,12 @@ def prepare_dataset():
 		print("No files in {}".format(dataset_dir))
 		return False
 	else:
-		reach_arrays, target_arrays = [], []
+		# TFRecord's files counter
+		tfrecord_file_cnt = 0
+		# TFRecord's files writer
+		tfrecord_writer = tf.python_io.TFRecordWriter('dataset_0.tfrecord')
+		# init temp arrays
+		reach_arrays, target_arrays = list(), list()
 		for i, reaches_to_values_filename in enumerate(filenames):
 			print("#{}-th reaches_to_values_filename == {}".format(i, reaches_to_values_filename))
 			reaches_to_values = get_reaches_to_values_dataframe(reaches_to_values_filename)
@@ -75,39 +98,29 @@ def prepare_dataset():
 			reach_arrays.append(np_dataset[:, -2])
 			target_arrays.append(np_dataset[:, -1])
 
-		np_features = np.stack(reach_arrays)    # shape [#seed_of_the_batch, #nodes, 1]
-		print("np_features:\n{}".format(np_features))
-		print("np_features.shape == {}".format(np_features.shape))
+			if (len(target_arrays) % 1000000) == 0:
+				np_features = np.stack(reach_arrays)
+				np_target = np.stack(target_arrays)
 
-		np_targets = np.stack(target_arrays)  # shape [#seed_of_the_batch, #nodes]
-		print("np_targets:\n{}".format(np_targets))
-		print("np_targets.shape == {}".format(np_targets.shape))
+				# store to data into TFRecord file
+				tfrecord_write(tfrecord_writer, np_features, np_target)
 
-		# split dataset to train/dev/test
-		trainset_ratio = 0.8
-		devset_ratio = 0.1
-		dataset_size = len(filenames)
-		split_train = int(trainset_ratio * dataset_size)
-		split_dev = int((trainset_ratio + devset_ratio) * dataset_size)
+				# increment the TFRecord's files counter
+				tfrecord_file_cnt += 1
 
-		train_features, train_targets = np_features[:split_train], np_targets[:split_train]
-		dev_features, dev_targets = np_features[split_train:split_dev], np_targets[split_train:split_dev]
-		test_features, test_targets = np_features[split_dev:], np_targets[split_dev:]
+				# re-init temp array with empty lists
+				reach_arrays, target_arrays = list(), list()
+				# close the TFRecord's writer and re-init for new TFRecord's file
+				tfrecord_writer.close()
+				tfrecord_writer = tf.python_io.TFRecordWriter('dataset_{}.tfrecord'.format(tfrecord_file_cnt))
+		# store the TFRecord file
+		if len(reach_arrays) > 0 and len(target_arrays) > 0:
+			np_features = np.stack(reach_arrays)
+			np_target = np.stack(target_arrays)
 
-		# store trainset
-		train_file = "{}_train.npz".format(npz_basename)
-		np.savez_compressed(train_file, features=train_features, targets=train_targets)
-		verify_npz(train_file, train_features, train_targets)
-
-		# store devset
-		dev_file = "{}_dev.npz".format(npz_basename)
-		np.savez_compressed(dev_file, features=dev_features, targets=dev_targets)
-		verify_npz(dev_file, dev_features, dev_targets)
-
-		# store testset
-		test_file = "{}_test.npz".format(npz_basename)
-		np.savez_compressed(test_file, features=test_features, targets=test_targets)
-		verify_npz(test_file, test_features, test_targets)
+			tfrecord_write(tfrecord_writer, np_features, np_target)
+		# close TFRecord's file writer
+		tfrecord_writer.close()
 
 		return True
 

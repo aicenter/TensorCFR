@@ -62,7 +62,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	                    help="Description of the feature extactor architecture.")
 	parser.add_argument("--regressor", default="C-{}".format(ConvNetBaseline_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
 	                    help="Description of the value regressor architecture.")
-	parser.add_argument("--epochs", default=50, type=int, help="Number of epochs.")
+	parser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 
 	args = parser.parse_args()

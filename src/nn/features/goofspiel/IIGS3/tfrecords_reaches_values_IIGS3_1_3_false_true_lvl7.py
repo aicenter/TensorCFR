@@ -11,6 +11,9 @@ from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, FE
 from src.utils.other_utils import get_files_in_directory_recursively, get_features_dataframe
 
 
+FEATURES_PER_FILE = 1000000
+
+
 def get_reaches_to_values_dataframe(filename):
 	reaches_to_values_dataframe = pd.read_csv(
 		filename,
@@ -98,7 +101,7 @@ def prepare_dataset():
 			reach_arrays.append(np_dataset[:, -2])
 			target_arrays.append(np_dataset[:, -1])
 
-			if (len(target_arrays) % 1000000) == 0:
+			if (len(target_arrays) % FEATURES_PER_FILE) == 0:
 				np_features = np.stack(reach_arrays)
 				np_target = np.stack(target_arrays)
 

@@ -8,6 +8,8 @@ from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS6.node_to_public_states_IIGS6_1_6_false_true_lvl10 import get_node_to_public_state, \
 	get_sizes_of_public_states
+from src.nn.features.goofspiel.IIGS6.one_hot_rounds_cards_IIGS6_1_6_false_true_lvl10 import \
+	get_1hot_round_card_features_np
 from src.utils.tf_utils import count_graph_operations
 
 FIXED_RANDOMNESS = False
@@ -17,7 +19,7 @@ class ConvNet_IIGS6Lvl10:
 	NUM_NODES = 14400
 	NUM_ROUNDS = 3
 
-	PUBLIC_FEATURES_DIM = 6   # TODO fix here to 3: modify `get_one_hot_flattened()`
+	PUBLIC_FEATURES_DIM = 3
 	INFOSET_FEATURES_DIM = 6
 	NODAL_FEATURES_DIM = 6
 	FEATURES_DIM_PER_ROUND = PUBLIC_FEATURES_DIM + INFOSET_FEATURES_DIM + NODAL_FEATURES_DIM
@@ -27,7 +29,7 @@ class ConvNet_IIGS6Lvl10:
 	TARGETS_DIM = 1
 	NUM_PUBLIC_STATES = 3 ** NUM_ROUNDS
 
-	def __init__(self, threads, seed=SEED_FOR_TESTING):
+	def __init__(self, threads, seed=SEED_FOR_TESTING, verbose=True):
 		# Create an empty graph and a session
 		self.graph = tf.Graph()
 		if FIXED_RANDOMNESS:
@@ -36,20 +38,48 @@ class ConvNet_IIGS6Lvl10:
 			                                                                  intra_op_parallelism_threads=threads))
 		else:
 			self.session = tf.Session(graph=self.graph)
+
 		self._node_to_public_state = get_node_to_public_state()
-		print("node_to_public_state:\n{}".format(self._node_to_public_state))
 		self._sizes_of_public_states = get_sizes_of_public_states()
-		print("sizes_of_public_states:\n{}".format(self._sizes_of_public_states))
+		self._one_hot_features_np = get_1hot_round_card_features_np()
+
+		if verbose:
+			print("node_to_public_state:\n{}".format(self._node_to_public_state))
+			print("sizes_of_public_states:\n{}".format(self._sizes_of_public_states))
+			print("one_hot_features:\n{}".format(self._one_hot_features_np))
 
 	def construct_input(self):
 		with tf.variable_scope("input"):
-			self.input_features = tf.placeholder(
+			self.input_reaches = tf.placeholder(
 				FLOAT_DTYPE,
-				[None, self.NUM_NODES, self.INPUT_FEATURES_DIM],
-				name="input_features"
+				[None, self.NUM_NODES],
+				name="input_reaches"
+			)
+			self.expanded_reaches = tf.expand_dims(
+				self.input_reaches,
+				axis=-1,
+				name="expanded_reaches"
+			)
+
+			self._one_hot_features_tf = tf.constant(
+				self._one_hot_features_np,
+				dtype=FLOAT_DTYPE,
+				name="one_hot_features"
+			)
+			print("one_hot_features.shape: {}".format(self._one_hot_features_tf.shape))
+			self.tiled_features = tf.tile(
+				tf.expand_dims(self._one_hot_features_tf, axis=0),
+				multiples=[tf.shape(self.input_reaches)[0], 1, 1],
+				name="tiled_1hot_features"
+			)
+
+			self.full_input = tf.concat(
+				[self.tiled_features, self.expanded_reaches],
+				axis=-1,
+				name="full_input"
 			)
 			self.latest_layer = tf.transpose(  # channels first for GPU computation
-				self.input_features,
+				self.full_input,
 				perm=[0, 2, 1],
 				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
 			)
@@ -255,24 +285,24 @@ class ConvNet_IIGS6Lvl10:
 
 	def train(self, features, targets):
 		self.session.run([self.loss_minimizer, self.summaries["train"]],
-		                 {self.input_features: features, self.targets: targets})
+		                 {self.input_reaches: features, self.targets: targets})
 
 	def evaluate(self, dataset, features, targets):
 		mean_squared_error, l_infinity_error, _ = self.session.run(
 			[self.mean_squared_error, self.l_infinity_error, self.summaries[dataset]],
-			{self.input_features: features, self.targets: targets}
+			{self.input_reaches: features, self.targets: targets}
 		)
 		return mean_squared_error, l_infinity_error
 
 	def predict(self, features):
-		return self.session.run(self.predictions, {self.input_features: features})
+		return self.session.run(self.predictions, {self.input_reaches: features})
 
 	def print_operations_count(self):
 		print("--> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
@@ -309,7 +339,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Load the data
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	dataset_directory = "data/IIGS6Lvl10/80-10-10"
+	dataset_directory = "data/IIGS6Lvl10/80-10-10_only_reaches"
 	npz_basename = "IIGS6_1_6_false_true_lvl10"
 	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
 	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
@@ -322,8 +352,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	# Train
 	for epoch in range(args.epochs):
 		while not trainset.epoch_finished():
-			features, targets = trainset.next_batch(args.batch_size)
-			network.train(features, targets)
+			reaches, targets = trainset.next_batch(args.batch_size)
+			network.train(reaches, targets)
 
 		# Evaluate on development set
 		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)

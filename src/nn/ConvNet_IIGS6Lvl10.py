@@ -302,7 +302,7 @@ class ConvNet_IIGS6Lvl10:
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
@@ -322,7 +322,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	                    help="Description of the feature extactor architecture.")
 	parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
 	                    help="Description of the value regressor architecture.")
-	parser.add_argument("--epochs", default=50, type=int, help="Number of epochs.")
+	parser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 
 	args = parser.parse_args()
@@ -339,7 +339,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Load the data
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	dataset_directory = "data/IIGS6Lvl10/80-10-10_only_reaches"
+	dataset_directory = "data/IIGS6Lvl10/minimal_dataset/1"
+	# dataset_directory = "data/IIGS6Lvl10/80-10-10_only_reaches"
 	npz_basename = "IIGS6_1_6_false_true_lvl10"
 	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
 	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))

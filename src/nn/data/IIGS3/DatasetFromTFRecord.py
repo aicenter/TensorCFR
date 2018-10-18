@@ -4,16 +4,20 @@ import os
 import numpy as np
 import tensorflow as tf
 
+from src.utils.other_utils import get_files_in_directory_recursively
+
 
 class DatasetFromTFRecord:
 	def __init__(self,
 				 batch_size=1,
-				 dataset_files=[],
+				 dataset_files=list(),
 				 feature_input_size=1,
 				 feature_target_size=1,
 				 number_of_epochs=1,
 				 number_parallel_calls=None,
-				 shuffle_batches=True):
+				 shuffle_batches=True,
+				 shuffle_batches_buffer_size=100000
+				 ):
 		self._batch_id = 0
 		self._batch_size = batch_size
 		self._dataset_files = dataset_files
@@ -23,6 +27,8 @@ class DatasetFromTFRecord:
 		self._number_of_epochs = number_of_epochs
 		self._number_parallel_calls = number_parallel_calls
 		self._variable_scope = 'DatasetFromTFRecord'
+		self._shuffle_batches = shuffle_batches
+		self._shuffle_batches_buffer_size = shuffle_batches_buffer_size
 
 		self._init()
 
@@ -32,11 +38,11 @@ class DatasetFromTFRecord:
 
 	@property
 	def features(self):
-		return self._features
+		return None
 
 	@property
 	def targets(self):
-		return self._targets
+		return None
 
 	def _init(self):
 		if self._features_op is None:
@@ -46,6 +52,8 @@ class DatasetFromTFRecord:
 				dataset = dataset.map(
 					lambda tfrecord_element: self._parser(tfrecord_element),
 					num_parallel_calls=self._number_parallel_calls)
+				if self._shuffle_batches:
+					dataset = dataset.shuffle(buffer_size=self._shuffle_batches_buffer_size)
 				dataset = dataset.batch(self._batch_size)
 				iterator = dataset.make_one_shot_iterator()
 				self._features_op = iterator.get_next()
@@ -64,13 +72,6 @@ class DatasetFromTFRecord:
 
 	def epoch_finished(self):
 		pass
-		# if len(self._permutation) == 0:
-		# 	self._batch_id = 0
-		# 	self._permutation = np.random.permutation(len(self._features)) if self._shuffle_batches \
-		# 		else range(len(self._features))
-		# 	return True
-		# return False
-
 
 if __name__ == "__main__":
 	import argparse
@@ -86,7 +87,8 @@ if __name__ == "__main__":
 	parser.add_argument("--feature_target_size", default=36, type=int, help="Number of epochs.")
 	args = parser.parse_args()
 
-	dataset_files = ["dataset_0.tfrecord"]
+	dataset_files = get_files_in_directory_recursively(rootdir='/home/ruda/Documents/Projects/tensorcfr/TensorCFR/src/nn/features/goofspiel/IIGS3/tfrecord_dataset_IIGS3_1_3_false_true_lvl7')
+	# dataset_files = ["dataset_{}.tfrecord".format(x) for x in range(34)]
 
 	dataset = DatasetFromTFRecord(dataset_files=dataset_files, feature_input_size=36, feature_target_size=36)
 

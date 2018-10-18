@@ -11,7 +11,7 @@ from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, FE
 from src.utils.other_utils import get_files_in_directory_recursively, get_features_dataframe
 
 
-FEATURES_PER_FILE = 1000000
+FEATURES_PER_FILE = 300
 
 
 def get_reaches_to_values_dataframe(filename):
@@ -79,6 +79,11 @@ def prepare_dataset():
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)
 	npz_basename = "{}/{}".format(script_directory, FEATURES_BASENAME)
 
+	tfrecord_dataset_path = "{}/{}_{}".format(script_directory, 'tfrecord_dataset', FEATURES_BASENAME)
+
+	if not os.path.isdir(tfrecord_dataset_path):
+		os.makedirs(tfrecord_dataset_path)
+
 	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
 	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
 	if not filenames:
@@ -88,7 +93,7 @@ def prepare_dataset():
 		# TFRecord's files counter
 		tfrecord_file_cnt = 0
 		# TFRecord's files writer
-		tfrecord_writer = tf.python_io.TFRecordWriter('dataset_0.tfrecord')
+		tfrecord_writer = tf.python_io.TFRecordWriter('{}/dataset_0.tfrecord'.format(tfrecord_dataset_path))
 		# init temp arrays
 		reach_arrays, target_arrays = list(), list()
 		for i, reaches_to_values_filename in enumerate(filenames):
@@ -115,7 +120,7 @@ def prepare_dataset():
 				reach_arrays, target_arrays = list(), list()
 				# close the TFRecord's writer and re-init for new TFRecord's file
 				tfrecord_writer.close()
-				tfrecord_writer = tf.python_io.TFRecordWriter('dataset_{}.tfrecord'.format(tfrecord_file_cnt))
+				tfrecord_writer = tf.python_io.TFRecordWriter('{}/dataset_{}.tfrecord'.format(tfrecord_dataset_path, tfrecord_file_cnt))
 		# store the TFRecord file
 		if len(reach_arrays) > 0 and len(target_arrays) > 0:
 			np_features = np.stack(reach_arrays)

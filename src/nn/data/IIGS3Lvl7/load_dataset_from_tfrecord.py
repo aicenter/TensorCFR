@@ -18,8 +18,8 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--batch_size", default=8, type=int, help="Batch size.")
 	parser.add_argument("--epochs", default=2, type=int, help="Number of epochs.")
-	parser.add_argument("--feature_input_size", default=36, type=int, help="Size of the .")
-	parser.add_argument("--feature_target_size", default=36, type=int, help="Number of epochs.")
+	parser.add_argument("--sample_length", default=36, type=int,
+	                    help="Length of 1 sample (TFRecord), i.e. number of nodes at the trunk level for IIGS6.")
 	args = parser.parse_args()
 
 	dataset_files = get_files_in_directory_recursively(
@@ -39,15 +39,13 @@ if __name__ == "__main__":
 	train_dataset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
 		dataset_files=training_set_dataset_files,
-		feature_input_size=args.feature_input_size,  # 36
-		feature_target_size=args.feature_input_size,  # 36
+		sample_length=args.sample_length,  # 36
 		variable_scope_name='train_dataset'
 	)
 	dev_dataset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
 		dataset_files=dev_set_dataset_files,
-		feature_input_size=args.feature_input_size,  # 36
-		feature_target_size=args.feature_input_size,  # 36
+		sample_length=args.sample_length,  # 36
 		variable_scope_name='test_dataset'
 	)
 

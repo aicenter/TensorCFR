@@ -132,14 +132,6 @@ if __name__ == "__main__":
 		feature_target_size=args.feature_input_size, # 36
 		variable_scope_name='test_dataset')
 
-	# for epoch in range(args.epochs):
-	# 	print("Epoch #{}:".format(epoch))
-	# 	while not train.epoch_finished():
-	# 		print("Batch #{}:".format(train.batch_id))
-	# 		features, targets = train.next_batch(args.batch_size)
-	# 		print("Features:\n{}".format(features))
-	# 		print("Targets:\n{}".format(targets))
-
 	with tf.Session() as sess:
 		for epoch in range(args.epochs):
 			print('Epoch', epoch)

@@ -56,12 +56,14 @@ def prepare_dataset():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--trainset_ratio", default=0.8, type=float, help="Trainset ratio of dataset.")
 	parser.add_argument("--devset_ratio", default=0.1, type=float, help="Devset (validation set) ratio of dataset.")
+	parser.add_argument("--dataset_dir", default="reach_value_datasets",
+	                    help="Relative path to folder with CSV dataset files.")
 	args = parser.parse_args()
 	print("args: {}".format(args))
 
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
-	dataset_dir = "{}/reach_value_datasets".format(script_directory)
+	dataset_dir = "{}/{}".format(script_directory, args.dataset_dir)
 	npz_basename = "{}/{}".format(script_directory, FEATURES_BASENAME)
 
 	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV, quiet=True)

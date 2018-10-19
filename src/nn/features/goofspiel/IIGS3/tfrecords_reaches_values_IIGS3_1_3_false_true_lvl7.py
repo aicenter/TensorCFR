@@ -11,6 +11,9 @@ from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, FE
 from src.utils.other_utils import get_files_in_directory_recursively, get_features_dataframe
 
 
+ACTIVATE_FILE = False
+
+
 FEATURES_PER_FILE = 100
 
 
@@ -132,5 +135,5 @@ def prepare_dataset():
 		return True
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' and ACTIVATE_FILE:
 	prepare_dataset()

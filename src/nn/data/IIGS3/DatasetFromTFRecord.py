@@ -120,16 +120,16 @@ if __name__ == "__main__":
 	dev_set_dataset_files = dataset_files[split_train:]
 
 	train_dataset = DatasetFromTFRecord(
+		batch_size=args.batch_size,  # 8
 		dataset_files=training_set_dataset_files,
-		feature_input_size=36,
-		feature_target_size=36,
-		batch_size=8,
+		feature_input_size=args.feature_input_size, # 36
+		feature_target_size=args.feature_input_size, # 36
 		variable_scope_name='Train dataset')
 	dev_dataset = DatasetFromTFRecord(
-		batch_size=8,
+		batch_size=args.batch_size, # 8
 		dataset_files=dev_set_dataset_files,
-		feature_input_size=36,
-		feature_target_size=36,
+		feature_input_size=args.feature_input_size, # 36
+		feature_target_size=args.feature_input_size, # 36
 		variable_scope_name='Test dataset')
 
 	# for epoch in range(args.epochs):

@@ -19,6 +19,7 @@ DATASET_DIR="${SCRATCHDIR}/TensorCFR/src/nn/data/out/IIGS6/50_datapoints"
 trap 'clean_scratch' TERM EXIT  # nastaveni uklidu SCRATCHE v pripade chyby
 module add tensorflow-1.7.1-gpu-python3
 
+# move to Metacentrum's temporal drive
 cd ${SCRATCHDIR} || exit 1
 cp -r ${REPO_DIR} .           # copy repo from FRONTNODE
 

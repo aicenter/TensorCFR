@@ -208,5 +208,7 @@ def muj_main():
 		writer.close()
 
 if __name__ == '__main__':
+	# Do not run this old script
+	pass
 	# prepare_dataset()
-	muj_main()
+	# muj_main()

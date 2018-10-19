@@ -64,7 +64,7 @@ def prepare_dataset():
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)
 	npz_basename = "{}/{}".format(script_directory, FEATURES_BASENAME)
 
-	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
+	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV, quiet=True)
 	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
 	if not filenames:
 		print("No files in {}".format(dataset_dir))

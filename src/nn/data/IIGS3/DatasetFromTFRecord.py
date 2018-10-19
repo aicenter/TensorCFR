@@ -52,7 +52,7 @@ class DatasetFromTFRecord:
 
 	def _init(self):
 		if self._features_op is None:
-			with tf.variable_scope(self._variable_scope):
+			with tf.variable_scope(self._variable_scope_name):
 				dataset = tf.data.TFRecordDataset(filenames=self._dataset_files)
 				dataset = dataset.repeat(self._number_of_epochs)
 				dataset = dataset.map(
@@ -124,13 +124,13 @@ if __name__ == "__main__":
 		dataset_files=training_set_dataset_files,
 		feature_input_size=args.feature_input_size, # 36
 		feature_target_size=args.feature_input_size, # 36
-		variable_scope_name='Train dataset')
+		variable_scope_name='train_dataset')
 	dev_dataset = DatasetFromTFRecord(
 		batch_size=args.batch_size, # 8
 		dataset_files=dev_set_dataset_files,
 		feature_input_size=args.feature_input_size, # 36
 		feature_target_size=args.feature_input_size, # 36
-		variable_scope_name='Test dataset')
+		variable_scope_name='test_dataset')
 
 	# for epoch in range(args.epochs):
 	# 	print("Epoch #{}:".format(epoch))

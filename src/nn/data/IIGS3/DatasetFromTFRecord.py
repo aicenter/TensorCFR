@@ -9,17 +9,9 @@ from src.utils.other_utils import get_files_in_directory_recursively
 
 
 class DatasetFromTFRecord:
-	def __init__(self,
-				 batch_size=1,
-				 dataset_files=list(),
-				 feature_input_size=1,
-				 feature_target_size=1,
-				 number_of_epochs=1,
-				 number_parallel_calls=None,
-				 variable_scope_name='DatasetFromTFRecord',
-				 shuffle_batches=True,
-				 shuffle_batches_buffer_size=100000
-				 ):
+	def __init__(self, batch_size=1, dataset_files=list(), feature_input_size=1, feature_target_size=1,
+	             number_of_epochs=1, number_parallel_calls=None, variable_scope_name='DatasetFromTFRecord',
+	             shuffle_batches=True, shuffle_batches_buffer_size=100000):
 		self.iterator = None
 
 		self.epoch_finished = None
@@ -29,7 +21,7 @@ class DatasetFromTFRecord:
 		self._dataset_files = dataset_files
 		self._feature_input_size = feature_input_size
 		self._feature_target_size = feature_target_size
-		self._features_op = None # TensorFlow operation
+		self._features_op = None  # TensorFlow operation
 		self._number_of_epochs = number_of_epochs
 		self._number_parallel_calls = number_parallel_calls
 		self._variable_scope_name = variable_scope_name
@@ -66,14 +58,14 @@ class DatasetFromTFRecord:
 
 	def _parser(self, tfrecord_element):
 		keys_to_features = {
-			'dataset_sample_input': tf.FixedLenFeature((self._feature_input_size,), tf.float32),
+			'dataset_sample_input' : tf.FixedLenFeature((self._feature_input_size,), tf.float32),
 			'dataset_sample_target': tf.FixedLenFeature((self._feature_target_size,), tf.float32)
 		}
 		parsed = tf.parse_single_example(tfrecord_element, keys_to_features)
 		return parsed["dataset_sample_input"], parsed["dataset_sample_target"]
 
 	def next_batch(self, session):
-		if self.epoch_finished is None or self.epoch_finished == True:
+		if self.epoch_finished is None or self.epoch_finished is True:
 			session.run(self.iterator.initializer)
 			self.epoch_finished = False
 			self._batch_id = 0
@@ -93,6 +85,7 @@ class DatasetFromTFRecord:
 	def epoch_finished(self):
 		return self.epoch_finished
 
+
 if __name__ == "__main__":
 	import argparse
 
@@ -108,7 +101,9 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	dataset_files = get_files_in_directory_recursively(
-		rootdir=os.path.join(PROJECT_ROOT, 'src', 'nn', 'features', 'goofspiel', 'IIGS3', 'tfrecord_dataset_IIGS3_1_3_false_true_lvl7'))
+		rootdir=os.path.join(PROJECT_ROOT, 'src', 'nn', 'features', 'goofspiel', 'IIGS3',
+		                     'tfrecord_dataset_IIGS3_1_3_false_true_lvl7')
+	)
 
 	trainset_ratio = 0.8
 	devset_ratio = 0.1
@@ -122,15 +117,17 @@ if __name__ == "__main__":
 	train_dataset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
 		dataset_files=training_set_dataset_files,
-		feature_input_size=args.feature_input_size, # 36
-		feature_target_size=args.feature_input_size, # 36
-		variable_scope_name='train_dataset')
+		feature_input_size=args.feature_input_size,  # 36
+		feature_target_size=args.feature_input_size,  # 36
+		variable_scope_name='train_dataset'
+	)
 	dev_dataset = DatasetFromTFRecord(
-		batch_size=args.batch_size, # 8
+		batch_size=args.batch_size,  # 8
 		dataset_files=dev_set_dataset_files,
-		feature_input_size=args.feature_input_size, # 36
-		feature_target_size=args.feature_input_size, # 36
-		variable_scope_name='test_dataset')
+		feature_input_size=args.feature_input_size,  # 36
+		feature_target_size=args.feature_input_size,  # 36
+		variable_scope_name='test_dataset'
+	)
 
 	with tf.Session() as sess:
 		for epoch in range(args.epochs):

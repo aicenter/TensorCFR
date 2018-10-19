@@ -57,7 +57,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=8, type=int, help="Batch size.")
+	parser.add_argument("--batch_size", default=1, type=int, help="Batch size.")
 	parser.add_argument("--dataset_directory", default="data/IIGS6Lvl10/minimal_dataset/2",
 	                    help="Relative path to dataset folder.")
 	parser.add_argument("--extractor", default="C-{}".format(ConvNetBaseline_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,

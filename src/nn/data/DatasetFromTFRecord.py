@@ -7,7 +7,6 @@ class DatasetFromTFRecord:
 	             number_parallel_calls=None, variable_scope_name='DatasetFromTFRecord', shuffle_batches=True,
 	             shuffle_batches_buffer_size=100000):
 		self.iterator = None
-
 		self.epoch_finished = None
 
 		self._batch_id = 0
@@ -22,21 +21,6 @@ class DatasetFromTFRecord:
 		self._shuffle_batches = shuffle_batches
 		self._shuffle_batches_buffer_size = shuffle_batches_buffer_size
 
-		self._init()
-
-	@property
-	def batch_id(self):
-		return self._batch_id
-
-	@property
-	def features(self):
-		raise NotImplementedError
-
-	@property
-	def targets(self):
-		raise NotImplementedError
-
-	def _init(self):
 		if self._features_op is None:
 			with tf.variable_scope(self._variable_scope_name):
 				dataset = tf.data.TFRecordDataset(filenames=self._dataset_files)
@@ -50,6 +34,18 @@ class DatasetFromTFRecord:
 				dataset = dataset.batch(self._batch_size)
 				self.iterator = dataset.make_initializable_iterator()
 				self._features_op = self.iterator.get_next()
+
+	@property
+	def batch_id(self):
+		return self._batch_id
+
+	@property
+	def features(self):
+		raise NotImplementedError
+
+	@property
+	def targets(self):
+		raise NotImplementedError
 
 	def _parser(self, tfrecord_element):
 		keys_to_features = {

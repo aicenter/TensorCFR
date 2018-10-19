@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import argparse
 import os
 
 import numpy as np
@@ -53,6 +53,12 @@ def prepare_dataset():
 	pd.set_option('display.width', 1000)
 	np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--trainset_ratio", default=0.8, type=float, help="Trainset ratio of dataset.")
+	parser.add_argument("--devset_ratio", default=0.1, type=float, help="Devset (validation set) ratio of dataset.")
+	args = parser.parse_args()
+	print("args: {}".format(args))
+
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
 	dataset_dir = "{}/reach_value_datasets".format(script_directory)
@@ -84,8 +90,8 @@ def prepare_dataset():
 		print("np_targets.shape == {}".format(np_targets.shape))
 
 		# split dataset to train/dev/test
-		trainset_ratio = 0.8
-		devset_ratio = 0.1
+		trainset_ratio = args.trainset_ratio
+		devset_ratio = args.devset_ratio
 		dataset_size = len(filenames)
 		split_train = int(trainset_ratio * dataset_size)
 		split_dev = int((trainset_ratio + devset_ratio) * dataset_size)

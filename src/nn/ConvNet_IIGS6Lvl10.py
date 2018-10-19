@@ -317,7 +317,9 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=8, type=int, help="Batch size.")
+	parser.add_argument("--batch_size", default=32, type=int, help="Batch size.")
+	parser.add_argument("--dataset_directory", default="data/IIGS6Lvl10/minimal_dataset/2",
+	                    help="Relative path to dataset folder.")
 	parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
 	                    help="Description of the feature extactor architecture.")
 	parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
@@ -329,6 +331,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	print("args: {}".format(args))
 
 	# Create logdir name
+	dataset_directory = args.dataset_directory
+	del args.dataset_directory
 	args.logdir = "logs/{}-{}-{}".format(
 		os.path.basename(__file__),
 		datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
@@ -339,8 +343,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Load the data
 	script_directory = os.path.dirname(os.path.abspath(__file__))
-	dataset_directory = "data/IIGS6Lvl10/minimal_dataset/1"
-	# dataset_directory = "data/IIGS6Lvl10/80-10-10_only_reaches"
 	npz_basename = "IIGS6_1_6_false_true_lvl10"
 	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
 	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))

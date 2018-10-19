@@ -30,11 +30,11 @@ class DatasetFromTFRecord:
 
 	@property
 	def features(self):
-		return None
+		raise NotImplementedError
 
 	@property
 	def targets(self):
-		return None
+		raise NotImplementedError
 
 	def _init(self):
 		if self._features_op is None:

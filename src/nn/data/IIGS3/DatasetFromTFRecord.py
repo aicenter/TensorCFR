@@ -101,7 +101,7 @@ if __name__ == "__main__":
 	np.random.seed(42)
 
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=3, type=int, help="Batch size.")
+	parser.add_argument("--batch_size", default=8, type=int, help="Batch size.")
 	parser.add_argument("--epochs", default=2, type=int, help="Number of epochs.")
 	parser.add_argument("--feature_input_size", default=36, type=int, help="Size of the .")
 	parser.add_argument("--feature_target_size", default=36, type=int, help="Number of epochs.")

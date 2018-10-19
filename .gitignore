@@ -335,7 +335,6 @@ src/out/
 *.out.*
 src/algorithms/tensorcfr/logs/*
 *.json
-*.tfrecord
 
 # Gambit files
 doc/poker/GP_cards2x2_122.gbt

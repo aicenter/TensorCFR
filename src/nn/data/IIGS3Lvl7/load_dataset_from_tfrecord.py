@@ -51,12 +51,16 @@ if __name__ == "__main__":
 
 	with tf.Session() as sess:
 		for epoch in range(args.epochs):
-			print('Epoch', epoch)
+			print('Epoch #{}'.format(epoch))
+
 			print('\tTrain set:')
 			for sample in train_dataset.next_batch(sess):
 				feature_input, feature_target = sample
+				print('\t\tBatch #{}'.format(train_dataset.batch_id))
 				print(feature_input, feature_target)
+
 			print('\tDev (Validation) set:')
 			for sample in dev_dataset.next_batch(sess):
 				feature_input, feature_target = sample
+				print('\t\tBatch #{}'.format(dev_dataset.batch_id))
 				print(feature_input, feature_target)

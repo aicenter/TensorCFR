@@ -69,26 +69,30 @@ if __name__ == "__main__":
 				print("Targets:\n{}".format(targets))
 
 			print('\tDevset:')
+			cumulative_variance = None
+			count_of_variances = 0
 			for sample in devset.next_batch(sess):
-				features, targets = sample
-				print('\t\tBatch #{}:'.format(devset.batch_id))
-				print("Features:\n{}".format(features))
-				print("Targets:\n{}".format(targets))
+				_, targets = sample
+				batch_variance = np.var(targets, axis=0)
+				if cumulative_variance is None:
+					cumulative_variance = batch_variance * batch_variance.shape[0]
+				else:
+					cumulative_variance += batch_variance * batch_variance.shape[0]
+				count_of_variances += batch_variance.shape[0]
+				print("\t\t\tVariance of targets in batch #{}:\n{}".format(devset.batch_id, batch_variance))
+			final_variance = cumulative_variance / count_of_variances
+			print("Final variance:\n{}".format(final_variance))
 
 		print('Testset:')
 		cumulative_variance = None
 		count_of_variances = 0
 		for sample in testset.next_batch(sess):
-			features, targets = sample
+			_, targets = sample
 			batch_variance = np.var(targets, axis=0)
 			if cumulative_variance is None:
 				cumulative_variance = batch_variance * batch_variance.shape[0]
 			else:
 				cumulative_variance += batch_variance * batch_variance.shape[0]
 			count_of_variances += batch_variance.shape[0]
-			# print('\tBatch #{}:'.format(testset.batch_id))
-			# print("Batch-variance of targets:\n{}".format(batch_variance))
-			# print("Cumulative variance of targets:\n{}".format(cumulative_variance))
-			# print("Count of variances:\n{}".format(count_of_variances))
 		final_variance = cumulative_variance / count_of_variances
 		print("Final variance:\n{}".format(final_variance))

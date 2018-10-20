@@ -4,7 +4,6 @@ import os
 import numpy as np
 import tensorflow as tf
 
-from src.commons.constants import PROJECT_ROOT
 from src.nn.data.DatasetFromTFRecord import DatasetFromTFRecord
 from src.utils.other_utils import get_files_in_directory_recursively
 
@@ -22,11 +21,8 @@ if __name__ == "__main__":
 	                    help="Length of 1 sample (TFRecord), i.e. number of nodes at the trunk level for IIGS6.")
 	args = parser.parse_args()
 
-	dataset_files = get_files_in_directory_recursively(
-		rootdir=os.path.join(
-			PROJECT_ROOT, 'src', 'nn', 'features', 'goofspiel', 'IIGS3', 'tfrecord_dataset_IIGS3_1_3_false_true_lvl7'
-		)
-	)
+	dataset_dir = "{}/tfrecords/tfrecord_dataset_IIGS3_1_3_false_true_lvl7".format(script_directory)
+	dataset_files = get_files_in_directory_recursively(rootdir=dataset_dir)
 
 	trainset_ratio = 0.8
 	devset_ratio = 0.1
@@ -52,16 +48,16 @@ if __name__ == "__main__":
 
 	with tf.Session() as sess:
 		for epoch in range(args.epochs):
-			print('Epoch #{}'.format(epoch))
+			print('Epoch #{}:'.format(epoch))
 
 			print('\tTrain set:')
 			for sample in train_dataset.next_batch(sess):
 				feature_input, feature_target = sample
-				print('\t\tBatch #{}'.format(train_dataset.batch_id))
+				print('\t\tBatch #{}:'.format(train_dataset.batch_id))
 				print(feature_input, feature_target)
 
 			print('\tDev (Validation) set:')
 			for sample in dev_dataset.next_batch(sess):
 				feature_input, feature_target = sample
-				print('\t\tBatch #{}'.format(dev_dataset.batch_id))
+				print('\t\tBatch #{}:'.format(dev_dataset.batch_id))
 				print(feature_input, feature_target)

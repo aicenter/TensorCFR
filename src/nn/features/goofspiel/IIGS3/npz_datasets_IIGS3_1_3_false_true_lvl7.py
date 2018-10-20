@@ -4,9 +4,6 @@ import os
 
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-
-from sys import getsizeof
 
 from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, N_CARDS, FEATURE_COLUMNS, TARGET_COLUMNS, \
 	SLICE_1HOT_FEATS, NAMES_OF_FEATURE_CSV
@@ -121,94 +118,6 @@ def prepare_dataset():
 
 		return True
 
-def store_tfrecord(sample_input, sample_target):
-
-	# writer = tf.python_io.TFRecordWriter(train_file)
-
-	# for x in dataset:
-		# per one line in the `dataset matrix`
-
-	# print(getsizeof(x))
-	# sample_input = sample[:-1]
-	# sample_input = sample_input.tolist()
-	#
-	# sample_target = [sample[-1]]
-
-	sample = {
-		'sample_input': tf.train.Feature(float_list=tf.train.FloatList(value=sample_input.tolist())),
-		'sample_target': tf.train.Feature(float_list=tf.train.FloatList(value=[sample_target]))
-	}
-
-	example = tf.train.Example(features=tf.train.Features(feature=sample))
-
-	return example.SerializeToString()
-	# writer.write(example.SerializeToString())
-	#
-	# writer.close()
-
-	import sys
-	# sys.stdout.flush()
-
-def muj_main():
-	script_dir = os.path.dirname(os.path.abspath(__file__))
-
-	features_filename = "{}/{}.csv".format(script_dir, FEATURES_BASENAME)
-
-	dataset_dir = "{}/reach_value_datasets".format(script_dir)
-
-
-	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV)
-	filenames = get_files_in_directory_recursively(rootdir=dataset_dir)
-
-
-	tfrecord_files_counter = 0
-	samples_counter = 0
-
-	if not filenames:
-		print("No files in {}".format(dataset_dir))
-		return False
-	else:
-		feature_arrays, target_arrays = [], []
-
-		writer = tf.python_io.TFRecordWriter('dataset_{}.tfrecord'.format(0))
-
-		for i, reaches_to_values_filename in enumerate(filenames):
-			print("#{}-th reaches_to_values_filename == {}".format(i, reaches_to_values_filename))
-
-			reaches_to_values = get_reaches_to_values_dataframe(reaches_to_values_filename)
-
-			concatenated = get_concatenated_dataframe(features, reaches_to_values)
-
-			sorted_concatenated = get_sorted_dataframes(concatenated)
-
-			np_dataset = sorted_concatenated.values
-
-			feature_arrays = np_dataset[:, :-1]
-			target_arrays = np_dataset[:, -1]
-
-			one_hot_features = get_one_hot_flattened(
-				feature_arrays,
-				n_classes=N_CARDS,
-				slice_1hot_feats=SLICE_1HOT_FEATS
-			)
-
-			for j in range(len(target_arrays)):
-				if samples_counter > 0 and (samples_counter%1000) == 0:
-					tfrecord_files_counter += 1
-					writer.close()
-					writer = tf.python_io.TFRecordWriter('dataset_{}.tfrecord'.format(tfrecord_files_counter))
-
-				sample_input = one_hot_features[j, :]
-				sample_target = target_arrays[j]
-
-				writer.write(store_tfrecord(sample_input, sample_target))
-
-				samples_counter += 1
-
-		writer.close()
 
 if __name__ == '__main__':
-	# Do not run this old script
-	pass
-	# prepare_dataset()
-	# muj_main()
+	prepare_dataset()

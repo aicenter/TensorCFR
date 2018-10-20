@@ -23,8 +23,9 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	dataset_files = get_files_in_directory_recursively(
-		rootdir=os.path.join(PROJECT_ROOT, 'src', 'nn', 'features', 'goofspiel', 'IIGS3',
-		                     'tfrecord_dataset_IIGS3_1_3_false_true_lvl7')
+		rootdir=os.path.join(
+			PROJECT_ROOT, 'src', 'nn', 'features', 'goofspiel', 'IIGS3', 'tfrecord_dataset_IIGS3_1_3_false_true_lvl7'
+		)
 	)
 
 	trainset_ratio = 0.8

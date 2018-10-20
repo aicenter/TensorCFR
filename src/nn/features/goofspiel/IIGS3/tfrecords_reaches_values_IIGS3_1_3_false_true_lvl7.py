@@ -10,9 +10,7 @@ from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, FE
 	NAMES_OF_FEATURE_CSV
 from src.utils.other_utils import get_files_in_directory_recursively, get_features_dataframe
 
-
 ACTIVATE_FILE = False
-
 
 FEATURES_PER_FILE = 100
 
@@ -51,6 +49,7 @@ def verify_npz(filename, features, targets):
 	np.testing.assert_array_equal(features, dataset["features"])
 	np.testing.assert_array_equal(targets, dataset["targets"])
 
+
 def tfrecord_write(tfrecord_writer, data_input, data_target):
 	n = data_target.shape[0]
 	# loop through rows
@@ -62,12 +61,13 @@ def tfrecord_write(tfrecord_writer, data_input, data_target):
 		dataset_sample_target = dataset_sample_target.tolist()
 		# create Tensorflow's structures for the TFRecord
 		dataset_sample = {
-			'dataset_sample_input': tf.train.Feature(float_list=tf.train.FloatList(value=dataset_sample_input)),
+			'dataset_sample_input' : tf.train.Feature(float_list=tf.train.FloatList(value=dataset_sample_input)),
 			'dataset_sample_target': tf.train.Feature(float_list=tf.train.FloatList(value=dataset_sample_target))
 		}
 		example = tf.train.Example(features=tf.train.Features(feature=dataset_sample))
 		# write into the TFRecord
 		tfrecord_writer.write(example.SerializeToString())
+
 
 def prepare_dataset():
 	"""
@@ -122,7 +122,8 @@ def prepare_dataset():
 				reach_arrays, target_arrays = list(), list()
 				# close the TFRecord's writer and re-init for new TFRecord's file
 				tfrecord_writer.close()
-				tfrecord_writer = tf.python_io.TFRecordWriter(os.path.join(tfrecord_dataset_path, 'dataset_{}.tfrecord'.format(tfrecord_file_cnt)))
+				tfrecord_writer = tf.python_io.TFRecordWriter(
+					os.path.join(tfrecord_dataset_path, 'dataset_{}.tfrecord'.format(tfrecord_file_cnt)))
 		# store the TFRecord file
 		if len(reach_arrays) > 0 and len(target_arrays) > 0:
 			np_features = np.stack(reach_arrays)

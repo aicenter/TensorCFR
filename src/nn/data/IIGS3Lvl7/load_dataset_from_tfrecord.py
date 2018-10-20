@@ -30,34 +30,47 @@ if __name__ == "__main__":
 	split_train = int(trainset_ratio * dataset_size)
 	split_dev = int((trainset_ratio + devset_ratio) * dataset_size)
 
-	training_set_dataset_files = dataset_files[0:split_train]
-	dev_set_dataset_files = dataset_files[split_train:]
+	trainset_files = dataset_files[:split_train]
+	devset_files = dataset_files[split_train:split_dev]
+	testset_files = dataset_files[split_dev:]
 
-	train_dataset = DatasetFromTFRecord(
+	trainset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
-		dataset_files=training_set_dataset_files,
+		dataset_files=trainset_files,
 		sample_length=args.sample_length,  # 36
-		variable_scope_name='train_dataset'
+		variable_scope_name='trainset'
 	)
-	dev_dataset = DatasetFromTFRecord(
+	devset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
-		dataset_files=dev_set_dataset_files,
+		dataset_files=devset_files,
 		sample_length=args.sample_length,  # 36
-		variable_scope_name='test_dataset'
+		variable_scope_name='devset'
+	)
+	testset = DatasetFromTFRecord(
+		batch_size=args.batch_size,  # 8
+		dataset_files=testset_files,
+		sample_length=args.sample_length,  # 36
+		variable_scope_name='testset'
 	)
 
 	with tf.Session() as sess:
 		for epoch in range(args.epochs):
 			print('Epoch #{}:'.format(epoch))
 
-			print('\tTrain set:')
-			for sample in train_dataset.next_batch(sess):
+			print('\tTrainset:')
+			for sample in trainset.next_batch(sess):
 				feature_input, feature_target = sample
-				print('\t\tBatch #{}:'.format(train_dataset.batch_id))
+				print('\t\tBatch #{}:'.format(trainset.batch_id))
 				print(feature_input, feature_target)
 
-			print('\tDev (Validation) set:')
-			for sample in dev_dataset.next_batch(sess):
+			print('\tDevset:')
+			for sample in devset.next_batch(sess):
 				feature_input, feature_target = sample
-				print('\t\tBatch #{}:'.format(dev_dataset.batch_id))
+				print('\t\tBatch #{}:'.format(devset.batch_id))
 				print(feature_input, feature_target)
+
+		print('Testset:')
+		for sample in testset.next_batch(sess):
+			feature_input, feature_target = sample
+			print('\tBatch #{}:'.format(testset.batch_id))
+			print(feature_input, feature_target)

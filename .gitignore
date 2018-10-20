@@ -357,3 +357,4 @@ cached_hkl/
 src/nn/features/goofspiel/IIGS3/reach_value_datasets/
 src/nn/features/goofspiel/IIGS6/reach_value_datasets.tar.gz
 /src/nn/features/goofspiel/IIGS3/tfrecord_dataset_IIGS3_1_3_false_true_lvl7/
+/src/nn/features/goofspiel/IIGS6/tfrecord_dataset_IIGS6_1_6_false_true_lvl10/

@@ -81,3 +81,5 @@ if __name__ == "__main__":
 			print('\tBatch #{}:'.format(testset.batch_id))
 			print("Features:\n{}".format(features))
 			print("Targets:\n{}".format(targets))
+			batch_variance = np.var(targets, axis=0)
+			print("Batch-variance of targets:\n{}".format(batch_variance))

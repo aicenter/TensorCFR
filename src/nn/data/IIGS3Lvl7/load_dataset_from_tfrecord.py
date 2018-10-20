@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# TODO make for IIGS6
 import os
 
 import numpy as np
@@ -59,18 +60,21 @@ if __name__ == "__main__":
 
 			print('\tTrainset:')
 			for sample in trainset.next_batch(sess):
-				feature_input, feature_target = sample
+				features, targets = sample
 				print('\t\tBatch #{}:'.format(trainset.batch_id))
-				print(feature_input, feature_target)
+				print("Features:\n{}".format(features))
+				print("Targets:\n{}".format(targets))
 
 			print('\tDevset:')
 			for sample in devset.next_batch(sess):
-				feature_input, feature_target = sample
+				features, targets = sample
 				print('\t\tBatch #{}:'.format(devset.batch_id))
-				print(feature_input, feature_target)
+				print("Features:\n{}".format(features))
+				print("Targets:\n{}".format(targets))
 
 		print('Testset:')
 		for sample in testset.next_batch(sess):
-			feature_input, feature_target = sample
+			features, targets = sample
 			print('\tBatch #{}:'.format(testset.batch_id))
-			print(feature_input, feature_target)
+			print("Features:\n{}".format(features))
+			print("Targets:\n{}".format(targets))

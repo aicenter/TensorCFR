@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 
@@ -82,6 +83,7 @@ if __name__ == "__main__":
 				print("\t\t\tVariance of targets in batch #{}:\n{}".format(devset.batch_id, batch_variance))
 			final_variance = cumulative_variance / count_of_variances
 			print("Final variance:\n{}".format(final_variance))
+			print("Max variance:\n{}".format(np.amax(final_variance)))
 
 		print('Testset:')
 		cumulative_variance = None
@@ -96,3 +98,8 @@ if __name__ == "__main__":
 			count_of_variances += batch_variance.shape[0]
 		final_variance = cumulative_variance / count_of_variances
 		print("Final variance:\n{}".format(final_variance))
+		print("Max variance:\n{}".format(np.amax(final_variance)))
+		plt.hist(final_variance, bins='auto')  # arguments are passed to np.histogram
+		plt.title("Histogram of variances")
+		plt.show()
+

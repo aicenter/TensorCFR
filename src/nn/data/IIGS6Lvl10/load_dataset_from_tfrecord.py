@@ -77,6 +77,7 @@ if __name__ == "__main__":
 
 		print('Testset:')
 		cumulative_variance = None
+		count_of_variances = 0
 		for sample in testset.next_batch(sess):
 			features, targets = sample
 			batch_variance = np.var(targets, axis=0)
@@ -84,6 +85,10 @@ if __name__ == "__main__":
 				cumulative_variance = batch_variance * batch_variance.shape[0]
 			else:
 				cumulative_variance += batch_variance * batch_variance.shape[0]
+			count_of_variances += batch_variance.shape[0]
 			print('\tBatch #{}:'.format(testset.batch_id))
 			print("Batch-variance of targets:\n{}".format(batch_variance))
 			print("Cumulative variance of targets:\n{}".format(cumulative_variance))
+			print("Count of variances:\n{}".format(count_of_variances))
+		final_variance = cumulative_variance / count_of_variances
+		print("Final variance:\n{}".format(final_variance))

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# TODO make for IIGS6
 import os
 
 import numpy as np
@@ -35,22 +34,26 @@ if __name__ == "__main__":
 	devset_files = dataset_files[split_train:split_dev]
 	testset_files = dataset_files[split_dev:]
 
+	SHUFFLE_BATCHES = False
 	trainset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
 		dataset_files=trainset_files,
 		sample_length=args.sample_length,  # 36
+		shuffle_batches=SHUFFLE_BATCHES,
 		variable_scope_name='trainset'
 	)
 	devset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
 		dataset_files=devset_files,
 		sample_length=args.sample_length,  # 36
+		shuffle_batches=SHUFFLE_BATCHES,
 		variable_scope_name='devset'
 	)
 	testset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
 		dataset_files=testset_files,
 		sample_length=args.sample_length,  # 36
+		shuffle_batches=SHUFFLE_BATCHES,
 		variable_scope_name='testset'
 	)
 

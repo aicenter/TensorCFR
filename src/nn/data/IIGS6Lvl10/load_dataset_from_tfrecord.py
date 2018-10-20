@@ -38,21 +38,21 @@ if __name__ == "__main__":
 	trainset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
 		dataset_files=trainset_files,
-		sample_length=args.sample_length,  # 36
+		sample_length=args.sample_length,  # 14400
 		shuffle_batches=SHUFFLE_BATCHES,
 		variable_scope_name='trainset'
 	)
 	devset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
 		dataset_files=devset_files,
-		sample_length=args.sample_length,  # 36
+		sample_length=args.sample_length,  # 14400
 		shuffle_batches=SHUFFLE_BATCHES,
 		variable_scope_name='devset'
 	)
 	testset = DatasetFromTFRecord(
 		batch_size=args.batch_size,  # 8
 		dataset_files=testset_files,
-		sample_length=args.sample_length,  # 36
+		sample_length=args.sample_length,  # 14400
 		shuffle_batches=SHUFFLE_BATCHES,
 		variable_scope_name='testset'
 	)
@@ -76,10 +76,14 @@ if __name__ == "__main__":
 				print("Targets:\n{}".format(targets))
 
 		print('Testset:')
+		cumulative_variance = None
 		for sample in testset.next_batch(sess):
 			features, targets = sample
-			print('\tBatch #{}:'.format(testset.batch_id))
-			print("Features:\n{}".format(features))
-			print("Targets:\n{}".format(targets))
 			batch_variance = np.var(targets, axis=0)
+			if cumulative_variance is None:
+				cumulative_variance = batch_variance * batch_variance.shape[0]
+			else:
+				cumulative_variance += batch_variance * batch_variance.shape[0]
+			print('\tBatch #{}:'.format(testset.batch_id))
 			print("Batch-variance of targets:\n{}".format(batch_variance))
+			print("Cumulative variance of targets:\n{}".format(cumulative_variance))

@@ -2,7 +2,7 @@
 #PBS -N ConvNet_IIGS6Lvl10_1xlayers_900seeds_npz
 #PBS -q gpu
 #PBS -l walltime=4:00:00
-#PBS -l ngpus=1:gpu_cap=cuda35:mem=30gb:scratch_local=10gb
+#PBS -l select=1:ncpus=10:ngpus=1:gpu_cap=cuda35:mem=30gb:scratch_local=10gb
 
 # README
 # This script runs ConvNet_IIGS6Lvl10 with datasets of 900 seed files stored in NPZ for II-GS6 on Metacentrum's server.

@@ -11,8 +11,6 @@ from src.nn.features.goofspiel.IIGS6.one_hot_rounds_cards_IIGS6_1_6_false_true_l
 	get_1hot_round_card_features_np
 from src.utils.tf_utils import count_graph_operations
 
-FIXED_RANDOMNESS = False
-
 
 class ConvNet_IIGS6Lvl10:
 	NUM_NODES = 14400
@@ -28,10 +26,10 @@ class ConvNet_IIGS6Lvl10:
 	TARGETS_DIM = 1
 	NUM_PUBLIC_STATES = 3 ** NUM_ROUNDS
 
-	def __init__(self, threads, seed=SEED_FOR_TESTING, verbose=True):
+	def __init__(self, threads, seed=SEED_FOR_TESTING, verbose=True, fixed_randomness=False):
 		# Create an empty graph and a session
 		self.graph = tf.Graph()
-		if FIXED_RANDOMNESS:
+		if fixed_randomness:
 			self.graph.seed = seed
 			self.session = tf.Session(graph=self.graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
 			                                                                  intra_op_parallelism_threads=threads))

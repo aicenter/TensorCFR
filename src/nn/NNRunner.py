@@ -4,8 +4,10 @@
 import numpy as np
 
 from src.commons.constants import SEED_FOR_TESTING
-from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10, FIXED_RANDOMNESS
+from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
+
+FIXED_RANDOMNESS = False
 
 
 class NNRunner:
@@ -61,7 +63,7 @@ class NNRunner:
 
 	@staticmethod
 	def construct_network(args):
-		network = ConvNet_IIGS6Lvl10(threads=args.threads)
+		network = ConvNet_IIGS6Lvl10(threads=args.threads, fixed_randomness=FIXED_RANDOMNESS)
 		network.construct(args)
 		return network
 

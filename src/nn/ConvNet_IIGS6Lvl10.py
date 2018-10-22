@@ -338,13 +338,18 @@ class NNRunner:
 		return args
 
 	@staticmethod
-	def init_datasets(dataset_directory):
-		import os
-		script_directory = os.path.dirname(os.path.abspath(__file__))
+	def datasets_from_npz(dataset_directory, script_directory):
 		npz_basename = "IIGS6_1_6_false_true_lvl10"
 		trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
 		devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
 		testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
+		return devset, testset, trainset
+
+	@staticmethod
+	def init_datasets(dataset_directory):
+		import os
+		script_directory = os.path.dirname(os.path.abspath(__file__))
+		devset, testset, trainset = NNRunner.datasets_from_npz(dataset_directory, script_directory)
 		return devset, testset, trainset
 
 	@staticmethod

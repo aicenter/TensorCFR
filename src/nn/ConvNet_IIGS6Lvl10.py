@@ -370,6 +370,13 @@ class NNRunner:
 		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
 
 	@staticmethod
+	def evaluate_testset(network, testset):
+		testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
+		print()
+		print("mean squared error on testset: {}".format(testset_error_mse))
+		print("L-infinity error on testset: {}".format(testset_error_infinity))
+
+	@staticmethod
 	def run_neural_net():
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if FIXED_RANDOMNESS:
@@ -387,11 +394,7 @@ class NNRunner:
 			NNRunner.train_one_epoch(args, network, trainset)
 			NNRunner.evaluate_devset(devset, epoch, network)
 
-		# Evaluate on test set
-		testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
-		print()
-		print("mean squared error on testset: {}".format(testset_error_mse))
-		print("L-infinity error on testset: {}".format(testset_error_infinity))
+		NNRunner.evaluate_testset(network, testset)
 
 		print()
 		print("Predictions of initial 2 training examples:")

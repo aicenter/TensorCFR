@@ -10,6 +10,14 @@ FIXED_RANDOMNESS = False
 
 
 class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
+	@property
+	def default_extractor_arch(self):
+		return "C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM)
+
+	@property
+	def default_regressor_arch(self):
+		return "C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM)
+
 	@staticmethod
 	def datasets_from_npz(dataset_directory, script_directory):
 		npz_basename = "IIGS6_1_6_false_true_lvl10"

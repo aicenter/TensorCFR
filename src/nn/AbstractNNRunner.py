@@ -6,23 +6,29 @@ from abc import abstractmethod
 import numpy as np
 
 from src.commons.constants import SEED_FOR_TESTING
-from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
 
 FIXED_RANDOMNESS = False
 
 
 class AbstractNNRunner:
-	@staticmethod
-	def parse_arguments():
+	@property
+	def default_extractor_arch(self):
+		raise NotImplementedError
+
+	@property
+	def default_regressor_arch(self):
+		raise NotImplementedError
+
+	def parse_arguments(self):
 		import argparse
 
 		parser = argparse.ArgumentParser()
 		parser.add_argument("--batch_size", default=32, type=int, help="Batch size.")
 		parser.add_argument("--dataset_directory", default="data/IIGS6Lvl10/minimal_dataset/2",
 		                    help="Relative path to dataset folder.")
-		parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
+		parser.add_argument("--extractor", default=self.default_extractor_arch, type=str,
 		                    help="Description of the feature extactor architecture.")
-		parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
+		parser.add_argument("--regressor", default=self.default_regressor_arch, type=str,
 		                    help="Description of the value regressor architecture.")
 		parser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
 		parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
@@ -84,7 +90,7 @@ class AbstractNNRunner:
 		if FIXED_RANDOMNESS:
 			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
-		args = AbstractNNRunner.parse_arguments()
+		args = self.parse_arguments()
 		dataset_directory = args.dataset_directory
 		args = AbstractNNRunner.create_logdir(args)
 

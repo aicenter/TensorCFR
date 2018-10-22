@@ -353,6 +353,12 @@ class NNRunner:
 		return devset, testset, trainset
 
 	@staticmethod
+	def construct_network(args):
+		network = ConvNet_IIGS6Lvl10(threads=args.threads)
+		network.construct(args)
+		return network
+
+	@staticmethod
 	def run_neural_net():
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if FIXED_RANDOMNESS:
@@ -363,10 +369,7 @@ class NNRunner:
 		args = NNRunner.create_logdir(args)
 
 		devset, testset, trainset = NNRunner.init_datasets(dataset_directory)
-
-		# Construct the network
-		network = ConvNet_IIGS6Lvl10(threads=args.threads)
-		network.construct(args)
+		network = NNRunner.construct_network(args)
 
 		# Train
 		for epoch in range(args.epochs):

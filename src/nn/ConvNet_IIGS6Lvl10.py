@@ -377,6 +377,12 @@ class NNRunner:
 		print("L-infinity error on testset: {}".format(testset_error_infinity))
 
 	@staticmethod
+	def showcase_predictions(network, trainset):
+		print()
+		print("Predictions of initial 2 training examples:")
+		print(network.predict(trainset.features[:2]))
+
+	@staticmethod
 	def run_neural_net():
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if FIXED_RANDOMNESS:
@@ -389,16 +395,12 @@ class NNRunner:
 		devset, testset, trainset = NNRunner.init_datasets(dataset_directory)
 		network = NNRunner.construct_network(args)
 
-		# Train
 		for epoch in range(args.epochs):
 			NNRunner.train_one_epoch(args, network, trainset)
 			NNRunner.evaluate_devset(devset, epoch, network)
 
 		NNRunner.evaluate_testset(network, testset)
-
-		print()
-		print("Predictions of initial 2 training examples:")
-		print(network.predict(trainset.features[:2]))
+		NNRunner.showcase_predictions(network, trainset)
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix

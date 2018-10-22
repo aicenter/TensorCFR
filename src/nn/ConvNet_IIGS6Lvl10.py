@@ -365,6 +365,11 @@ class NNRunner:
 			network.train(reaches, targets)
 
 	@staticmethod
+	def evaluate_devset(devset, epoch, network):
+		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
+		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+
+	@staticmethod
 	def run_neural_net():
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if FIXED_RANDOMNESS:
@@ -380,10 +385,7 @@ class NNRunner:
 		# Train
 		for epoch in range(args.epochs):
 			NNRunner.train_one_epoch(args, network, trainset)
-
-			# Evaluate on development set
-			devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
-			print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+			NNRunner.evaluate_devset(devset, epoch, network)
 
 		# Evaluate on test set
 		testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)

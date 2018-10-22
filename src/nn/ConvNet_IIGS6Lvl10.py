@@ -338,9 +338,17 @@ class NNRunner:
 		return args
 
 	@staticmethod
-	def run_neural_net():
+	def init_datasets(dataset_directory):
 		import os
+		script_directory = os.path.dirname(os.path.abspath(__file__))
+		npz_basename = "IIGS6_1_6_false_true_lvl10"
+		trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
+		devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
+		testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
+		return devset, testset, trainset
 
+	@staticmethod
+	def run_neural_net():
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if FIXED_RANDOMNESS:
 			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
@@ -349,12 +357,7 @@ class NNRunner:
 		dataset_directory = args.dataset_directory
 		args = NNRunner.create_logdir(args)
 
-		# Load the data
-		script_directory = os.path.dirname(os.path.abspath(__file__))
-		npz_basename = "IIGS6_1_6_false_true_lvl10"
-		trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
-		devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
-		testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
+		devset, testset, trainset = NNRunner.init_datasets(dataset_directory)
 
 		# Construct the network
 		network = ConvNet_IIGS6Lvl10(threads=args.threads)

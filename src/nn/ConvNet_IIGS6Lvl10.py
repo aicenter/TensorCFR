@@ -301,20 +301,15 @@ class ConvNet_IIGS6Lvl10:
 		print("--> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
 
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
-
-
-if __name__ == '__main__' and ACTIVATE_FILE:
+def run_neural_net():
+	global args
 	import argparse
 	import datetime
 	import os
 	import re
-
 	np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 	if FIXED_RANDOMNESS:
 		np.random.seed(SEED_FOR_TESTING)  # Fix random seed
-
 	# Parse arguments
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--batch_size", default=32, type=int, help="Batch size.")
@@ -326,10 +321,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	                    help="Description of the value regressor architecture.")
 	parser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
-
 	args = parser.parse_args()
 	print("args: {}".format(args))
-
 	# Create logdir name
 	dataset_directory = args.dataset_directory
 	del args.dataset_directory
@@ -340,18 +333,15 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	)
 	if not os.path.exists("logs"):
 		os.mkdir("logs")  # TF 1.6 will do this by itself
-
 	# Load the data
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	npz_basename = "IIGS6_1_6_false_true_lvl10"
 	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
 	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
 	testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
-
 	# Construct the network
 	network = ConvNet_IIGS6Lvl10(threads=args.threads)
 	network.construct(args)
-
 	# Train
 	for epoch in range(args.epochs):
 		while not trainset.epoch_finished():
@@ -361,13 +351,19 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		# Evaluate on development set
 		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
 		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
-
 	# Evaluate on test set
 	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
 	print()
 	print("mean squared error on testset: {}".format(testset_error_mse))
 	print("L-infinity error on testset: {}".format(testset_error_infinity))
-
 	print()
 	print("Predictions of initial 2 training examples:")
 	print(network.predict(trainset.features[:2]))
+
+
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
+ACTIVATE_FILE = False
+
+
+if __name__ == '__main__' and ACTIVATE_FILE:
+	run_neural_net()

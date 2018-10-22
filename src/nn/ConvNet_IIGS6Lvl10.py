@@ -303,8 +303,26 @@ class ConvNet_IIGS6Lvl10:
 
 class NNRunner:
 	@staticmethod
-	def run_neural_net():
+	def parse_arguments():
 		import argparse
+
+		parser = argparse.ArgumentParser()
+		parser.add_argument("--batch_size", default=32, type=int, help="Batch size.")
+		parser.add_argument("--dataset_directory", default="data/IIGS6Lvl10/minimal_dataset/2",
+		                    help="Relative path to dataset folder.")
+		parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
+		                    help="Description of the feature extactor architecture.")
+		parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
+		                    help="Description of the value regressor architecture.")
+		parser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
+		parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
+
+		args = parser.parse_args()
+		print("args: {}".format(args))
+		return args
+
+	@staticmethod
+	def run_neural_net():
 		import datetime
 		import os
 		import re
@@ -313,20 +331,7 @@ class NNRunner:
 		if FIXED_RANDOMNESS:
 			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
-		# Parse arguments
-		parser = argparse.ArgumentParser()
-		parser.add_argument("--batch_size", default=32, type=int, help="Batch size.")
-		parser.add_argument("--dataset_directory", default="data/IIGS6Lvl10/minimal_dataset/2",
-												help="Relative path to dataset folder.")
-		parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
-												help="Description of the feature extactor architecture.")
-		parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
-												help="Description of the value regressor architecture.")
-		parser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
-		parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
-
-		args = parser.parse_args()
-		print("args: {}".format(args))
+		args = NNRunner.parse_arguments()
 
 		# Create logdir name
 		dataset_directory = args.dataset_directory

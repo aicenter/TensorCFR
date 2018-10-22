@@ -10,7 +10,7 @@ from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 FIXED_RANDOMNESS = False
 
 
-class NNRunner:
+class AbstractNNRunner:
 	@staticmethod
 	def parse_arguments():
 		import argparse
@@ -58,7 +58,7 @@ class NNRunner:
 	def init_datasets(dataset_directory):
 		import os
 		script_directory = os.path.dirname(os.path.abspath(__file__))
-		devset, testset, trainset = NNRunner.datasets_from_npz(dataset_directory, script_directory)
+		devset, testset, trainset = AbstractNNRunner.datasets_from_npz(dataset_directory, script_directory)
 		return devset, testset, trainset
 
 	@staticmethod
@@ -97,19 +97,19 @@ class NNRunner:
 		if FIXED_RANDOMNESS:
 			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
-		args = NNRunner.parse_arguments()
+		args = AbstractNNRunner.parse_arguments()
 		dataset_directory = args.dataset_directory
-		args = NNRunner.create_logdir(args)
+		args = AbstractNNRunner.create_logdir(args)
 
-		devset, testset, trainset = NNRunner.init_datasets(dataset_directory)
-		network = NNRunner.construct_network(args)
+		devset, testset, trainset = AbstractNNRunner.init_datasets(dataset_directory)
+		network = AbstractNNRunner.construct_network(args)
 
 		for epoch in range(args.epochs):
-			NNRunner.train_one_epoch(args, network, trainset)
-			NNRunner.evaluate_devset(devset, epoch, network)
+			AbstractNNRunner.train_one_epoch(args, network, trainset)
+			AbstractNNRunner.evaluate_devset(devset, epoch, network)
 
-		NNRunner.evaluate_testset(network, testset)
-		NNRunner.showcase_predictions(network, trainset)
+		AbstractNNRunner.evaluate_testset(network, testset)
+		AbstractNNRunner.showcase_predictions(network, trainset)
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
@@ -117,4 +117,4 @@ ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
-	NNRunner.run_neural_net()
+	AbstractNNRunner.run_neural_net()

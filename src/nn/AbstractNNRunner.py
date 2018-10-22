@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
+from abc import abstractmethod
+
 import numpy as np
 
 from src.commons.constants import SEED_FOR_TESTING
 from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
-from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 
 FIXED_RANDOMNESS = False
 
@@ -46,26 +47,13 @@ class AbstractNNRunner:
 			os.mkdir("logs")  # TF 1.6 will do this by itself
 		return args
 
-	@staticmethod
-	def datasets_from_npz(dataset_directory, script_directory):
-		npz_basename = "IIGS6_1_6_false_true_lvl10"
-		trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
-		devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
-		testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
-		return devset, testset, trainset
+	@abstractmethod
+	def init_datasets(self, dataset_directory):
+		pass
 
-	@staticmethod
-	def init_datasets(dataset_directory):
-		import os
-		script_directory = os.path.dirname(os.path.abspath(__file__))
-		devset, testset, trainset = AbstractNNRunner.datasets_from_npz(dataset_directory, script_directory)
-		return devset, testset, trainset
-
-	@staticmethod
-	def construct_network(args):
-		network = ConvNet_IIGS6Lvl10(threads=args.threads, fixed_randomness=FIXED_RANDOMNESS)
-		network.construct(args)
-		return network
+	@abstractmethod
+	def construct_network(self, args):
+		pass
 
 	@staticmethod
 	def train_one_epoch(args, network, trainset):
@@ -91,8 +79,7 @@ class AbstractNNRunner:
 		print("Predictions of initial 2 training examples:")
 		print(network.predict(trainset.features[:2]))
 
-	@staticmethod
-	def run_neural_net():
+	def run_neural_net(self):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if FIXED_RANDOMNESS:
 			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
@@ -101,8 +88,8 @@ class AbstractNNRunner:
 		dataset_directory = args.dataset_directory
 		args = AbstractNNRunner.create_logdir(args)
 
-		devset, testset, trainset = AbstractNNRunner.init_datasets(dataset_directory)
-		network = AbstractNNRunner.construct_network(args)
+		devset, testset, trainset = self.init_datasets(dataset_directory)
+		network = self.construct_network(args)
 
 		for epoch in range(args.epochs):
 			AbstractNNRunner.train_one_epoch(args, network, trainset)
@@ -110,11 +97,3 @@ class AbstractNNRunner:
 
 		AbstractNNRunner.evaluate_testset(network, testset)
 		AbstractNNRunner.showcase_predictions(network, trainset)
-
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = True
-
-
-if __name__ == '__main__' and ACTIVATE_FILE:
-	AbstractNNRunner.run_neural_net()

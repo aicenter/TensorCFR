@@ -18,15 +18,13 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 		testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
 		return devset, testset, trainset
 
-	@staticmethod
-	def init_datasets(dataset_directory):
+	def init_datasets(self, dataset_directory):
 		import os
 		script_directory = os.path.dirname(os.path.abspath(__file__))
 		devset, testset, trainset = Runner_CNN_IIGS6Lvl10_NPZ.datasets_from_npz(dataset_directory, script_directory)
 		return devset, testset, trainset
 
-	@staticmethod
-	def construct_network(args):
+	def construct_network(self, args):
 		network = ConvNet_IIGS6Lvl10(threads=args.threads, fixed_randomness=FIXED_RANDOMNESS)
 		network.construct(args)
 		return network
@@ -37,4 +35,5 @@ ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
-	Runner_CNN_IIGS6Lvl10_NPZ.run_neural_net()
+	runner = Runner_CNN_IIGS6Lvl10_NPZ()
+	runner.run_neural_net()

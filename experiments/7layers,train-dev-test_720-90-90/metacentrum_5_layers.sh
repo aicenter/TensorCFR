@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -N ConvNet_IIGS6Lvl10_5xlayers_900seeds_npz
 #PBS -q gpu
-#PBS -l walltime=10:00:00
+#PBS -l walltime=24:00:00
 #PBS -l select=1:ncpus=10:ngpus=1:gpu_cap=cuda35:mem=30gb:scratch_local=10gb
 
 # README

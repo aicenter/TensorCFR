@@ -359,6 +359,12 @@ class NNRunner:
 		return network
 
 	@staticmethod
+	def train_one_epoch(args, network, trainset):
+		while not trainset.epoch_finished():
+			reaches, targets = trainset.next_batch(args.batch_size)
+			network.train(reaches, targets)
+
+	@staticmethod
 	def run_neural_net():
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if FIXED_RANDOMNESS:
@@ -373,9 +379,7 @@ class NNRunner:
 
 		# Train
 		for epoch in range(args.epochs):
-			while not trainset.epoch_finished():
-				reaches, targets = trainset.next_batch(args.batch_size)
-				network.train(reaches, targets)
+			NNRunner.train_one_epoch(args, network, trainset)
 
 			# Evaluate on development set
 			devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)

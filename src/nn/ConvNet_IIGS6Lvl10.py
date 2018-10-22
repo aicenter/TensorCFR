@@ -322,19 +322,11 @@ class NNRunner:
 		return args
 
 	@staticmethod
-	def run_neural_net():
+	def create_logdir(args):
 		import datetime
-		import os
 		import re
+		import os
 
-		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
-		if FIXED_RANDOMNESS:
-			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
-
-		args = NNRunner.parse_arguments()
-
-		# Create logdir name
-		dataset_directory = args.dataset_directory
 		del args.dataset_directory
 		args.logdir = "logs/{}-{}-{}".format(
 			os.path.basename(__file__),
@@ -343,6 +335,19 @@ class NNRunner:
 		)
 		if not os.path.exists("logs"):
 			os.mkdir("logs")  # TF 1.6 will do this by itself
+		return args
+
+	@staticmethod
+	def run_neural_net():
+		import os
+
+		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
+		if FIXED_RANDOMNESS:
+			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
+
+		args = NNRunner.parse_arguments()
+		dataset_directory = args.dataset_directory
+		args = NNRunner.create_logdir(args)
 
 		# Load the data
 		script_directory = os.path.dirname(os.path.abspath(__file__))

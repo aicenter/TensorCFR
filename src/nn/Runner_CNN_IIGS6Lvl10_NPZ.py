@@ -6,8 +6,6 @@ from src.nn.AbstractNNRunner import AbstractNNRunner
 from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 
-FIXED_RANDOMNESS = False
-
 
 class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 	@property
@@ -33,7 +31,7 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 		return devset, testset, trainset
 
 	def construct_network(self, args):
-		network = ConvNet_IIGS6Lvl10(threads=args.threads, fixed_randomness=FIXED_RANDOMNESS)
+		network = ConvNet_IIGS6Lvl10(threads=args.threads, fixed_randomness=self.fixed_randomness)
 		network.construct(args)
 		return network
 

@@ -7,10 +7,11 @@ import numpy as np
 
 from src.commons.constants import SEED_FOR_TESTING
 
-FIXED_RANDOMNESS = False
-
 
 class AbstractNNRunner:
+	def __init__(self, fixed_randomness=False):
+		self.fixed_randomness = fixed_randomness
+
 	@property
 	def default_extractor_arch(self):
 		raise NotImplementedError
@@ -87,7 +88,8 @@ class AbstractNNRunner:
 
 	def run_neural_net(self):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
-		if FIXED_RANDOMNESS:
+		if self.fixed_randomness:
+			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
 			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
 		args = self.parse_arguments()

@@ -30,6 +30,7 @@ class ConvNet_IIGS6Lvl10:
 		# Create an empty graph and a session
 		self.graph = tf.Graph()
 		if fixed_randomness:
+			print("fixed_randomness is {}".format(fixed_randomness))
 			self.graph.seed = seed
 			self.session = tf.Session(graph=self.graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
 			                                                                  intra_op_parallelism_threads=threads))

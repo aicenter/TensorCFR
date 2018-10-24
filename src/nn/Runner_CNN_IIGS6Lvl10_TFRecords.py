@@ -73,7 +73,15 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 		for sample in devset.next_batch(self.data_session):
 			reaches, targets = sample
 			devset_error_mse, devset_error_infinity = self.network.evaluate("dev", reaches, targets)
-			print("[epoch #{}, dev batch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset.batch_id, devset_error_mse, devset_error_infinity))
+			print("[epoch #{}, dev batch #{}] dev MSE {}, \tdev L-infinity error {}".format(
+				epoch, devset.batch_id, devset_error_mse, devset_error_infinity))
+
+	def evaluate_testset(self, network, testset):
+		for sample in testset.next_batch(self.data_session):
+			reaches, targets = sample
+			testset_error_mse, testset_error_infinity = self.network.evaluate("test", reaches, targets)
+			print("[test batch #{}] test MSE {}, \ttest L-infinity error {}".format(
+				testset.batch_id, testset_error_mse, testset_error_infinity))
 
 	def run_neural_net(self):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
@@ -93,8 +101,8 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 				print("Epoch #{}".format(epoch))
 				self.train_one_epoch(self.network, trainset)
 				self.evaluate_devset(devset, epoch, self.network)
-			#
-			# self.evaluate_testset(self.network, testset)
+
+			self.evaluate_testset(self.network, testset)
 			# self.showcase_predictions(self.network, trainset)
 
 

@@ -67,6 +67,7 @@ class DatasetFromTFRecord:
 				feature_input, feature_target = session.run(self._features_op)
 				if feature_target.shape[0] != self._batch_size:
 					self.epoch_finished = True
+					yield (feature_input, feature_target)
 					break
 			except tf.errors.OutOfRangeError:
 				self.epoch_finished = True

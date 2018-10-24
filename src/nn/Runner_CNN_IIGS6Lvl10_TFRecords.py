@@ -65,8 +65,9 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 
 	def train_one_epoch(self, network, trainset):
 		for sample in trainset.next_batch(self.data_session):
+			print("\tTraining batch #{}".format(trainset.batch_id))
 			reaches, targets = sample
-			network.train(reaches, targets)
+			self.network.train(reaches, targets)
 
 	def run_neural_net(self):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
@@ -84,11 +85,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 		with tf.Session() as self.data_session:
 			for epoch in range(self.args.epochs):
 				print("Epoch #{}".format(epoch))
-				# self.train_one_epoch(self.network, trainset)
-				for sample in trainset.next_batch(self.data_session):
-					print("\tTrain batch #{}".format(trainset.batch_id))
-					reaches, targets = sample
-					self.network.train(reaches, targets)
+				self.train_one_epoch(self.network, trainset)
 
 				# self.evaluate_devset(devset, epoch, self.network)
 				for sample in devset.next_batch(self.data_session):

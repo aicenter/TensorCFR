@@ -44,7 +44,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 			variable_scope_name='devset'
 		)
 		testset = DatasetFromTFRecord(
-			batch_size=self.args.batch_size,
+			batch_size=len(testset_files) * FEATURES_PER_FILE,
 			dataset_files=testset_files,
 			sample_length=SAMPLE_LENGTH,
 			shuffle_batches=False,

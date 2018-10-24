@@ -83,6 +83,9 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 			print("[test batch #{}] test MSE {}, \ttest L-infinity error {}".format(
 				testset.batch_id, testset_error_mse, testset_error_infinity))
 
+	def showcase_predictions(self, network, trainset):
+		pass
+
 	def run_neural_net(self):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if self.fixed_randomness:
@@ -103,7 +106,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 				self.evaluate_devset(devset, epoch, self.network)
 
 			self.evaluate_testset(self.network, testset)
-			# self.showcase_predictions(self.network, trainset)
+		self.showcase_predictions(self.network, trainset)
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix

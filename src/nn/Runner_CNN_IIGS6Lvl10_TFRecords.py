@@ -8,7 +8,7 @@ from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 
 class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test parent here
 	@staticmethod
-	def datasets_from_npz(dataset_directory, script_directory):
+	def datasets_from_tfrecords(dataset_directory, script_directory):
 		npz_basename = "IIGS6_1_6_false_true_lvl10"
 		trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
 		devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
@@ -18,7 +18,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 	def init_datasets(self, dataset_directory):
 		import os
 		script_directory = os.path.dirname(os.path.abspath(__file__))
-		devset, testset, trainset = Runner_CNN_IIGS6Lvl10_TFRecords.datasets_from_npz(dataset_directory, script_directory)
+		devset, testset, trainset = Runner_CNN_IIGS6Lvl10_TFRecords.datasets_from_tfrecords(dataset_directory, script_directory)
 		return devset, testset, trainset
 
 

@@ -66,20 +66,17 @@ class AbstractNNRunner:
 			reaches, targets = trainset.next_batch(self.args.batch_size)
 			network.train(reaches, targets)
 
-	@staticmethod
-	def evaluate_devset(devset, epoch, network):
+	def evaluate_devset(self, devset, epoch, network):
 		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
 		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
 
-	@staticmethod
-	def evaluate_testset(network, testset):
+	def evaluate_testset(self, network, testset):
 		testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
 		print()
 		print("mean squared error on testset: {}".format(testset_error_mse))
 		print("L-infinity error on testset: {}".format(testset_error_infinity))
 
-	@staticmethod
-	def showcase_predictions(network, trainset):
+	def showcase_predictions(self, network, trainset):
 		print()
 		print("Predictions of initial 2 training examples:")
 		print(network.predict(trainset.features[:2]))
@@ -99,7 +96,7 @@ class AbstractNNRunner:
 
 		for epoch in range(self.args.epochs):
 			self.train_one_epoch(network, trainset)
-			AbstractNNRunner.evaluate_devset(devset, epoch, network)
+			self.evaluate_devset(devset, epoch, network)
 
-		AbstractNNRunner.evaluate_testset(network, testset)
-		AbstractNNRunner.showcase_predictions(network, trainset)
+		self.evaluate_testset(network, testset)
+		self.showcase_predictions(network, trainset)

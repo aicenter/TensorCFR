@@ -12,6 +12,7 @@ class AbstractNNRunner:
 	def __init__(self, fixed_randomness=False):
 		self.fixed_randomness = fixed_randomness
 		self.args = None
+		self.network = None
 
 	@property
 	def default_extractor_arch(self):
@@ -92,11 +93,11 @@ class AbstractNNRunner:
 		self.create_logdir()
 
 		devset, testset, trainset = self.init_datasets(dataset_directory)
-		network = self.construct_network()
+		self.network = self.construct_network()
 
 		for epoch in range(self.args.epochs):
-			self.train_one_epoch(network, trainset)
-			self.evaluate_devset(devset, epoch, network)
+			self.train_one_epoch(self.network, trainset)
+			self.evaluate_devset(devset, epoch, self.network)
 
-		self.evaluate_testset(network, testset)
-		self.showcase_predictions(network, trainset)
+		self.evaluate_testset(self.network, testset)
+		self.showcase_predictions(self.network, trainset)

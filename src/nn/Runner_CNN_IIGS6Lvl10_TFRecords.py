@@ -11,7 +11,6 @@ from src.utils.other_utils import get_files_in_directory_recursively
 class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test parent here
 	def __init__(self, fixed_randomness=False):
 		super().__init__(fixed_randomness)
-		self.network = None
 		self.data_session = None
 
 	def datasets_from_tfrecords(self, script_directory, dataset_directory):
@@ -61,27 +60,27 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 		)
 		return devset, testset, trainset
 
-	def train_one_epoch(self, network, trainset):
+	def train_one_epoch(self, trainset):
 		for sample in trainset.next_batch(self.data_session):
 			print("\tTraining batch #{}".format(trainset.batch_id))
 			reaches, targets = sample
 			self.network.train(reaches, targets)
 
-	def evaluate_devset(self, devset, epoch, network):
+	def evaluate_devset(self, devset, epoch):
 		for sample in devset.next_batch(self.data_session):
 			reaches, targets = sample
 			devset_error_mse, devset_error_infinity = self.network.evaluate("dev", reaches, targets)
 			print("[epoch #{}, dev batch #{}] dev MSE {}, \tdev L-infinity error {}".format(
 				epoch, devset.batch_id, devset_error_mse, devset_error_infinity))
 
-	def evaluate_testset(self, network, testset):
+	def evaluate_testset(self, testset):
 		for sample in testset.next_batch(self.data_session):
 			reaches, targets = sample
 			testset_error_mse, testset_error_infinity = self.network.evaluate("test", reaches, targets)
 			print("[test batch #{}] test MSE {}, \ttest L-infinity error {}".format(
 				testset.batch_id, testset_error_mse, testset_error_infinity))
 
-	def showcase_predictions(self, network, trainset):
+	def showcase_predictions(self, trainset):
 		pass
 
 	def run_neural_net(self):

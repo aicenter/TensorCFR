@@ -62,25 +62,25 @@ class AbstractNNRunner:
 	def construct_network(self):
 		pass
 
-	def train_one_epoch(self, network, trainset):
+	def train_one_epoch(self, trainset):
 		while not trainset.epoch_finished():
 			reaches, targets = trainset.next_batch(self.args.batch_size)
-			network.train(reaches, targets)
+			self.network.train(reaches, targets)
 
-	def evaluate_devset(self, devset, epoch, network):
-		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
+	def evaluate_devset(self, devset, epoch):
+		devset_error_mse, devset_error_infinity = self.network.evaluate("dev", devset.features, devset.targets)
 		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
 
-	def evaluate_testset(self, network, testset):
-		testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
+	def evaluate_testset(self, testset):
+		testset_error_mse, testset_error_infinity = self.network.evaluate("test", testset.features, testset.targets)
 		print()
 		print("mean squared error on testset: {}".format(testset_error_mse))
 		print("L-infinity error on testset: {}".format(testset_error_infinity))
 
-	def showcase_predictions(self, network, trainset):
+	def showcase_predictions(self, trainset):
 		print()
 		print("Predictions of initial 2 training examples:")
-		print(network.predict(trainset.features[:2]))
+		print(self.network.predict(trainset.features[:2]))
 
 	def run_neural_net(self):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
@@ -96,8 +96,8 @@ class AbstractNNRunner:
 		self.network = self.construct_network()
 
 		for epoch in range(self.args.epochs):
-			self.train_one_epoch(self.network, trainset)
-			self.evaluate_devset(devset, epoch, self.network)
+			self.train_one_epoch(trainset)
+			self.evaluate_devset(devset, epoch)
 
-		self.evaluate_testset(self.network, testset)
-		self.showcase_predictions(self.network, trainset)
+		self.evaluate_testset(testset)
+		self.showcase_predictions(trainset)

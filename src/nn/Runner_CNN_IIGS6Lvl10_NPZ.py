@@ -30,9 +30,9 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 		devset, testset, trainset = Runner_CNN_IIGS6Lvl10_NPZ.datasets_from_npz(dataset_directory, script_directory)
 		return devset, testset, trainset
 
-	def construct_network(self, args):
-		network = ConvNet_IIGS6Lvl10(threads=args.threads, fixed_randomness=self.fixed_randomness)
-		network.construct(args)
+	def construct_network(self):
+		network = ConvNet_IIGS6Lvl10(threads=self.args.threads, fixed_randomness=self.fixed_randomness)
+		network.construct(self.args)
 		return network
 
 

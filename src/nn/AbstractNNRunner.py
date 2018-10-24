@@ -11,6 +11,7 @@ from src.commons.constants import SEED_FOR_TESTING
 class AbstractNNRunner:
 	def __init__(self, fixed_randomness=False):
 		self.fixed_randomness = fixed_randomness
+		self.args = None
 
 	@property
 	def default_extractor_arch(self):
@@ -34,38 +35,35 @@ class AbstractNNRunner:
 		parser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
 		parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 
-		args = parser.parse_args()
-		print("args: {}".format(args))
-		return args
+		self.args = parser.parse_args()
+		print("args: {}".format(self.args))
 
-	@staticmethod
-	def create_logdir(args):
+	def create_logdir(self):
 		import datetime
 		import re
 		import os
 
-		del args.dataset_directory
-		args.logdir = "logs/{}-{}-{}".format(
+		del self.args.dataset_directory
+		self.args.logdir = "logs/{}-{}-{}".format(
 			os.path.basename(__file__),
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
-			",".join(("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value) for key, value in sorted(vars(args).items())))
+			",".join(("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
+			          for key, value in sorted(vars(self.args).items())))
 		)
 		if not os.path.exists("logs"):
 			os.mkdir("logs")  # TF 1.6 will do this by itself
-		return args
 
 	@abstractmethod
 	def init_datasets(self, dataset_directory):
 		pass
 
 	@abstractmethod
-	def construct_network(self, args):
+	def construct_network(self):
 		pass
 
-	@staticmethod
-	def train_one_epoch(args, network, trainset):
+	def train_one_epoch(self, network, trainset):
 		while not trainset.epoch_finished():
-			reaches, targets = trainset.next_batch(args.batch_size)
+			reaches, targets = trainset.next_batch(self.args.batch_size)
 			network.train(reaches, targets)
 
 	@staticmethod
@@ -92,15 +90,15 @@ class AbstractNNRunner:
 			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
 			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
-		args = self.parse_arguments()
-		dataset_directory = args.dataset_directory
-		args = AbstractNNRunner.create_logdir(args)
+		self.parse_arguments()
+		dataset_directory = self.args.dataset_directory
+		self.create_logdir()
 
 		devset, testset, trainset = self.init_datasets(dataset_directory)
-		network = self.construct_network(args)
+		network = self.construct_network()
 
-		for epoch in range(args.epochs):
-			AbstractNNRunner.train_one_epoch(args, network, trainset)
+		for epoch in range(self.args.epochs):
+			self.train_one_epoch(network, trainset)
 			AbstractNNRunner.evaluate_devset(devset, epoch, network)
 
 		AbstractNNRunner.evaluate_testset(network, testset)

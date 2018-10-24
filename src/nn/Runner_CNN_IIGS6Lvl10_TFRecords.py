@@ -101,7 +101,6 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 
 		with tf.Session() as self.data_session:
 			for epoch in range(self.args.epochs):
-				print("Epoch #{}".format(epoch))
 				self.train_one_epoch(self.network, trainset)
 				self.evaluate_devset(devset, epoch, self.network)
 

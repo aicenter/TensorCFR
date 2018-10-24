@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
-import numpy as np
 import tensorflow as tf
 
-from src.commons.constants import SEED_FOR_TESTING
 from src.nn.Runner_CNN_IIGS6Lvl10_NPZ import Runner_CNN_IIGS6Lvl10_NPZ
 from src.nn.data.DatasetFromTFRecord import DatasetFromTFRecord
 from src.utils.other_utils import get_files_in_directory_recursively
@@ -87,25 +85,8 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 		pass
 
 	def run_neural_net(self):
-		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
-		if self.fixed_randomness:
-			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
-			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
-
-		self.parse_arguments()
-		dataset_directory = self.args.dataset_directory
-		self.create_logdir()
-
-		devset, testset, trainset = self.init_datasets(dataset_directory)
-		self.network = self.construct_network()
-
 		with tf.Session() as self.data_session:
-			for epoch in range(self.args.epochs):
-				self.train_one_epoch(self.network, trainset)
-				self.evaluate_devset(devset, epoch, self.network)
-
-			self.evaluate_testset(self.network, testset)
-		self.showcase_predictions(self.network, trainset)
+			super().run_neural_net()
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix

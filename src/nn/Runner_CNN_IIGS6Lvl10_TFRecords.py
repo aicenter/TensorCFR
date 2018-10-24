@@ -14,7 +14,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 		super().__init__(fixed_randomness)
 		self.data_session = None
 
-	def datasets_from_tfrecords(self, script_directory, dataset_directory):
+	def datasets_from_tfrecords(self, script_directory, dataset_directory, dev_batch_size=None, test_batch_size=None):
 		dataset_dir = "{}/{}".format(script_directory, dataset_directory)
 		dataset_files = get_files_in_directory_recursively(rootdir=dataset_dir)
 
@@ -37,14 +37,14 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 			variable_scope_name='trainset'
 		)
 		devset = DatasetFromTFRecord(
-			batch_size=len(devset_files) * FEATURES_PER_FILE,
+			batch_size=len(devset_files) * FEATURES_PER_FILE if dev_batch_size is None else dev_batch_size,
 			dataset_files=devset_files,
 			sample_length=SAMPLE_LENGTH,
 			shuffle_batches=False,
 			variable_scope_name='devset'
 		)
 		testset = DatasetFromTFRecord(
-			batch_size=len(testset_files) * FEATURES_PER_FILE,
+			batch_size=len(testset_files) * FEATURES_PER_FILE if test_batch_size is None else test_batch_size,
 			dataset_files=testset_files,
 			sample_length=SAMPLE_LENGTH,
 			shuffle_batches=False,

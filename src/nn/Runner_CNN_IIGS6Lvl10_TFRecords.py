@@ -5,6 +5,7 @@ import tensorflow as tf
 
 from src.nn.Runner_CNN_IIGS6Lvl10_NPZ import Runner_CNN_IIGS6Lvl10_NPZ
 from src.nn.data.DatasetFromTFRecord import DatasetFromTFRecord
+from src.nn.features.goofspiel.IIGS6.tfrecords_reaches_values_IIGS6_1_6_false_true_lvl10 import FEATURES_PER_FILE
 from src.utils.other_utils import get_files_in_directory_recursively
 
 
@@ -36,7 +37,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 			variable_scope_name='trainset'
 		)
 		devset = DatasetFromTFRecord(
-			batch_size=self.args.batch_size,
+			batch_size=len(devset_files) * FEATURES_PER_FILE,
 			dataset_files=devset_files,
 			sample_length=SAMPLE_LENGTH,
 			shuffle_batches=False,

@@ -325,33 +325,42 @@ class GambitLoaderCached(GambitLoader):
 
 
 if __name__ == '__main__':
-	domain01_efg = os.path.join(
-			common_constants.PROJECT_ROOT,
-			'doc',
-			'domain01_via_gambit.efg'
-	)
-	hunger_games_efg = os.path.join(
+	# domain01_efg = os.path.join(
+	# 		common_constants.PROJECT_ROOT,
+	# 		'doc',
+	# 		'domain01_via_gambit.efg'
+	# )
+	# hunger_games_efg = os.path.join(
+	# 	common_constants.PROJECT_ROOT,
+	# 	'doc',
+	# 	'hunger_games',
+	# 	'hunger_games_via_gambit.efg'
+	# )
+	# hunger_games_2_efg = os.path.join(
+	# 	common_constants.PROJECT_ROOT,
+	# 	'doc',
+	# 	'hunger_games_2',
+	# 	'hunger_games_via_gambit.efg'
+	# )
+	# efg_files = [
+	# 	domain01_efg,
+	# 	hunger_games_efg,
+	# 	hunger_games_2_efg
+	# ]
+	# domain_names = [
+	# 	"domain01",
+	# 	"hunger_games",
+	# 	"hunger_games_2"
+	# ]
+	# for efg_file, domain_name in zip(efg_files, domain_names):
+	# 	GambitLoader(efg_file, domain_name).show()
+	# 	print("___________________________________\n")
+
+	domain_name = os.path.join(
 		common_constants.PROJECT_ROOT,
 		'doc',
-		'hunger_games',
-		'hunger_games_via_gambit.efg'
+		'phantom_ttt',
+		'SingleLevelPhantomTTT.gbt'
 	)
-	hunger_games_2_efg = os.path.join(
-		common_constants.PROJECT_ROOT,
-		'doc',
-		'hunger_games_2',
-		'hunger_games_via_gambit.efg'
-	)
-	efg_files = [
-		domain01_efg,
-		hunger_games_efg,
-		hunger_games_2_efg
-	]
-	domain_names = [
-		"domain01",
-		"hunger_games",
-		"hunger_games_2"
-	]
-	for efg_file, domain_name in zip(efg_files, domain_names):
-		GambitLoader(efg_file, domain_name).show()
-		print("___________________________________\n")
+
+	GambitLoader(domain_name).show()

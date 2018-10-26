@@ -11,7 +11,7 @@ from src.commons.constants import SEED_FOR_TESTING
 
 class AbstractNNRunner:
 	def __init__(self, fixed_randomness=False):
-		self.parser = argparse.ArgumentParser()
+		self.argparser = argparse.ArgumentParser()
 		self.fixed_randomness = fixed_randomness
 		self.args = None
 		self.network = None
@@ -26,17 +26,17 @@ class AbstractNNRunner:
 		raise NotImplementedError
 
 	def parse_arguments(self):
-		self.parser.add_argument("--batch_size", default=32, type=int, help="Batch size.")
-		self.parser.add_argument("--dataset_directory", default="data/IIGS6Lvl10/minimal_dataset/2",
-		                         help="Relative path to dataset folder.")
-		self.parser.add_argument("--extractor", default=self.default_extractor_arch, type=str,
-		                         help="Description of the feature extactor architecture.")
-		self.parser.add_argument("--regressor", default=self.default_regressor_arch, type=str,
-		                         help="Description of the value regressor architecture.")
-		self.parser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
-		self.parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
+		self.argparser.add_argument("--batch_size", default=32, type=int, help="Batch size.")
+		self.argparser.add_argument("--dataset_directory", default="data/IIGS6Lvl10/minimal_dataset/2",
+		                            help="Relative path to dataset folder.")
+		self.argparser.add_argument("--extractor", default=self.default_extractor_arch, type=str,
+		                            help="Description of the feature extactor architecture.")
+		self.argparser.add_argument("--regressor", default=self.default_regressor_arch, type=str,
+		                            help="Description of the value regressor architecture.")
+		self.argparser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
+		self.argparser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 
-		self.args = self.parser.parse_args()
+		self.args = self.argparser.parse_args()
 		print("args: {}".format(self.args))
 
 	def create_logdir(self):

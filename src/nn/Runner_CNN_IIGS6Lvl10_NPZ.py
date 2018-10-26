@@ -16,6 +16,17 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 	def default_regressor_arch(self):
 		return "C-{}".format(ConvNet_IIGS6Lvl10.INPUT_FEATURES_DIM)
 
+	def add_arguments_to_argparser(self):
+		self.argparser.add_argument("--batch_size", default=32, type=int, help="Batch size.")
+		self.argparser.add_argument("--dataset_directory", default="data/IIGS6Lvl10/minimal_dataset/2",
+		                            help="Relative path to dataset folder.")
+		self.argparser.add_argument("--extractor", default=self.default_extractor_arch, type=str,
+		                            help="Description of the feature extactor architecture.")
+		self.argparser.add_argument("--regressor", default=self.default_regressor_arch, type=str,
+		                            help="Description of the value regressor architecture.")
+		self.argparser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
+		self.argparser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
+
 	@staticmethod
 	def datasets_from_npz(dataset_directory, script_directory):
 		npz_basename = "IIGS6_1_6_false_true_lvl10"

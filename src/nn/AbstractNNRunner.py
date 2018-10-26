@@ -26,15 +26,7 @@ class AbstractNNRunner:
 		raise NotImplementedError
 
 	def add_arguments_to_argparser(self):
-		self.argparser.add_argument("--batch_size", default=32, type=int, help="Batch size.")
-		self.argparser.add_argument("--dataset_directory", default="data/IIGS6Lvl10/minimal_dataset/2",
-		                            help="Relative path to dataset folder.")
-		self.argparser.add_argument("--extractor", default=self.default_extractor_arch, type=str,
-		                            help="Description of the feature extactor architecture.")
-		self.argparser.add_argument("--regressor", default=self.default_regressor_arch, type=str,
-		                            help="Description of the value regressor architecture.")
-		self.argparser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
-		self.argparser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
+		raise NotImplementedError
 
 	def parse_arguments(self):
 		self.add_arguments_to_argparser()

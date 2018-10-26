@@ -13,6 +13,7 @@ class AbstractNNRunner:
 		self.fixed_randomness = fixed_randomness
 		self.args = None
 		self.network = None
+		self.epoch = None
 
 	@property
 	def default_extractor_arch(self):
@@ -64,12 +65,13 @@ class AbstractNNRunner:
 
 	def train_one_epoch(self, trainset):
 		while not trainset.epoch_finished():
+			print("[epoch #{}, batch #{}] Training...".format(self.epoch, trainset.batch_id))
 			reaches, targets = trainset.next_batch(self.args.batch_size)
 			self.network.train(reaches, targets)
 
-	def evaluate_devset(self, devset, epoch):
+	def evaluate_devset(self, devset):
 		devset_error_mse, devset_error_infinity = self.network.evaluate("dev", devset.features, devset.targets)
-		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(self.epoch, devset_error_mse, devset_error_infinity))
 
 	def evaluate_testset(self, testset):
 		testset_error_mse, testset_error_infinity = self.network.evaluate("test", testset.features, testset.targets)
@@ -95,9 +97,9 @@ class AbstractNNRunner:
 		devset, testset, trainset = self.init_datasets(dataset_directory)
 		self.network = self.construct_network()
 
-		for epoch in range(self.args.epochs):
+		for self.epoch in range(self.args.epochs):
 			self.train_one_epoch(trainset)
-			self.evaluate_devset(devset, epoch)
+			self.evaluate_devset(devset)
 
 		self.evaluate_testset(testset)
 		self.showcase_predictions(trainset)

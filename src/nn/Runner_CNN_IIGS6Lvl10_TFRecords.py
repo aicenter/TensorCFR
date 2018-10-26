@@ -9,17 +9,16 @@ from src.nn.features.goofspiel.IIGS6.tfrecords_reaches_values_IIGS6_1_6_false_tr
 from src.utils.other_utils import get_files_in_directory_recursively
 
 
-class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test parent here
+class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 	def __init__(self, fixed_randomness=False):
 		super().__init__(fixed_randomness)
 		self.data_session = None
 
-	def datasets_from_tfrecords(self, script_directory, dataset_directory, dev_batch_size=None, test_batch_size=None):
+	def datasets_from_tfrecords(self, script_directory, dataset_directory, trainset_ratio=0.8, devset_ratio=0.1,
+	                            dev_batch_size=None, test_batch_size=None):
 		dataset_dir = "{}/{}".format(script_directory, dataset_directory)
 		dataset_files = get_files_in_directory_recursively(rootdir=dataset_dir)
 
-		trainset_ratio = 0.8
-		devset_ratio = 0.1
 		dataset_size = len(dataset_files)
 		split_train = int(trainset_ratio * dataset_size)
 		split_dev = int((trainset_ratio + devset_ratio) * dataset_size)
@@ -91,7 +90,6 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):   # TODO test 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
 ACTIVATE_FILE = True
-
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	runner = Runner_CNN_IIGS6Lvl10_TFRecords()

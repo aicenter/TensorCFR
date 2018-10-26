@@ -14,14 +14,18 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 		super().__init__(fixed_randomness)
 		self.data_session = None
 
-	def datasets_from_tfrecords(self, script_directory, dataset_directory, trainset_ratio=0.8, devset_ratio=0.1,
-	                            dev_batch_size=None, test_batch_size=None):
+	def add_arguments_to_argparser(self):
+		super().add_arguments_to_argparser()
+		self.argparser.add_argument("--trainset_ratio", default=0.8, type=float, help="Ratio of dataset for trainset.")
+		self.argparser.add_argument("--devset_ratio", default=0.1, type=float, help="Ratio of dataset for devset.")
+
+	def datasets_from_tfrecords(self, script_directory, dataset_directory, dev_batch_size=None, test_batch_size=None):
 		dataset_dir = "{}/{}".format(script_directory, dataset_directory)
 		dataset_files = get_files_in_directory_recursively(rootdir=dataset_dir)
 
 		dataset_size = len(dataset_files)
-		split_train = int(trainset_ratio * dataset_size)
-		split_dev = int((trainset_ratio + devset_ratio) * dataset_size)
+		split_train = int(self.args.trainset_ratio * dataset_size)
+		split_dev = int((self.args.trainset_ratio + self.args.devset_ratio) * dataset_size)
 
 		trainset_files = dataset_files[:split_train]
 		devset_files = dataset_files[split_train:split_dev]

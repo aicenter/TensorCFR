@@ -27,6 +27,6 @@ PYTHON=python
 DATASET_DIRECTORY="../../../data/IIGS6/IIGS6_1_6_false_true_lvl10_npz_900_seeds"
 COMMON_ARGS="--dataset_directory ${DATASET_DIRECTORY} --epochs 25000"
 ARCH="--extractor C-46,C-46,C-46,C-46 --regressor C-138,C-138,C-138,C-138"
-CMD="${PYTHON} -m src.nn.ConvNet_IIGS6Lvl10 ${COMMON_ARGS} ${ARCH}"
+CMD="${PYTHON} -m src.nn.Runner_CNN_IIGS6Lvl10_NPZ ${COMMON_ARGS} ${ARCH}"
 
 $CMD &>${FRONTNODE_LOGS}/${OUTFILE}

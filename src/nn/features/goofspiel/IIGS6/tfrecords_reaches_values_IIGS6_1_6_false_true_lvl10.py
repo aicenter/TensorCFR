@@ -12,7 +12,7 @@ from src.utils.other_utils import get_files_in_directory_recursively, get_featur
 
 ACTIVATE_FILE = False
 
-FEATURES_PER_FILE = 45
+FEATURES_PER_FILE = 128
 
 
 def get_reaches_to_values_dataframe(filename):

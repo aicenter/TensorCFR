@@ -1,23 +1,18 @@
 import os
 import tensorflow as tf
 
-from src.domains.Domain import Domain
+from src.commons.constants import PROJECT_ROOT
+from src.domains.FlattenedDomain import FlattenedDomain
 
 
 def get_domain_phantom_ttt():
 	path_to_domain_filename = os.path.join(
-			os.path.dirname(
-					os.path.abspath(
-							__file__)
-			),
-			'..',
-			'..',
-			'..',
+			PROJECT_ROOT,
 			'doc',
 			'phantom_ttt',
 			'SingleLevelPhantomTTT.efg'
 	)
-	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="phantom_ttt_single_level_via_gambit")
+	return FlattenedDomain.init_from_gambit_file(path_to_domain_filename, domain_name="phantom_ttt_single_level_via_gambit")
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix

@@ -40,7 +40,7 @@ class AbstractNNRunner:
 
 		del self.args.dataset_directory
 		self.args.logdir = "logs/{}-{}-{}".format(
-			os.path.basename(__file__),
+			os.path.basename(self.__class__.__name__),
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
 			",".join(("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value)
 			          for key, value in sorted(vars(self.args).items())))

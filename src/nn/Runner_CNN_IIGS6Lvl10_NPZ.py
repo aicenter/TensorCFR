@@ -48,7 +48,7 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = True
+ACTIVATE_FILE = False
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:

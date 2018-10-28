@@ -57,6 +57,8 @@ class DatasetFromTFRecord:
 
 	def next_batch(self, session):
 		if self.epoch_finished is None or self.epoch_finished is True:
+			# TODO debug OOM: Runner_*_TFRecords, command-line args --train_ratio .6, --dev_ratio .2
+			# run_options = tf.RunOptions(tf.RunOptions.report_tensor_allocations_upon_oom)
 			session.run(self.iterator.initializer)
 			self.epoch_finished = False
 			self._batch_id = 0
@@ -64,6 +66,8 @@ class DatasetFromTFRecord:
 		while True:
 			self._batch_id += 1
 			try:
+				# TODO debug OOM: Runner_*_TFRecords, command-line args --train_ratio .6, --dev_ratio .2
+				# run_options = tf.RunOptions(tf.RunOptions.report_tensor_allocations_upon_oom)
 				feature_input, feature_target = session.run(self._features_op)
 				if feature_target.shape[0] != self._batch_size:
 					self.epoch_finished = True

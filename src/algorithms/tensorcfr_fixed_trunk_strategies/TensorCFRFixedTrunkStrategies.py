@@ -1061,6 +1061,9 @@ class TensorCFRFixedTrunkStrategies:
 		)
 		csv_file.close()
 
+	def log_after_all_steps(self):
+		print_tensors(self.session, self.average_infoset_strategies)
+
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     storing_strategies=False, profiling=False, register_strategies_on_step=list()):
 		# a list of returned average strategies
@@ -1123,6 +1126,7 @@ class TensorCFRFixedTrunkStrategies:
 
 				if storing_strategies:
 					self.store_final_average_strategies()
+			self.log_after_all_steps()
 		return return_average_strategies
 
 	def get_data_generation_header(self):

@@ -103,7 +103,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			self.session.run(tf.global_variables_initializer())
 			self.session.run(set_initial_strategies)
-			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()) as writer:
+			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 				for step in range(total_steps):
 					print("CFR step #{}".format(step))
 					self.session.run(cfr_step_op)

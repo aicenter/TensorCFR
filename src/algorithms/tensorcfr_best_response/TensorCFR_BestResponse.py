@@ -101,17 +101,7 @@ if __name__ == '__main__':
 			[1.],
 			[1.],
 			[1.]
-		],
-
-		[  # infoset strategies at level 4
-			[.1, .9],
-			[.2, .8],
-			[.3, .7],
-			[.4, .6],
-			[.5, .5],
-			[.6, .4],
-			[.7, .3]
-		],
+		]
 	]
 
 	tensorcfr_instance = TensorCFR_BestResponse(

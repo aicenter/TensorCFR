@@ -36,7 +36,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		infoset_acting_players = self.domain.get_infoset_acting_players()
 		ops_update_infoset_strategies = [None] * self.domain.acting_depth
 		with tf.variable_scope("update_strategy_of_updating_player"):
-			for level in range(self.trunk_depth, self.domain.acting_depth):  # TODO modify for BR
+			for level in range(self.domain.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_acting_player = tf.reshape(
 						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
@@ -50,7 +50,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 						value=infoset_strategies_matched_to_regrets[level],
 						name="op_update_infoset_strategies_lvl{}".format(level)
 					)
-			return ops_update_infoset_strategies[self.trunk_depth:]
+			return ops_update_infoset_strategies
 
 	# TODO refactor to make use of method overriding
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

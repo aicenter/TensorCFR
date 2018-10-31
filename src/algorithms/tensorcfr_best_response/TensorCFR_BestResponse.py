@@ -161,9 +161,9 @@ if __name__ == '__main__':
 		trunk_depth=4
 	)
 	tensorcfr_instance.cfr_strategies_after_fixed_trunk(
-		total_steps=10,
+		total_steps=3,
 		# storing_strategies=True,
 		# profiling=True,
-		# delay=0
-		register_strategies_on_step=[1, 500, 999]
+		delay=1,
+		# register_strategies_on_step=[1, 500, 999],
 	)

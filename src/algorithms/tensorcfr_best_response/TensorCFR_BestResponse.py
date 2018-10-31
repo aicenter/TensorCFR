@@ -3,17 +3,19 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
-from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, PLAYER1
 from src.domains import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.tf_utils import get_default_config_proto, print_tensors
 
 
 class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
-	def __init__(self, trunk_strategies, domain: FlattenedDomain, trunk_depth=0):
+	def __init__(self, best_responder, trunk_strategies, domain: FlattenedDomain, trunk_depth=0):
 		super().__init__(domain, trunk_depth)
 		self.trunk_strategies = trunk_strategies
+		self.best_responder = best_responder
 
+	# TODO refactor to make use of method overriding
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     storing_strategies=False, profiling=False, register_strategies_on_step=list()):
 		# a list of returned average strategies
@@ -105,6 +107,7 @@ if __name__ == '__main__':
 	]
 
 	tensorcfr_instance = TensorCFR_BestResponse(
+		best_responder=PLAYER1,
 		trunk_strategies=trunk_strategies_gs3_td4,
 		domain=domain_,
 		trunk_depth=4

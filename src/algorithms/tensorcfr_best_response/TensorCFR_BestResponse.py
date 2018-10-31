@@ -6,7 +6,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
-from src.utils.tf_utils import get_default_config_proto
+from src.utils.tf_utils import get_default_config_proto, print_tensors
 
 
 class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
@@ -39,40 +39,29 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 
 		cfr_step_op = self.do_cfr_step()
 
-		with tf.Session(config=get_default_config_proto()) as self.session:
-			self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
-			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()) as writer:
-				for step in range(total_steps):
-					"""
-					Profiler gives the Model report with total compute time and memory consumption.
-					- Add CUDA libs to LD_LIBRARY_PATH: https://github.com/tensorflow/tensorflow/issues/8830
-					- For `cmd` see:
-					https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/profiler/g3doc/python_api.md#time-and-memory
-					"""
-					if profiling:
-						run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-						metadata = tf.RunMetadata()
-						self.session.run(cfr_step_op, options=run_options, run_metadata=metadata)
-						tf.profiler.profile(
-							self.session.graph,
-							run_meta=metadata,
-							# cmd='op',
-							cmd='scope',
-							options=tf.profiler.ProfileOptionBuilder.time_and_memory()
-						)
-						writer.add_run_metadata(
-							metadata,
-							"step{}".format(step)
-						)  # save metadata about time and memory for tensorboard
-					else:
-						self.session.run(cfr_step_op)
+		set_initial_strategies = [
+			tf.assign(
+				current_strategies_per_level,
+				value=self.trunk_strategies[level]
+			)
+			for level, current_strategies_per_level in enumerate(self.domain.current_infoset_strategies[:self.trunk_depth])
+		]
 
-					if step in register_strategies_on_step:
-						# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
-						# self.set_average_infoset_strategies()
-						return_average_strategies.append(
-							{"step"            : step,
-							 "average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]})
+		with tf.Session(config=get_default_config_proto()) as self.session:
+			self.session.run(tf.global_variables_initializer())
+			self.session.run(set_initial_strategies)
+			for step in range(total_steps):
+				print("CFR step #{}".format(step))
+				self.session.run(cfr_step_op)
+				print_tensors(self.session, self.domain.initial_infoset_strategies)
+				print_tensors(self.session, self.domain.current_infoset_strategies)
+
+				if step in register_strategies_on_step:
+					# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
+					# self.set_average_infoset_strategies()
+					return_average_strategies.append(
+						{"step"            : step,
+						 "average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]})
 
 				if storing_strategies:
 					self.store_final_average_strategies()
@@ -90,8 +79,42 @@ if __name__ == '__main__':
 	# domain_ = get_domain_by_name("IIGS6_gambit_flattened")
 
 	tensorcfr_instance = TensorCFR_BestResponse(
-		[],  # TODO
-		domain_,
+		trunk_strategies=[
+			[   # infoset strategies at level 0
+				[1.]
+			],
+
+			[   # infoset strategies at level 1
+				[0.1, 0.9, 0.]
+			],
+
+			[   # infoset strategies at level 2
+				[0.5, 0., 0.5]
+			],
+
+			[   # infoset strategies at level 3
+				[1.],
+				[1.],
+				[1.],
+				[1.],
+				[1.],
+				[1.],
+				[1.],
+				[1.],
+				[1.]
+			],
+
+			[   # infoset strategies at level 4
+				[.1, .9],
+				[.2, .8],
+				[.3, .7],
+				[.4, .6],
+				[.5, .5],
+				[.6, .4],
+				[.7, .3]
+			],
+		],
+		domain=domain_,
 		trunk_depth=4
 	)
 	tensorcfr_instance.cfr_strategies_after_fixed_trunk(

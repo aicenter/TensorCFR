@@ -44,17 +44,20 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 						shape=[self.domain.current_infoset_strategies[level].shape[0]],
 						name="infosets_of_updating_player_lvl{}".format(level)
 					)
-					infosets_of_best_responder = tf.reshape(
-						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
-						tf.equal(infoset_acting_players[level], self.best_responder),
-						shape=[self.domain.current_infoset_strategies[level].shape[0]],
-						name="infosets_of_best_responder_lvl{}".format(level)
-					)
-					infosets_to_update = tf.logical_and(    # TODO account for trunk_depth
-						infosets_of_acting_player,
-						infosets_of_best_responder,
-						name="infosets_to_update_lvl{}".format(level)
-					)
+					if level < self.trunk_depth:
+						infosets_of_best_responder = tf.reshape(
+							# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+							tf.equal(infoset_acting_players[level], self.best_responder),
+							shape=[self.domain.current_infoset_strategies[level].shape[0]],
+							name="infosets_of_best_responder_lvl{}".format(level)
+						)
+						infosets_to_update = tf.logical_and(
+							infosets_of_acting_player,
+							infosets_of_best_responder,
+							name="infosets_to_update_lvl{}".format(level)
+						)
+					else:
+						infosets_to_update = infosets_of_acting_player
 					ops_update_infoset_strategies[level] = masked_assign(
 						ref=self.domain.current_infoset_strategies[level],
 						mask=infosets_to_update,

@@ -6,7 +6,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, PLAYER1
 from src.domains import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
-from src.utils.tf_utils import get_default_config_proto, print_tensors, masked_assign
+from src.utils.tf_utils import get_default_config_proto, print_tensors, masked_assign, print_tensor
 
 
 class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
@@ -99,6 +99,10 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 			)
 			for level, current_strategies_per_level in enumerate(self.domain.current_infoset_strategies[:self.trunk_depth])
 		]
+		best_response_value = tf.identity(
+			self.get_expected_values(for_player=self.best_responder)[0],
+			name="best_response_value"
+		)
 
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			self.session.run(tf.global_variables_initializer())
@@ -109,6 +113,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 					self.session.run(cfr_step_op)
 					print_tensors(self.session, self.domain.initial_infoset_strategies)
 					print_tensors(self.session, self.domain.current_infoset_strategies)
+					print_tensor(self.session, best_response_value)   # TODO track in the list
 
 					if step in register_strategies_on_step:
 						# if the number of step `i` is in `register_strategies_on_step` then add the average strategy

@@ -6,7 +6,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, PLAYER1, PLAYER2
 from src.domains import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
-from src.utils.tf_utils import get_default_config_proto, print_tensors, masked_assign
+from src.utils.tf_utils import get_default_config_proto, masked_assign
 
 
 class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
@@ -110,10 +110,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 			self.session.run(set_initial_strategies)
 			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 				for step in range(total_steps):
-					print("CFR step #{}".format(step))
 					self.session.run(cfr_step_op)
-					print_tensors(self.session, self.domain.initial_infoset_strategies)
-					print_tensors(self.session, self.domain.current_infoset_strategies)
 					self.best_response_values.append(self.session.run(best_response_value))
 
 					if step in register_strategies_on_step:
@@ -126,7 +123,6 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 
 					if storing_strategies:
 						self.store_final_average_strategies()
-				self.log_after_all_steps()
 		return return_average_strategies
 
 

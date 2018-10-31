@@ -19,7 +19,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		"""
 		Update for the strategy for the given `acting_player`.
 
-	  Keep trunk strategies fixed if he is not `best_responder`.
+		Keep trunk strategies fixed if he is not `best_responder`.
 
 		Take into account the `self.trunk_depth`, i.e., the strategies at levels `0`, `1`, ... `trunk_depth - 1` are kept
 		 intact (fixed) during the CFR iterations.
@@ -44,9 +44,20 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 						shape=[self.domain.current_infoset_strategies[level].shape[0]],
 						name="infosets_of_updating_player_lvl{}".format(level)
 					)
+					infosets_of_best_responder = tf.reshape(
+						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+						tf.equal(infoset_acting_players[level], self.best_responder),
+						shape=[self.domain.current_infoset_strategies[level].shape[0]],
+						name="infosets_of_best_responder_lvl{}".format(level)
+					)
+					infosets_to_update = tf.logical_and(    # TODO account for trunk_depth
+						infosets_of_acting_player,
+						infosets_of_best_responder,
+						name="infosets_to_update_lvl{}".format(level)
+					)
 					ops_update_infoset_strategies[level] = masked_assign(
 						ref=self.domain.current_infoset_strategies[level],
-						mask=infosets_of_acting_player,  # TODO modify for BR: tf.and
+						mask=infosets_to_update,
 						value=infoset_strategies_matched_to_regrets[level],
 						name="op_update_infoset_strategies_lvl{}".format(level)
 					)
@@ -54,7 +65,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 
 	# TODO refactor to make use of method overriding
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                     storing_strategies=False, profiling=False, register_strategies_on_step=list()):
+																			 storing_strategies=False, profiling=False, register_strategies_on_step=list()):
 		# a list of returned average strategies
 		# the parameter `register_strategies_on_step` is used to determine which strategy export
 		return_average_strategies = list()

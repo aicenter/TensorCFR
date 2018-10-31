@@ -167,19 +167,18 @@ def exploitability_IIGS3_td4():
 		domain=domain_,
 		trunk_depth=4
 	)
+	best_response_values_of_player2 = TensorCFR_BestResponse(
+		best_responder=PLAYER2,
+		trunk_strategies=trunk_strategies_gs3_td4,
+		domain=domain_,
+		trunk_depth=4
+	)
 	best_response_values_of_player1.cfr_strategies_after_fixed_trunk(
 		total_steps=TOTAL_STEPS,
 		# storing_strategies=True,
 		# profiling=True,
 		delay=1,
 		# register_strategies_on_step=[1, 500, 999],
-	)
-	print("best_response_values_of_player1: {}".format(best_response_values_of_player1.best_response_values))
-	best_response_values_of_player2 = TensorCFR_BestResponse(
-		best_responder=PLAYER2,
-		trunk_strategies=trunk_strategies_gs3_td4,
-		domain=domain_,
-		trunk_depth=4
 	)
 	best_response_values_of_player2.cfr_strategies_after_fixed_trunk(
 		total_steps=TOTAL_STEPS,
@@ -188,6 +187,8 @@ def exploitability_IIGS3_td4():
 		delay=1,
 		# register_strategies_on_step=[1, 500, 999],
 	)
+
+	print("best_response_values_of_player1: {}".format(best_response_values_of_player1.best_response_values))
 	print("best_response_values_of_player2: {}".format(best_response_values_of_player2.best_response_values))
 
 

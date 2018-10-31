@@ -14,6 +14,12 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		super().__init__(domain, trunk_depth)
 		self.trunk_strategies = trunk_strategies
 
+	def set_up_feed_dictionary(self, method="trunk", initial_strategy_values=None, seed=None):
+		if method == "trunk":
+			raise NotImplementedError
+		else:
+			return super().set_up_feed_dictionary(method, initial_strategy_values, seed)
+
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     storing_strategies=False, profiling=False, register_strategies_on_step=list()):
 		# a list of returned average strategies

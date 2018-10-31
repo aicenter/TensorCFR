@@ -68,7 +68,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 
 	# TODO refactor to make use of method overriding
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-																			 storing_strategies=False, profiling=False, register_strategies_on_step=list()):
+	                                     storing_strategies=False, profiling=False, register_strategies_on_step=list()):
 		# a list of returned average strategies
 		# the parameter `register_strategies_on_step` is used to determine which strategy export
 		return_average_strategies = list()

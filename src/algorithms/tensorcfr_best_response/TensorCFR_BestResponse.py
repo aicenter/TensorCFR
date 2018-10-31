@@ -88,7 +88,7 @@ if __name__ == '__main__':
 		],
 
 		[  # infoset strategies at level 2
-			[0.5, 0., 0.5]
+			[0.69, 0.01, 0.3]
 		],
 
 		[  # infoset strategies at level 3

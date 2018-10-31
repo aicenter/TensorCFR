@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
-from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, PLAYER1
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, PLAYER1, PLAYER2
 from src.domains import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.tf_utils import get_default_config_proto, print_tensors, masked_assign
@@ -130,7 +130,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		return return_average_strategies
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':    # TODO test on MP
 	# domain_ = get_domain_by_name("flattened_hunger_games")
 	# domain_ = get_domain_by_name("flattened_hunger_games_2")
 	# domain_ = get_domain_by_name("flattened_domain01_via_gambit")
@@ -179,3 +179,18 @@ if __name__ == '__main__':
 		# register_strategies_on_step=[1, 500, 999],
 	)
 	print("best_response_values_of_player1: {}".format(best_response_values_of_player1.best_response_values))
+
+	best_response_values_of_player2 = TensorCFR_BestResponse(
+		best_responder=PLAYER2,
+		trunk_strategies=trunk_strategies_gs3_td4,
+		domain=domain_,
+		trunk_depth=4
+	)
+	best_response_values_of_player2.cfr_strategies_after_fixed_trunk(
+		total_steps=10,
+		# storing_strategies=True,
+		# profiling=True,
+		delay=1,
+		# register_strategies_on_step=[1, 500, 999],
+	)
+	print("best_response_values_of_player2: {}".format(best_response_values_of_player2.best_response_values))

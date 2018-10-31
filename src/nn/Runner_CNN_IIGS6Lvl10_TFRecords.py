@@ -19,9 +19,8 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 		self.argparser.add_argument("--trainset_ratio", default=0.8, type=float, help="Ratio of dataset for trainset.")
 		self.argparser.add_argument("--devset_ratio", default=0.1, type=float, help="Ratio of dataset for devset.")
 
-	def datasets_from_tfrecords(self, script_directory, dataset_directory, dev_batch_size=None, test_batch_size=None):
-		dataset_dir = "{}/{}".format(script_directory, dataset_directory)
-		dataset_files = get_files_in_directory_recursively(rootdir=dataset_dir)
+	def datasets_from_tfrecords(self, dataset_directory, dev_batch_size=None, test_batch_size=None):
+		dataset_files = get_files_in_directory_recursively(rootdir=dataset_directory)
 
 		dataset_size = len(dataset_files)
 		split_train = int(self.args.trainset_ratio * dataset_size)
@@ -56,11 +55,8 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 		return devset, testset, trainset
 
 	def init_datasets(self, dataset_directory):
-		import os
-		script_directory = os.path.dirname(os.path.abspath(__file__))
 		devset, testset, trainset = self.datasets_from_tfrecords(
-			script_directory,
-			dataset_directory="data/IIGS6Lvl10/tfrecords/tfrecord_dataset_IIGS6_1_6_false_true_lvl10"
+			dataset_directory=dataset_directory
 		)
 		return devset, testset, trainset
 
@@ -93,7 +89,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = True
+ACTIVATE_FILE = False
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	runner = Runner_CNN_IIGS6Lvl10_TFRecords()

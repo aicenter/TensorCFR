@@ -12,6 +12,7 @@ from src.utils.tf_utils import get_default_config_proto, print_tensors, masked_a
 class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 	def __init__(self, best_responder, trunk_strategies, domain: FlattenedDomain, trunk_depth=0):
 		super().__init__(domain, trunk_depth)
+		self.best_response_values = []
 		self.trunk_strategies = trunk_strategies
 		self.best_responder = best_responder
 
@@ -113,7 +114,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 					self.session.run(cfr_step_op)
 					print_tensors(self.session, self.domain.initial_infoset_strategies)
 					print_tensors(self.session, self.domain.current_infoset_strategies)
-					print_tensor(self.session, best_response_value)   # TODO track in the list
+					self.best_response_values.append(self.session.run(best_response_value))
 
 					if step in register_strategies_on_step:
 						# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
@@ -177,3 +178,4 @@ if __name__ == '__main__':
 		delay=1,
 		# register_strategies_on_step=[1, 500, 999],
 	)
+	print("best_response_values: {}".format(tensorcfr_instance.best_response_values))

@@ -40,14 +40,14 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 			variable_scope_name='trainset'
 		)
 		devset = DatasetFromTFRecord(
-			batch_size=len(devset_files) * FEATURES_PER_FILE if dev_batch_size is None else dev_batch_size,
+			batch_size=self.args.batch_size,
 			dataset_files=devset_files,
 			sample_length=SAMPLE_LENGTH,
 			shuffle_batches=False,
 			variable_scope_name='devset'
 		)
 		testset = DatasetFromTFRecord(
-			batch_size=len(testset_files) * FEATURES_PER_FILE if test_batch_size is None else test_batch_size,
+			batch_size=self.args.batch_size,
 			dataset_files=testset_files,
 			sample_length=SAMPLE_LENGTH,
 			shuffle_batches=False,
@@ -93,7 +93,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	runner = Runner_CNN_IIGS6Lvl10_TFRecords()

@@ -113,9 +113,10 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 					if step in register_strategies_on_step:
 						# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
 						# self.set_average_infoset_strategies()
-						return_average_strategies.append(
-							{"step"            : step,
-							 "average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]})
+						return_average_strategies.append({
+							"step"            : step,
+							"average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]
+						})
 
 					if storing_strategies:
 						self.store_final_average_strategies()

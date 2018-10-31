@@ -78,42 +78,44 @@ if __name__ == '__main__':
 	# domain_ = get_domain_by_name("IIGS5_gambit_flattened")
 	# domain_ = get_domain_by_name("IIGS6_gambit_flattened")
 
-	tensorcfr_instance = TensorCFR_BestResponse(
-		trunk_strategies=[
-			[   # infoset strategies at level 0
-				[1.]
-			],
-
-			[   # infoset strategies at level 1
-				[0.1, 0.9, 0.]
-			],
-
-			[   # infoset strategies at level 2
-				[0.5, 0., 0.5]
-			],
-
-			[   # infoset strategies at level 3
-				[1.],
-				[1.],
-				[1.],
-				[1.],
-				[1.],
-				[1.],
-				[1.],
-				[1.],
-				[1.]
-			],
-
-			[   # infoset strategies at level 4
-				[.1, .9],
-				[.2, .8],
-				[.3, .7],
-				[.4, .6],
-				[.5, .5],
-				[.6, .4],
-				[.7, .3]
-			],
+	trunk_strategies_gs3_td4 = [
+		[  # infoset strategies at level 0
+			[1.]
 		],
+
+		[  # infoset strategies at level 1
+			[0.1, 0.9, 0.]
+		],
+
+		[  # infoset strategies at level 2
+			[0.5, 0., 0.5]
+		],
+
+		[  # infoset strategies at level 3
+			[1.],
+			[1.],
+			[1.],
+			[1.],
+			[1.],
+			[1.],
+			[1.],
+			[1.],
+			[1.]
+		],
+
+		[  # infoset strategies at level 4
+			[.1, .9],
+			[.2, .8],
+			[.3, .7],
+			[.4, .6],
+			[.5, .5],
+			[.6, .4],
+			[.7, .3]
+		],
+	]
+
+	tensorcfr_instance = TensorCFR_BestResponse(
+		trunk_strategies=trunk_strategies_gs3_td4,
 		domain=domain_,
 		trunk_depth=4
 	)

@@ -6,7 +6,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, PLAYER1
 from src.domains import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
-from src.utils.tf_utils import get_default_config_proto, print_tensors
+from src.utils.tf_utils import get_default_config_proto, print_tensors, masked_assign
 
 
 class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
@@ -14,6 +14,43 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		super().__init__(domain, trunk_depth)
 		self.trunk_strategies = trunk_strategies
 		self.best_responder = best_responder
+
+	def update_strategy_of_updating_player(self, acting_player=None):
+		"""
+		Update for the strategy for the given `acting_player`.
+
+	  Keep trunk strategies fixed if he is not `best_responder`.
+
+		Take into account the `self.trunk_depth`, i.e., the strategies at levels `0`, `1`, ... `trunk_depth - 1` are kept
+		 intact (fixed) during the CFR iterations.
+
+		Args:
+			:param acting_player: A variable. An index of the player whose strategies are to be updated.
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
+		if acting_player is None:
+			acting_player = self.domain.current_updating_player
+		infoset_strategies_matched_to_regrets = self.get_strategy_matched_to_regrets()
+		infoset_acting_players = self.domain.get_infoset_acting_players()
+		ops_update_infoset_strategies = [None] * self.domain.acting_depth
+		with tf.variable_scope("update_strategy_of_updating_player"):
+			for level in range(self.trunk_depth, self.domain.acting_depth):  # TODO modify for BR
+				with tf.variable_scope("level{}".format(level)):
+					infosets_of_acting_player = tf.reshape(
+						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+						tf.equal(infoset_acting_players[level], acting_player),
+						shape=[self.domain.current_infoset_strategies[level].shape[0]],
+						name="infosets_of_updating_player_lvl{}".format(level)
+					)
+					ops_update_infoset_strategies[level] = masked_assign(
+						ref=self.domain.current_infoset_strategies[level],
+						mask=infosets_of_acting_player,  # TODO modify for BR: tf.and
+						value=infoset_strategies_matched_to_regrets[level],
+						name="op_update_infoset_strategies_lvl{}".format(level)
+					)
+			return ops_update_infoset_strategies[self.trunk_depth:]
 
 	# TODO refactor to make use of method overriding
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,

@@ -165,17 +165,17 @@ if __name__ == '__main__':
 		]
 	]
 
-	tensorcfr_instance = TensorCFR_BestResponse(
+	best_response_values_of_player1 = TensorCFR_BestResponse(
 		best_responder=PLAYER1,
 		trunk_strategies=trunk_strategies_gs3_td4,
 		domain=domain_,
 		trunk_depth=4
 	)
-	tensorcfr_instance.cfr_strategies_after_fixed_trunk(
-		total_steps=100,
+	best_response_values_of_player1.cfr_strategies_after_fixed_trunk(
+		total_steps=10,
 		# storing_strategies=True,
 		# profiling=True,
 		delay=1,
 		# register_strategies_on_step=[1, 500, 999],
 	)
-	print("best_response_values: {}".format(tensorcfr_instance.best_response_values))
+	print("best_response_values_of_player1: {}".format(best_response_values_of_player1.best_response_values))

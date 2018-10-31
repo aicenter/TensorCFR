@@ -103,22 +103,23 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			self.session.run(tf.global_variables_initializer())
 			self.session.run(set_initial_strategies)
-			for step in range(total_steps):
-				print("CFR step #{}".format(step))
-				self.session.run(cfr_step_op)
-				print_tensors(self.session, self.domain.initial_infoset_strategies)
-				print_tensors(self.session, self.domain.current_infoset_strategies)
+			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()) as writer:
+				for step in range(total_steps):
+					print("CFR step #{}".format(step))
+					self.session.run(cfr_step_op)
+					print_tensors(self.session, self.domain.initial_infoset_strategies)
+					print_tensors(self.session, self.domain.current_infoset_strategies)
 
-				if step in register_strategies_on_step:
-					# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
-					# self.set_average_infoset_strategies()
-					return_average_strategies.append(
-						{"step"            : step,
-						 "average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]})
+					if step in register_strategies_on_step:
+						# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
+						# self.set_average_infoset_strategies()
+						return_average_strategies.append(
+							{"step"            : step,
+							 "average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]})
 
-				if storing_strategies:
-					self.store_final_average_strategies()
-			self.log_after_all_steps()
+					if storing_strategies:
+						self.store_final_average_strategies()
+				self.log_after_all_steps()
 		return return_average_strategies
 
 

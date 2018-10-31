@@ -128,7 +128,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		return return_average_strategies
 
 
-if __name__ == '__main__':    # TODO test on MP
+def exploitability_IIGS3_td4():
 	# domain_ = get_domain_by_name("flattened_hunger_games")
 	# domain_ = get_domain_by_name("flattened_hunger_games_2")
 	# domain_ = get_domain_by_name("flattened_domain01_via_gambit")
@@ -136,7 +136,6 @@ if __name__ == '__main__':    # TODO test on MP
 	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
 	# domain_ = get_domain_by_name("IIGS5_gambit_flattened")
 	# domain_ = get_domain_by_name("IIGS6_gambit_flattened")
-
 	trunk_strategies_gs3_td4 = [
 		[  # infoset strategies at level 0
 			[1.]
@@ -162,7 +161,6 @@ if __name__ == '__main__':    # TODO test on MP
 			[1.]
 		]
 	]
-
 	best_response_values_of_player1 = TensorCFR_BestResponse(
 		best_responder=PLAYER1,
 		trunk_strategies=trunk_strategies_gs3_td4,
@@ -177,7 +175,6 @@ if __name__ == '__main__':    # TODO test on MP
 		# register_strategies_on_step=[1, 500, 999],
 	)
 	print("best_response_values_of_player1: {}".format(best_response_values_of_player1.best_response_values))
-
 	best_response_values_of_player2 = TensorCFR_BestResponse(
 		best_responder=PLAYER2,
 		trunk_strategies=trunk_strategies_gs3_td4,
@@ -192,3 +189,7 @@ if __name__ == '__main__':    # TODO test on MP
 		# register_strategies_on_step=[1, 500, 999],
 	)
 	print("best_response_values_of_player2: {}".format(best_response_values_of_player2.best_response_values))
+
+
+if __name__ == '__main__':    # TODO test on MP
+	exploitability_IIGS3_td4()

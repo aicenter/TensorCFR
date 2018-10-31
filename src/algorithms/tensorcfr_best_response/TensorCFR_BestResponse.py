@@ -8,6 +8,8 @@ from src.domains import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.tf_utils import get_default_config_proto, masked_assign
 
+TOTAL_STEPS = 10
+
 
 class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 	def __init__(self, best_responder, trunk_strategies, domain: FlattenedDomain, trunk_depth=0):
@@ -168,7 +170,7 @@ if __name__ == '__main__':    # TODO test on MP
 		trunk_depth=4
 	)
 	best_response_values_of_player1.cfr_strategies_after_fixed_trunk(
-		total_steps=10,
+		total_steps=TOTAL_STEPS,
 		# storing_strategies=True,
 		# profiling=True,
 		delay=1,
@@ -183,7 +185,7 @@ if __name__ == '__main__':    # TODO test on MP
 		trunk_depth=4
 	)
 	best_response_values_of_player2.cfr_strategies_after_fixed_trunk(
-		total_steps=10,
+		total_steps=TOTAL_STEPS,
 		# storing_strategies=True,
 		# profiling=True,
 		delay=1,

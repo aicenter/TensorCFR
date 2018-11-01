@@ -122,4 +122,5 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 
 					if storing_strategies:
 						self.store_final_average_strategies()
+				self.log_after_all_steps()
 		return return_average_strategies

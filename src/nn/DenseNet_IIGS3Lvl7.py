@@ -30,12 +30,13 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 	def __init__(self, threads, seed=SEED_FOR_TESTING):
 		# Create an empty graph and a session
 		self.graph = tf.Graph()
+		#with self.graph.as_default():
+			#self.saver = tf.train.Saver()
 		if FIXED_RANDOMNESS:
 			self.graph.seed = seed
-			self.session = tf.Session(graph=self.graph, config=tf.ConfigProto(inter_op_parallelism_threads=threads,
-			                                                                  intra_op_parallelism_threads=threads))
+			self.session = tf.Session(graph=self.graph, config=tf.ConfigProto(device_count={"GPU":0}))
 		else:
-			self.session = tf.Session(graph=self.graph)
+			self.session = tf.Session(graph=self.graph,config=tf.ConfigProto(device_count={"GPU":0}))
 		self._node_to_public_state = get_node_to_public_state()
 		print("node_to_public_state:\n{}".format(self._node_to_public_state))
 
@@ -130,6 +131,9 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 			self.features = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES, self.FEATURES_DIM], name="input_features")
 			self.targets = tf.placeholder(FLOAT_DTYPE, [None, self.NUM_NODES], name="targets")
 			print(">> Placeholder constructed")
+
+			print("Saver constructed")
+
 			self.print_operations_count()
 
 			# Computation
@@ -212,10 +216,11 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 					]
 			print(">> Summaries[dev/test] constructed")
 			self.print_operations_count()
-
+			self.saver = tf.train.Saver()
 			# Initialize variables
 			self.session.run(tf.global_variables_initializer())
 			print(">> Session constructed")
+			#self.saver.save(self.session,"model.ckpt")
 			self.print_operations_count()
 			with summary_writer.as_default():
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
@@ -227,6 +232,21 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 
 	def train(self, features, targets):
 		self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
+
+	def save(self,path):
+		#self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
+		#self.saver = tf.train.Saver()
+		self.saver.save(self.session,path)
+		print("Model saved in path: %s" % path)
+		#meta_graph_def = self.saver.export_meta_graph(filename='~/my-model.meta')
+
+	def load_ckpt(self,path):
+		#self.graph = tf.saved_model.loader.load(self.session,)
+		self.saver.restore(self.session,path+"model.ckpt")
+		print("Model load from path: %s" % path)
+		#meta_graph_def = self.saver.export_meta_graph(filename='~/my-model.meta')
+
+
 
 	def evaluate(self, dataset, features, targets):
 		mean_squared_error, l_infinity_error, _ = self.session.run(
@@ -288,6 +308,7 @@ if __name__ == "__main__":
 	network = DenseNet_IIGS3Lvl7(threads=args.threads)
 	features, targets = trainset.next_batch(args.batch_size)
 	network.construct(args)
+	#network.load_ckpt(path = "~/PycharmProjects/TensorCFR/src/nn/~/Desktop/")
 
 	# Train
 	for epoch in range(args.epochs):
@@ -298,7 +319,8 @@ if __name__ == "__main__":
 		# Evaluate on development set
 		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
 		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
-
+	#save
+	#network.save("/model")
 	# Evaluate on test set
 	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
 	print()
@@ -308,3 +330,11 @@ if __name__ == "__main__":
 	print()
 	print("Predictions of initial 2 training examples:")
 	print(network.predict(trainset.features[:2]))
+	print("graph vars are ;")
+	print(network.session.graph.get_all_collection_keys())
+
+	#print("saving model..")
+
+	#saver = tf.train.Saver()
+	#saver.save(network.session,"~/mode.ckpt")
+	#tf.saved_model.builder.SavedModelBuilder()

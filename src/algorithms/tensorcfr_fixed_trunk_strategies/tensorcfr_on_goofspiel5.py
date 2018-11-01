@@ -3,10 +3,10 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.domains.available_domains import get_domain_by_name
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = True
+ACTIVATE_FILE = False
 
 if __name__ == '__main__' and ACTIVATE_FILE:
-	domain = get_domain_by_name("IIGS6_gambit_flattened")
+	domain = get_domain_by_name("IIGS5_gambit_flattened")
 	tensorcfr = TensorCFRFixedTrunkStrategies(
 		domain,
 		trunk_depth=0
@@ -20,5 +20,5 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	utils.gtlibrary.export_average_strategies_to_json(
 		domain,
 		average_strategies,
-		"GS6_average_strategies"
+		"GS5_average_strategies"
 	)

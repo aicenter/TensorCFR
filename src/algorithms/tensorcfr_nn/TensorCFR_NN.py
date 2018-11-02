@@ -43,7 +43,7 @@ if __name__ == '__main__':
 	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
 	tensorcfr = TensorCFR_NN(
 		domain_,
-		trunk_depth=4
+		trunk_depth=7
 	)
 
 	permutation = get_sorted_permutation()

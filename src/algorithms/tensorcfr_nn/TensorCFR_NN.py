@@ -28,29 +28,29 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		super().__init__(domain, trunk_depth)
 		self.neural_net = neural_net if neural_net is not None else NeuralNetMockUp()
 
-	def predict_equilibrium_values(self, input_tensor, nn_input_permutation):
+	def predict_equilibrial_values(self, input_reaches, nn_input_permutation):
 		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=nn_input_permutation)
 
 		# permute input reach probabilities
-		tensor_permutation = permutate_op.forward(input_tensor)
+		permuted_input = permutate_op.forward(input_reaches)
 
 		# use neural net to predict equilibrium values
-		predicted_equilibrium_values = self.neural_net.predict(tensor_permutation)
+		predicted_equilibrial_values = self.neural_net.predict(permuted_input)
 
 		# permute back the expected values
-		tensor_inverse_permutation = permutate_op.inverse(predicted_equilibrium_values)
-		return tensor_inverse_permutation
+		permuted_predictions = permutate_op.inverse(predicted_equilibrial_values)
+		return permuted_predictions
 
 
 if __name__ == '__main__':
-	domain = get_domain_by_name("II-GS3_gambit_flattened")
+	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
 	tensorcfr = TensorCFR_NN(
-		domain,
+		domain_,
 		trunk_depth=4
 	)
 
 	permutation = get_sorted_permutation()
-	equilibrium_values = tensorcfr.predict_equilibrium_values([-1., 0., 1.], permutation)
+	equilibrium_values = tensorcfr.predict_equilibrial_values([-1., 0., 1.], permutation)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print(sess.run(equilibrium_values))

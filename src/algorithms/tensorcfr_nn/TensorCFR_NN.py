@@ -37,7 +37,8 @@ if __name__ == '__main__':
 		trunk_depth=4
 	)
 
-	equilibrium_values = tensorcfr.predict_equilibrium_values([-1., 0., 1.], nn, get_sorted_permutation())
+	permutation = get_sorted_permutation()
+	equilibrium_values = tensorcfr.predict_equilibrium_values([-1., 0., 1.], nn, permutation)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print(sess.run(equilibrium_values))

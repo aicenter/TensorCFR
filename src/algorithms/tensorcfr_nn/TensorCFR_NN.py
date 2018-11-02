@@ -12,7 +12,7 @@ def get_sorted_permutation():
 
 class NeuralNetMockUp:
 	def predict(self, input_tensor):
-		return [5, 5, 6]
+		return input_tensor * 10
 
 
 class TensorCFR_NN(TensorCFRFixedTrunkStrategies):

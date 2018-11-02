@@ -4,15 +4,11 @@ import tensorflow as tf
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
+from src.nn.AbstractNN import AbstractNN
 
 
 def get_sorted_permutation():
 	return [2, 1, 0]
-
-
-class AbstractNN:
-	def predict(self, input_tensor):
-		return input_tensor * 10
 
 
 class TensorCFR_NN(TensorCFRFixedTrunkStrategies):

@@ -4,7 +4,7 @@ import tensorflow as tf
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
-from src.nn.AbstractNN import AbstractNN
+from src.nn.NNMockUp import NNMockUp
 
 
 def get_sorted_permutation():
@@ -22,7 +22,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 			 between `0` to `self.domain.levels`. It defaults to `0` (no trunk).
 		"""
 		super().__init__(domain, trunk_depth)
-		self.neural_net = neural_net if neural_net is not None else AbstractNN()
+		self.neural_net = neural_net if neural_net is not None else NNMockUp()
 		self.nn_input_permutation = nn_input_permutation if neural_net is not None else get_sorted_permutation()
 
 	def predict_equilibrial_values(self, input_reaches):

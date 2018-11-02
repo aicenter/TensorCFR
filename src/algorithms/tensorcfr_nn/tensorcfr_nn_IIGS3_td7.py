@@ -13,7 +13,7 @@ if __name__ == '__main__':
 	)
 
 	permutation = get_permutation_by_public_states()
-	input_reaches = tf.constant([-1., 0., 2.])
+	input_reaches = tf.range(len(permutation), name="input_reaches")
 	equilibrium_values = tensorcfr.predict_equilibrial_values(input_reaches)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

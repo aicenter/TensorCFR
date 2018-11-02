@@ -10,7 +10,7 @@ from src.nn.features.goofspiel.IIGS3.game_constants import FEATURE_COLUMNS, FEAT
 from src.utils.other_utils import get_features_dataframe
 
 
-def get_permutation_by_public_states():
+def get_permutation_by_public_states(verbose=False):
 	"""
 	:return: The permutation that sorts game nodes of IIGS3 at level 7 by their public states and infosets.
 	"""
@@ -27,11 +27,12 @@ def get_permutation_by_public_states():
 		columns_without_reach,
 		kind='mergesort'
 	)
-	print(features)
+	if verbose:
+		print(features)
 	permutation = list(features.index)
 	return permutation
 
 
 if __name__ == '__main__':
 	print("The permutation that sorts game nodes of IIGS3 at level 7 by their public states and infosets:")
-	print(get_permutation_by_public_states())
+	print(get_permutation_by_public_states(verbose=True))

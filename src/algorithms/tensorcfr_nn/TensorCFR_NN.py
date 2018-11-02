@@ -29,16 +29,16 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		self.neural_net = neural_net if neural_net is not None else NeuralNetMockUp()
 
 	def predict_equilibrium_values(self, input_tensor, permutation_tensor):
-		permutation = tf.contrib.distributions.bijectors.Permute(permutation=permutation_tensor)
+		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=permutation_tensor)
 
 		# permute input reach probabilities
-		tensor_permutation = permutation.forward(input_tensor)
+		tensor_permutation = permutate_op.forward(input_tensor)
 
 		# use neural net to predict equilibrium values
 		predicted_equilibrium_values = self.neural_net.predict(tensor_permutation)
 
 		# permute back the expected values
-		tensor_inverse_permutation = permutation.inverse(predicted_equilibrium_values)
+		tensor_inverse_permutation = permutate_op.inverse(predicted_equilibrium_values)
 		return tensor_inverse_permutation
 
 

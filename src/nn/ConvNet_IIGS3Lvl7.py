@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
+import argparse
+
 import numpy as np
 import tensorflow as tf
 
@@ -303,9 +305,20 @@ class ConvNet_IIGS3Lvl7(AbstractNN):
 	def print_operations_count(self):
 		print("--> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
 
+	@staticmethod
+	def parse_arguments():
+		parser = argparse.ArgumentParser()
+		parser.add_argument("--batch_size", default=16, type=int, help="Batch size.")
+		parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
+												help="Description of the feature extactor architecture.")
+		parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
+												help="Description of the value regressor architecture.")
+		parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
+		parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
+		return parser.parse_args()
+
 
 if __name__ == '__main__' and ACTIVATE_FILE:
-	import argparse
 	import datetime
 	import os
 	import re
@@ -315,16 +328,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
 	# Parse arguments
-	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=16, type=int, help="Batch size.")
-	parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
-	                    help="Description of the feature extactor architecture.")
-	parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
-	                    help="Description of the value regressor architecture.")
-	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
-	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
-
-	args = parser.parse_args()
+	args = ConvNet_IIGS3Lvl7.parse_arguments()
 	print("args: {}".format(args))
 
 	# Create logdir name

@@ -25,7 +25,10 @@ def get_permutation_by_public_states():
 		kind='mergesort'
 	)
 	print(features)
+	permutation = list(features.index)
+	return permutation
 
 
 if __name__ == '__main__':
-	get_permutation_by_public_states()
+	print("The permutation that sorts game nodes of IIGS3 at level 7 by their public states and infosets:")
+	print(get_permutation_by_public_states())

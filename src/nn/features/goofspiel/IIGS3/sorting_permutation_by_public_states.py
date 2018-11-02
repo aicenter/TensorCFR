@@ -19,7 +19,7 @@ def get_permutation_by_public_states():
 	features_filename = "{}.csv".format(FEATURES_BASENAME)
 	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV, quiet=True)
 	columns_without_reach = FEATURE_COLUMNS[:-1]
-	features = features[columns_without_reach]   # exclude column "nodal_reach"
+	features = features[columns_without_reach]
 	features = features.sort_values(
 		columns_without_reach,
 		kind='mergesort'

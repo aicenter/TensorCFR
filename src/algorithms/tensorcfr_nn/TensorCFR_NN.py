@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 import tensorflow as tf
 
+from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
+from src.domains.available_domains import get_domain_by_name
+
 
 class NeuralNetMockUp:
 	def predict(self, input_tensor):
 		return [5, 5, 6]
 
 
-class TensorCFR_NN:  # TODO pridat TensorCFRFixedTrunkStrategies
+class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 	def get_sorted_permutation(self):
 		return [2, 1, 0]
 
@@ -29,9 +32,13 @@ class TensorCFR_NN:  # TODO pridat TensorCFRFixedTrunkStrategies
 
 
 if __name__ == '__main__':
+	domain = get_domain_by_name("II-GS3_gambit_flattened")
 	nn = NeuralNetMockUp()
-	tensorcfr_nn = TensorCFR_NN()
+	tensorcfr = TensorCFR_NN(
+		domain,
+		trunk_depth=4
+	)
 
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		print(sess.run(tensorcfr_nn.predict_equilibrium_values([-1., 0., 1.], nn)))
+		print(sess.run(tensorcfr.predict_equilibrium_values([-1., 0., 1.], nn)))

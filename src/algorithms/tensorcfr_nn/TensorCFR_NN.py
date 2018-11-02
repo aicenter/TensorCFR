@@ -7,7 +7,7 @@ class NeuralNetMockUp:
 		return [5, 5, 6]
 
 
-class TensorCFR_NN():  # TODO pridat TensorCFRFixedTrunkStrategies
+class TensorCFR_NN:  # TODO pridat TensorCFRFixedTrunkStrategies
 	def get_sorted_permutation(self):
 		return [2, 1, 0]
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+
 import numpy as np
 import pandas as pd
 
@@ -16,7 +18,8 @@ def get_permutation_by_public_states():
 	pd.set_option('display.width', 1000)
 	np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 
-	features_filename = "{}.csv".format(FEATURES_BASENAME)
+	script_directory = os.path.dirname(os.path.abspath(__file__))
+	features_filename = "{}/{}.csv".format(script_directory, FEATURES_BASENAME)
 	features = get_features_dataframe(features_filename, NAMES_OF_FEATURE_CSV, quiet=True)
 	columns_without_reach = FEATURE_COLUMNS[:-1]
 	features = features[columns_without_reach]

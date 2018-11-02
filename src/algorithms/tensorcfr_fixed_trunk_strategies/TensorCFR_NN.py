@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-import numpy as np
 import tensorflow as tf
-from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 
 
 class NeuralNetMockUp:
@@ -9,7 +7,7 @@ class NeuralNetMockUp:
 		return [5, 5, 6]
 
 
-class TensorCFR_NN(): # TODO pridat TensorCFRFixedTrunkStrategies
+class TensorCFR_NN():  # TODO pridat TensorCFRFixedTrunkStrategies
 	def get_sorted_permutation(self):
 		return [2, 1, 0]
 
@@ -28,6 +26,7 @@ class TensorCFR_NN(): # TODO pridat TensorCFRFixedTrunkStrategies
 		# permute back the expected values
 		tensor_inverse_permutation = permutation.inverse(predicted_equilibrium_values)
 		return tensor_inverse_permutation
+
 
 if __name__ == '__main__':
 	nn = NeuralNetMockUp()

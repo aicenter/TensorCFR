@@ -51,7 +51,7 @@ if __name__ == '__main__':
 	)
 
 	permutation = get_sorted_permutation()
-	equilibrium_values = tensorcfr.predict_equilibrial_values([-1., 0., 1.])
+	equilibrium_values = tensorcfr.predict_equilibrial_values([-1., 0., 2.])
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print(sess.run(equilibrium_values))

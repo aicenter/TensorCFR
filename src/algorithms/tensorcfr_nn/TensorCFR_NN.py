@@ -3,7 +3,6 @@ import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 from src.domains.FlattenedDomain import FlattenedDomain
-from src.domains.available_domains import get_domain_by_name
 from src.nn.NNMockUp import NNMockUp
 
 
@@ -37,17 +36,3 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		# permute back the expected values
 		permuted_predictions = permutate_op.inverse(predicted_equilibrial_values)
 		return permuted_predictions
-
-
-if __name__ == '__main__':
-	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
-	tensorcfr = TensorCFR_NN(
-		domain_,
-		trunk_depth=7
-	)
-
-	permutation = get_sorted_permutation()
-	equilibrium_values = tensorcfr.predict_equilibrial_values([-1., 0., 2.])
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		print(sess.run(equilibrium_values))

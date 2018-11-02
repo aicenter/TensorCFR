@@ -10,7 +10,7 @@ def get_sorted_permutation():
 	return [2, 1, 0]
 
 
-class NeuralNetMockUp:
+class AbstractNN:
 	def predict(self, input_tensor):
 		return input_tensor * 10
 
@@ -26,7 +26,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 			 between `0` to `self.domain.levels`. It defaults to `0` (no trunk).
 		"""
 		super().__init__(domain, trunk_depth)
-		self.neural_net = neural_net if neural_net is not None else NeuralNetMockUp()
+		self.neural_net = neural_net if neural_net is not None else AbstractNN()
 		self.nn_input_permutation = nn_input_permutation if neural_net is not None else get_sorted_permutation()
 
 	def predict_equilibrial_values(self, input_reaches):

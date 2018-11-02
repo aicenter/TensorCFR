@@ -22,7 +22,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		"""
 		super().__init__(domain, trunk_depth)
 		self.neural_net = neural_net if neural_net is not None else NNMockUp()
-		self.nn_input_permutation = nn_input_permutation if neural_net is not None else get_sorted_permutation()
+		self.nn_input_permutation = nn_input_permutation if nn_input_permutation is not None else get_sorted_permutation()
 
 	def predict_equilibrial_values(self, input_reaches):
 		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=self.nn_input_permutation)

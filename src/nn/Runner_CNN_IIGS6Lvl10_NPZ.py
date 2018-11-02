@@ -7,6 +7,10 @@ from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 
 
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
+ACTIVATE_FILE = False
+
+
 class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 	@property
 	def default_extractor_arch(self):
@@ -45,10 +49,6 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 		network = ConvNet_IIGS6Lvl10(threads=self.args.threads, fixed_randomness=self.fixed_randomness)
 		network.construct(self.args)
 		return network
-
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:

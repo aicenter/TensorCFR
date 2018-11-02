@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
+from src.nn.AbstractNN import AbstractNN
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_lvl7 import get_node_to_public_state, \
 	get_sizes_of_public_states
@@ -12,10 +13,12 @@ from src.nn.features.goofspiel.IIGS3.one_hot_rounds_cards_IIGS3_1_3_false_true_l
 	get_1hot_round_card_features_np
 from src.utils.tf_utils import count_graph_operations
 
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
+ACTIVATE_FILE = False
 FIXED_RANDOMNESS = False
 
 
-class ConvNet_IIGS3Lvl7:
+class ConvNet_IIGS3Lvl7(AbstractNN):
 	NUM_NODES = 36
 	NUM_ROUNDS = 2
 
@@ -124,7 +127,7 @@ class ConvNet_IIGS3Lvl7:
 			groups_by_public_states = tf.split(
 				value=self.latest_layer,
 				num_or_size_splits=self._sizes_of_public_states,
-				axis=-1,     # NCL
+				axis=-1,  # NCL
 				name="split_by_public_states"
 			)
 
@@ -299,10 +302,6 @@ class ConvNet_IIGS3Lvl7:
 
 	def print_operations_count(self):
 		print("--> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
-
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:

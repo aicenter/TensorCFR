@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
+from src.nn.AbstractNN import AbstractNN
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS6.node_to_public_states_IIGS6_1_6_false_true_lvl10 import get_node_to_public_state
 from src.utils.tf_utils import count_graph_operations
@@ -12,7 +13,7 @@ from src.utils.tf_utils import count_graph_operations
 FIXED_RANDOMNESS = False
 
 
-class DenseNet_IIGS6Lvl10:
+class DenseNet_IIGS6Lvl10(AbstractNN):
 	NUM_NODES = 14400
 	NUM_ROUNDS = 3
 

@@ -5,8 +5,10 @@ import tensorflow as tf
 
 from src.nn.Runner_CNN_IIGS6Lvl10_NPZ import Runner_CNN_IIGS6Lvl10_NPZ
 from src.nn.data.DatasetFromTFRecord import DatasetFromTFRecord
-from src.nn.features.goofspiel.IIGS6.tfrecords_reaches_values_IIGS6_1_6_false_true_lvl10 import FEATURES_PER_FILE
 from src.utils.other_utils import get_files_in_directory_recursively
+
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
+ACTIVATE_FILE = True
 
 
 class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
@@ -81,15 +83,12 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 				self.epoch, testset.batch_id, testset_error_mse, testset_error_infinity))
 
 	def showcase_predictions(self, trainset):
-		pass
+		pass      # TODO
 
 	def run_neural_net(self):
 		with tf.Session() as self.data_session:
 			super().run_neural_net()
 
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	runner = Runner_CNN_IIGS6Lvl10_TFRecords()

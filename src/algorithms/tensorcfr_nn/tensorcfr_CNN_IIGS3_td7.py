@@ -15,9 +15,7 @@ if __name__ == '__main__':
 		trunk_depth=7
 	)
 
-	# input_reaches = tf.constant([0, 1, 2, 3, 4, 5, 6, 7, 8, 96, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-	#                              24, 25, 26, 27, 28, 29, 30, 31, 69, 33, 34, 35])
-	input_reaches = tf.range(len(nn_input_permutation), name="input_reaches")
+	input_reaches = tf.range(len(nn_input_permutation), name="input_reaches") / 1000
 	equilibrium_values = tensorcfr.predict_equilibrial_values(input_reaches)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

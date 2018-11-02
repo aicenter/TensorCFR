@@ -16,7 +16,7 @@ class NeuralNetMockUp:
 
 
 class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
-	def __init__(self, domain: FlattenedDomain, trunk_depth=0):
+	def __init__(self, domain: FlattenedDomain, neural_net=None, trunk_depth=0):
 		"""
 		Constructor for an instance of TensorCFR algorithm with given parameters (as a TensorFlow computation graph).
 
@@ -26,15 +26,16 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 			 between `0` to `self.domain.levels`. It defaults to `0` (no trunk).
 		"""
 		super().__init__(domain, trunk_depth)
+		self.neural_net = neural_net if neural_net is not None else NeuralNetMockUp()
 
-	def predict_equilibrium_values(self, input_tensor, neural_net, permutation_tensor):
+	def predict_equilibrium_values(self, input_tensor, permutation_tensor):
 		permutation = tf.contrib.distributions.bijectors.Permute(permutation=permutation_tensor)
 
 		# permute input reach probabilities
 		tensor_permutation = permutation.forward(input_tensor)
 
 		# use neural net to predict equilibrium values
-		predicted_equilibrium_values = neural_net.predict(tensor_permutation)
+		predicted_equilibrium_values = self.neural_net.predict(tensor_permutation)
 
 		# permute back the expected values
 		tensor_inverse_permutation = permutation.inverse(predicted_equilibrium_values)
@@ -43,14 +44,13 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 
 if __name__ == '__main__':
 	domain = get_domain_by_name("II-GS3_gambit_flattened")
-	nn = NeuralNetMockUp()
 	tensorcfr = TensorCFR_NN(
 		domain,
 		trunk_depth=4
 	)
 
 	permutation = get_sorted_permutation()
-	equilibrium_values = tensorcfr.predict_equilibrium_values([-1., 0., 1.], nn, permutation)
+	equilibrium_values = tensorcfr.predict_equilibrium_values([-1., 0., 1.], permutation)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
 		print(sess.run(equilibrium_values))

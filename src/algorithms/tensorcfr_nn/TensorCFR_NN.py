@@ -102,7 +102,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 					print_tensor(self.session, self.predict_equilibrial_values())
 		return return_average_strategies
 
-	def predict_equilibrial_values(self, input_reaches=None):
+	def predict_equilibrial_values(self, input_reaches=None, name="permuted_predictions"):
 		if input_reaches is None:
 			input_reaches = self.get_nodal_reaches_at_trunk_depth()
 		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=self.nn_input_permutation)
@@ -120,4 +120,4 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 
 		# permute back the expected values
 		permuted_predictions = permutate_op.inverse(predicted_equilibrial_values)
-		return tf.identity(permuted_predictions, name="permuted_predictions")
+		return tf.identity(permuted_predictions, name=name)

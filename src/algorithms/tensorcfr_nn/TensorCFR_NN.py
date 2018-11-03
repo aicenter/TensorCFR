@@ -5,6 +5,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.nn.NNMockUp import NNMockUp
+from src.utils.tf_utils import get_default_config_proto
 
 
 def get_sorted_permutation():
@@ -24,7 +25,12 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		super().__init__(domain, trunk_depth)
 		self.neural_net = neural_net if neural_net is not None else NNMockUp()
 		self.nn_input_permutation = nn_input_permutation if nn_input_permutation is not None else get_sorted_permutation()
+		self.session = tf.Session(config=get_default_config_proto())
 		self.construct_computation_graph()
+		with tf.variable_scope("initialization"):
+			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
+			print(setup_messages)
+		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
 	def construct_computation_graph(self):
 		self.cfr_step_op = self.do_cfr_step()
@@ -46,11 +52,6 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		}
 		self.set_up_cfr_parameters(delay, total_steps)
 		self.set_log_directory()
-		with tf.variable_scope("initialization"):
-			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
-			print(setup_messages)
-
-		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 		with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 			for step in range(total_steps):
 				self.session.run(self.cfr_step_op)

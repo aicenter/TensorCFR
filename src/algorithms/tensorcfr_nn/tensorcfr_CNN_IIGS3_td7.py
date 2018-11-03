@@ -64,12 +64,13 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	print("mean squared error on testset: {}".format(testset_error_mse))
 	print("L-infinity error on testset: {}".format(testset_error_infinity))
 
-	input_reaches = tf.divide(
+	mockup_input_reaches = tf.divide(
 		tf.range(len(nn_input_permutation)),
 		1000,
 		name="input_reaches"
 	)
-	equilibrium_values = tensorcfr.predict_equilibrial_values(input_reaches)
+	equilibrium_values_mockup = tensorcfr.predict_equilibrial_values(mockup_input_reaches)
+	equilibrium_values_true_reaches = tensorcfr.predict_equilibrial_values()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())
-		print_tensors(sess, [input_reaches, equilibrium_values])
+		print_tensors(sess, [mockup_input_reaches, equilibrium_values_mockup, equilibrium_values_true_reaches])

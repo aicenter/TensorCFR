@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import numpy as np
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
@@ -7,7 +6,6 @@ from src.domains.available_domains import get_domain_by_name
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.sorting_permutation_by_public_states import get_permutation_by_public_states
-from src.utils.tf_utils import print_tensors
 
 if __name__ == '__main__':
 	import datetime
@@ -44,9 +42,21 @@ if __name__ == '__main__':
 		nn_input_permutation=nn_input_permutation,
 		trunk_depth=7
 	)
+	network.session.run(tf.global_variables_initializer())
 
-	input_reaches = tf.range(len(nn_input_permutation), name="input_reaches") / 1000
-	equilibrium_values = tensorcfr.predict_equilibrial_values(input_reaches)
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		print_tensors(sess, [input_reaches, equilibrium_values])
+	# Train
+	for epoch in range(args.epochs):
+		while not trainset.epoch_finished():
+			reaches, targets = trainset.next_batch(args.batch_size)
+			network.train(reaches, targets)
+
+		# Evaluate on development set
+		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
+		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+
+	# Evaluate on test set
+	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
+	print()
+	print("mean squared error on testset: {}".format(testset_error_mse))
+	print("L-infinity error on testset: {}".format(testset_error_infinity))
+

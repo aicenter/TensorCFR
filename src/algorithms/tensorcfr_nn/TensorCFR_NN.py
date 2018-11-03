@@ -5,7 +5,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.nn.NNMockUp import NNMockUp
-from src.utils.tf_utils import get_default_config_proto
+from src.utils.tf_utils import get_default_config_proto, print_tensor, print_tensors, masked_assign
 
 
 def get_sorted_permutation():
@@ -31,6 +31,38 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 			print(setup_messages)
 		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+
+	def update_strategy_of_updating_player(self, acting_player=None):  # override not to fix trunk
+		"""
+		Update for the strategy for the given `acting_player`.
+
+		Args:
+			:param acting_player: A variable. An index of the player whose strategies are to be updated.
+
+		Returns:
+			A corresponding TensorFlow operation (from the computation graph).
+		"""
+		if acting_player is None:
+			acting_player = self.domain.current_updating_player
+		infoset_strategies_matched_to_regrets = self.get_strategy_matched_to_regrets()
+		infoset_acting_players = self.domain.get_infoset_acting_players()
+		ops_update_infoset_strategies = [None] * self.domain.acting_depth
+		with tf.variable_scope("update_strategy_of_updating_player"):
+			for level in range(self.domain.acting_depth):
+				with tf.variable_scope("level{}".format(level)):
+					infosets_of_acting_player = tf.reshape(
+						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
+						tf.equal(infoset_acting_players[level], acting_player),
+						shape=[self.domain.current_infoset_strategies[level].shape[0]],
+						name="infosets_of_updating_player_lvl{}".format(level)
+					)
+					ops_update_infoset_strategies[level] = masked_assign(
+						ref=self.domain.current_infoset_strategies[level],
+						mask=infosets_of_acting_player,
+						value=infoset_strategies_matched_to_regrets[level],
+						name="op_update_infoset_strategies_lvl{}".format(level)
+					)
+			return ops_update_infoset_strategies
 
 	def construct_computation_graph(self):
 		self.cfr_step_op = self.do_cfr_step()

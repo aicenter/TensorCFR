@@ -32,6 +32,9 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 			print(setup_messages)
 		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
+	# TODO modify topdown
+	# TODO modify bottomup
+
 	def update_strategy_of_updating_player(self, acting_player=None):  # override not to fix trunk
 		"""
 		Update for the strategy for the given `acting_player`.
@@ -48,7 +51,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		infoset_acting_players = self.domain.get_infoset_acting_players()
 		ops_update_infoset_strategies = [None] * self.domain.acting_depth
 		with tf.variable_scope("update_strategy_of_updating_player"):
-			for level in range(self.domain.acting_depth):
+			for level in range(self.domain.acting_depth):       # TODO update only at trunk
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_acting_player = tf.reshape(
 						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]

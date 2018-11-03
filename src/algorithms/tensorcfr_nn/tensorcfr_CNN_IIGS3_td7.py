@@ -8,7 +8,11 @@ from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.sorting_permutation_by_public_states import get_permutation_by_public_states
 from src.utils.tf_utils import print_tensors
 
-if __name__ == '__main__':
+# TODO: Get rid of `ACTIVATE_FILE` hotfix
+ACTIVATE_FILE = False
+
+
+if __name__ == '__main__' and ACTIVATE_FILE:
 	import datetime
 	import os
 	import re

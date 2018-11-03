@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+import numpy as np
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
 from src.domains.available_domains import get_domain_by_name
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
+from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.sorting_permutation_by_public_states import get_permutation_by_public_states
 from src.utils.tf_utils import print_tensors
 
@@ -23,9 +25,18 @@ if __name__ == '__main__':
 	if not os.path.exists("logs"):
 		os.mkdir("logs")  # TF 1.6 will do this by itself
 
-	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
-	network = ConvNet_IIGS3Lvl7(threads=None)
+	# Load the data
+	script_directory = os.path.dirname(os.path.abspath(__file__))
+	dataset_directory = "../../nn/data/IIGS3Lvl7/80-10-10_only_reaches"
+	npz_basename = "IIGS3_1_3_false_true_lvl7"
+	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
+	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
+	testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
+
+	# Construct the network
+	network = ConvNet_IIGS3Lvl7(threads=args.threads)
 	network.construct(args)
+	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
 	nn_input_permutation = get_permutation_by_public_states()
 	tensorcfr = TensorCFR_NN(
 		domain_,

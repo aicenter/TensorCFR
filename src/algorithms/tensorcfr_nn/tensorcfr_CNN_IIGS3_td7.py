@@ -42,7 +42,6 @@ if __name__ == '__main__':
 		nn_input_permutation=nn_input_permutation,
 		trunk_depth=7
 	)
-	network.session.run(tf.global_variables_initializer())
 
 	# Train
 	for epoch in range(args.epochs):

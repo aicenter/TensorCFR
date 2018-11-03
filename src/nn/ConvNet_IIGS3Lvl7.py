@@ -317,9 +317,9 @@ class ConvNet_IIGS3Lvl7(AbstractNN):
 		parser = argparse.ArgumentParser()
 		parser.add_argument("--batch_size", default=16, type=int, help="Batch size.")
 		parser.add_argument("--extractor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
-												help="Description of the feature extactor architecture.")
+		                    help="Description of the feature extactor architecture.")
 		parser.add_argument("--regressor", default="C-{}".format(ConvNet_IIGS3Lvl7.INPUT_FEATURES_DIM), type=str,
-												help="Description of the value regressor architecture.")
+		                    help="Description of the value regressor architecture.")
 		parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 		parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 		return parser.parse_args()

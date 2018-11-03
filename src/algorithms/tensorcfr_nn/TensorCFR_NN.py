@@ -5,7 +5,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.nn.NNMockUp import NNMockUp
-from src.utils.tf_utils import get_default_config_proto, print_tensor, print_tensors, masked_assign
+from src.utils.tf_utils import get_default_config_proto, print_tensor, masked_assign
 
 
 def get_sorted_permutation():
@@ -68,7 +68,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		self.cfr_step_op = self.do_cfr_step()
 
 	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                     storing_strategies=False, profiling=False, register_strategies_on_step=list()):
+	                                     storing_strategies=False, verbose=False, register_strategies_on_step=list()):
 		# a list of returned average strategies
 		# the parameter `register_strategies_on_step` is used to determine which strategy export
 		return_average_strategies = list()
@@ -86,13 +86,17 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		self.set_log_directory()
 		with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 			for step in range(total_steps):
+				print("\n########## CFR step {} ##########".format(step))
 				self.session.run(self.cfr_step_op)
-
 				if step in register_strategies_on_step:
 					return_average_strategies.append({
 						"step": step,
 						"average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]
 					})
+
+				if verbose:
+					print_tensor(self.session, self.get_nodal_reaches_at_trunk_depth())
+					print_tensor(self.session, self.predict_equilibrial_values())
 		return return_average_strategies
 
 	def predict_equilibrial_values(self, input_reaches=None):

@@ -80,4 +80,4 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 
 		# permute back the expected values
 		permuted_predictions = permutate_op.inverse(predicted_equilibrial_values)
-		return permuted_predictions
+		return tf.identity(permuted_predictions, name="permuted_predictions")

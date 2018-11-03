@@ -65,11 +65,18 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 	def predict_equilibrial_values(self, input_reaches):
 		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=self.nn_input_permutation)
 
-		# permute input reach probabilities
-		permuted_input = permutate_op.forward(input_reaches)
+		permuted_input = tf.expand_dims(
+			permutate_op.forward(input_reaches),    # permute input reach probabilities
+			axis=0,                                 # simulate batch size of 1 for prediction
+			name="expanded_permuted_input"
+		)
+
+		with tf.Session() as sess:
+			sess.run(tf.global_variables_initializer())
+			np_permuted_input = sess.run(permuted_input)
 
 		# use neural net to predict equilibrium values
-		predicted_equilibrial_values = self.neural_net.predict(permuted_input)
+		predicted_equilibrial_values = self.neural_net.predict(np_permuted_input)
 
 		# permute back the expected values
 		permuted_predictions = permutate_op.inverse(predicted_equilibrial_values)

@@ -303,9 +303,7 @@ class ConvNet_IIGS3Lvl7(AbstractNN):
 		if pass_input_using == "numpy":
 			return self.session.run(self.predictions, {self.input_reaches: features})
 		elif pass_input_using == "tensorflow":
-			handle = tf.get_session_handle(features)
-			handle_of_features = self.session.run(handle)
-			return self.session.run(self.predictions, {self.input_reaches: handle_of_features})
+			raise NotImplementedError
 		else:
 			raise ValueError("Invalid value '{}' of 'pass_input_using'.".format(pass_input_using))
 
@@ -379,8 +377,9 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	print("Predictions of initial 2 training examples (passing input using numpy):")
 	print(network.predict(trainset.features[:2], pass_input_using="numpy"))
 
-	print()
-	print("Predictions of initial 2 training examples (passing input using tensorflow):")
-	with network.session.graph.as_default():
-		input_to_prediction = tf.constant(trainset.features[:2], name="input_to_prediction")
-		print(network.predict(input_to_prediction, pass_input_using="tensorflow"))
+	# TODO implement
+	# print()
+	# print("Predictions of initial 2 training examples (passing input using tensorflow):")
+	# with network.session.graph.as_default():
+	# 	input_to_prediction = tf.constant(trainset.features[:2], name="input_to_prediction")
+	# 	print(network.predict(input_to_prediction, pass_input_using="tensorflow"))

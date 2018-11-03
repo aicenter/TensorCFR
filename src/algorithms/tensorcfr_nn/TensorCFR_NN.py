@@ -72,9 +72,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 			name="expanded_permuted_input"
 		)
 
-		with tf.Session() as sess:
-			sess.run(tf.global_variables_initializer())
-			np_permuted_input = sess.run(permuted_input)
+		np_permuted_input = self.session.run(permuted_input)
 
 		# use neural net to predict equilibrium values
 		predicted_equilibrial_values = self.neural_net.predict(np_permuted_input)

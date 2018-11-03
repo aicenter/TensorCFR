@@ -2,6 +2,7 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.nn.NNMockUp import NNMockUp
 
@@ -23,6 +24,43 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		super().__init__(domain, trunk_depth)
 		self.neural_net = neural_net if neural_net is not None else NNMockUp()
 		self.nn_input_permutation = nn_input_permutation if nn_input_permutation is not None else get_sorted_permutation()
+		self.construct_computation_graph()
+
+	def construct_computation_graph(self):
+		self.cfr_step_op = self.do_cfr_step()
+
+	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
+	                                     storing_strategies=False, profiling=False, register_strategies_on_step=list()):
+		# a list of returned average strategies
+		# the parameter `register_strategies_on_step` is used to determine which strategy export
+		return_average_strategies = list()
+
+		# if the `register_strategies_on_step` list is empty, register just the last iteration
+		if len(register_strategies_on_step) == 0:
+			register_strategies_on_step.append(total_steps - 1)
+
+		self.cfr_parameters = {
+			"total_steps"    : total_steps,
+			"averaging_delay": delay,
+			"trunk_depth"    : self.trunk_depth,
+		}
+		self.set_up_cfr_parameters(delay, total_steps)
+		self.set_log_directory()
+		with tf.variable_scope("initialization"):
+			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
+			print(setup_messages)
+
+		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+		with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
+			for step in range(total_steps):
+				self.session.run(self.cfr_step_op)
+
+				if step in register_strategies_on_step:
+					return_average_strategies.append({
+						"step": step,
+						"average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]
+					})
+		return return_average_strategies
 
 	def predict_equilibrial_values(self, input_reaches):
 		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=self.nn_input_permutation)

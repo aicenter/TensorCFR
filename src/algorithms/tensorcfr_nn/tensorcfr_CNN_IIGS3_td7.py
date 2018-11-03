@@ -60,7 +60,11 @@ if __name__ == '__main__':
 	print("mean squared error on testset: {}".format(testset_error_mse))
 	print("L-infinity error on testset: {}".format(testset_error_infinity))
 
-	input_reaches = tf.range(len(nn_input_permutation), name="input_reaches") / 1000
+	input_reaches = tf.divide(
+		tf.range(len(nn_input_permutation)),
+		1000,
+		name="input_reaches"
+	)
 	equilibrium_values = tensorcfr.predict_equilibrial_values(input_reaches)
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

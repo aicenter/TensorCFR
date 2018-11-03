@@ -3,7 +3,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.domains.available_domains import get_domain_by_name
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = True
+ACTIVATE_FILE = False
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	domain = get_domain_by_name("IIGS6_gambit_flattened")

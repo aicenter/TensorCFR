@@ -67,13 +67,12 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 		# Evaluate on development set
 		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
-		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+		logging.info("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
 
 	# Evaluate on test set
 	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
-	print()
-	print("mean squared error on testset: {}".format(testset_error_mse))
-	print("L-infinity error on testset: {}".format(testset_error_infinity))
+	logging.info("\nmean squared error on testset: {}".format(testset_error_mse))
+	logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
 
 	mockup_input_reaches = tf.divide(
 		tf.range(len(nn_input_permutation)),
@@ -94,8 +93,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	for step in steps_to_register:
 		trunk_strategy = tensorcfr.average_strategies_over_steps["average_strategy_step{}".format(step)]
-		print("average_strategy in step {}:".format(step))
-		pprint(trunk_strategy)
+		print("step {}:".format(step))
+		logging.info("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
 		exploitability_tensorcfr = ExploitabilityByTensorCFR(
 			domain_,
@@ -105,6 +104,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 			delay=3,
 			log_lvl=logging.INFO
 		)
-		print("final BR value (player 1): {}".format(exploitability_tensorcfr.final_brvalue_1))
-		print("final BR value (player 2): {}".format(exploitability_tensorcfr.final_brvalue_2))
+		logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
+		logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
 		print("final exploitability: {}".format(exploitability_tensorcfr.final_exploitability))

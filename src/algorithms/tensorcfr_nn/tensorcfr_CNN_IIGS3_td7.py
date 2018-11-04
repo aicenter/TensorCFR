@@ -80,6 +80,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		sess.run(tf.global_variables_initializer())
 		print_tensors(sess, [mockup_input_reaches, mockup_equilibrium_values, equilibrium_values])
 
-	tensorcfr.run_cfr(total_steps=5, delay=2, verbose=True, register_strategies_on_step=[0, 1, 3, 5])
+	steps_to_register = [0, 2, 4]
+	tensorcfr.run_cfr(total_steps=5, delay=2, verbose=True, register_strategies_on_step=steps_to_register)
 	print("average_strategies_over_steps:")
 	pprint(tensorcfr.average_strategies_over_steps)

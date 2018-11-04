@@ -78,4 +78,4 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		sess.run(tf.global_variables_initializer())
 		print_tensors(sess, [mockup_input_reaches, mockup_equilibrium_values, equilibrium_values])
 
-	tensorcfr.cfr_strategies_after_fixed_trunk(total_steps=5, delay=2, verbose=True)
+	tensorcfr.run_cfr(total_steps=5, delay=2, verbose=True)

@@ -70,8 +70,8 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 	def construct_computation_graph(self):
 		self.cfr_step_op = self.do_cfr_step()
 
-	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                     storing_strategies=False, verbose=False, register_strategies_on_step=list()):
+	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
+	            storing_strategies=False, verbose=False, register_strategies_on_step=list()):
 		# a list of returned average strategies
 		# the parameter `register_strategies_on_step` is used to determine which strategy export
 		return_average_strategies = list()

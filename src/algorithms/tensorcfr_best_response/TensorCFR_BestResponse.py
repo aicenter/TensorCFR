@@ -11,7 +11,6 @@ from src.utils.tf_utils import get_default_config_proto, masked_assign
 class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 	def __init__(self, best_responder, trunk_strategies, domain: FlattenedDomain, trunk_depth=0):
 		super().__init__(domain, trunk_depth)
-		self.best_response_values = []
 		self.trunk_strategies = trunk_strategies
 		self.best_responder = best_responder
 		self.average_strategies_over_steps = None
@@ -114,7 +113,6 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 				for step in range(total_steps):
 					self.session.run(self.cfr_step_op)
-					self.best_response_values.append(self.session.run(self.best_response_value_op))
 
 					if step in register_strategies_on_step:
 						self.average_strategies_over_steps.append({

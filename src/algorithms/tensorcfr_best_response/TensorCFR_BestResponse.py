@@ -14,6 +14,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		self.best_response_values = []
 		self.trunk_strategies = trunk_strategies
 		self.best_responder = best_responder
+		self.final_br_value = None
 
 	def update_strategy_of_updating_player(self, acting_player=None):
 		"""
@@ -66,9 +67,12 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 					)
 			return ops_update_infoset_strategies
 
-	# TODO refactor to make use of method overriding
-	def cfr_strategies_after_fixed_trunk(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                     storing_strategies=False, profiling=False, register_strategies_on_step=list()):
+	# TODO rename to get_final_best_response_value
+	# TODO profiling -> verbose
+	# TODO remove storing_strategies
+	# TODO register_strategies_on_step
+	def get_best_response_value_via_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
+	                                    storing_strategies=False, profiling=False, register_strategies_on_step=list()):
 		# a list of returned average strategies
 		# the parameter `register_strategies_on_step` is used to determine which strategy export
 		return_average_strategies = list()
@@ -103,6 +107,14 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 			self.get_expected_values(for_player=self.best_responder)[0][0],
 			name="best_response_value"
 		)
+		set_final_strategies = [
+			tf.assign(
+				self.domain.current_infoset_strategies[level],
+				value=self.average_infoset_strategies[level],
+				name="assign_final_average_strategies_lvl{}".format(level)
+			)
+			for level in range(self.domain.acting_depth)
+		]
 
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			self.session.run(tf.global_variables_initializer())
@@ -122,5 +134,8 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 
 					if storing_strategies:
 						self.store_final_average_strategies()
+
+				self.session.run(set_final_strategies)
+				self.final_br_value = self.session.run(best_response_value)
 				self.log_after_all_steps()
-		return return_average_strategies
+		return self.final_br_value

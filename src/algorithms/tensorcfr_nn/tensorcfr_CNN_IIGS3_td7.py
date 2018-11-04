@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import logging
-from pprint import pprint
 
 import tensorflow as tf
 
@@ -10,16 +9,24 @@ from src.domains.available_domains import get_domain_by_name
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.sorting_permutation_by_public_states import get_permutation_by_public_states
+from src.utils.other_utils import get_current_timestamp
 from src.utils.tf_utils import print_tensors
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
 ACTIVATE_FILE = False
 
 
+def create_logger(log_lvl=logging.WARNING):
+	log_filename = "logs/tensorcfr_CNN_IIGS3_td7_{}.log".format(get_current_timestamp())
+	logging.basicConfig(filename=log_filename, format='%(asctime)s %(message)s', level=log_lvl)
+
+
 if __name__ == '__main__' and ACTIVATE_FILE:
 	import datetime
 	import os
 	import re
+
+	create_logger()
 
 	args = ConvNet_IIGS3Lvl7.parse_arguments()
 	print("args: {}".format(args))

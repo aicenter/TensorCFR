@@ -14,7 +14,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		self.best_response_values = []
 		self.trunk_strategies = trunk_strategies
 		self.best_responder = best_responder
-		self.return_average_strategies = None
+		self.average_strategies_over_steps = None
 		self.final_br_value = None
 
 	def update_strategy_of_updating_player(self, acting_player=None):
@@ -72,7 +72,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 	                                  register_strategies_on_step=None):
 		if register_strategies_on_step is None:
 			register_strategies_on_step = [total_steps - 1]   # by default, register just the last iteration
-		self.return_average_strategies = list()             # reset the list
+		self.average_strategies_over_steps = list()             # reset the list
 
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
@@ -115,7 +115,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 					self.best_response_values.append(self.session.run(best_response_value))
 
 					if step in register_strategies_on_step:
-						self.return_average_strategies.append({
+						self.average_strategies_over_steps.append({
 							"step"            : step,
 							"average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]
 						})

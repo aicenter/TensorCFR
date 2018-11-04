@@ -119,7 +119,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 					if step in register_strategies_on_step:
 						self.average_strategies_over_steps.append({
 							"step"            : step,
-							"average_strategy": self.session.run(self.average_infoset_strategies)
+							"average_strategy": [self.session.run(strategy).tolist() for strategy in self.average_infoset_strategies]
 						})
 
 				self.session.run(self.set_final_strategies)

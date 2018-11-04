@@ -90,8 +90,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 				self.session.run(self.cfr_step_op)
 				if step in register_strategies_on_step:
 					self.average_strategies_over_steps.append({
-						"step"            : step,
-						"average_strategy": [
+						"average_strategy_step{}".format(step): [
 							self.session.run(strategy).tolist() for strategy in self.average_infoset_strategies[:self.trunk_depth]
 						]
 					})

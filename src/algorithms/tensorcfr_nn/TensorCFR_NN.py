@@ -75,7 +75,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 	            register_strategies_on_step=None):
 		if register_strategies_on_step is None:
 			register_strategies_on_step = [total_steps - 1]  # by default, register just the last iteration
-		self.average_strategies_over_steps = list()  # reset the list
+		self.average_strategies_over_steps = dict()        # reset the dict
 
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
@@ -89,11 +89,9 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 				print("\n########## CFR step {} ##########".format(step))
 				self.session.run(self.cfr_step_op)
 				if step in register_strategies_on_step:
-					self.average_strategies_over_steps.append({
-						"average_strategy_step{}".format(step): [
-							self.session.run(strategy).tolist() for strategy in self.average_infoset_strategies[:self.trunk_depth]
-						]
-					})
+					self.average_strategies_over_steps["average_strategy_step{}".format(step)] = [
+						self.session.run(strategy).tolist() for strategy in self.average_infoset_strategies[:self.trunk_depth]
+					]
 
 				if verbose:
 					print_tensor(self.session, self.get_nodal_reaches_at_trunk_depth())

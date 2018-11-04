@@ -16,6 +16,7 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		self.best_responder = best_responder
 		self.average_strategies_over_steps = None
 		self.final_br_value = None
+		self.construct_ops()
 
 	def update_strategy_of_updating_player(self, acting_player=None):
 		"""
@@ -68,6 +69,28 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 					)
 			return ops_update_infoset_strategies
 
+	def construct_ops(self):
+		self.cfr_step_op = self.do_cfr_step()
+		self.set_initial_strategies = [
+			tf.assign(
+				current_strategies_per_level,
+				value=self.trunk_strategies[level]
+			)
+			for level, current_strategies_per_level in enumerate(self.domain.current_infoset_strategies[:self.trunk_depth])
+		]
+		self.best_response_value_op = tf.identity(
+			self.get_expected_values(for_player=self.best_responder)[0][0],
+			name="best_response_value"
+		)
+		self.set_final_strategies = [
+			tf.assign(
+				self.domain.current_infoset_strategies[level],
+				value=self.average_infoset_strategies[level],
+				name="assign_final_average_strategies_lvl{}".format(level)
+			)
+			for level in range(self.domain.acting_depth)
+		]
+
 	def get_final_best_response_value(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=False,
 	                                  register_strategies_on_step=None):
 		if register_strategies_on_step is None:
@@ -85,34 +108,13 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 			print(setup_messages)
 
-		cfr_step_op = self.do_cfr_step()
-		set_initial_strategies = [
-			tf.assign(
-				current_strategies_per_level,
-				value=self.trunk_strategies[level]
-			)
-			for level, current_strategies_per_level in enumerate(self.domain.current_infoset_strategies[:self.trunk_depth])
-		]
-		best_response_value = tf.identity(
-			self.get_expected_values(for_player=self.best_responder)[0][0],
-			name="best_response_value"
-		)
-		set_final_strategies = [
-			tf.assign(
-				self.domain.current_infoset_strategies[level],
-				value=self.average_infoset_strategies[level],
-				name="assign_final_average_strategies_lvl{}".format(level)
-			)
-			for level in range(self.domain.acting_depth)
-		]
-
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			self.session.run(tf.global_variables_initializer())
-			self.session.run(set_initial_strategies)
+			self.session.run(self.set_initial_strategies)
 			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 				for step in range(total_steps):
-					self.session.run(cfr_step_op)
-					self.best_response_values.append(self.session.run(best_response_value))
+					self.session.run(self.cfr_step_op)
+					self.best_response_values.append(self.session.run(self.best_response_value_op))
 
 					if step in register_strategies_on_step:
 						self.average_strategies_over_steps.append({
@@ -120,8 +122,8 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 							"average_strategy": self.session.run(self.average_infoset_strategies)
 						})
 
-				self.session.run(set_final_strategies)
-				self.final_br_value = self.session.run(best_response_value)
+				self.session.run(self.set_final_strategies)
+				self.final_br_value = self.session.run(self.best_response_value_op)
 				if verbose:
 					self.log_after_all_steps()
 		return self.final_br_value

@@ -30,6 +30,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		with tf.variable_scope("initialization"):
 			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 			print(setup_messages)
+		self.average_strategies_over_steps = None
 		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
 	# TODO modify topdown
@@ -51,7 +52,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		infoset_acting_players = self.domain.get_infoset_acting_players()
 		ops_update_infoset_strategies = [None] * self.domain.acting_depth
 		with tf.variable_scope("update_strategy_of_updating_player"):
-			for level in range(self.domain.acting_depth):       # TODO update only at trunk
+			for level in range(self.domain.acting_depth):  # TODO update only at trunk
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_acting_player = tf.reshape(
 						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
@@ -70,15 +71,11 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 	def construct_computation_graph(self):
 		self.cfr_step_op = self.do_cfr_step()
 
-	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	            storing_strategies=False, verbose=False, register_strategies_on_step=list()):
-		# a list of returned average strategies
-		# the parameter `register_strategies_on_step` is used to determine which strategy export
-		return_average_strategies = list()
-
-		# if the `register_strategies_on_step` list is empty, register just the last iteration
-		if len(register_strategies_on_step) == 0:
-			register_strategies_on_step.append(total_steps - 1)
+	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=False,
+	            register_strategies_on_step=None):
+		if register_strategies_on_step is None:
+			register_strategies_on_step = [total_steps - 1]  # by default, register just the last iteration
+		self.average_strategies_over_steps = list()  # reset the list
 
 		self.cfr_parameters = {
 			"total_steps"    : total_steps,
@@ -92,15 +89,16 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 				print("\n########## CFR step {} ##########".format(step))
 				self.session.run(self.cfr_step_op)
 				if step in register_strategies_on_step:
-					return_average_strategies.append({
-						"step": step,
-						"average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]
+					self.average_strategies_over_steps.append({
+						"step"            : step,
+						"average_strategy": [
+							self.session.run(strategy).tolist() for strategy in self.average_infoset_strategies[:self.trunk_depth]
+						]
 					})
 
 				if verbose:
 					print_tensor(self.session, self.get_nodal_reaches_at_trunk_depth())
 					print_tensor(self.session, self.predict_equilibrial_values())
-		return return_average_strategies
 
 	def predict_equilibrial_values(self, input_reaches=None, name="permuted_predictions"):
 		if input_reaches is None:
@@ -108,8 +106,8 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=self.nn_input_permutation)
 
 		permuted_input = tf.expand_dims(
-			permutate_op.forward(input_reaches),    # permute input reach probabilities
-			axis=0,                                 # simulate batch size of 1 for prediction
+			permutate_op.forward(input_reaches),  # permute input reach probabilities
+			axis=0,  # simulate batch size of 1 for prediction
 			name="expanded_permuted_input"
 		)
 

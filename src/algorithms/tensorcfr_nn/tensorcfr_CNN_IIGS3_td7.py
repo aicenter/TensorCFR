@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from pprint import pprint
+
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
@@ -78,4 +80,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		sess.run(tf.global_variables_initializer())
 		print_tensors(sess, [mockup_input_reaches, mockup_equilibrium_values, equilibrium_values])
 
-	tensorcfr.run_cfr(total_steps=5, delay=2, verbose=True)
+	tensorcfr.run_cfr(total_steps=5, delay=2, verbose=True, register_strategies_on_step=[0, 1, 3, 5])
+	print("average_strategies_over_steps:")
+	pprint(tensorcfr.average_strategies_over_steps)

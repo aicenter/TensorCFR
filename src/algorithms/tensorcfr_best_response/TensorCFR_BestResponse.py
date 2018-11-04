@@ -67,11 +67,10 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 					)
 			return ops_update_infoset_strategies
 
-	# TODO profiling -> verbose
 	# TODO remove storing_strategies
 	# TODO register_strategies_on_step
 	def get_final_best_response_value(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
-	                                  storing_strategies=False, profiling=False, register_strategies_on_step=list()):
+	                                  storing_strategies=False, verbose=False, register_strategies_on_step=list()):
 		# a list of returned average strategies
 		# the parameter `register_strategies_on_step` is used to determine which strategy export
 		return_average_strategies = list()
@@ -87,8 +86,6 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		}
 		self.set_up_cfr_parameters(delay, total_steps)
 		self.set_log_directory()
-		if profiling:
-			self.log_directory += "-profiling"
 		with tf.variable_scope("initialization"):
 			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 			print(setup_messages)
@@ -124,8 +121,6 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 					self.best_response_values.append(self.session.run(best_response_value))
 
 					if step in register_strategies_on_step:
-						# if the number of step `i` is in `register_strategies_on_step` then add the average strategy
-						# self.set_average_infoset_strategies()
 						return_average_strategies.append({
 							"step"            : step,
 							"average_strategy": [self.session.run(x) for x in self.average_infoset_strategies]
@@ -136,5 +131,6 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 
 				self.session.run(set_final_strategies)
 				self.final_br_value = self.session.run(best_response_value)
-				self.log_after_all_steps()
+				if verbose:
+					self.log_after_all_steps()
 		return self.final_br_value

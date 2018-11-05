@@ -15,12 +15,12 @@ def get_sorted_permutation():
 class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 	def __init__(self, domain: FlattenedDomain, neural_net=None, nn_input_permutation=None, trunk_depth=0):
 		"""
-		Constructor for an instance of TensorCFR algorithm with given parameters (as a TensorFlow computation graph).
+		Constructor for an instance of TensorCFR_NN algorithm with given parameters (as a TensorFlow computation graph).
 
-		:param domain: The domain of the game (as an instance of class `FlattenedDomain`). TensorCFR (the CFR+ algorithm)
-		 will be launched for this game.
-		:param trunk_depth: The number of levels of the trunk where the strategies are kept fixed. It should be an integer
-			 between `0` to `self.domain.levels`. It defaults to `0` (no trunk).
+		:param domain: The domain of the game (as an instance of class `FlattenedDomain`). TensorCFR (the CFR+ algorithm
+		with neural network for prediction of nodal expected values) will be launched for this game.
+	  :param trunk_depth: The number of levels of the trunk where the strategies are kept fixed. It should be an integer between `0` to
+		`self.domain.levels`. It defaults to `0` (no trunk).
 		"""
 		super().__init__(domain, trunk_depth)
 		self.neural_net = neural_net if neural_net is not None else NNMockUp()

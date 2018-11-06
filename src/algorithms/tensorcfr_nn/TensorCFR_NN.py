@@ -22,11 +22,12 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 	  :param trunk_depth: The number of levels of the trunk where the strategies are kept fixed. It should be an integer between `0` to
 		`self.domain.levels`. It defaults to `0` (no trunk).
 		"""
-		super().__init__(domain, trunk_depth)
-
-		# reduce tree only to the trunk
-		self.levels = self.trunk_depth
-		self.acting_depth = self.levels - 1
+		super().__init__(
+			domain,
+			trunk_depth,
+			levels=trunk_depth,             # reduce tree only to the trunk
+			acting_depth=trunk_depth - 1
+		)
 
 		self.neural_net = neural_net if neural_net is not None else NNMockUp()
 		self.nn_input_permutation = nn_input_permutation if nn_input_permutation is not None else get_sorted_permutation()

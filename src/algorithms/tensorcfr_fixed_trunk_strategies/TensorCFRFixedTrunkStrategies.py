@@ -18,7 +18,7 @@ from src.utils.tf_utils import print_tensors, expanded_multiply, scatter_nd_sum,
 
 
 class TensorCFRFixedTrunkStrategies:
-	def __init__(self, domain: FlattenedDomain, trunk_depth=0):
+	def __init__(self, domain: FlattenedDomain, trunk_depth=0, levels=None, acting_depth=None):
 		"""
 		Constructor for an instance of TensorCFR algorithm with given parameters (as a TensorFlow computation graph).
 
@@ -30,20 +30,11 @@ class TensorCFRFixedTrunkStrategies:
 		self.domain = domain
 		self.session = None
 
-		with tf.variable_scope("increment_step"):
-			self.increment_cfr_step = tf.assign_add(
-				ref=self.domain.cfr_step,
-				value=1,
-				name="increment_cfr_step"
-			)
-		self.average_infoset_strategies = None
-		self.set_average_infoset_strategies()
-
 		self.summary_writer = None
 		self.log_directory = None
 		self.trunk_depth = trunk_depth
-		self.levels = self.domain.levels
-		self.acting_depth = self.domain.acting_depth
+		self.levels = self.domain.levels if levels is None else levels
+		self.acting_depth = self.domain.acting_depth if acting_depth is None else acting_depth
 		self.boundary_level = self.trunk_depth
 		last_level_with_infosets = self.domain.acting_depth - 1
 		assert 0 <= self.boundary_level <= last_level_with_infosets, \
@@ -65,6 +56,16 @@ class TensorCFRFixedTrunkStrategies:
 		self.ops_assign_strategies = None
 
 		self.expected_values = [None] * self.levels
+
+		with tf.variable_scope("increment_step"):
+			self.increment_cfr_step = tf.assign_add(
+				ref=self.domain.cfr_step,
+				value=1,
+				name="increment_cfr_step"
+			)
+		self.average_infoset_strategies = None
+		self.set_average_infoset_strategies()
+
 
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):

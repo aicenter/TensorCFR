@@ -71,10 +71,10 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	logging.info("\nmean squared error on testset: {}".format(testset_error_mse))
 	logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
 
-	steps_to_register = [0, 25, 50, 75, 99]
+	steps_to_register = [0, 1, 2, 3, 4, 5]
 	tensorcfr.run_cfr(
-		total_steps=100,
-		delay=25,
+		total_steps=6,
+		delay=2,
 		verbose=True,
 		register_strategies_on_step=steps_to_register
 	)
@@ -83,15 +83,14 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	for step in steps_to_register:
 		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
-		print("step {}:".format(step))
 		logging.info("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
 		exploitability_tensorcfr = ExploitabilityByTensorCFR(
 			domain_,
 			trunk_depth=7,
 			trunk_strategies=trunk_strategy,
-			total_steps=10,
-			delay=3,
+			total_steps=100,
+			delay=25,
 			log_lvl=logging.INFO
 		)
 		logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))

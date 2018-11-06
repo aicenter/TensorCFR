@@ -42,6 +42,7 @@ class TensorCFRFixedTrunkStrategies:
 		self.summary_writer = None
 		self.log_directory = None
 		self.trunk_depth = trunk_depth
+		self.levels = self.domain.levels
 		self.boundary_level = self.trunk_depth
 		last_level_with_infosets = self.domain.acting_depth - 1
 		assert 0 <= self.boundary_level <= last_level_with_infosets, \
@@ -169,14 +170,14 @@ class TensorCFRFixedTrunkStrategies:
 
 		node_strategies = self.get_node_strategies()
 		with tf.variable_scope("expected_values"):
-			expected_values = [None] * self.domain.levels
-			with tf.variable_scope("level{}".format(self.domain.levels - 1)):
-				expected_values[self.domain.levels - 1] = tf.multiply(
+			expected_values = [None] * self.levels
+			with tf.variable_scope("level{}".format(self.levels - 1)):
+				expected_values[self.levels - 1] = tf.multiply(
 					signum,
-					self.domain.utilities[self.domain.levels - 1],
-					name="expected_values_lvl{}_for_{}".format(self.domain.levels - 1, player_name)
+					self.domain.utilities[self.levels - 1],
+					name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
 				)
-			for level in reversed(range(self.domain.levels - 1)):
+			for level in reversed(range(self.levels - 1)):
 				with tf.variable_scope("level{}".format(level)):
 					weighted_sum_of_values = tf.segment_sum(
 						data=node_strategies[level + 1] * expected_values[level + 1],

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from src import utils
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 from src.domains.available_domains import get_domain_by_name

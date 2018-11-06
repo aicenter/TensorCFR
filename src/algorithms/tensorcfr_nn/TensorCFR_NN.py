@@ -25,8 +25,8 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		super().__init__(
 			domain,
 			trunk_depth,
-			levels=trunk_depth,             # reduce tree only to the trunk
-			acting_depth=trunk_depth - 1
+			levels=trunk_depth + 1,  # `trunk_depth` levels where strategy is fixed + the final one at the bottom
+			acting_depth=trunk_depth
 		)
 
 		self.neural_net = neural_net if neural_net is not None else NNMockUp()

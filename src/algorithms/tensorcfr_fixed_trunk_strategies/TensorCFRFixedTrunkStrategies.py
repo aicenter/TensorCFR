@@ -106,7 +106,7 @@ class TensorCFRFixedTrunkStrategies:
 					self.domain.node_to_infoset[level],
 					self.domain.mask_of_inner_nodes[level],
 					name="node_strategies_lvl{}".format(level)
-				) for level in range(self.domain.acting_depth)
+				) for level in range(self.acting_depth)
 			]
 			flattened_node_strategies = flatten_strategies_via_action_counts(
 				node_strategies,
@@ -127,7 +127,7 @@ class TensorCFRFixedTrunkStrategies:
 					for_player=for_player,
 					acting_players=self.domain.infoset_acting_players[level],
 					name="node_cf_strategies_lvl{}".format(level)
-				) for level in range(self.domain.acting_depth)
+				) for level in range(self.acting_depth)
 			]
 			flattened_node_cf_strategies = flatten_strategies_via_action_counts(
 				node_cf_strategies,
@@ -139,7 +139,7 @@ class TensorCFRFixedTrunkStrategies:
 	def show_strategies(self):
 		node_strategies = self.get_node_strategies()
 		node_cf_strategies = self.get_node_cf_strategies()
-		for level in range(self.domain.acting_depth):
+		for level in range(self.acting_depth):
 			print("########## Level {} ##########".format(level))
 			print_tensors(self.session, [
 				self.domain.node_to_infoset[level],
@@ -374,7 +374,7 @@ class TensorCFRFixedTrunkStrategies:
 
 	def get_infoset_mask_non_imaginary_children(self):  # TODO unittest
 		with tf.variable_scope("infoset_mask_non_imaginary_children"):
-			infoset_mask_non_imaginary_children = [None] * self.domain.acting_depth
+			infoset_mask_non_imaginary_children = [None] * self.acting_depth
 			for level, infoset_action_count in enumerate(self.domain.infoset_action_counts):
 				with tf.variable_scope("level{}".format(level)):
 					infoset_mask_non_imaginary_children[level] = tf.sequence_mask(
@@ -386,7 +386,7 @@ class TensorCFRFixedTrunkStrategies:
 	def get_infoset_uniform_strategies(self):  # TODO unittest
 		with tf.variable_scope("infoset_uniform_strategies"):
 			infoset_mask_non_imaginary_children = self.get_infoset_mask_non_imaginary_children()
-			infoset_uniform_strategies = [None] * self.domain.acting_depth
+			infoset_uniform_strategies = [None] * self.acting_depth
 			for level, infoset_mask_of_1_level in enumerate(infoset_mask_non_imaginary_children):
 				with tf.variable_scope("level{}".format(level)):
 					infoset_mask_non_imaginary_children_float_dtype = tf.cast(
@@ -469,7 +469,7 @@ class TensorCFRFixedTrunkStrategies:
 		with tf.control_dependencies(update_regrets):
 			with tf.variable_scope("strategies_matched_to_regrets"):
 				strategies_matched_to_regrets = [None] * (self.domain.levels - 1)
-				for level in range(self.domain.acting_depth):
+				for level in range(self.acting_depth):
 					with tf.variable_scope("level{}".format(level)):
 						sums_of_regrets = tf.reduce_sum(
 							self.domain.positive_cumulative_regrets[level].read_value(),
@@ -514,9 +514,9 @@ class TensorCFRFixedTrunkStrategies:
 			acting_player = self.domain.current_updating_player
 		infoset_strategies_matched_to_regrets = self.get_strategy_matched_to_regrets()
 		infoset_acting_players = self.domain.get_infoset_acting_players()
-		ops_update_infoset_strategies = [None] * self.domain.acting_depth
+		ops_update_infoset_strategies = [None] * self.acting_depth
 		with tf.variable_scope("update_strategy_of_updating_player"):
-			for level in range(self.trunk_depth, self.domain.acting_depth):
+			for level in range(self.trunk_depth, self.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_acting_player = tf.reshape(
 						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
@@ -566,8 +566,8 @@ class TensorCFRFixedTrunkStrategies:
 		infoset_acting_players = self.domain.get_infoset_acting_players()
 		infoset_reach_probabilities = self.get_infoset_reach_probabilities()
 		with tf.variable_scope("cumulate_strategy_of_opponent"):
-			cumulate_infoset_strategies_ops = [None] * self.domain.acting_depth
-			for level in range(self.domain.acting_depth):
+			cumulate_infoset_strategies_ops = [None] * self.acting_depth
+			for level in range(self.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_opponent = tf.reshape(  # `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
 						tf.equal(infoset_acting_players[level], opponent),
@@ -601,10 +601,10 @@ class TensorCFRFixedTrunkStrategies:
 	def set_average_infoset_strategies(self):
 		# TODO Do not normalize over imaginary nodes. <- Do we need to solve this? Or is it already ok (cf. `bottomup-*.py`)
 		with tf.variable_scope("average_strategies"):
-			self.average_infoset_strategies = [None] * self.domain.acting_depth
-			norm_of_strategies = [None] * self.domain.acting_depth
-			infosets_with_nonzero_norm = [None] * self.domain.acting_depth
-			for level in range(self.domain.acting_depth):
+			self.average_infoset_strategies = [None] * self.acting_depth
+			norm_of_strategies = [None] * self.acting_depth
+			infosets_with_nonzero_norm = [None] * self.acting_depth
+			for level in range(self.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					norm_of_strategies[level] = tf.reduce_sum(
 						self.domain.cumulative_infoset_strategies[level],
@@ -671,7 +671,7 @@ class TensorCFRFixedTrunkStrategies:
 		"""
 		if self.ops_assign_strategies is None:
 			with tf.variable_scope("assign_avg_strategies_to_current_strategies"):
-				self.ops_assign_strategies = [None] * self.domain.acting_depth
+				self.ops_assign_strategies = [None] * self.acting_depth
 				for level, avg_strategy in enumerate(self.average_infoset_strategies):
 					with tf.variable_scope("level{}".format(level)):
 						self.ops_assign_strategies[level] = masked_assign(
@@ -973,7 +973,7 @@ class TensorCFRFixedTrunkStrategies:
 			print(initial_strategy_values)
 			return "Initializing strategies to custom values defined by user...\n", {
 				self.domain.initial_infoset_strategies[level]: initial_strategy_values[level]
-				for level in range(self.domain.acting_depth)
+				for level in range(self.acting_depth)
 			}
 		elif method == "random":
 			np_random_strategies = self.domain.generate_random_strategies(
@@ -982,7 +982,7 @@ class TensorCFRFixedTrunkStrategies:
 			)
 			return "Initializing strategies to random distributions using seed {}...\n".format(seed), {
 				self.domain.initial_infoset_strategies[level]: np_random_strategies[level]
-				for level in range(self.domain.acting_depth)
+				for level in range(self.acting_depth)
 			}
 		else:
 			raise ValueError('Undefined method "{}" for set_up_feed_dictionary().'.format(method))

@@ -43,6 +43,7 @@ class TensorCFRFixedTrunkStrategies:
 				last_level_with_infosets
 			)
 		self.action_counts = self.domain.action_counts[:self.levels]
+		self.infoset_action_counts = self.domain.infoset_action_counts[:self.acting_depth]
 
 		self.trunk_depth_infoset_cfvs = None
 		self.trunk_depth_nodal_expected_values = None
@@ -378,7 +379,7 @@ class TensorCFRFixedTrunkStrategies:
 	def get_infoset_mask_non_imaginary_children(self):  # TODO unittest
 		with tf.variable_scope("infoset_mask_non_imaginary_children"):
 			infoset_mask_non_imaginary_children = [None] * self.acting_depth
-			for level, infoset_action_count in enumerate(self.domain.infoset_action_counts):
+			for level, infoset_action_count in enumerate(self.infoset_action_counts):
 				with tf.variable_scope("level{}".format(level)):
 					infoset_mask_non_imaginary_children[level] = tf.sequence_mask(
 						lengths=infoset_action_count,

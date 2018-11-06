@@ -85,7 +85,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
 		logging.info("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
-		exploitability_tensorcfr = ExploitabilityByTensorCFR(
+		exploitability_tensorcfr = ExploitabilityByTensorCFR(   # TODO optimize by construction object only once
 			domain_,
 			trunk_depth=7,
 			trunk_strategies=trunk_strategy,

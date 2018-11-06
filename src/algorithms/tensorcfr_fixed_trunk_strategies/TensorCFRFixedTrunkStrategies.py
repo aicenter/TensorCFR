@@ -42,6 +42,8 @@ class TensorCFRFixedTrunkStrategies:
 				self.boundary_level,
 				last_level_with_infosets
 			)
+		self.action_counts = self.domain.action_counts[:self.levels]
+
 		self.trunk_depth_infoset_cfvs = None
 		self.trunk_depth_nodal_expected_values = None
 		self.cfr_parameters = {}
@@ -111,7 +113,7 @@ class TensorCFRFixedTrunkStrategies:
 			]
 			flattened_node_strategies = flatten_strategies_via_action_counts(
 				node_strategies,
-				self.domain.action_counts
+				self.action_counts
 			)
 			return flattened_node_strategies
 
@@ -132,7 +134,7 @@ class TensorCFRFixedTrunkStrategies:
 			]
 			flattened_node_cf_strategies = flatten_strategies_via_action_counts(
 				node_cf_strategies,
-				self.domain.action_counts,
+				self.action_counts,
 				basename="nodal_cf_strategies"
 			)
 			return flattened_node_cf_strategies
@@ -364,7 +366,7 @@ class TensorCFRFixedTrunkStrategies:
 		for level in range(self.acting_depth):
 			infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
 				values_in_children=nodal_cf_values[level + 1],
-				action_counts=self.domain.action_counts[level],
+				action_counts=self.action_counts[level],
 				parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
 				infoset_strategy=self.domain.current_infoset_strategies[level],
 				name="cf_values_lvl{}_for_{}".format(level, player_name)
@@ -908,7 +910,7 @@ class TensorCFRFixedTrunkStrategies:
 						dtype=FLOAT_DTYPE,
 						name="nodal_enumeration_lvl{}".format(level)
 					)
-					for level, action_counts_in_a_level in enumerate(self.domain.action_counts)
+					for level, action_counts_in_a_level in enumerate(self.action_counts)
 				]
 
 			if self.inner_nodal_enumerations is None:

@@ -148,6 +148,14 @@ class TensorCFRFixedTrunkStrategies:
 				node_cf_strategies[level],
 			])
 
+	def construct_lowest_expected_values(self, player_name, signum):
+		with tf.variable_scope("level{}".format(self.levels - 1)):
+			self.expected_values[self.levels - 1] = tf.multiply(
+				signum,
+				self.domain.utilities[self.levels - 1],
+				name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
+			)
+
 	def get_expected_values(self, for_player=None):
 		"""
 		Compute expected values of nodes using the bottom-up tree traversal.
@@ -172,13 +180,7 @@ class TensorCFRFixedTrunkStrategies:
 
 		node_strategies = self.get_node_strategies()
 		with tf.variable_scope("expected_values"):
-			expected_values = [None] * self.levels
-			with tf.variable_scope("level{}".format(self.levels - 1)):
-				self.expected_values[self.levels - 1] = tf.multiply(
-					signum,
-					self.domain.utilities[self.levels - 1],
-					name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
-				)
+			self.construct_lowest_expected_values(player_name, signum)
 			for level in reversed(range(self.levels - 1)):
 				with tf.variable_scope("level{}".format(level)):
 					weighted_sum_of_values = tf.segment_sum(

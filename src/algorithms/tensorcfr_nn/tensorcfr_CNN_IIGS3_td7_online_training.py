@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 import logging
 
-import tensorflow as tf
-
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
 from src.domains.available_domains import get_domain_by_name
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.sorting_permutation_by_public_states import get_permutation_by_public_states
 from src.utils.other_utils import get_current_timestamp
-from src.utils.tf_utils import print_tensors
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
 ACTIVATE_FILE = False
@@ -72,20 +69,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
 	logging.info("\nmean squared error on testset: {}".format(testset_error_mse))
 	logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
-
-	mockup_input_reaches = tf.divide(
-		tf.range(len(nn_input_permutation)),
-		1000,
-		name="mockup_input_reaches"
-	)
-	mockup_equilibrium_values = tensorcfr.predict_equilibrial_values(
-		mockup_input_reaches,
-		name="mockup_equilibrium_values"
-	)
-	equilibrium_values = tensorcfr.predict_equilibrial_values()
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		print_tensors(sess, [mockup_input_reaches, mockup_equilibrium_values, equilibrium_values])
 
 	steps_to_register = [0, 2, 4]
 	tensorcfr.run_cfr(total_steps=5, delay=2, verbose=True, register_strategies_on_step=steps_to_register)

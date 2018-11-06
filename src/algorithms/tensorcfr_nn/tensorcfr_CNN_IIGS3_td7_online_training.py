@@ -70,8 +70,13 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	logging.info("\nmean squared error on testset: {}".format(testset_error_mse))
 	logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
 
-	steps_to_register = [0, 2, 4]
-	tensorcfr.run_cfr(total_steps=5, delay=2, verbose=True, register_strategies_on_step=steps_to_register)
+	steps_to_register = [0, 25, 50, 75, 99]
+	tensorcfr.run_cfr(
+		total_steps=100,
+		delay=25,
+		verbose=True,
+		register_strategies_on_step=steps_to_register
+	)
 
 	# for step in steps_to_register:
 	# 	trunk_strategy = tensorcfr.average_strategies_over_steps["average_strategy_step{}".format(step)]

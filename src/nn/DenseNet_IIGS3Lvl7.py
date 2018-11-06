@@ -222,8 +222,20 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 			print(">> Summary writer constructed")
 			self.print_operations_count()
 
+			## saver
+
+			self.saver = tf.train.Saver()
+
 	def train(self, features, targets):
 		self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
+		#self.saver.save(self.session,"./my_dense_model.ckpt")
+
+	def save_to_ckpt(self,path):
+		if str(path).endswith(".ckpt"):
+			self.saver.save(self.session,path)
+		else:
+			self.saver.save(self.session, path + ".ckpt")
+		print("Saving to " + path + " successful")
 
 	def evaluate(self, dataset, features, targets):
 		mean_squared_error, l_infinity_error, _ = self.session.run(
@@ -237,6 +249,17 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 
 	def print_operations_count(self):
 		print(">>> {} operations".format(count_graph_operations(self.graph)))
+
+	def restore_from_ckpt(self,path):
+
+		if str(path).endswith(".ckpt"):
+
+			self.saver.restore(self.session,path)
+		else:
+			self.saver.restore(self.session, path + ".ckpt")
+
+		print("Restoring from "+path +" successful")
+
 
 	@staticmethod
 	def parse_arguments():
@@ -264,7 +287,6 @@ if __name__ == "__main__":
 
 	args = DenseNet_IIGS3Lvl7.parse_arguments()
 
-	args = parser.parse_args()
 	print("args: {}".format(args))
 
 	# Create logdir name

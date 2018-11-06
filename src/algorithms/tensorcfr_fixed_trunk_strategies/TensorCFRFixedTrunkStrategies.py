@@ -223,7 +223,7 @@ class TensorCFRFixedTrunkStrategies:
 		expected_values_for_current_player = self.get_expected_values()
 		expected_values_for_player1 = self.get_expected_values(for_player=PLAYER1)
 		expected_values_for_player2 = self.get_expected_values(for_player=PLAYER2)
-		for level in reversed(range(self.domain.levels)):
+		for level in reversed(range(self.levels)):
 			print("########## Level {} ##########".format(level))
 			if level < len(node_strategies):
 				print_tensors(self.session, [node_strategies[level]])
@@ -257,12 +257,12 @@ class TensorCFRFixedTrunkStrategies:
 			player_name = "current_player"
 
 		with tf.variable_scope("nodal_reach_probabilities_for_{}".format(player_name)):
-			nodal_reach_probabilities = [None] * self.domain.levels
+			nodal_reach_probabilities = [None] * self.levels
 			nodal_reach_probabilities[0] = tf.expand_dims(
 				self.domain.reach_probability_of_root_node,
 				axis=0
 			)
-			for level in range(1, self.domain.levels):
+			for level in range(1, self.levels):
 				nodal_reach_probabilities[level] = tf.multiply(
 					tf.gather(
 						nodal_reach_probabilities[level - 1],
@@ -285,7 +285,7 @@ class TensorCFRFixedTrunkStrategies:
 			for_player = self.domain.current_opponent
 		nodal_reach_probabilities = self.get_nodal_reach_probabilities(for_player)
 		with tf.variable_scope("infoset_reach_probabilities"):
-			infoset_reach_probabilities = [None] * self.domain.levels
+			infoset_reach_probabilities = [None] * self.levels
 			with tf.variable_scope("level0"):
 				infoset_reach_probabilities[0] = tf.identity(
 					nodal_reach_probabilities[0],
@@ -295,7 +295,7 @@ class TensorCFRFixedTrunkStrategies:
 				nodal_reach_probabilities,
 				name="nodal_reach_probabilities"
 			)
-			for level in range(1, self.domain.levels - 1):
+			for level in range(1, self.levels - 1):
 				with tf.variable_scope("level{}".format(level)):
 					scatter_nd_sum_indices = tf.expand_dims(
 						self.domain.inner_node_to_infoset[level],
@@ -317,12 +317,12 @@ class TensorCFRFixedTrunkStrategies:
 		for player in [PLAYER1, PLAYER2, ALL_PLAYERS]:
 			nodal_reach_probabilities[player] = self.get_nodal_reach_probabilities(for_player=player)
 		infoset_reach_probabilities = self.get_infoset_reach_probabilities()
-		for level in range(self.domain.levels):
+		for level in range(self.levels):
 			print("########## Level {} ##########".format(level))
 			for player in [PLAYER1, PLAYER2, ALL_PLAYERS]:
 				print_tensors(session, [nodal_reach_probabilities[player][level]])
 			print("___________________________________\n")
-			if level < self.domain.levels - 1:
+			if level < self.levels - 1:
 				print_tensors(session, [
 					self.domain.node_to_infoset[level],
 					infoset_reach_probabilities[level],
@@ -471,7 +471,7 @@ class TensorCFRFixedTrunkStrategies:
 		infoset_uniform_strategies = self.get_infoset_uniform_strategies()
 		with tf.control_dependencies(update_regrets):
 			with tf.variable_scope("strategies_matched_to_regrets"):
-				strategies_matched_to_regrets = [None] * (self.domain.levels - 1)
+				strategies_matched_to_regrets = [None] * (self.levels - 1)
 				for level in range(self.acting_depth):
 					with tf.variable_scope("level{}".format(level)):
 						sums_of_regrets = tf.reduce_sum(

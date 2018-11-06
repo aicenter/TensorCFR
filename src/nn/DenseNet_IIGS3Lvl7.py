@@ -238,9 +238,22 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 	def print_operations_count(self):
 		print(">>> {} operations".format(count_graph_operations(self.graph)))
 
+	@staticmethod
+	def parse_arguments():
+		# Parse arguments
+		import argparse
+		parser = argparse.ArgumentParser()
+		parser.add_argument("--batch_size", default=10, type=int, help="Batch size.")
+		parser.add_argument("--extractor", default="R-{}".format(DenseNet_IIGS3Lvl7.FEATURES_DIM), type=str,
+		                    help="Description of the feature extactor architecture.")
+		parser.add_argument("--regressor", default="R-{}".format(DenseNet_IIGS3Lvl7.FEATURES_DIM), type=str,
+		                    help="Description of the value regressor architecture.")
+		parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
+		parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
+		return parser.parse_args()
+
 
 if __name__ == "__main__":
-	import argparse
 	import datetime
 	import os
 	import re
@@ -249,15 +262,7 @@ if __name__ == "__main__":
 	if FIXED_RANDOMNESS:
 		np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
-	# Parse arguments
-	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=10, type=int, help="Batch size.")
-	parser.add_argument("--extractor", default="R-{}".format(DenseNet_IIGS3Lvl7.FEATURES_DIM), type=str,
-	                    help="Description of the feature extactor architecture.")
-	parser.add_argument("--regressor", default="R-{}".format(DenseNet_IIGS3Lvl7.FEATURES_DIM), type=str,
-	                    help="Description of the value regressor architecture.")
-	parser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
-	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
+	args = DenseNet_IIGS3Lvl7.parse_arguments()
 
 	args = parser.parse_args()
 	print("args: {}".format(args))

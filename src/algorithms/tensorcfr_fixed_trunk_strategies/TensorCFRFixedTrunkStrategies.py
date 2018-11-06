@@ -43,6 +43,7 @@ class TensorCFRFixedTrunkStrategies:
 		self.log_directory = None
 		self.trunk_depth = trunk_depth
 		self.levels = self.domain.levels
+		self.acting_depth = self.domain.acting_depth
 		self.boundary_level = self.trunk_depth
 		last_level_with_infosets = self.domain.acting_depth - 1
 		assert 0 <= self.boundary_level <= last_level_with_infosets, \
@@ -342,7 +343,7 @@ class TensorCFRFixedTrunkStrategies:
 					reach_probabilities[level],
 					expected_values[level],
 					name="nodal_cf_value_lvl{}".format(level)
-				) for level in range(self.domain.levels)
+				) for level in range(self.levels)
 			]
 
 	def get_infoset_cf_values(self, for_player=None):  # TODO verify and write a unittest
@@ -359,7 +360,7 @@ class TensorCFRFixedTrunkStrategies:
 			player_name = "player{}".format(for_player)
 		nodal_cf_values = self.get_nodal_cf_values(for_player=for_player)
 		infoset_actions_cf_values, infoset_cf_values = [], []
-		for level in range(self.domain.acting_depth):
+		for level in range(self.acting_depth):
 			infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
 				values_in_children=nodal_cf_values[level + 1],
 				action_counts=self.domain.action_counts[level],
@@ -422,8 +423,8 @@ class TensorCFRFixedTrunkStrategies:
 		infoset_action_cf_values, infoset_cf_values = self.get_infoset_cf_values()
 		infoset_mask_non_imaginary_children = self.get_infoset_mask_non_imaginary_children()
 		with tf.variable_scope("regrets"):
-			regrets = [None] * self.domain.acting_depth
-			for level in range(self.domain.acting_depth):
+			regrets = [None] * self.acting_depth
+			for level in range(self.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					regrets[level] = tf.where(
 						condition=infoset_mask_non_imaginary_children[level],
@@ -440,8 +441,8 @@ class TensorCFRFixedTrunkStrategies:
 		if regrets is None:
 			regrets = self.get_regrets()
 		with tf.variable_scope("update_cumulative_regrets"):
-			update_regrets_ops = [None] * self.domain.acting_depth
-			for level in range(self.domain.acting_depth):
+			update_regrets_ops = [None] * self.acting_depth
+			for level in range(self.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					# TODO optimize by: pre-define `infosets_of_player1` and `infosets_of_player2` (in domain definitions) and
 					#  switch

@@ -39,7 +39,6 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		self.average_strategies_over_steps = None
 		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
-	# TODO modify bottomup
 	def construct_lowest_expected_values(self, player_name, signum):
 		with tf.variable_scope("level{}".format(self.levels - 1)):
 			lowest_utilities = self.domain.utilities[self.levels - 1]
@@ -70,7 +69,7 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		infoset_acting_players = self.domain.get_infoset_acting_players()
 		ops_update_infoset_strategies = [None] * self.acting_depth
 		with tf.variable_scope("update_strategy_of_updating_player"):
-			for level in range(self.acting_depth):  # TODO update only at trunk
+			for level in range(self.acting_depth):
 				with tf.variable_scope("level{}".format(level)):
 					infosets_of_acting_player = tf.reshape(
 						# `tf.reshape` to force "shape of 2D tensor" == [number of infosets, 1]
@@ -88,6 +87,27 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 
 	def construct_computation_graph(self):
 		self.cfr_step_op = self.do_cfr_step()
+		self.input_reaches = self.get_nodal_reaches_at_trunk_depth()
+
+	def predict_equilibrial_values(self, input_reaches=None, name="permuted_predictions"):
+		if input_reaches is None:
+			input_reaches = self.input_reaches
+		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=self.nn_input_permutation)
+
+		permuted_input = tf.expand_dims(
+			permutate_op.forward(input_reaches),  # permute input reach probabilities
+			axis=0,  # simulate batch size of 1 for prediction
+			name="expanded_permuted_input"
+		)
+
+		np_permuted_input = self.session.run(permuted_input)
+
+		# use neural net to predict equilibrium values
+		predicted_equilibrial_values = self.neural_net.predict(np_permuted_input)
+
+		# permute back the expected values
+		permuted_predictions = permutate_op.inverse(predicted_equilibrial_values)   # TODO make into numpy array
+		return tf.identity(permuted_predictions, name=name)
 
 	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=False,
 	            register_strategies_on_step=None):
@@ -105,32 +125,18 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 			for step in range(total_steps):
 				print("\n########## CFR step {} ##########".format(step))
-				self.session.run(self.cfr_step_op)
+				predicted_equilibrial_values = self.predict_equilibrial_values()
+				if verbose:
+					print("Before:")
+					print_tensor(self.session, self.input_reaches)
+					print_tensor(self.session, predicted_equilibrial_values)
+				np_predicted_equilibrial_values = self.session.run(predicted_equilibrial_values)
+				self.session.run(self.cfr_step_op, {self.predicted_equilibrial_values: np_predicted_equilibrial_values})
+				if verbose:
+					print("After:")
+					print_tensor(self.session, self.input_reaches)
+
 				if step in register_strategies_on_step:
 					self.average_strategies_over_steps["average_strategy_step{}".format(step)] = [
 						self.session.run(strategy).tolist() for strategy in self.average_infoset_strategies[:self.trunk_depth]
 					]
-
-				if verbose:
-					print_tensor(self.session, self.get_nodal_reaches_at_trunk_depth())
-					print_tensor(self.session, self.predict_equilibrial_values())
-
-	def predict_equilibrial_values(self, input_reaches=None, name="permuted_predictions"):
-		if input_reaches is None:
-			input_reaches = self.get_nodal_reaches_at_trunk_depth()
-		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=self.nn_input_permutation)
-
-		permuted_input = tf.expand_dims(
-			permutate_op.forward(input_reaches),  # permute input reach probabilities
-			axis=0,  # simulate batch size of 1 for prediction
-			name="expanded_permuted_input"
-		)
-
-		np_permuted_input = self.session.run(permuted_input)
-
-		# use neural net to predict equilibrium values
-		predicted_equilibrial_values = self.neural_net.predict(np_permuted_input)
-
-		# permute back the expected values
-		permuted_predictions = permutate_op.inverse(predicted_equilibrial_values)
-		return tf.identity(permuted_predictions, name=name)

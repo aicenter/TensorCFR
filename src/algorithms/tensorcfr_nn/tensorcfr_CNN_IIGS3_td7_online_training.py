@@ -3,7 +3,6 @@ import logging
 
 import tensorflow as tf
 
-from src.algorithms.tensorcfr_best_response.ExploitabilityByTensorCFR import ExploitabilityByTensorCFR
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
 from src.domains.available_domains import get_domain_by_name
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
@@ -91,19 +90,19 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	steps_to_register = [0, 2, 4]
 	tensorcfr.run_cfr(total_steps=5, delay=2, verbose=True, register_strategies_on_step=steps_to_register)
 
-	for step in steps_to_register:
-		trunk_strategy = tensorcfr.average_strategies_over_steps["average_strategy_step{}".format(step)]
-		print("step {}:".format(step))
-		logging.info("average_strategy_step{}:\n{}".format(step, trunk_strategy))
-
-		exploitability_tensorcfr = ExploitabilityByTensorCFR(
-			domain_,
-			trunk_depth=7,
-			trunk_strategies=trunk_strategy,
-			total_steps=10,
-			delay=3,
-			log_lvl=logging.INFO
-		)
-		logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
-		logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
-		print("final exploitability: {}".format(exploitability_tensorcfr.final_exploitability))
+	# for step in steps_to_register:
+	# 	trunk_strategy = tensorcfr.average_strategies_over_steps["average_strategy_step{}".format(step)]
+	# 	print("step {}:".format(step))
+	# 	logging.info("average_strategy_step{}:\n{}".format(step, trunk_strategy))
+	#
+	# 	exploitability_tensorcfr = ExploitabilityByTensorCFR(
+	# 		domain_,
+	# 		trunk_depth=7,
+	# 		trunk_strategies=trunk_strategy,
+	# 		total_steps=10,
+	# 		delay=3,
+	# 		log_lvl=logging.INFO
+	# 	)
+	# 	logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
+	# 	logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
+	# 	print("final exploitability: {}".format(exploitability_tensorcfr.final_exploitability))

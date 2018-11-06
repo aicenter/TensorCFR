@@ -33,8 +33,20 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		self.average_strategies_over_steps = None
 		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
-	# TODO modify topdown
 	# TODO modify bottomup
+	def construct_lowest_expected_values(self, player_name, signum):
+		with tf.variable_scope("level{}".format(self.levels - 1)):
+			lowest_utilities = self.domain.utilities[self.levels - 1]
+			self.predicted_equilibrial_values = tf.placeholder_with_default(
+				lowest_utilities,
+				shape=lowest_utilities.shape,
+				name="predicted_equilibrial_values"
+			)
+			self.expected_values[self.levels - 1] = tf.multiply(
+				signum,
+				self.predicted_equilibrial_values,
+				name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
+			)
 
 	def update_strategy_of_updating_player(self, acting_player=None):  # override not to fix trunk
 		"""

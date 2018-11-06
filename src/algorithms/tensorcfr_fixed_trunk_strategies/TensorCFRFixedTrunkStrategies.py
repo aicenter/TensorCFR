@@ -63,6 +63,8 @@ class TensorCFRFixedTrunkStrategies:
 		self.ops_randomize_strategies = None
 		self.ops_assign_strategies = None
 
+		self.expected_values = [None] * self.levels
+
 	@staticmethod
 	def get_the_other_player_of(tensor_variable_of_player):
 		with tf.variable_scope("get_the_other_player"):
@@ -172,7 +174,7 @@ class TensorCFRFixedTrunkStrategies:
 		with tf.variable_scope("expected_values"):
 			expected_values = [None] * self.levels
 			with tf.variable_scope("level{}".format(self.levels - 1)):
-				expected_values[self.levels - 1] = tf.multiply(
+				self.expected_values[self.levels - 1] = tf.multiply(
 					signum,
 					self.domain.utilities[self.levels - 1],
 					name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
@@ -180,7 +182,7 @@ class TensorCFRFixedTrunkStrategies:
 			for level in reversed(range(self.levels - 1)):
 				with tf.variable_scope("level{}".format(level)):
 					weighted_sum_of_values = tf.segment_sum(
-						data=node_strategies[level + 1] * expected_values[level + 1],
+						data=node_strategies[level + 1] * self.expected_values[level + 1],
 						segment_ids=self.domain.parents[level + 1],
 						name="weighted_sum_of_values_lvl{}".format(level),
 					)
@@ -198,7 +200,7 @@ class TensorCFRFixedTrunkStrategies:
 						shape=self.domain.utilities[level].shape,
 						name="extended_weighted_sum_lvl{}".format(level)
 					)
-					expected_values[level] = tf.where(
+					self.expected_values[level] = tf.where(
 						condition=self.domain.mask_of_inner_nodes[level],
 						x=extended_weighted_sum,
 						y=signum * tf.reshape(
@@ -207,7 +209,7 @@ class TensorCFRFixedTrunkStrategies:
 						),
 						name="expected_values_lvl{}_for_{}".format(level, player_name)
 					)
-		return expected_values
+		return self.expected_values
 
 	def show_expected_values(self):
 		self.domain.print_misc_variables(session=self.session)

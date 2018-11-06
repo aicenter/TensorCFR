@@ -78,9 +78,11 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		verbose=True,
 		register_strategies_on_step=steps_to_register
 	)
+	average_strategies_over_steps = tensorcfr.average_strategies_over_steps
+	del tensorcfr
 
 	for step in steps_to_register:
-		trunk_strategy = tensorcfr.average_strategies_over_steps["average_strategy_step{}".format(step)]
+		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
 		print("step {}:".format(step))
 		logging.info("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
@@ -95,3 +97,4 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
 		logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
 		print("final exploitability: {}".format(exploitability_tensorcfr.final_exploitability))
+		del exploitability_tensorcfr

@@ -23,6 +23,11 @@ class TensorCFR_NN(TensorCFRFixedTrunkStrategies):
 		`self.domain.levels`. It defaults to `0` (no trunk).
 		"""
 		super().__init__(domain, trunk_depth)
+
+		# reduce tree only to the trunk
+		self.levels = self.trunk_depth
+		self.acting_depth = self.levels - 1
+
 		self.neural_net = neural_net if neural_net is not None else NNMockUp()
 		self.nn_input_permutation = nn_input_permutation if nn_input_permutation is not None else get_sorted_permutation()
 		self.session = tf.Session(config=get_default_config_proto())

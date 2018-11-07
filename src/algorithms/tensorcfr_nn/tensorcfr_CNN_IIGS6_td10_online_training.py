@@ -30,11 +30,10 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		domain_,
 		neural_net=network,
 		nn_input_permutation=nn_input_permutation,
-		trunk_depth=7
+		trunk_depth=10
 	)
 
-	steps_to_register = []
-	# steps_to_register = [0, 1, 2, 3, 4, 5]
+	steps_to_register = [0, 1, 2, 3, 4, 5]
 	tensorcfr.run_cfr(
 		total_steps=6,
 		delay=2,
@@ -50,7 +49,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 		exploitability_tensorcfr = ExploitabilityByTensorCFR(   # TODO optimize by construction object only once
 			domain_,
-			trunk_depth=7,
+			trunk_depth=10,
 			trunk_strategies=trunk_strategy,
 			total_steps=100,
 			delay=25,

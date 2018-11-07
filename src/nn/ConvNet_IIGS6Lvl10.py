@@ -300,21 +300,3 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 
 	def print_operations_count(self):
 		print("--> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
-
-	def save_to_ckpt(self,path):
-		if str(path).endswith(".ckpt"):
-			self.saver.save(self.session,path)
-		else:
-			self.saver.save(self.session, path + ".ckpt")
-		print("Saving to " + path + " successful")
-
-	def restore_from_ckpt(self,path):
-
-		if str(path).endswith(".ckpt"):
-
-			self.saver.restore(self.session,path)
-		else:
-
-			self.saver.restore(self.session, path + ".ckpt")
-
-		print("Restoring from "+path +" successful")

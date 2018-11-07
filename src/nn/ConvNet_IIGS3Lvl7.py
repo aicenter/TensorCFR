@@ -16,7 +16,7 @@ from src.nn.features.goofspiel.IIGS3.one_hot_rounds_cards_IIGS3_1_3_false_true_l
 from src.utils.tf_utils import count_graph_operations
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 FIXED_RANDOMNESS = False
 
 
@@ -85,7 +85,7 @@ class ConvNet_IIGS3Lvl7(AbstractNN):
 			)
 			self.latest_layer = tf.transpose(  # channels first for GPU computation
 				self.full_input,
-				perm=[0, 2, 1],
+				perm=[0, 1, 2],
 				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
 			)
 		print("Input constructed")
@@ -112,7 +112,7 @@ class ConvNet_IIGS3Lvl7(AbstractNN):
 						filters=int(specs[1]),
 						kernel_size=1,
 						activation=tf.nn.relu,
-						data_format="channels_first",
+						data_format="channels_last",
 						name=layer_name
 					)
 					print("{} constructed".format(layer_name))
@@ -185,7 +185,7 @@ class ConvNet_IIGS3Lvl7(AbstractNN):
 						filters=int(specs[1]),
 						kernel_size=1,
 						activation=tf.nn.relu,
-						data_format="channels_first",
+						data_format="channels_last",
 						name=layer_name
 					)
 					print("{} constructed".format(layer_name))
@@ -199,7 +199,7 @@ class ConvNet_IIGS3Lvl7(AbstractNN):
 				filters=self.TARGETS_DIM,
 				kernel_size=1,
 				activation=None,
-				data_format="channels_first",
+				data_format="channels_last",
 				name="conv1d_regression"
 			)
 			self.predictions = tf.squeeze(self.predictions, name="predictions")

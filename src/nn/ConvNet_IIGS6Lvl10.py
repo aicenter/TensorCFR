@@ -79,7 +79,7 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 			)
 			self.latest_layer = tf.transpose(  # channels first for GPU computation
 				self.full_input,
-				perm=[0, 2, 1],
+				perm=[0,1,2], # perm=[0,2,1] is for gpu
 				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
 			)
 		print("Input constructed")
@@ -105,6 +105,7 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 						inputs=self.latest_layer,
 						filters=int(specs[1]),
 						kernel_size=1,
+						kernel_initializer=tf.keras.initializers.he_normal(),
 						activation=tf.nn.relu,
 						data_format="channels_first",
 						name=layer_name
@@ -178,10 +179,30 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 						inputs=self.latest_layer,
 						filters=int(specs[1]),
 						kernel_size=1,
+						kernel_initializer=tf.keras.initializers.he_normal(),
 						activation=tf.nn.relu,
 						data_format="channels_first",
 						name=layer_name
 					)
+					print("{} constructed".format(layer_name))
+
+				elif specs[0] == "BN":
+					self.latest_layer = tf.layers.BatchNormalization(
+						inputs = self.latest_layer,
+						axis = int(specs[1]),
+						name = layer_name
+
+					)
+
+				elif specs[0] == "DROP":
+					self.latest_layer = tf.layers.dropout(
+						inputs=self.latest_layer,
+						rate=int(specs[1]),
+						name=layer_name,
+						training=True
+
+					)
+
 					print("{} constructed".format(layer_name))
 				else:
 					raise ValueError("Invalid regressor specification '{}'".format(specs))

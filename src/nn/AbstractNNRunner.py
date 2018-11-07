@@ -77,7 +77,7 @@ class AbstractNNRunner:
 		print("Predictions of initial 2 training examples:")
 		print(self.network.predict(trainset.features[:2]))
 
-	def run_neural_net(self):
+	def run_neural_net(self,steps=None,path=None):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if self.fixed_randomness:
 			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
@@ -93,6 +93,11 @@ class AbstractNNRunner:
 		for self.epoch in range(self.args.epochs):
 			self.train_one_epoch(trainset)
 			self.evaluate_devset(devset)
+
+			if steps and path is not None and int(self.epoch) % int(steps) == 0:
+
+				self.network.save_to_ckpt(self.session,path)
+
 
 		self.evaluate_testset(testset)
 		self.showcase_predictions(trainset)

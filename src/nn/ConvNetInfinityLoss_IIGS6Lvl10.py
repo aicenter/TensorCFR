@@ -35,12 +35,12 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	# Parse arguments
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--batch_size", default=8, type=int, help="Batch size.")
+	parser.add_argument("--batch_size", default=128, type=int, help="Batch size.")
 	parser.add_argument("--extractor", default="C-{}".format(ConvNetInfinityLoss_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
 	                    help="Description of the feature extactor architecture.")
 	parser.add_argument("--regressor", default="C-{}".format(ConvNetInfinityLoss_IIGS6Lvl10.INPUT_FEATURES_DIM), type=str,
 	                    help="Description of the value regressor architecture.")
-	parser.add_argument("--epochs", default=50, type=int, help="Number of epochs.")
+	parser.add_argument("--epochs", default=500, type=int, help="Number of epochs.")
 	parser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 
 	args = parser.parse_args()

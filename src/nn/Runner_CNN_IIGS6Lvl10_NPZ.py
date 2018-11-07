@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
+import logging
 
 from src.nn.AbstractNNRunner import AbstractNNRunner
 from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
-
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
 ACTIVATE_FILE = False
@@ -52,5 +52,9 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
+	logging.basicConfig(
+		format='%(asctime)s %(message)s',
+		level=logging.INFO
+	)
 	runner = Runner_CNN_IIGS6Lvl10_NPZ()
 	runner.run_neural_net(ckpt_every=2)

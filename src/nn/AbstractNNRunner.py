@@ -2,6 +2,7 @@
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
 import argparse
+import logging
 from abc import abstractmethod
 
 import numpy as np
@@ -59,24 +60,24 @@ class AbstractNNRunner:
 
 	def train_one_epoch(self, trainset):
 		while not trainset.epoch_finished():
-			print("[epoch #{}, batch #{}] Training...".format(self.epoch, trainset.batch_id))
+			logging.info("[epoch #{}, batch #{}] Training...".format(self.epoch, trainset.batch_id))
 			reaches, targets = trainset.next_batch(self.args.batch_size)
 			self.network.train(reaches, targets)
 
 	def evaluate_devset(self, devset):
 		devset_error_mse, devset_error_infinity = self.network.evaluate("dev", devset.features, devset.targets)
-		print(
-			"[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(self.epoch, devset_error_mse, devset_error_infinity))
+		logging.info("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(
+			self.epoch,
+			devset_error_mse, devset_error_infinity)
+		)
 
 	def evaluate_testset(self, testset):
 		testset_error_mse, testset_error_infinity = self.network.evaluate("test", testset.features, testset.targets)
-		print()
-		print("mean squared error on testset: {}".format(testset_error_mse))
-		print("L-infinity error on testset: {}".format(testset_error_infinity))
+		logging.info("\nmean squared error on testset: {}".format(testset_error_mse))
+		logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
 
 	def showcase_predictions(self, trainset):
-		print()
-		print("Predictions of initial 2 training examples:")
+		print("\nPredictions of initial 2 training examples:")
 		print(self.network.predict(trainset.features[:2]))
 
 	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):

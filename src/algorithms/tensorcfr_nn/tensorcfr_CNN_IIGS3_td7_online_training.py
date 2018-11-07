@@ -122,7 +122,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	for step in steps_to_register:
 		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
-		logging.info("average_strategy_step{}:\n{}".format(step, trunk_strategy))
+		logging.debug("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
 		exploitability_tensorcfr.evaluate(trunk_strategies=trunk_strategy, trunk_depth=7)
 

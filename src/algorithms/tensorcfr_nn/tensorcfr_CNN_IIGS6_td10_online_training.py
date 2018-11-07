@@ -12,14 +12,25 @@ from src.utils.other_utils import get_current_timestamp
 ACTIVATE_FILE = False
 
 
-def create_logger(log_lvl=logging.WARNING):
-	log_filename = "logs/tensorcfr_CNN_IIGS6_td10_{}.log".format(get_current_timestamp())
-	logging.basicConfig(filename=log_filename, format='%(asctime)s %(message)s', level=log_lvl)
+def create_logger(log_lvl=logging.WARNING, log_to_file=True):
+	fmt = '%(asctime)s %(message)s'
+	if log_to_file:
+		logging.basicConfig(
+			filename="logs/tensorcfr_CNN_IIGS6_td10_{}.log".format(get_current_timestamp()),
+			format=fmt,
+			level=log_lvl
+		)
+	else:
+		logging.basicConfig(
+			format=fmt,
+			level=log_lvl
+		)
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	create_logger(
-		log_lvl=logging.DEBUG
+		log_lvl=logging.DEBUG,
+		log_to_file=False
 	)
 
 	runner = Runner_CNN_IIGS6Lvl10_NPZ()

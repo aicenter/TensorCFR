@@ -27,7 +27,9 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	import os
 	import re
 
-	create_logger()
+	create_logger(
+		log_lvl=logging.DEBUG
+	)
 
 	args = ConvNet_IIGS3Lvl7.parse_arguments()
 	print("args: {}".format(args))
@@ -94,7 +96,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 			# Evaluate on development set
 			devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
 			logging.info(
-				"[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+				"[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity)
+			)
 
 		# Evaluate on test set
 		testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
@@ -110,6 +113,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		)
 		average_strategies_over_steps = tensorcfr.average_strategies_over_steps
 	del computation_graph
+	del tensorcfr
 
 	exploitability_tensorcfr = ExploitabilityByTensorCFR(
 		domain_in_numpy,
@@ -128,5 +132,4 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 		logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
 		logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
-
 		print("exploitability of avg strategy at step {}: {}".format(step, exploitability_tensorcfr.final_exploitability))

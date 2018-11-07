@@ -1,7 +1,7 @@
 #!/bin/bash
-#PBS -N ConvNet_IIGS6Lvl10_1xlayers_900seeds_npz
+#PBS -N ConvNet_IIGS6Lvl10__hyp_opt_2_npz
 #PBS -q gpu
-#PBS -l walltime=24:00:00
+#PBS -l walltime=02:00:00
 #PBS -l select=1:ncpus=10:ngpus=1:gpu_cap=cuda35:mem=30gb:scratch_local=10gb
 
 # README
@@ -26,7 +26,7 @@ module add tensorflow-1.7.1-gpu-python3
 cd ${REPO_DIR} || exit 1
 PYTHON=python
 DATASET_DIRECTORY="../../../data/IIGS6/IIGS6_1_6_false_true_lvl10_npz_900_seeds"
-COMMON_ARGS="--dataset_directory ${DATASET_DIRECTORY} --batch_size 512 --epochs 5000"
+COMMON_ARGS="--dataset_directory ${DATASET_DIRECTORY} --batch_size 512 --epochs 2000"
 ARCH="--extractor C-$(($FEATURES_DIM*3)),C-$(($FEATURES_DIM*2)),C-$(($FEATURES_DIM*1))
 --regressor C-$(($FEATURES_DIM*7)),C-$(($FEATURES_DIM*7)),C-$(($FEATURES_DIM*5)),C-$(($FEATURES_DIM*5))
 ,C-$(($FEATURES_DIM*4)),C-$(($FEATURES_DIM*3))"

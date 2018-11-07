@@ -29,7 +29,7 @@ def create_logger(log_lvl=logging.WARNING, log_to_file=True):
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	create_logger(
-		log_lvl=logging.DEBUG,
+		log_lvl=logging.INFO,
 		log_to_file=False
 	)
 

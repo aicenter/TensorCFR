@@ -55,7 +55,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 			delay=25,
 			log_lvl=logging.INFO
 		)
-		logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
-		logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
-		print("exploitability of avg strategy at step {}: {}".format(step, exploitability_tensorcfr.final_exploitability))
+		logging.debug("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
+		logging.debug("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
+		logging.info(
+			"exploitability of avg strategy at step {}: {}".format(step, exploitability_tensorcfr.final_exploitability))
 		del exploitability_tensorcfr

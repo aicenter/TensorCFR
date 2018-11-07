@@ -1273,7 +1273,7 @@ if __name__ == '__main__':
 
 	tensorcfr_instance = TensorCFRFixedTrunkStrategies(
 		domain_,
-		trunk_depth=0 # 4
+		trunk_depth=4
 	)
 	tensorcfr_instance.cfr_strategies_after_fixed_trunk(
 		# total_steps=10,

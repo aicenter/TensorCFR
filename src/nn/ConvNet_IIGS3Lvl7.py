@@ -287,6 +287,7 @@ class ConvNet_IIGS3Lvl7(AbstractNN):
 			self.session.run(tf.global_variables_initializer())
 			with self.summary_writer.as_default():
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
+			self.saver = tf.train.Saver()
 
 	def train(self, features, targets):
 		self.session.run([self.loss_minimizer, self.summaries["train"]],

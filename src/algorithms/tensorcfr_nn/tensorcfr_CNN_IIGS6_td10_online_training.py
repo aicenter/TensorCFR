@@ -18,7 +18,9 @@ def create_logger(log_lvl=logging.WARNING):
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
-	create_logger()
+	create_logger(
+		log_lvl=logging.DEBUG
+	)
 
 	runner = Runner_CNN_IIGS6Lvl10_NPZ()
 	runner.run_neural_net()

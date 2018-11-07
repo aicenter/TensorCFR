@@ -56,6 +56,9 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	average_strategies_over_steps = tensorcfr.average_strategies_over_steps
 	del tensorcfr
 
+	exploitabilities = {}
+	br_values1 = {}
+	br_values2 = {}
 	for step in steps_to_register:
 		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
 		logging.debug("average_strategy_step{}:\n{}".format(step, trunk_strategy))
@@ -68,8 +71,11 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 			delay=25,
 			log_lvl=logging.INFO
 		)
-		logging.debug("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
-		logging.debug("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
-		logging.info(
-			"exploitability of avg strategy at step {}: {}".format(step, exploitability_tensorcfr.final_exploitability))
+		br_values1[step] = exploitability_tensorcfr.final_brvalue_1
+		br_values2[step] = exploitability_tensorcfr.final_brvalue_2
+		exploitabilities[step] = exploitability_tensorcfr.final_exploitability
 		del exploitability_tensorcfr
+	for step in steps_to_register:
+		logging.debug("BR value (player 1) at step {}: {}".format(step, br_values1[step]))
+		logging.debug("BR value (player 2) at step {}: {}".format(step, br_values2[step]))
+		logging.info("exploitability of avg strategy at step {}: {}".format(step, exploitabilities[step]))

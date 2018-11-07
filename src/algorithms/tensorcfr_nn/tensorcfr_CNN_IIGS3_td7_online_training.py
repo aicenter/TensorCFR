@@ -10,16 +10,25 @@ from src.domains.FlattenedDomain import FlattenedDomain
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.sorting_permutation_by_public_states import get_permutation_by_public_states
-from src.utils.gambit_flattened_domains.loader import GambitLoaderCached
 from src.utils.other_utils import get_current_timestamp
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
 ACTIVATE_FILE = False
 
 
-def create_logger(log_lvl=logging.WARNING):
-	log_filename = "logs/tensorcfr_CNN_IIGS3_td7_{}.log".format(get_current_timestamp())
-	logging.basicConfig(filename=log_filename, format='%(asctime)s %(message)s', level=log_lvl)
+def create_logger(log_lvl=logging.WARNING, log_to_file=True):
+	fmt = '%(asctime)s %(message)s'
+	if log_to_file:
+		logging.basicConfig(
+			filename="logs/tensorcfr_CNN_IIGS3_td7_{}.log".format(get_current_timestamp()),
+			format=fmt,
+			level=log_lvl
+		)
+	else:
+		logging.basicConfig(
+			format=fmt,
+			level=log_lvl
+		)
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
@@ -28,7 +37,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	import re
 
 	create_logger(
-		log_lvl=logging.DEBUG
+		log_lvl=logging.INFO,
+		log_to_file=False
 	)
 
 	args = ConvNet_IIGS3Lvl7.parse_arguments()
@@ -124,12 +134,19 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		log_lvl=logging.INFO
 	)
 
+	exploitabilities = {}
+	br_values1 = {}
+	br_values2 = {}
 	for step in steps_to_register:
 		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
 		logging.debug("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
 		exploitability_tensorcfr.evaluate(trunk_strategies=trunk_strategy, trunk_depth=7)
+		br_values1[step] = exploitability_tensorcfr.final_brvalue_1
+		br_values2[step] = exploitability_tensorcfr.final_brvalue_2
+		exploitabilities[step] = exploitability_tensorcfr.final_exploitability
 
-		logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
-		logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
-		print("exploitability of avg strategy at step {}: {}".format(step, exploitability_tensorcfr.final_exploitability))
+	for step in steps_to_register:
+		logging.debug("BR value (player 1) at step {}: {}".format(step, br_values1[step]))
+		logging.debug("BR value (player 2) at step {}: {}".format(step, br_values2[step]))
+		print("exploitability of avg strategy at step {}: {}".format(step, exploitabilities[step]))

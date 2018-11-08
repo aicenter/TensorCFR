@@ -105,6 +105,7 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 						inputs=self.latest_layer,
 						filters=int(specs[1]),
 						kernel_size=1,
+						kernel_initializer=tf.keras.initializers.he_normal(),
 						activation=tf.nn.relu,
 						data_format="channels_first",
 						name=layer_name
@@ -178,6 +179,7 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 						inputs=self.latest_layer,
 						filters=int(specs[1]),
 						kernel_size=1,
+						kernel_initializer=tf.keras.initializers.he_normal(),
 						activation=tf.nn.relu,
 						data_format="channels_first",
 						name=layer_name

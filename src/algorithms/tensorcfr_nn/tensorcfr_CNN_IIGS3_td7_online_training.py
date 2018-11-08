@@ -102,10 +102,10 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
 		logging.info("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
+		exploitability_tensorcfr.evaluate(trunk_strategies=trunk_strategy, trunk_depth=7)
+
 		logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
 		logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
-
-		exploitability_tensorcfr.evaluate(trunk_strategies=trunk_strategy, trunk_depth=7)
 
 		print("exploitability of avg strategy at step {}: {}".format(step, exploitability_tensorcfr.final_exploitability))
 

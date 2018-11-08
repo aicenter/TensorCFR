@@ -3,6 +3,7 @@
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
 import argparse
 from abc import abstractmethod
+from src.utils.other_utils import get_current_timestamp
 
 import numpy as np
 
@@ -96,7 +97,7 @@ class AbstractNNRunner:
 
 			if steps and path is not None and int(self.epoch) % int(steps) == 0:
 
-				self.network.save_to_ckpt(self.session,path)
+				self.network.save_to_ckpt(self.session,path+"epoch_"+str(self.epoch)+str(get_current_timestamp())+".ckpt")
 
 
 		self.evaluate_testset(testset)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import logging
+import tensorflow as tf
 
 from src.algorithms.tensorcfr_best_response.ExploitabilityByTensorCFR import ExploitabilityByTensorCFR
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
@@ -40,60 +41,71 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	script_directory = os.path.dirname(os.path.abspath(__file__))
 	dataset_directory = "../../nn/data/IIGS3Lvl7/80-10-10_only_reaches"
 	npz_basename = "IIGS3_1_3_false_true_lvl7"
-	trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
-	devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
-	testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
 
-	# Construct the network
-	network = ConvNet_IIGS3Lvl7(threads=args.threads)
-	network.construct(args)
-	domain_ = get_domain_by_name("II-GS3_gambit_flattened")
-	nn_input_permutation = get_permutation_by_public_states()
-	tensorcfr = TensorCFR_NN(
+	steps_to_register = list()
+	average_strategies_over_steps = dict()
+
+	computation_graph = tf.Graph()
+	with computation_graph.as_default():
+		trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
+		devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
+		testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
+
+		# Construct the network
+		network = ConvNet_IIGS3Lvl7(threads=args.threads)
+		network.construct(args)
+		domain_ = get_domain_by_name("II-GS3_gambit_flattened")
+		nn_input_permutation = get_permutation_by_public_states()
+		tensorcfr = TensorCFR_NN(
+			domain_,
+			neural_net=network,
+			nn_input_permutation=nn_input_permutation,
+			trunk_depth=7
+		)
+
+		# Train
+		for epoch in range(args.epochs):
+			while not trainset.epoch_finished():
+				reaches, targets = trainset.next_batch(args.batch_size)
+				network.train(reaches, targets)
+
+			# Evaluate on development set
+			devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
+			logging.info("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+
+		# Evaluate on test set
+		testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
+		logging.info("\nmean squared error on testset: {}".format(testset_error_mse))
+		logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
+
+		steps_to_register = [0, 1, 2, 3, 4, 5]
+		tensorcfr.run_cfr(
+			total_steps=6,
+			delay=2,
+			verbose=True,
+			register_strategies_on_step=steps_to_register
+		)
+		average_strategies_over_steps = tensorcfr.average_strategies_over_steps
+	del computation_graph
+
+
+	exploitability_tensorcfr = ExploitabilityByTensorCFR(  # TODO optimize by construction object only once
 		domain_,
-		neural_net=network,
-		nn_input_permutation=nn_input_permutation,
-		trunk_depth=7
+		trunk_depth=None,
+		trunk_strategies=None,
+		total_steps=100,
+		delay=25,
+		log_lvl=logging.INFO
 	)
-
-	# Train
-	for epoch in range(args.epochs):
-		while not trainset.epoch_finished():
-			reaches, targets = trainset.next_batch(args.batch_size)
-			network.train(reaches, targets)
-
-		# Evaluate on development set
-		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
-		logging.info("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
-
-	# Evaluate on test set
-	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
-	logging.info("\nmean squared error on testset: {}".format(testset_error_mse))
-	logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
-
-	steps_to_register = [0, 1, 2, 3, 4, 5]
-	tensorcfr.run_cfr(
-		total_steps=6,
-		delay=2,
-		verbose=True,
-		register_strategies_on_step=steps_to_register
-	)
-	average_strategies_over_steps = tensorcfr.average_strategies_over_steps
-	del tensorcfr
 
 	for step in steps_to_register:
 		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
 		logging.info("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
-		exploitability_tensorcfr = ExploitabilityByTensorCFR(   # TODO optimize by construction object only once
-			domain_,
-			trunk_depth=7,
-			trunk_strategies=trunk_strategy,
-			total_steps=100,
-			delay=25,
-			log_lvl=logging.INFO
-		)
 		logging.info("BR value (player 1) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_1))
 		logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
+
+		exploitability_tensorcfr.evaluate(trunk_strategies=trunk_strategy, trunk_depth=7)
+
 		print("exploitability of avg strategy at step {}: {}".format(step, exploitability_tensorcfr.final_exploitability))
-		del exploitability_tensorcfr
+

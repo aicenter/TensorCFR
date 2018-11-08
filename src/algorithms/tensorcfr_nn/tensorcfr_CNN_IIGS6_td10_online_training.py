@@ -78,4 +78,4 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	for step in steps_to_register:
 		logging.debug("BR value (player 1) at step {}: {}".format(step, br_values1[step]))
 		logging.debug("BR value (player 2) at step {}: {}".format(step, br_values2[step]))
-		logging.info("exploitability of avg strategy at step {}: {}".format(step, exploitabilities[step]))
+		print("exploitability of avg strategy at step {}: {}".format(step, exploitabilities[step]))

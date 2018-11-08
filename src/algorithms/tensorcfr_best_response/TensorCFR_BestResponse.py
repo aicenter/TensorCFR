@@ -96,13 +96,6 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 			register_strategies_on_step = [total_steps - 1]   # by default, register just the last iteration
 		self.average_strategies_over_steps = list()             # reset the list
 
-		self.cfr_parameters = {
-			"total_steps"    : total_steps,
-			"averaging_delay": delay,
-			"trunk_depth"    : self.trunk_depth,
-		}
-		self.set_up_cfr_parameters(delay, total_steps)
-		self.set_log_directory()
 		with tf.variable_scope("initialization"):
 			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 			print(setup_messages)
@@ -110,18 +103,17 @@ class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies):
 		with tf.Session(config=get_default_config_proto()) as self.session:
 			self.session.run(tf.global_variables_initializer())
 			self.session.run(self.set_initial_strategies)
-			with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
-				for step in range(total_steps):
-					self.session.run(self.cfr_step_op)
+			for step in range(total_steps):
+				self.session.run(self.cfr_step_op)
 
-					if step in register_strategies_on_step:
-						self.average_strategies_over_steps.append({
-							"step"            : step,
-							"average_strategy": [self.session.run(strategy).tolist() for strategy in self.average_infoset_strategies]
-						})
+				if step in register_strategies_on_step:
+					self.average_strategies_over_steps.append({
+						"step"            : step,
+						"average_strategy": [self.session.run(strategy).tolist() for strategy in self.average_infoset_strategies]
+					})
 
-				self.session.run(self.set_final_strategies)
-				self.final_br_value = self.session.run(self.best_response_value_op)
-				if verbose:
-					self.log_after_all_steps()
+			self.session.run(self.set_final_strategies)
+			self.final_br_value = self.session.run(self.best_response_value_op)
+			if verbose:
+				self.log_after_all_steps()
 		return self.final_br_value

@@ -208,7 +208,7 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 			print("loss constructed")
 			self.print_operations_count()
 
-	def construct_training(self):
+	def construct_training(self,args):
 		with tf.variable_scope("metrics"):
 			with tf.variable_scope("huber_loss"):
 				self.huber_loss = tf.losses.huber_loss(self.targets, self.predictions, scope="huber_loss")
@@ -223,7 +223,7 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 			global_step = tf.train.create_global_step()
 			print("global_step constructed")
 			self.print_operations_count()
-			optimizer = tf.train.AdamOptimizer()
+			optimizer = tf.train.AdamOptimizer(learning_rate=args.lr)
 			print("optimizer constructed")
 			self.print_operations_count()
 			self.loss_minimizer = optimizer.minimize(self.loss, global_step=global_step, name="loss_minimizer")

@@ -5,6 +5,7 @@ import tensorflow as tf
 from src.algorithms.tensorcfr_best_response.ExploitabilityByTensorCFR import ExploitabilityByTensorCFR
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
 from src.commons.constants import PROJECT_ROOT
+from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
@@ -59,6 +60,16 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	computation_graph = tf.Graph()
 	with computation_graph.as_default():
+		domain = FlattenedDomain(
+			"IIGS3",
+			domain_in_numpy.domain_parameters,
+			domain_in_numpy.number_of_nodes_actions,
+			domain_in_numpy.node_to_infoset,
+			domain_in_numpy.utilities,
+			domain_in_numpy.infoset_acting_players,
+			domain_in_numpy.initial_infoset_strategies,
+			information_set_mapping_to_gtlibrary=domain_in_numpy.information_set_mapping_to_gtlibrary)
+
 		trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
 		devset = DatasetFromNPZ("{}/{}/{}_dev.npz".format(script_directory, dataset_directory, npz_basename))
 		testset = DatasetFromNPZ("{}/{}/{}_test.npz".format(script_directory, dataset_directory, npz_basename))
@@ -69,7 +80,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 		nn_input_permutation = get_permutation_by_public_states()
 		tensorcfr = TensorCFR_NN(
-			domain_in_numpy,
+			domain,
 			neural_net=network,
 			nn_input_permutation=nn_input_permutation,
 			trunk_depth=7

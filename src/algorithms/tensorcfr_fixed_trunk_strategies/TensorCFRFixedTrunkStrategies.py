@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import datetime
+import logging
 import os
 import re
 
@@ -1100,7 +1101,7 @@ class TensorCFRFixedTrunkStrategies:
 			self.log_directory += "-profiling"
 		with tf.variable_scope("initialization"):
 			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
-			print(setup_messages)
+			logging.debug(setup_messages)
 
 		cfr_step_op = self.do_cfr_step()
 

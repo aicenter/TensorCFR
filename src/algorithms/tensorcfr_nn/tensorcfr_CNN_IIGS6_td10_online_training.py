@@ -60,6 +60,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	br_values1 = {}
 	br_values2 = {}
 	for step in steps_to_register:
+		print("\n########## CFR step {}: exploitability evaluation ##########".format(step))
 		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
 		logging.debug("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
@@ -68,8 +69,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 			trunk_depth=10,
 			trunk_strategies=trunk_strategy,
 			total_steps=100,
-			delay=25,
-			log_lvl=logging.INFO
+			delay=25
 		)
 		br_values1[step] = exploitability_tensorcfr.final_brvalue_1
 		br_values2[step] = exploitability_tensorcfr.final_brvalue_2

@@ -73,8 +73,10 @@ class AbstractNNRunner:
 
 	def evaluate_testset(self, testset):
 		testset_error_mse, testset_error_infinity = self.network.evaluate("test", testset.features, testset.targets)
-		logging.info("\nmean squared error on testset: {}".format(testset_error_mse))
-		logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
+		# logging.info("\nmean squared error on testset: {}".format(testset_error_mse))   # TODO
+		# logging.info("L-infinity error on testset: {}".format(testset_error_infinity))  # TODO
+		print("\nmean squared error on testset: {}".format(testset_error_mse))
+		print("L-infinity error on testset: {}".format(testset_error_infinity))
 
 	def showcase_predictions(self, trainset):
 		print("\nPredictions of initial 2 training examples:")

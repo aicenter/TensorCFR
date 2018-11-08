@@ -4,10 +4,12 @@ import tensorflow as tf
 
 from src.algorithms.tensorcfr_best_response.ExploitabilityByTensorCFR import ExploitabilityByTensorCFR
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
+from src.commons.constants import PROJECT_ROOT
 from src.domains.available_domains import get_domain_by_name
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.sorting_permutation_by_public_states import get_permutation_by_public_states
+from src.utils.gambit_flattened_domains.loader import GambitLoaderCached
 from src.utils.other_utils import get_current_timestamp
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
@@ -45,6 +47,16 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	steps_to_register = list()
 	average_strategies_over_steps = dict()
 
+
+	path_to_domain_efg = os.path.join(
+		PROJECT_ROOT,
+		'doc',
+		'goofspiel',
+		'II-GS3_scalar_util.efg'
+	)
+
+	domain_in_numpy = GambitLoaderCached(path_to_domain_efg)
+
 	computation_graph = tf.Graph()
 	with computation_graph.as_default():
 		trainset = DatasetFromNPZ("{}/{}/{}_train.npz".format(script_directory, dataset_directory, npz_basename))
@@ -54,10 +66,10 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		# Construct the network
 		network = ConvNet_IIGS3Lvl7(threads=args.threads)
 		network.construct(args)
-		domain_ = get_domain_by_name("II-GS3_gambit_flattened")
+
 		nn_input_permutation = get_permutation_by_public_states()
 		tensorcfr = TensorCFR_NN(
-			domain_,
+			domain_in_numpy,
 			neural_net=network,
 			nn_input_permutation=nn_input_permutation,
 			trunk_depth=7
@@ -90,7 +102,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 
 	exploitability_tensorcfr = ExploitabilityByTensorCFR(  # TODO optimize by construction object only once
-		domain_,
+		domain_in_numpy,
 		trunk_depth=None,
 		trunk_strategies=None,
 		total_steps=100,

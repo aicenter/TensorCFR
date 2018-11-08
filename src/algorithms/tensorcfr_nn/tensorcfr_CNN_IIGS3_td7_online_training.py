@@ -6,7 +6,6 @@ from src.algorithms.tensorcfr_best_response.ExploitabilityByTensorCFR import Exp
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
 from src.commons.constants import PROJECT_ROOT
 from src.domains.FlattenedDomain import FlattenedDomain
-from src.domains.available_domains import get_domain_by_name
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.sorting_permutation_by_public_states import get_permutation_by_public_states

@@ -79,7 +79,7 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 			)
 			self.latest_layer = tf.transpose(  # channels first for GPU computation
 				self.full_input,
-				perm=[0,1,2], # perm=[0,2,1] is for gpu
+				perm=[0, 2, 1],
 				name="input_channels_first_NCL"  # [batch, channels, lengths] == [batch_size, INPUT_FEATURES_DIM, NUM_NODES]
 			)
 		print("Input constructed")

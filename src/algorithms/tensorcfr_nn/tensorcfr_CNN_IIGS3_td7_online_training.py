@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import logging
+
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_best_response.ExploitabilityByTensorCFR import ExploitabilityByTensorCFR
@@ -32,7 +33,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	print("args: {}".format(args))
 	# Create logdir name
 	args.logdir = "logs/{}-{}-{}".format(
-	os.path.basename(__file__),
+		os.path.basename(__file__),
 		datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),
 		",".join(("{}={}".format(re.sub("(.)[^_]*_?", r"\1", key), value) for key, value in sorted(vars(args).items())))
 	)
@@ -46,7 +47,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	steps_to_register = list()
 	average_strategies_over_steps = dict()
-
 
 	path_to_domain_efg = os.path.join(
 		PROJECT_ROOT,
@@ -93,7 +93,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 			# Evaluate on development set
 			devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
-			logging.info("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
+			logging.info(
+				"[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
 
 		# Evaluate on test set
 		testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
@@ -110,8 +111,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		average_strategies_over_steps = tensorcfr.average_strategies_over_steps
 	del computation_graph
 
-
-	exploitability_tensorcfr = ExploitabilityByTensorCFR(  # TODO optimize by construction object only once
+	exploitability_tensorcfr = ExploitabilityByTensorCFR(
 		domain_in_numpy,
 		trunk_depth=None,
 		trunk_strategies=None,
@@ -130,4 +130,3 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		logging.info("BR value (player 2) at step {}: {}".format(step, exploitability_tensorcfr.final_brvalue_2))
 
 		print("exploitability of avg strategy at step {}: {}".format(step, exploitability_tensorcfr.final_exploitability))
-

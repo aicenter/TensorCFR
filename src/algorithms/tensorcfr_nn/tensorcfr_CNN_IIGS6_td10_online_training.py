@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 import logging
 
+import tensorflow as tf
+
 from src.algorithms.tensorcfr_best_response.ExploitabilityByTensorCFR import ExploitabilityByTensorCFR
 from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
-from src.domains.available_domains import get_domain_by_name
+from src.commons.constants import PROJECT_ROOT
+from src.domains.FlattenedDomain import FlattenedDomain
 from src.nn.Runner_CNN_IIGS6Lvl10_NPZ import Runner_CNN_IIGS6Lvl10_NPZ
 from src.nn.features.goofspiel.IIGS6.sorting_permutation_by_public_states import get_permutation_by_public_states
+from src.utils.gambit_flattened_domains.loader import GambitLoaderCached
 from src.utils.other_utils import get_current_timestamp
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
@@ -28,6 +32,8 @@ def create_logger(log_lvl=logging.WARNING, log_to_file=True):
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
+	import os
+
 	create_logger(
 		log_lvl=logging.INFO,
 		log_to_file=False
@@ -35,26 +41,60 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 
 	runner = Runner_CNN_IIGS6Lvl10_NPZ()
 	runner.run_neural_net()
-
 	network = runner.network
-	domain_ = get_domain_by_name("IIGS6_gambit_flattened")
-	nn_input_permutation = get_permutation_by_public_states()
-	tensorcfr = TensorCFR_NN(
-		domain_,
-		neural_net=network,
-		nn_input_permutation=nn_input_permutation,
-		trunk_depth=10
+
+	steps_to_register = list()
+	average_strategies_over_steps = dict()
+
+	path_to_domain_efg = os.path.join(
+		PROJECT_ROOT,
+		'doc',
+		'goofspiel',
+		'IIGS6_s1_bf_ft.gbt'
 	)
 
-	steps_to_register = [0, 1, 2, 3, 4, 5]
-	tensorcfr.run_cfr(
-		total_steps=6,
-		delay=2,
-		verbose=True,
-		register_strategies_on_step=steps_to_register
-	)
-	average_strategies_over_steps = tensorcfr.average_strategies_over_steps
+	domain_in_numpy = GambitLoaderCached(path_to_domain_efg)
+
+	computation_graph = tf.Graph()
+	with computation_graph.as_default():
+		domain = FlattenedDomain(
+			"IIGS6",
+			domain_in_numpy.domain_parameters,
+			domain_in_numpy.number_of_nodes_actions,
+			domain_in_numpy.node_to_infoset,
+			domain_in_numpy.utilities,
+			domain_in_numpy.infoset_acting_players,
+			domain_in_numpy.initial_infoset_strategies,
+			information_set_mapping_to_gtlibrary=domain_in_numpy.information_set_mapping_to_gtlibrary
+		)
+
+		nn_input_permutation = get_permutation_by_public_states()
+		tensorcfr = TensorCFR_NN(
+			domain,
+			neural_net=network,
+			nn_input_permutation=nn_input_permutation,
+			trunk_depth=10
+		)
+
+		steps_to_register = [0, 200, 400, 600, 800, 999]
+		tensorcfr.run_cfr(
+			total_steps=1000,
+			delay=250,
+			verbose=True,
+			register_strategies_on_step=steps_to_register
+		)
+		average_strategies_over_steps = tensorcfr.average_strategies_over_steps
+	del computation_graph
 	del tensorcfr
+
+	exploitability_tensorcfr = ExploitabilityByTensorCFR(
+		domain_in_numpy,
+		trunk_depth=None,
+		trunk_strategies=None,
+		total_steps=10000,
+		delay=2500,
+		log_lvl=logging.INFO
+	)
 
 	exploitabilities = {}
 	br_values1 = {}
@@ -64,17 +104,11 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		trunk_strategy = average_strategies_over_steps["average_strategy_step{}".format(step)]
 		logging.debug("average_strategy_step{}:\n{}".format(step, trunk_strategy))
 
-		exploitability_tensorcfr = ExploitabilityByTensorCFR(  # TODO optimize by construction object only once
-			domain_,
-			trunk_depth=10,
-			trunk_strategies=trunk_strategy,
-			total_steps=100,
-			delay=25
-		)
+		exploitability_tensorcfr.evaluate(trunk_strategies=trunk_strategy, trunk_depth=10)
 		br_values1[step] = exploitability_tensorcfr.final_brvalue_1
 		br_values2[step] = exploitability_tensorcfr.final_brvalue_2
 		exploitabilities[step] = exploitability_tensorcfr.final_exploitability
-		del exploitability_tensorcfr
+
 	for step in steps_to_register:
 		logging.debug("BR value (player 1) at step {}: {}".format(step, br_values1[step]))
 		logging.debug("BR value (player 2) at step {}: {}".format(step, br_values2[step]))

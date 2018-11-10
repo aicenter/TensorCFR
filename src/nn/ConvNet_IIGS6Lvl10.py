@@ -105,7 +105,6 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 						inputs=self.latest_layer,
 						filters=int(specs[1]),
 						kernel_size=1,
-						kernel_initializer=tf.keras.initializers.he_normal(),
 						activation=tf.nn.relu,
 						data_format="channels_first",
 						name=layer_name
@@ -179,30 +178,10 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 						inputs=self.latest_layer,
 						filters=int(specs[1]),
 						kernel_size=1,
-						kernel_initializer=tf.keras.initializers.he_normal(),
 						activation=tf.nn.relu,
 						data_format="channels_first",
 						name=layer_name
 					)
-					print("{} constructed".format(layer_name))
-
-				elif specs[0] == "BN":
-					self.latest_layer = tf.layers.BatchNormalization(
-						inputs = self.latest_layer,
-						axis = int(specs[1]),
-						name = layer_name
-
-					)
-
-				elif specs[0] == "DROP":
-					self.latest_layer = tf.layers.dropout(
-						inputs=self.latest_layer,
-						rate=int(specs[1]),
-						name=layer_name,
-						training=True
-
-					)
-
 					print("{} constructed".format(layer_name))
 				else:
 					raise ValueError("Invalid regressor specification '{}'".format(specs))
@@ -302,7 +281,8 @@ class ConvNet_IIGS6Lvl10(AbstractNN):
 			self.session.run(tf.global_variables_initializer())
 			with self.summary_writer.as_default():
 				tf.contrib.summary.initialize(session=self.session, graph=self.session.graph)
-			# saver added in construct method
+
+			# Saver of NN model
 			self.saver = tf.train.Saver()
 
 	def train(self, features, targets):

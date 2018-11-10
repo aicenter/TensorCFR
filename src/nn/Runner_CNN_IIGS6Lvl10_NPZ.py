@@ -46,9 +46,9 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 		return devset, testset, trainset
 
 	def construct_network(self):
-		network = ConvNet_IIGS6Lvl10(threads=self.args.threads, fixed_randomness=self.fixed_randomness)
-		network.construct(self.args)
-		return network
+		self.network = ConvNet_IIGS6Lvl10(threads=self.args.threads, fixed_randomness=self.fixed_randomness)
+		self.network.construct(self.args)
+		return self.network
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:

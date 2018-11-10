@@ -79,7 +79,7 @@ class AbstractNNRunner:
 		print("Predictions of initial 2 training examples:")
 		print(self.network.predict(trainset.features[:2]))
 
-	def run_neural_net(self, steps=None, path=None):
+	def run_neural_net(self, steps=None, path="checkpoints/"):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if self.fixed_randomness:
 			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))

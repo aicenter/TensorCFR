@@ -6,7 +6,7 @@ from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.utils.other_utils import get_current_timestamp
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = True
+ACTIVATE_FILE = False
 
 
 def create_logger(log_lvl=logging.WARNING):

@@ -97,11 +97,8 @@ class AbstractNNRunner:
 			self.evaluate_devset(devset)
 
 			if steps and path is not None and int(self.epoch) % int(steps) == 0:
-				self.network.save_to_ckpt(
-					self.session,
-					path + "epoch_" + str(self.epoch) + str(get_current_timestamp()) + ".ckpt"
-				)
-		self.network.save_to_ckpt(self.session, path + "final_" + str(get_current_timestamp()) + ".ckpt")   # final model
+				self.network.save_to_ckpt(path + "epoch_" + str(self.epoch) + str(get_current_timestamp()) + ".ckpt")
+		self.network.save_to_ckpt("{}final_{}.ckpt".format(path, get_current_timestamp()))   # final model
 
 		self.evaluate_testset(testset)
 		self.showcase_predictions(trainset)

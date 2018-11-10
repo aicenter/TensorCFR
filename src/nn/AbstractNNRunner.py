@@ -79,7 +79,7 @@ class AbstractNNRunner:
 		print("Predictions of initial 2 training examples:")
 		print(self.network.predict(trainset.features[:2]))
 
-	def run_neural_net(self, steps=None, path="checkpoints/"):
+	def run_neural_net(self, steps=None, ckpt_dir=None):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if self.fixed_randomness:
 			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
@@ -92,13 +92,20 @@ class AbstractNNRunner:
 		devset, testset, trainset = self.init_datasets(dataset_directory)
 		self.network = self.construct_network()
 
+		if ckpt_dir is None:
+			ckpt_dir = self.args.logdir
+
 		for self.epoch in range(self.args.epochs):
 			self.train_one_epoch(trainset)
 			self.evaluate_devset(devset)
 
-			if steps and path is not None and int(self.epoch) % int(steps) == 0:
-				self.network.save_to_ckpt(path + "epoch_" + str(self.epoch) + str(get_current_timestamp()) + ".ckpt")
-		self.network.save_to_ckpt("{}final_{}.ckpt".format(path, get_current_timestamp()))   # final model
+			# checkpoint every `steps` steps   # TODO
+			# if steps and ckpt_dir is not None and int(self.epoch) % int(steps) == 0:
+			# 	self.network.save_to_ckpt(ckpt_dir + "epoch_" + str(self.epoch) + str(get_current_timestamp()) + ".ckpt")
+		self.network.save_to_ckpt(                # final model
+			ckpt_dir=ckpt_dir,
+			ckpt_basename="final_{}.ckpt".format(get_current_timestamp())
+		)
 
 		self.evaluate_testset(testset)
 		self.showcase_predictions(trainset)

@@ -57,13 +57,14 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	logging.info("mean squared error on testset: {}".format(testset_error_mse))
 	logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
 
-	ckpt_file = "checkpoints/tensorcfr_CNN_IIGS3_td7_{}.ckpt".format(get_current_timestamp())
-	network.save_to_ckpt(ckpt_file)
+	ckpt_dir = "checkpoints"
+	ckpt_basename = "tensorcfr_CNN_IIGS3_td7_{}".format(get_current_timestamp())
+	network.save_to_ckpt(ckpt_dir, ckpt_basename)
 	del network
 
 	restored_network = ConvNet_IIGS3Lvl7(threads=args.threads)
 	restored_network.construct(args)
-	restored_network.restore_from_ckpt(ckpt_file)
+	restored_network.restore_from_ckpt(ckpt_dir, ckpt_basename)
 
 	testset_error_mse, testset_error_infinity = restored_network.evaluate("test", testset.features, testset.targets)
 	logging.info("[restored] mean squared error on testset: {}".format(testset_error_mse))

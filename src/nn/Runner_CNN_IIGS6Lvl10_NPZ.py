@@ -53,5 +53,4 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	runner = Runner_CNN_IIGS6Lvl10_NPZ()
-	checkpoint_path = "checkpoints/{}_".format(runner.__class__.__name__)
-	runner.run_neural_net(path=checkpoint_path)
+	runner.run_neural_net()

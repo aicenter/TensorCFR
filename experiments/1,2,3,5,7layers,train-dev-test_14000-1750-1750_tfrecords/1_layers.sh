@@ -14,7 +14,7 @@
 # configure variables
 FRONTNODE_HOME="/storage/plzen1/home/mathemage"
 REPO_DIR="${FRONTNODE_HOME}/beyond-deepstack/TensorCFR"
-EXPERIMENT_NAME="CNN_IIGS6Lvl10_1xlayers_17500seeds_tfrecords_experiments"
+EXPERIMENT_NAME="CNN_IIGS6Lvl10_17500seeds_tfrecords_experiments"
 FRONTNODE_LOGS="${REPO_DIR}/logs/${EXPERIMENT_NAME}"
 OUTFILE=${EXPERIMENT_NAME}_$(date -d "today" +"%Y%m%d%H%M").out
 

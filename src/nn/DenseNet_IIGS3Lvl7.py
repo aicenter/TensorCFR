@@ -191,7 +191,6 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 			print(">> Optimization constructed")
 			self.print_operations_count()
 
-
 			# Summaries
 			with tf.name_scope("summaries"):
 				summary_writer = tf.contrib.summary.create_file_writer(args.logdir, flush_millis=10 * 1000)
@@ -223,19 +222,11 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 			print(">> Summary writer constructed")
 			self.print_operations_count()
 
-			## saver
-
+			# Saver of NN model
 			self.saver = tf.train.Saver()
 
 	def train(self, features, targets):
 		self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
-
-	def save_to_ckpt(self,path):
-		if str(path).endswith(".ckpt"):
-			self.saver.save(self.session,path)
-		else:
-			self.saver.save(self.session, path + ".ckpt")
-		print("Saving to " + path + " successful")
 
 	def evaluate(self, dataset, features, targets):
 		mean_squared_error, l_infinity_error, _ = self.session.run(
@@ -249,18 +240,6 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 
 	def print_operations_count(self):
 		print(">>> {} operations".format(count_graph_operations(self.graph)))
-
-	def restore_from_ckpt(self,path):
-
-		if str(path).endswith(".ckpt"):
-
-			self.saver.restore(self.session,path)
-		else:
-
-			self.saver.restore(self.session, path + ".ckpt")
-
-		print("Restoring from "+path +" successful")
-
 
 	@staticmethod
 	def parse_arguments():
@@ -287,7 +266,6 @@ if __name__ == "__main__":
 		np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
 	args = DenseNet_IIGS3Lvl7.parse_arguments()
-
 	print("args: {}".format(args))
 
 	# Create logdir name
@@ -311,7 +289,7 @@ if __name__ == "__main__":
 	features, targets = trainset.next_batch(args.batch_size)
 	network.construct(args)
 
-	#Train
+	# Train
 	for epoch in range(args.epochs):
 		while not trainset.epoch_finished():
 			features, targets = trainset.next_batch(args.batch_size)
@@ -330,4 +308,3 @@ if __name__ == "__main__":
 	print()
 	print("Predictions of initial 2 training examples:")
 	print(network.predict(trainset.features[:2]))
-

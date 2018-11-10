@@ -5,7 +5,7 @@ import tensorflow as tf
 class DatasetFromTFRecord:
 	def __init__(self, batch_size=1, dataset_files=list(), sample_length=1, number_of_epochs=1,
 	             number_parallel_calls=None, variable_scope_name='DatasetFromTFRecord', shuffle_batches=True,
-	             shuffle_batches_buffer_size=100000):
+	             shuffle_batches_buffer_size=512):
 		self.iterator = None
 		self.epoch_finished = None
 

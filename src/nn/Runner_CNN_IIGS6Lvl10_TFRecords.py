@@ -8,7 +8,7 @@ from src.nn.data.DatasetFromTFRecord import DatasetFromTFRecord
 from src.utils.other_utils import get_files_in_directory_recursively
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = True
+ACTIVATE_FILE = False
 
 
 class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
@@ -85,11 +85,11 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 	def showcase_predictions(self, trainset):
 		pass      # TODO
 
-	def run_neural_net(self):
+	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):
 		with tf.Session() as self.data_session:
-			super().run_neural_net()
+			super().run_neural_net(ckpt_every, ckpt_dir)
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	runner = Runner_CNN_IIGS6Lvl10_TFRecords()
-	runner.run_neural_net()
+	runner.run_neural_net(ckpt_every=2)

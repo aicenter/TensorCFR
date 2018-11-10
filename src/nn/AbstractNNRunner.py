@@ -79,7 +79,7 @@ class AbstractNNRunner:
 		print("Predictions of initial 2 training examples:")
 		print(self.network.predict(trainset.features[:2]))
 
-	def run_neural_net(self, steps=None, ckpt_dir=None):
+	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if self.fixed_randomness:
 			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
@@ -99,9 +99,12 @@ class AbstractNNRunner:
 			self.train_one_epoch(trainset)
 			self.evaluate_devset(devset)
 
-			# checkpoint every `steps` steps   # TODO
-			# if steps and ckpt_dir is not None and int(self.epoch) % int(steps) == 0:
-			# 	self.network.save_to_ckpt(ckpt_dir + "epoch_" + str(self.epoch) + str(get_current_timestamp()) + ".ckpt")
+			# checkpoint every `ckpt_every` epochs
+			if ckpt_every and ckpt_dir is not None and int(self.epoch) % int(ckpt_every) == 0:
+				self.network.save_to_ckpt(
+					ckpt_dir,
+					ckpt_basename="epoch_{}_{}".format(str(self.epoch), str(get_current_timestamp()))
+				)
 		self.network.save_to_ckpt(                # final model
 			ckpt_dir=ckpt_dir,
 			ckpt_basename="final_{}.ckpt".format(get_current_timestamp())

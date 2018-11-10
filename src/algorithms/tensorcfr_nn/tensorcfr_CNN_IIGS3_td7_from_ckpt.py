@@ -10,8 +10,7 @@ ACTIVATE_FILE = False
 
 
 def create_logger(log_lvl=logging.WARNING):
-	log_filename = "logs/tensorcfr_CNN_IIGS3_td7_{}.log".format(get_current_timestamp())
-	logging.basicConfig(filename=log_filename, format='%(asctime)s %(message)s', level=log_lvl)
+	logging.basicConfig(format='%(asctime)s %(message)s', level=log_lvl)
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
@@ -55,7 +54,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		logging.info("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
 	# Evaluate on test set
 	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
-	logging.info("\nmean squared error on testset: {}".format(testset_error_mse))
+	logging.info("mean squared error on testset: {}".format(testset_error_mse))
 	logging.info("L-infinity error on testset: {}".format(testset_error_infinity))
 
 	ckpt_file = "checkpoints/tensorcfr_CNN_IIGS3_td7_{}.ckpt".format(get_current_timestamp())
@@ -67,7 +66,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	restored_network.restore_from_ckpt(ckpt_file)
 
 	testset_error_mse, testset_error_infinity = restored_network.evaluate("test", testset.features, testset.targets)
-	logging.info("\n[restored] mean squared error on testset: {}".format(testset_error_mse))
+	logging.info("[restored] mean squared error on testset: {}".format(testset_error_mse))
 	logging.info("[restored] L-infinity error on testset: {}".format(testset_error_infinity))
 
 	# domain_ = get_domain_by_name("II-GS3_gambit_flattened")

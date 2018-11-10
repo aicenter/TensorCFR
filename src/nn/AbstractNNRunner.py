@@ -3,11 +3,11 @@
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
 import argparse
 from abc import abstractmethod
-from src.utils.other_utils import get_current_timestamp
 
 import numpy as np
 
 from src.commons.constants import SEED_FOR_TESTING
+from src.utils.other_utils import get_current_timestamp
 
 
 class AbstractNNRunner:
@@ -65,7 +65,8 @@ class AbstractNNRunner:
 
 	def evaluate_devset(self, devset):
 		devset_error_mse, devset_error_infinity = self.network.evaluate("dev", devset.features, devset.targets)
-		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(self.epoch, devset_error_mse, devset_error_infinity))
+		print(
+			"[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(self.epoch, devset_error_mse, devset_error_infinity))
 
 	def evaluate_testset(self, testset):
 		testset_error_mse, testset_error_infinity = self.network.evaluate("test", testset.features, testset.targets)
@@ -78,7 +79,7 @@ class AbstractNNRunner:
 		print("Predictions of initial 2 training examples:")
 		print(self.network.predict(trainset.features[:2]))
 
-	def run_neural_net(self,steps=None,path=None):
+	def run_neural_net(self, steps=None, path=None):
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
 		if self.fixed_randomness:
 			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
@@ -96,9 +97,11 @@ class AbstractNNRunner:
 			self.evaluate_devset(devset)
 
 			if steps and path is not None and int(self.epoch) % int(steps) == 0:
-
-				self.network.save_to_ckpt(self.session,path+"epoch_"+str(self.epoch)+str(get_current_timestamp())+".ckpt")
-
+				self.network.save_to_ckpt(
+					self.session,
+					path + "epoch_" + str(self.epoch) + str(get_current_timestamp()) + ".ckpt"
+				)
+		self.network.save_to_ckpt(self.session, path + "final_" + str(get_current_timestamp()) + ".ckpt")   # final model
 
 		self.evaluate_testset(testset)
 		self.showcase_predictions(trainset)

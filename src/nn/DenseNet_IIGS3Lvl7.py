@@ -229,7 +229,6 @@ class DenseNet_IIGS3Lvl7(AbstractNN):
 
 	def train(self, features, targets):
 		self.session.run([self.loss_minimizer, self.summaries["train"]], {self.features: features, self.targets: targets})
-		#self.saver.save(self.session,"./my_dense_model.ckpt")
 
 	def save_to_ckpt(self,path):
 		if str(path).endswith(".ckpt"):
@@ -309,20 +308,8 @@ if __name__ == "__main__":
 
 	# Construct the network
 	network = DenseNet_IIGS3Lvl7(threads=args.threads)
-	#network = AbstractNN()
 	features, targets = trainset.next_batch(args.batch_size)
 	network.construct(args)
-	network.restore_from_file("/home/dominik/PycharmProjects/TensorCFR/src/nn/mymodel_final.ckpt")
-	#network.construct(args)
-
-	#network.saver.restore(sess= network.session, save_path="./mymodel_final.ckpt")
-	# with tf.Session() as session:
-	#
-	# 	saver = tf.train.Saver()
-	#
-	# 	saver.restore(sess=session, save_path="./mymodel_final.ckpt")
-
-
 
 	#Train
 	for epoch in range(args.epochs):
@@ -334,8 +321,6 @@ if __name__ == "__main__":
 		devset_error_mse, devset_error_infinity = network.evaluate("dev", devset.features, devset.targets)
 		print("[epoch #{}] dev MSE {}, \tdev L-infinity error {}".format(epoch, devset_error_mse, devset_error_infinity))
 
-	network.save("/home/dominik/PycharmProjects/TensorCFR/src/nn/mymodel_final.ckpt")
-	#print("network saved")
 	# Evaluate on test set
 	testset_error_mse, testset_error_infinity = network.evaluate("test", testset.features, testset.targets)
 	print()

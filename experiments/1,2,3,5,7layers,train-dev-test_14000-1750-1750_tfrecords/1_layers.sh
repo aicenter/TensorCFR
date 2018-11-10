@@ -29,6 +29,5 @@ COMMON_ARGS="--dataset_directory ${DATASET_DIRECTORY} --epochs 64 --ckpt_every 1
 ARCH="--extractor C-46 --regressor C-138"
 CMD="${PYTHON} -m src.nn.Runner_CNN_IIGS6Lvl10_TFRecords ${COMMON_ARGS} ${ARCH}"
 
-echo ${CMD}
-echo ${CMD} &>${FRONTNODE_LOGS}/${OUTFILE}
-${CMD} &>${FRONTNODE_LOGS}/${OUTFILE}
+echo ${CMD} |& tee ${FRONTNODE_LOGS}/${OUTFILE}
+${CMD} |& tee ${FRONTNODE_LOGS}/${OUTFILE}

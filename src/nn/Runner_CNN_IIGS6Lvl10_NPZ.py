@@ -30,6 +30,7 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 		                            help="Description of the value regressor architecture.")
 		self.argparser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
 		self.argparser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
+		self.argparser.add_argument("--ckpt_every", default=2, type=float, help="Checkpoint every `ckpt_every` epochs.")
 
 	@staticmethod
 	def datasets_from_npz(dataset_directory, script_directory):
@@ -58,3 +59,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	)
 	runner = Runner_CNN_IIGS6Lvl10_NPZ()
 	runner.run_neural_net(ckpt_every=2)
+
+	runner_from_ckpt = Runner_CNN_IIGS6Lvl10_NPZ()
+	runner_from_ckpt.run_neural_net_from_ckpt(ckpt_dir=runner.args.logdir, ckpt_basename=runner.ckpt_basenames[-1])

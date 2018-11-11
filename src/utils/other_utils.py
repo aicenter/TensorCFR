@@ -6,7 +6,6 @@ import subprocess
 
 import numpy as np
 import pandas as pd
-import psutil
 
 
 def get_current_timestamp():
@@ -14,8 +13,9 @@ def get_current_timestamp():
 
 
 def get_memory_usage():
-	process = psutil.Process(os.getpid())
-	return process.memory_info().rss
+	# process = psutil.Process(os.getpid())
+	# return process.memory_info().rss
+	raise NotImplementedError
 
 
 def get_memory_usage_using_os():

@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#PBS -N CNN_IIGS6Lvl10_x_layers_17500seeds_tfrecords
 #PBS -q gpu
 #PBS -l walltime=24:00:00
 #PBS -l select=1:ncpus=10:ngpus=1:gpu_cap=cuda35:mem=30gb:scratch_local=10gb

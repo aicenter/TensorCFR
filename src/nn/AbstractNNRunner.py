@@ -19,6 +19,13 @@ class AbstractNNRunner:
 		self.network = None
 		self.epoch = None
 
+		# NN preparation
+		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
+		if self.fixed_randomness:
+			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
+			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
+		self.parse_arguments()
+
 	@property
 	def default_extractor_arch(self):
 		raise NotImplementedError
@@ -83,12 +90,6 @@ class AbstractNNRunner:
 		print(self.network.predict(trainset.features[:2]))
 
 	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):
-		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
-		if self.fixed_randomness:
-			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
-			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
-
-		self.parse_arguments()
 		dataset_directory = self.args.dataset_directory
 		self.create_logdir()
 

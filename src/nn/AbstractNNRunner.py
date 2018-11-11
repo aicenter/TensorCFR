@@ -18,6 +18,7 @@ class AbstractNNRunner:
 		self.args = None
 		self.network = None
 		self.epoch = None
+		self.ckpt_basenames = []
 
 		# NN preparation
 		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
@@ -105,14 +106,13 @@ class AbstractNNRunner:
 
 			# checkpoint every `ckpt_every` epochs
 			if ckpt_every and ckpt_dir is not None and int(self.epoch) % int(ckpt_every) == 0:
-				self.network.save_to_ckpt(
-					ckpt_dir,
-					ckpt_basename="epoch_{}_{}".format(str(self.epoch), str(get_current_timestamp()))
-				)
-		self.network.save_to_ckpt(                # final model
-			ckpt_dir=ckpt_dir,
-			ckpt_basename="final_{}.ckpt".format(get_current_timestamp())
-		)
+				ckpt_basename = "epoch_{}_{}".format(str(self.epoch), str(get_current_timestamp()))
+				self.ckpt_basenames.append(ckpt_basename)
+				self.network.save_to_ckpt(ckpt_dir, ckpt_basename)
+
+		ckpt_basename = "final_{}.ckpt".format(get_current_timestamp())
+		self.ckpt_basenames.append(ckpt_basename)
+		self.network.save_to_ckpt(ckpt_dir, ckpt_basename)  # final model
 
 		self.evaluate_testset(testset)
 		self.showcase_predictions(trainset)

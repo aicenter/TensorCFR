@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PYTHON=python3.6
-BASENAME=tensorcfr_CNN_IIGS6_td10_online_training
+BASENAME=tensorcfr_CNN_IIGS6_td10_from_ckpt
 SCRIPT=src.algorithms.tensorcfr_nn.${BASENAME}
 COMMON_ARGS=""
 OUTDIR=/home/mathemage/beyond-deepstack/TensorCFR/experiments/tensorcfr_nn/IIGS6Lvl10_FromCkpt

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#PBS -N CNN_1_layers_IIGS6Lvl10_17500seeds_tfrecords
+#PBS -N CNN_5_layers_IIGS6Lvl10_17500seeds_tfrecords
 #PBS -q gpu
 #PBS -l walltime=24:00:00
 #PBS -l select=1:ncpus=10:ngpus=1:gpu_cap=cuda35:mem=30gb:scratch_local=10gb
@@ -26,7 +26,7 @@ cd ${REPO_DIR} || exit 1
 PYTHON=python3
 DATASET_DIRECTORY="../data/IIGS6/17450_datapoints_128_seed_per_file/tfrecord_dataset_IIGS6_1_6_false_true_lvl10"
 COMMON_ARGS="--dataset_directory ${DATASET_DIRECTORY} --epochs 512 --ckpt_every 64"
-ARCH="--extractor C-46 --regressor C-138"
+ARCH="--extractor C-46,C-46,C-46,C-46,C-46,C-46,C-46 --regressor C-138,C-138,C-138,C-138,C-138,C-138,C-138"
 CMD="${PYTHON} -m src.nn.Runner_CNN_IIGS6Lvl10_TFRecords ${COMMON_ARGS} ${ARCH}"
 
 echo ${CMD} |& tee ${FRONTNODE_LOGS}/${OUTFILE}

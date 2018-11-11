@@ -83,13 +83,20 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 				self.epoch, testset.batch_id, testset_error_mse, testset_error_infinity))
 
 	def showcase_predictions(self, trainset):
-		pass      # TODO
+		pass  # TODO
 
 	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):
 		with tf.Session() as self.data_session:
 			super().run_neural_net(ckpt_every, ckpt_dir)
 
+	def run_neural_net_from_ckpt(self, ckpt_dir, ckpt_basename):
+		with tf.Session() as self.data_session:
+			super().run_neural_net_from_ckpt(ckpt_dir, ckpt_basename)
+
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	runner = Runner_CNN_IIGS6Lvl10_TFRecords()
 	runner.run_neural_net(ckpt_every=2)
+
+	runner_from_ckpt = Runner_CNN_IIGS6Lvl10_TFRecords()
+	runner_from_ckpt.run_neural_net_from_ckpt(ckpt_dir=runner.args.logdir, ckpt_basename=runner.ckpt_basenames[-1])

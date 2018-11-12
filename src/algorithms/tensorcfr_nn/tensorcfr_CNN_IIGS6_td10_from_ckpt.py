@@ -87,7 +87,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 			trunk_depth=10
 		)
 
-		steps_to_register = [0, 200, 400, 600, 800, 999]
+		# steps_to_register = [0, 200, 400, 600, 800, 999]
+		steps_to_register = [0, 500, 1000, 3000, 5000]
 		tensorcfr.run_cfr(
 			total_steps=1000,
 			delay=250,

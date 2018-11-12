@@ -96,7 +96,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		# steps_to_register = [0, 200, 400, 600, 800, 999]
 		steps_to_register = [0, 500, 1000, 3000, 5000]
 		tensorcfr.run_cfr(
-			total_steps=max(steps_to_register),
+			total_steps=max(steps_to_register) + 1,
 			delay=int(max(steps_to_register)/4),
 			verbose=True,
 			register_strategies_on_step=steps_to_register

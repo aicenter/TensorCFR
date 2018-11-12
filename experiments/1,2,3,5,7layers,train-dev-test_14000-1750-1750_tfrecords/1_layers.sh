@@ -25,7 +25,7 @@ module add tensorflow-1.7.1-gpu-python3
 cd ${REPO_DIR} || exit 1
 PYTHON=python3
 DATASET_DIRECTORY="../data/IIGS6/17450_datapoints_128_seed_per_file/tfrecord_dataset_IIGS6_1_6_false_true_lvl10"
-COMMON_ARGS="--dataset_directory ${DATASET_DIRECTORY} --epochs 512 --ckpt_every 64"
+COMMON_ARGS="--dataset_directory ${DATASET_DIRECTORY} --epochs 1024 --ckpt_every 128"
 ARCH="--extractor C-46 --regressor C-138"
 CMD="${PYTHON} -m src.nn.Runner_CNN_IIGS6Lvl10_TFRecords ${COMMON_ARGS} ${ARCH}"
 

@@ -31,6 +31,7 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 		self.argparser.add_argument("--epochs", default=5, type=int, help="Number of epochs.")
 		self.argparser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 		self.argparser.add_argument("--ckpt_every", default=2, type=float, help="Checkpoint every `ckpt_every` epochs.")
+		# TODO add ckpt_dir
 
 	@staticmethod
 	def datasets_from_npz(dataset_directory, script_directory):

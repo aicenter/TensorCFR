@@ -102,24 +102,25 @@ class Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_TFRecords(Runner_CNN_Selu_Infinity
 		return network
 
 	def run_neural_net(self):
-		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
-		if self.fixed_randomness:
-			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
-			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
+		with tf.Session() as self.data_session:
+			np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
+			if self.fixed_randomness:
+				print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
+				np.random.seed(SEED_FOR_TESTING)  # Fix random seed
 
-		self.parse_arguments()
-		dataset_directory = self.args.dataset_directory
-		self.create_logdir()
+			self.parse_arguments()
+			dataset_directory = self.args.dataset_directory
+			self.create_logdir()
 
-		devset, testset, trainset = self.init_datasets(dataset_directory)
-		self.network = self.construct_network()
+			devset, testset, trainset = self.init_datasets(dataset_directory)
+			self.network = self.construct_network()
 
-		for self.epoch in range(self.args.epochs):
-			self.train_one_epoch(trainset)
-			self.evaluate_devset(devset)
+			for self.epoch in range(self.args.epochs):
+				self.train_one_epoch(trainset)
+				self.evaluate_devset(devset)
 
-		self.evaluate_testset(testset)
-		self.showcase_predictions(trainset)
+			self.evaluate_testset(testset)
+			self.showcase_predictions(trainset)
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix

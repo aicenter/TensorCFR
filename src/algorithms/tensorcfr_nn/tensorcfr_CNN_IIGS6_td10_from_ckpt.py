@@ -40,24 +40,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	)
 
 	runner = Runner_CNN_IIGS6Lvl10_TFRecords()
-
-	# 1-layer
-	# ckpt_dir = "checkpoints/Runner_CNN_IIGS6Lvl10_TFRecords-2018-11-11_021836-bs=32,ce=64.0,dr=0.1,e=512,e=C-46,r=C-138," \
-	#            "t=1,tr=0.8"
-	# ckpt_basename = "final_2018-11-11_07:46:15.ckpt"
-
-	# 5-layer
-	# ckpt_dir = "src/algorithms/tensorcfr_nn/checkpoints/Runner_CNN_IIGS6Lvl10_TFRecords-2018-11-11_030427-bs=32,ce=64.0," \
-	#            "dr=0.1,e=512,e=C-46,C-46,C-46,C-46,C-46,r=C-138,C-138,C-138,C-138,C-138,t=1,tr=0.8"
-	# ckpt_basename = "final_2018-11-11_16:52:00.ckpt"
-
-	# 7-layer
-	ckpt_dir = "src/algorithms/tensorcfr_nn/checkpoints/Runner_CNN_IIGS6Lvl10_TFRecords-2018-11-11_133801-bs=32,ce=64.0," \
-	           "dr=0.1,e=512,e=C-46,C-46,C-46,C-46,C-46,C-46,C-46,r=C-138,C-138,C-138,C-138,C-138,C-138,C-138,t=1," \
-	           "tr=0.8"
-	ckpt_basename = "final_2018-11-12_09:37:52.ckpt"
-
-	runner.restore_from_ckpt(ckpt_dir, ckpt_basename)
+	runner.restore_from_ckpt()
 	network = runner.network
 
 	steps_to_register = list()

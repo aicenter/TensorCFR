@@ -9,9 +9,9 @@ OUTDIR=/home/mathemage/beyond-deepstack/TensorCFR/experiments/tensorcfr_nn/IIGS6
 OUTFILE=${OUTDIR}/${BASENAME}.out
 
 # 1 layers
-CKPT_DIR="Runner_CNN_IIGS6Lvl10_TFRecords-2018-11-11_021836-bs=32,ce=64.0,dr=0.1,e=512,e=C-46,r=C-138,t=1,tr=0.8"
+CKPT_DIR="${CKPT_COMMON_DIR}/Runner_CNN_IIGS6Lvl10_TFRecords-2018-11-11_021836-bs=32,ce=64.0,dr=0.1,e=512,e=C-46,r=C-138,t=1,tr=0.8"
 CKPT_BASENAME="final_2018-11-11_07:46:15.ckpt"
-CKPTS="--ckpt_dir ${CKPT_COMMON_DIR} --ckpt_basename ${CKPT_BASENAME}"
+CKPTS="--ckpt_dir ${CKPT_DIR} --ckpt_basename ${CKPT_BASENAME}"
 ARCH="--extractor C-46 --regressor C-138"
 RUNS=10
 for i in `seq 10` ; do

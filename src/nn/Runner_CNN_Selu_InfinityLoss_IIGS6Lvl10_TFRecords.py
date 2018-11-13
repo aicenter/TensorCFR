@@ -8,13 +8,18 @@ from src.nn.Runner_CNN_IIGS6Lvl10_TFRecords import Runner_CNN_IIGS6Lvl10_TFRecor
 class Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_TFRecords):
 	def construct_network(self):
 		network = ConvNet_Selu_InfinityLoss_IIGS6Lvl10(threads=self.args.threads, fixed_randomness=self.fixed_randomness)
+		print("network = ConvNet_Selu_InfinityLoss_IIGS6Lvl10(threads=self.args.threads, "
+		      "fixed_randomness=self.fixed_randomness)")
 		network.construct(self.args)
+		print("network.construct(self.args)")
 		return network
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 if __name__ == '__main__' and ACTIVATE_FILE:
 	runner = Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_TFRecords()
+	print("runner = Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_TFRecords()")
 	runner.run_neural_net()
+	print("runner.run_neural_net()")

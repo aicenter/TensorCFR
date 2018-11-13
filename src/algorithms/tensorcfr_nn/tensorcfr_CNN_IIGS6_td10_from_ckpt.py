@@ -114,6 +114,10 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		log_lvl=logging.INFO
 	)
 
+	logging.info("steps_to_register: {}".format(steps_to_register))
+	logging.info("total_steps = {}".format(max(steps_to_register) + 1))
+	logging.info("delay = {}".format(int(max(steps_to_register)/4)))
+
 	exploitabilities = {}
 	br_values1 = {}
 	br_values2 = {}

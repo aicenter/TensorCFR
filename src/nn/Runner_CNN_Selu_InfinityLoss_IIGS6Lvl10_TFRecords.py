@@ -2,17 +2,26 @@
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
 import tensorflow as tf
-
+import numpy as np
+from src.commons.constants import SEED_FOR_TESTING
 from src.nn.Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_NPZ import Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_NPZ
 from src.nn.data.DatasetFromTFRecord import DatasetFromTFRecord
 from src.nn.features.goofspiel.IIGS6.tfrecords_reaches_values_IIGS6_1_6_false_true_lvl10 import FEATURES_PER_FILE
 from src.utils.other_utils import get_files_in_directory_recursively
-
+from src.nn.ConvNet_Selu_InfinityLoss_IIGS6Lvl10 import ConvNet_Selu_InfinityLoss_IIGS6Lvl10
 
 class Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_TFRecords(Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_NPZ):
 	def __init__(self, fixed_randomness=False):
 		super().__init__(fixed_randomness)
 		self.data_session = None
+
+	@property
+	def default_extractor_arch(self):
+		return "C-{}".format(ConvNet_Selu_InfinityLoss_IIGS6Lvl10.INPUT_FEATURES_DIM)
+
+	@property
+	def default_regressor_arch(self):
+		return "C-{}".format(ConvNet_Selu_InfinityLoss_IIGS6Lvl10.INPUT_FEATURES_DIM)
 
 	def add_arguments_to_argparser(self):
 		super().add_arguments_to_argparser()
@@ -83,9 +92,34 @@ class Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_TFRecords(Runner_CNN_Selu_Infinity
 	def showcase_predictions(self, trainset):
 		pass
 
+	# def run_neural_net(self):
+	# 	with tf.Session() as self.data_session:
+	# 		super().run_neural_net()
+
+	def construct_network(self):
+		network = ConvNet_Selu_InfinityLoss_IIGS6Lvl10(threads=self.args.threads, fixed_randomness=self.fixed_randomness)
+		network.construct(self.args)
+		return network
+
 	def run_neural_net(self):
-		with tf.Session() as self.data_session:
-			super().run_neural_net()
+		np.set_printoptions(edgeitems=20, suppress=True, linewidth=200)
+		if self.fixed_randomness:
+			print("Abstract: self.fixed_randomness is {}".format(self.fixed_randomness))
+			np.random.seed(SEED_FOR_TESTING)  # Fix random seed
+
+		self.parse_arguments()
+		dataset_directory = self.args.dataset_directory
+		self.create_logdir()
+
+		devset, testset, trainset = self.init_datasets(dataset_directory)
+		self.network = self.construct_network()
+
+		for self.epoch in range(self.args.epochs):
+			self.train_one_epoch(trainset)
+			self.evaluate_devset(devset)
+
+		self.evaluate_testset(testset)
+		self.showcase_predictions(trainset)
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix

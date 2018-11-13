@@ -49,6 +49,8 @@ class AbstractNNRunner:
 		import os
 
 		del self.args.dataset_directory
+		del self.args.ckpt_dir
+		del self.args.ckpt_basename
 		self.args.logdir = "logs/{}-{}-{}".format(
 			os.path.basename(self.__class__.__name__),
 			datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S"),

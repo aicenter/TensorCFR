@@ -89,7 +89,10 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 		with tf.Session() as self.data_session:
 			super().run_neural_net(ckpt_every, ckpt_dir)
 
-	def run_neural_net_from_ckpt(self, ckpt_dir, ckpt_basename):
+	def run_neural_net_from_ckpt(self, ckpt_dir=None, ckpt_basename=None):
+		if (ckpt_dir is None) or (ckpt_basename is None):
+			ckpt_dir = self.args.ckpt_dir
+			ckpt_basename = self.args.ckpt_basename
 		with tf.Session() as self.data_session:
 			super().run_neural_net_from_ckpt(ckpt_dir, ckpt_basename)
 
@@ -99,4 +102,10 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	runner.run_neural_net(ckpt_every=2)
 
 	runner_from_ckpt = Runner_CNN_IIGS6Lvl10_TFRecords()
-	runner_from_ckpt.run_neural_net_from_ckpt(ckpt_dir=runner.args.logdir, ckpt_basename=runner.ckpt_basenames[-1])
+	# runner_from_ckpt.run_neural_net_from_ckpt(ckpt_dir=runner.args.logdir, ckpt_basename=runner.ckpt_basenames[-1])
+
+	# Note: you can test this on:
+	# i.e.
+	# --ckpt_dir "logs/Runner_CNN_IIGS6Lvl10_TFRecords-2018-11-11_204734-bs=32,ce=2,dr=0.1,e=3,e=C-46,r=C-46,t=1,tr=0.8"
+	# --ckpt_basename "final_2018-11-11_20:47:52.ckpt successful"
+	runner_from_ckpt.run_neural_net_from_ckpt()

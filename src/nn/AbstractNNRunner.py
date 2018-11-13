@@ -119,12 +119,15 @@ class AbstractNNRunner:
 		self.evaluate_testset(testset)
 		self.showcase_predictions(trainset)
 
-	def restore_from_ckpt(self, ckpt_dir, ckpt_basename):
+	def restore_from_ckpt(self, ckpt_dir=None, ckpt_basename=None):
+		if (ckpt_dir is None) or (ckpt_basename is None):
+			ckpt_dir = self.args.ckpt_dir
+			ckpt_basename = self.args.ckpt_basename
 		self.create_logdir()
 		self.network = self.construct_network()
 		self.network.restore_from_ckpt(ckpt_dir, ckpt_basename)
 
-	def run_neural_net_from_ckpt(self, ckpt_dir, ckpt_basename):
+	def run_neural_net_from_ckpt(self, ckpt_dir=None, ckpt_basename=None):
 		dataset_directory = self.args.dataset_directory
 		_, testset, trainset = self.init_datasets(dataset_directory)
 

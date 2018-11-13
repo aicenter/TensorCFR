@@ -76,8 +76,7 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 			trunk_depth=10
 		)
 
-		# steps_to_register = [0, 200, 400, 600, 800, 999]
-		steps_to_register = [0, 500, 1000, 3000, 5000]
+		steps_to_register = [0, 5, 10, 20]
 		tensorcfr.run_cfr(
 			total_steps=max(steps_to_register) + 1,
 			delay=int(max(steps_to_register)/4),
@@ -92,8 +91,8 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 		domain_in_numpy,
 		trunk_depth=None,
 		trunk_strategies=None,
-		total_steps=10000,
-		delay=2500,
+		total_steps=100,
+		delay=25,
 		log_lvl=logging.INFO
 	)
 

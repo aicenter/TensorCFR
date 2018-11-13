@@ -7,7 +7,7 @@ from src.nn.ConvNet_Selu_InfinityLoss_IIGS6Lvl10 import ConvNet_Selu_InfinityLos
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 
 
-class Runner_CNN_Selu_IIGS6Lvl10_NPZ(AbstractNNRunner):
+class Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_NPZ(AbstractNNRunner):
 	@property
 	def default_extractor_arch(self):
 		return "C-{}".format(ConvNet_Selu_InfinityLoss_IIGS6Lvl10.INPUT_FEATURES_DIM)
@@ -38,7 +38,7 @@ class Runner_CNN_Selu_IIGS6Lvl10_NPZ(AbstractNNRunner):
 	def init_datasets(self, dataset_directory):
 		import os
 		script_directory = os.path.dirname(os.path.abspath(__file__))
-		devset, testset, trainset = Runner_CNN_Selu_IIGS6Lvl10_NPZ.datasets_from_npz(dataset_directory, script_directory)
+		devset, testset, trainset = Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_NPZ.datasets_from_npz(dataset_directory, script_directory)
 		return devset, testset, trainset
 
 	def construct_network(self):
@@ -52,5 +52,5 @@ ACTIVATE_FILE = False
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:
-	runner = Runner_CNN_Selu_IIGS6Lvl10_NPZ()
+	runner = Runner_CNN_Selu_InfinityLoss_IIGS6Lvl10_NPZ()
 	runner.run_neural_net()

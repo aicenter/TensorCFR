@@ -43,9 +43,6 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 	runner.restore_from_ckpt()
 	network = runner.network
 
-	steps_to_register = list()
-	average_strategies_over_steps = dict()
-
 	path_to_domain_efg = os.path.join(
 		PROJECT_ROOT,
 		'doc',

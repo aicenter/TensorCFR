@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-LOGS=*.out.*_layers
+LOGS=${@:-*.out.*_layers}
+echo "LOGS: $LOGS"
 OUTFILE=summary.out
 >${OUTFILE}
 

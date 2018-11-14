@@ -1,5 +1,4 @@
 import argparse
-import os
 
 import matplotlib.pyplot as plt
 import tensorflow as tf

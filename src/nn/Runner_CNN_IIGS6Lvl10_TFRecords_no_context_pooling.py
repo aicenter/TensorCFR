@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
+from src.nn.FullyConvNet_IIGS6Lvl10_no_context_pooling import FullyConvNet_IIGS6Lvl10_no_context_pooling
 from src.nn.Runner_CNN_IIGS6Lvl10_TFRecords import Runner_CNN_IIGS6Lvl10_TFRecords
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
@@ -8,7 +9,10 @@ ACTIVATE_FILE = False
 
 
 class Runner_CNN_IIGS6Lvl10_TFRecords_no_context_pooling(Runner_CNN_IIGS6Lvl10_TFRecords):
-	pass
+	def construct_network(self):
+		self.network = FullyConvNet_IIGS6Lvl10_no_context_pooling(threads=self.args.threads, fixed_randomness=self.fixed_randomness)
+		self.network.construct(self.args)
+		return self.network
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:

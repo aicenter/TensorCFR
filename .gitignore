@@ -366,3 +366,6 @@ src/nn/features/goofspiel/IIGS6/csv_datasets/
 !/src/algorithms/tensorcfr_nn/checkpoints/Runner_CNN_IIGS6Lvl10_TFRecords-2018-11-11_021836-bs=32,ce=64.0,dr=0.1,e=512,e=C-46,r=C-138,t=1,tr=0.8/final_2018-11-11_07:46:15.ckpt.meta
 !/src/algorithms/tensorcfr_nn/checkpoints/Runner_CNN_IIGS6Lvl10_TFRecords-2018-11-11_021836-bs=32,ce=64.0,dr=0.1,e=512,e=C-46,r=C-138,t=1,tr=0.8/final_2018-11-11_07:46:15.ckpt.data-00000-of-00001
 !/src/algorithms/tensorcfr_nn/checkpoints/Runner_CNN_IIGS6Lvl10_TFRecords-2018-11-11_021836-bs=32,ce=64.0,dr=0.1,e=512,e=C-46,r=C-138,t=1,tr=0.8/final_2018-11-11_07:46:15.ckpt.index
+/experiments/1,2,3,5,7layers,train-dev-test_14000-1750-1750_tfrecords/sample_1layer_run.tar.gz
+/experiments/tensorcfr_nn/IIGS6Lvl10_FromCkpt/epochs_512/summary.5_layers
+/experiments/tensorcfr_nn/IIGS6Lvl10_FromCkpt/epochs_512/summary.7_layers

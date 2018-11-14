@@ -10,6 +10,7 @@ from src.domains.FlattenedDomain import FlattenedDomain
 from src.nn.Runner_CNN_IIGS6Lvl10_TFRecords import Runner_CNN_IIGS6Lvl10_TFRecords
 from src.nn.features.goofspiel.IIGS6.sorting_permutation_by_public_states import get_permutation_by_public_states
 from src.utils.gambit_flattened_domains.loader import GambitLoaderCached
+from src.utils.gtlibrary import export_average_strategies_to_json
 from src.utils.other_utils import get_current_timestamp
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
@@ -81,6 +82,11 @@ if __name__ == '__main__' and ACTIVATE_FILE:
 			register_strategies_on_step=steps_to_register
 		)
 		average_strategies_over_steps = tensorcfr.average_strategies_over_steps
+		export_average_strategies_to_json(
+			domain,
+			average_strategies_over_steps,
+			'tensorcfr_1-layer_cnn_IIGS6_average_strategy'
+		)
 	del computation_graph
 	del tensorcfr
 

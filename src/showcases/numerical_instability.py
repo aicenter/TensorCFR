@@ -11,10 +11,14 @@ if __name__ == '__main__':
 	# c2 = tf.placeholder(tf.float32)
 	# div_op = tf.divide(x2, c2)
 
-	y = np.array([1.0, 1.0, 1.0])
+	y = np.random.rand(3)
 
-	for prime in [2, 3, 5, 7, 9, 11, 12, 13]:
-		for _ in range(10000):
+	add_sub_vector = np.random.rand(3)
+	print("Before")
+	print(y)
+
+	for prime in [7, 9, 11, 12, 13]:
+		for _ in range(1000):
 			graph1 = tf.Graph()
 			with graph1.as_default():
 				x1 = tf.placeholder(tf.float32)
@@ -23,7 +27,8 @@ if __name__ == '__main__':
 
 				with tf.Session() as session:
 					y = session.run(mul_op, feed_dict={x1: y, c1: prime})
-					print("Mul: " + str(y))
+					# print("Mul: " + str(y))
+				    #y += add_sub_vector
 			del graph1
 
 			graph2 = tf.Graph()
@@ -31,9 +36,11 @@ if __name__ == '__main__':
 				x2 = tf.placeholder(tf.float32)
 				c2 = tf.placeholder(tf.float32)
 				div_op = tf.divide(x2, c2)
-				
+
 				with tf.Session() as session:
+					#y -= add_sub_vector
 					y = session.run(div_op, feed_dict={x2: y, c2: prime})
-					print("Div: " + str(y))
+					# print("Div: " + str(y))
 			del graph2
+	print("After")
 	print(y)

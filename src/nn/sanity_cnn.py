@@ -21,7 +21,7 @@ class SanityCNN(ConvNet_IIGS6Lvl10):
 	NUM_PUBLIC_STATES = 1 # 3 ** NUM_ROUNDS
 
 	def construct_input(self):
-		self._one_hot_features_np = np.array([[0,0,1],[1,0,0]])
+		self._one_hot_features_np = np.array([[0,1],[0,0],[1,0]]) # np.array([[0,0,1],[1,0,0]])
 
 		with tf.variable_scope("input"):
 			self.input_reaches = tf.placeholder(

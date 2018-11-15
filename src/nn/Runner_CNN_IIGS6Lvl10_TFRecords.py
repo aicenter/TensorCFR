@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
+import logging
+
 import tensorflow as tf
 
 from src.nn.Runner_CNN_IIGS6Lvl10_NPZ import Runner_CNN_IIGS6Lvl10_NPZ
@@ -83,7 +85,12 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 				self.epoch, testset.batch_id, testset_error_mse, testset_error_infinity))
 
 	def showcase_predictions(self, trainset):
-		pass  # TODO
+		print("Showcase of predictions:")
+		for sample in trainset.next_batch(self.data_session):
+			print("[batch #{}]".format(trainset.batch_id))
+			reaches, targets = sample
+			logging.debug("\treaches: {}".format(reaches))
+			logging.debug("\ttargets: {}".format(targets))
 
 	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):
 		with tf.Session() as self.data_session:

@@ -90,9 +90,10 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 		reps = 3
 		reaches = np.random.rand(1, self.SAMPLE_LENGTH)
 		logging.debug("\treaches: {}".format(reaches))
+		predictions = np.zeros((reps, self.SAMPLE_LENGTH))
 		for i in range(reps):
-			prediction = self.network.predict(reaches)
-			logging.info("prediction #{}:\n\t {}".format(i, prediction))
+			predictions[i] = self.network.predict(reaches)
+			logging.info("prediction[{}]:\n\t {}\n".format(i, predictions[i]))
 
 	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):
 		with tf.Session() as self.data_session:

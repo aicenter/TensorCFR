@@ -87,13 +87,12 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 
 	def showcase_predictions(self, trainset):
 		print("Showcase of predictions:")
-		for sample in trainset.next_batch(self.data_session):
-			print("[batch #{}]".format(trainset.batch_id))
-			reaches, targets = sample
+		reps = 3
+		reaches = np.random.rand(1, self.SAMPLE_LENGTH)
+		logging.debug("\treaches: {}".format(reaches))
+		for i in range(reps):
 			prediction = self.network.predict(reaches)
-			logging.debug("\treaches: {}".format(reaches))
-			logging.debug("\ttargets: {}".format(targets))
-			logging.info("\tpredictions: {}".format(prediction))
+			logging.info("prediction #{}:\n\t {}".format(i, prediction))
 
 	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):
 		with tf.Session() as self.data_session:

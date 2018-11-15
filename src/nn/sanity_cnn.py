@@ -69,6 +69,8 @@ class SanityCNN(ConvNet_IIGS6Lvl10):
 
 		:return:
 		"""
+		self._sizes_of_public_states = [3]
+
 		with tf.variable_scope("context_pooling"):
 			groups_by_public_states = tf.split(
 				value=self.latest_layer,

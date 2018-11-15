@@ -89,8 +89,10 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 		for sample in trainset.next_batch(self.data_session):
 			print("[batch #{}]".format(trainset.batch_id))
 			reaches, targets = sample
+			prediction = self.network.predict(reaches)
 			logging.debug("\treaches: {}".format(reaches))
 			logging.debug("\ttargets: {}".format(targets))
+			logging.info("\tpredictions: {}".format(prediction))
 
 	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):
 		with tf.Session() as self.data_session:

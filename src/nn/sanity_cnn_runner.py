@@ -18,9 +18,9 @@ class SanityCNNRunner(Runner_CNN_IIGS6Lvl10_NPZ):
 		                            help="Description of the value regressor architecture.")
 		self.argparser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 		self.argparser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
-		# self.argparser.add_argument("--ckpt_every", default=2, type=float, help="Checkpoint every `ckpt_every` epochs.")
-		# self.argparser.add_argument("--ckpt_dir", default=None, type=str, help="Checkpoint directory with model to restore.")
-		# self.argparser.add_argument("--ckpt_basename", default=None, type=str, help="Checkpoint name with model to restore.")
+		self.argparser.add_argument("--ckpt_every", default=2, type=float, help="Checkpoint every `ckpt_every` epochs.")
+		self.argparser.add_argument("--ckpt_dir", default=None, type=str, help="Checkpoint directory with model to restore.")
+		self.argparser.add_argument("--ckpt_basename", default=None, type=str, help="Checkpoint name with model to restore.")
 	@staticmethod
 	def datasets_from_npz(dataset_directory, script_directory):
 		p = os.path.join(PROJECT_ROOT, 'src', 'nn', "sanity_dataset.npz")

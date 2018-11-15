@@ -3,6 +3,7 @@
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
 import logging
 
+import numpy as np
 import tensorflow as tf
 
 from src.nn.Runner_CNN_IIGS6Lvl10_NPZ import Runner_CNN_IIGS6Lvl10_NPZ
@@ -17,6 +18,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 	def __init__(self, fixed_randomness=False):
 		super().__init__(fixed_randomness)
 		self.data_session = None
+		self.SAMPLE_LENGTH = 14400
 
 	def add_arguments_to_argparser(self):
 		super().add_arguments_to_argparser()
@@ -34,25 +36,24 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 		devset_files = dataset_files[split_train:split_dev]
 		testset_files = dataset_files[split_dev:]
 
-		SAMPLE_LENGTH = 14400
 		trainset = DatasetFromTFRecord(
 			batch_size=self.args.batch_size,
 			dataset_files=trainset_files,
-			sample_length=SAMPLE_LENGTH,
+			sample_length=self.SAMPLE_LENGTH,
 			shuffle_batches=True,
 			variable_scope_name='trainset'
 		)
 		devset = DatasetFromTFRecord(
 			batch_size=self.args.batch_size,
 			dataset_files=devset_files,
-			sample_length=SAMPLE_LENGTH,
+			sample_length=self.SAMPLE_LENGTH,
 			shuffle_batches=False,
 			variable_scope_name='devset'
 		)
 		testset = DatasetFromTFRecord(
 			batch_size=self.args.batch_size,
 			dataset_files=testset_files,
-			sample_length=SAMPLE_LENGTH,
+			sample_length=self.SAMPLE_LENGTH,
 			shuffle_batches=False,
 			variable_scope_name='testset'
 		)

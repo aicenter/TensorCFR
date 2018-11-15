@@ -34,6 +34,12 @@ class SanityCNNRunner(Runner_CNN_IIGS6Lvl10_NPZ):
 		self.network.construct(self.args)
 		return self.network
 
+	def init_datasets(self, dataset_directory):
+		import os
+		script_directory = os.path.dirname(os.path.abspath(__file__))
+		devset, testset, trainset = SanityCNNRunner.datasets_from_npz(dataset_directory, script_directory)
+		return devset, testset, trainset
+
 	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):
 		dataset_directory = self.args.dataset_directory
 		self.create_logdir()

@@ -67,7 +67,8 @@ class SanityCNNRunner(Runner_CNN_IIGS6Lvl10_NPZ):
 		self.evaluate_testset(testset)
 		self.showcase_predictions(trainset)
 
+ACTIVATE_FILE = False
 
-if __name__ == '__main__':
+if __name__ == '__main__' and ACTIVATE_FILE:
 	runner = SanityCNNRunner()
 	runner.run_neural_net()

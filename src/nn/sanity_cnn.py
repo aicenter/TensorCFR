@@ -112,5 +112,7 @@ class SanityCNN(ConvNet_IIGS6Lvl10):
 				name="features_with_contexts"
 			)
 
-if __name__ == '__main__':
+ACTIVATE_FILE = False
+
+if __name__ == '__main__'  and ACTIVATE_FILE:
 	pass

@@ -3,7 +3,6 @@
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
 import logging
 
-import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 
@@ -88,7 +87,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 
 	def showcase_predictions(self, trainset):
 		print("Showcase of predictions:")
-		reps = 3
+		reps = 100
 		reaches = np.random.rand(1, self.SAMPLE_LENGTH)
 		logging.debug("\treaches: {}".format(reaches))
 		predictions = np.zeros((reps, self.SAMPLE_LENGTH))
@@ -102,9 +101,10 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 		print("mean of variances: {}".format(np.mean(variances)))
 		print("median of variances: {}".format(np.median(variances)))
 		print("max of variances: {}".format(np.amax(variances)))
-		plt.hist(variances, bins='auto')
-		plt.title("Histogram of variances")
-		plt.show()
+		# uncomment to plot:
+		# plt.hist(variances, bins='auto')
+		# plt.title("Histogram of variances")
+		# plt.show()
 
 
 	def run_neural_net(self, ckpt_every=None, ckpt_dir=None):

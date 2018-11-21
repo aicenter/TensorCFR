@@ -8,6 +8,13 @@ import numpy as np
 import pandas as pd
 
 
+def activate_script():
+	enviroment_variable = 'TENSORCFR_ACTIVATE_FILE'
+
+	if enviroment_variable in os.environ and int(os.environ[enviroment_variable]) == 1:
+		return True
+	return False
+
 def get_current_timestamp():
 	return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 

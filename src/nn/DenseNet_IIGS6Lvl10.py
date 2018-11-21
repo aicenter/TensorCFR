@@ -8,6 +8,7 @@ from src.commons.constants import SEED_FOR_TESTING, FLOAT_DTYPE
 from src.nn.AbstractNN import AbstractNN
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS6.node_to_public_states_IIGS6_1_6_false_true_lvl10 import get_node_to_public_state
+from src.utils.other_utils import activate_script
 from src.utils.tf_utils import count_graph_operations
 
 FIXED_RANDOMNESS = False
@@ -238,11 +239,7 @@ class DenseNet_IIGS6Lvl10(AbstractNN):
 		print(">>> Total size of computation graph: {} operations".format(count_graph_operations(self.graph)))
 
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
-
-
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	import argparse
 	import datetime
 	import os

@@ -11,10 +11,7 @@ from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.features.goofspiel.IIGS3.sorting_permutation_by_public_states import get_permutation_by_public_states
 from src.utils.gambit_flattened_domains.loader import GambitLoaderCached
-from src.utils.other_utils import get_current_timestamp
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+from src.utils.other_utils import get_current_timestamp, activate_script
 
 
 def create_logger(log_lvl=logging.WARNING, log_to_file=True):
@@ -32,7 +29,7 @@ def create_logger(log_lvl=logging.WARNING, log_to_file=True):
 		)
 
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	import datetime
 	import os
 	import re

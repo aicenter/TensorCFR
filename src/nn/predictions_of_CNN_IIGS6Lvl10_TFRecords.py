@@ -2,12 +2,10 @@
 import logging
 
 from src.nn.Runner_CNN_IIGS6Lvl10_TFRecords import Runner_CNN_IIGS6Lvl10_TFRecords
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+from src.utils.other_utils import activate_script
 
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	logging.basicConfig(
 		format='%(asctime)s %(message)s',
 		level=logging.INFO

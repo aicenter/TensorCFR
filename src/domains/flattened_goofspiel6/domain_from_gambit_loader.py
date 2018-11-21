@@ -3,6 +3,7 @@ import os
 import tensorflow as tf
 
 from src.domains.FlattenedDomain import FlattenedDomain
+from src.utils.other_utils import activate_script
 
 
 def get_flattened_goofspiel6():
@@ -21,11 +22,7 @@ def get_flattened_goofspiel6():
 	return FlattenedDomain.init_from_hkl_file(path_to_domain_filename, domain_name="IIGS6_s1_bf_ft_gambit_flattened")
 
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
-
-
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	goofspiel6 = get_flattened_goofspiel6()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

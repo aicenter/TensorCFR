@@ -13,10 +13,9 @@ from src.nn.features.goofspiel.IIGS3.node_to_public_states_IIGS3_1_3_false_true_
 	get_sizes_of_public_states
 from src.nn.features.goofspiel.IIGS3.one_hot_rounds_cards_IIGS3_1_3_false_true_lvl7 import \
 	get_1hot_round_card_features_np
+from src.utils.other_utils import activate_script
 from src.utils.tf_utils import count_graph_operations
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
 FIXED_RANDOMNESS = False
 
 
@@ -324,7 +323,7 @@ class ConvNet_IIGS3Lvl7(AbstractNN):
 		return parser.parse_args()
 
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	import datetime
 	import os
 	import re

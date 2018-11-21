@@ -6,10 +6,10 @@
 import h5py
 import numpy as np
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+from src.utils.other_utils import activate_script
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+
+if __name__ == '__main__' and activate_script():
 	#
 	# Open an existing file using defaut properties.
 	#

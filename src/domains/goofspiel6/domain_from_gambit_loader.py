@@ -2,6 +2,7 @@ import os
 import tensorflow as tf
 
 from src.domains.Domain import Domain
+from src.utils.other_utils import activate_script
 
 
 def get_domain_goofspiel6():
@@ -20,10 +21,7 @@ def get_domain_goofspiel6():
 	return Domain.init_from_gambit_file(path_to_domain_filename, domain_name="IIGS6_s1_bf_ft_via_gambit")
 
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
-
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	goofspiel6 = get_domain_goofspiel6()
 	with tf.Session() as sess:
 		sess.run(tf.global_variables_initializer())

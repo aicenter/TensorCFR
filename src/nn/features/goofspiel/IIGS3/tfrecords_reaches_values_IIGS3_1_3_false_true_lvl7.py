@@ -8,9 +8,8 @@ import tensorflow as tf
 
 from src.nn.features.goofspiel.IIGS3.game_constants import FEATURES_BASENAME, FEATURE_COLUMNS, TARGET_COLUMNS, \
 	NAMES_OF_FEATURE_CSV
-from src.utils.other_utils import get_files_in_directory_recursively, get_features_dataframe
+from src.utils.other_utils import get_files_in_directory_recursively, get_features_dataframe, activate_script
 
-ACTIVATE_FILE = False
 
 FEATURES_PER_FILE = 100
 
@@ -136,5 +135,5 @@ def prepare_dataset():
 		return True
 
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	prepare_dataset()

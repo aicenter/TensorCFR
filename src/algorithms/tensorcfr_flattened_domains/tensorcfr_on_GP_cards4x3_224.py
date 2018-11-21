@@ -1,12 +1,9 @@
 from src.algorithms.tensorcfr_flattened_domains.TensorCFRFlattenedDomains import TensorCFRFlattenedDomains, get_cfr_strategies
 from src.domains.available_domains import get_domain_by_name
+from src.utils.other_utils import activate_script
 
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
-
-
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	import time
 	print("Local current time (start): {}".format(
 		time.asctime(

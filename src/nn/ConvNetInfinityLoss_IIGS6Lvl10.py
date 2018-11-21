@@ -7,6 +7,7 @@ import tensorflow as tf
 from src.commons.constants import SEED_FOR_TESTING
 from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
+from src.utils.other_utils import activate_script
 
 FIXED_RANDOMNESS = False
 
@@ -19,11 +20,7 @@ class ConvNetInfinityLoss_IIGS6Lvl10(ConvNet_IIGS6Lvl10):
 			self.print_operations_count()
 
 
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
-
-
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	import argparse
 	import datetime
 	import os

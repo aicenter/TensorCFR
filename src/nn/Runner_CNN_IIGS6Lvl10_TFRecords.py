@@ -8,10 +8,7 @@ import tensorflow as tf
 
 from src.nn.Runner_CNN_IIGS6Lvl10_NPZ import Runner_CNN_IIGS6Lvl10_NPZ
 from src.nn.data.DatasetFromTFRecord import DatasetFromTFRecord
-from src.utils.other_utils import get_files_in_directory_recursively
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+from src.utils.other_utils import get_files_in_directory_recursively, activate_script
 
 
 class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
@@ -119,7 +116,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords(Runner_CNN_IIGS6Lvl10_NPZ):
 			super().run_neural_net_from_ckpt(ckpt_dir, ckpt_basename)
 
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	runner = Runner_CNN_IIGS6Lvl10_TFRecords()
 	runner.run_neural_net(ckpt_every=2)
 

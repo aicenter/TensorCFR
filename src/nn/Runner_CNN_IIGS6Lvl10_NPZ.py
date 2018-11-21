@@ -6,9 +6,7 @@ import logging
 from src.nn.AbstractNNRunner import AbstractNNRunner
 from src.nn.ConvNet_IIGS6Lvl10 import ConvNet_IIGS6Lvl10
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+from src.utils.other_utils import activate_script
 
 
 class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
@@ -54,7 +52,7 @@ class Runner_CNN_IIGS6Lvl10_NPZ(AbstractNNRunner):
 		return self.network
 
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	logging.basicConfig(
 		format='%(asctime)s %(message)s',
 		level=logging.INFO

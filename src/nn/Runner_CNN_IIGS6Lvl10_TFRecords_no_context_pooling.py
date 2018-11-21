@@ -3,9 +3,7 @@
 # taken from https://github.com/ufal/npfl114/blob/3b35b431be3c84c2f2d51a4e2353d65cd30ee8fe/labs/04/mnist_competition.py
 from src.nn.FullyConvNet_IIGS6Lvl10_no_context_pooling import FullyConvNet_IIGS6Lvl10_no_context_pooling
 from src.nn.Runner_CNN_IIGS6Lvl10_TFRecords import Runner_CNN_IIGS6Lvl10_TFRecords
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+from src.utils.other_utils import activate_script
 
 
 class Runner_CNN_IIGS6Lvl10_TFRecords_no_context_pooling(Runner_CNN_IIGS6Lvl10_TFRecords):
@@ -15,7 +13,7 @@ class Runner_CNN_IIGS6Lvl10_TFRecords_no_context_pooling(Runner_CNN_IIGS6Lvl10_T
 		return self.network
 
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	runner = Runner_CNN_IIGS6Lvl10_TFRecords_no_context_pooling()
 	runner.run_neural_net(ckpt_every=2)
 

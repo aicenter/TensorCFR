@@ -3,17 +3,14 @@ import logging
 
 from src.nn.ConvNet_IIGS3Lvl7 import ConvNet_IIGS3Lvl7
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
-from src.utils.other_utils import get_current_timestamp
-
-# TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+from src.utils.other_utils import get_current_timestamp, activate_script
 
 
 def create_logger(log_lvl=logging.WARNING):
 	logging.basicConfig(format='%(asctime)s %(message)s', level=log_lvl)
 
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	import datetime
 	import os
 	import re

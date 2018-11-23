@@ -239,7 +239,7 @@ class DenseNet_IIGS6Lvl10(AbstractNN):
 
 
 # TODO: Get rid of `ACTIVATE_FILE` hotfix
-ACTIVATE_FILE = False
+ACTIVATE_FILE = True
 
 
 if __name__ == '__main__' and ACTIVATE_FILE:

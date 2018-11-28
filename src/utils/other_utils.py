@@ -14,6 +14,7 @@ def activate_script():
 		return False
 	return True
 
+
 def get_current_timestamp():
 	return datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 

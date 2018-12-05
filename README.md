@@ -96,10 +96,23 @@ Examples:
  - randomize_strategies
 
 Post-process dataset
-- Pandas: features.csv -> 1-hot encoding as tf.Constant -> concant to NN as input
+- Pandas: features.csv -> 1-hot encoding as tf.Constant -> concat to NN as input
 - npz
 - tfrecords
 
 ## NN
 
-- 
+- 1-hot-encoded features are replicated via `tf.tile()` in the NN. E.g. in `src/nn/ConvNet_IIGS6Lvl10.py`:
+
+```python
+self._one_hot_features_tf = tf.constant(
+    self._one_hot_features_np,
+    dtype=FLOAT_DTYPE,
+    name="one_hot_features"
+)
+self.tiled_features = tf.tile(
+    tf.expand_dims(self._one_hot_features_tf, axis=0),
+    multiples=[tf.shape(self.input_reaches)[0], 1, 1],
+    name="tiled_1hot_features"
+)
+```

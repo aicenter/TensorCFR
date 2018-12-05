@@ -78,6 +78,8 @@ Permutation:
 
 ## Dataset generation
 
+![Overview of CFR with fixed trunk strategies](./doc/cfr_fixed_trunk.png)
+
 Input to NN (per each node):
 - features (round results, player's cards, opponent's cards) -> 1-hot encoding
 - reach probability (given some initial strategy at the trunk of game tree)

@@ -49,3 +49,57 @@ _TFProfRoot (--/4.38KB, --/1.04ms, --/0us, --/1.04ms)
     domain_definitions/positive_cumulative_regrets_lvl1 (48B/48B, 7us/7us, 0us/0us, 7us/7us)
     domain_definitions/NotEqual_2 (9B/9B, 7us/7us, 0us/0us, 7us/7us)
 ```
+
+# How to use
+
+- what's input/output, parameters
+
+## CFR
+
+## CFR + NN
+`src/algorithms/tensorcfr_nn`
+`TensorCFR_NN(TensorCFRFixedTrunkStrategies)`
+
+Two ways:
+- online training: `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_online_training.py`
+- NN loaded from a checkpoint file: `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_from_ckpt.py`
+    - first traing
+    - store to `.ckpt` file
+    - load from this file (as saved model): `runner.restore_from_ckpt()`
+
+Prediction:
+- `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_from_ckpt.py`
+- `TensorCFR_NN.predict_equilibrial_values()`
+
+Permutation:
+- for grouping nodes/histories per public states <- they need to be next to each other (for `tf.reduce_mean`)
+- Pandas: `src/nn/features/goofspiel/IIGS6/sorting_permutation_by_public_states.py`
+    - radix sort/merge sort on round results: `get_permutation_by_public_states(verbose=False)`
+
+## Dataset generation
+
+Input to NN (per each node):
+- features (round results, player's cards, opponent's cards) -> 1-hot encoding
+- reach probability (given some initial strategy at the trunk of game tree)
+
+Output of NN (per each node):
+- expected value under (almost) Nash equilibrium strategy
+
+Seeds:
+- loop over seeds: `src/algorithms/tensorcfr_fixed_trunk_strategies/TensorCFRFixedTrunkStrategies.py`
+    `for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):`
+
+Examples:
+- `TensorCFR/src/nn/data/generate_data_of_IIGS6.py`
+/home/mathemage/beyond-deepstack/TensorCFR/src/nn/data/generate_data.py
+ - generate_dataset_single_session
+ - randomize_strategies
+
+Post-process dataset
+- Pandas: features.csv -> 1-hot encoding as tf.Constant -> concant to NN as input
+- npz
+- tfrecords
+
+## NN
+
+- 

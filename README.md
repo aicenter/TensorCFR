@@ -57,8 +57,10 @@ _TFProfRoot (--/4.38KB, --/1.04ms, --/0us, --/1.04ms)
 ## CFR
 
 ## CFR + NN
-`src/algorithms/tensorcfr_nn`
-`TensorCFR_NN(TensorCFRFixedTrunkStrategies)`
+
+![Overview of CFR integrated with an NN](./doc/cfr_nn.png)
+
+Located at `src/algorithms/tensorcfr_nn`, the class `TensorCFR_NN(TensorCFRFixedTrunkStrategies)` implements CFR with a NN.
 
 Two ways:
 - online training: `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_online_training.py`

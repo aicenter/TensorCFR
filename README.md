@@ -87,6 +87,9 @@ Permutation:
 - Pandas: `src/nn/features/goofspiel/IIGS6/sorting_permutation_by_public_states.py`
     - radix sort/merge sort on round results: `get_permutation_by_public_states(verbose=False)`
 
+### Experiments for TensorCFR_NN
+- `experiments/tensorcfr_nn/IIGS6Lvl10_FromCkptMetacentrum/1layer_tensorcfr_cnn_iigs6_td10_from_ckpt_argparse@meta.sh`
+
 ## Dataset generation
 
 ![Overview of CFR with fixed trunk strategies](./doc/cfr_fixed_trunk.png)

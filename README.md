@@ -120,3 +120,25 @@ self.tiled_features = tf.tile(
     name="tiled_1hot_features"
 )
 ```
+
+## Exploitability via CFR
+
+input/output or how to run it
+In `src/algorithms/tensorcfr_best_response`:
+- `class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies)`
+```python
+TensorCFR_BestResponse(
+			best_responder=PLAYER1,
+			trunk_strategies=self._trunk_strategies,
+			domain=domain,
+			trunk_depth=self._trunk_depth
+		)
+```
+
+- `class ExploitabilityByTensorCFR`
+
+Note: exploitability is average here, it is sum in gtlibrary
+
+E.g.
+- `exploitability_IIGS3_td7.py` 
+- `exploitability_IIGS6_entire_tree.py` 

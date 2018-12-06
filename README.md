@@ -56,6 +56,13 @@ _TFProfRoot (--/4.38KB, --/1.04ms, --/0us, --/1.04ms)
 
 ## CFR
 
+Versions:
+1. `src/algorithms/tensorcfr`
+2. `src/algorithms/tensorcfr_flattened_domains`: rewritten #1 but for flattened domains
+3. `src/algorithms/tensorcfr_fixed_trunk_strategies`: #2 with additional functionality
+4. `src/algorithms/tensorcfr_nn`: child class of #3, some methods overriden
+5. `src/algorithms/tensorcfr_best_response`: child class of #3, some methods overriden
+
 ## CFR + NN
 
 ![Overview of CFR integrated with an NN](./doc/cfr_nn.png)

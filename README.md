@@ -65,6 +65,18 @@ Versions:
 4. `src/algorithms/tensorcfr_nn`: child class of #3, some methods overriden (see the screenshot above)
 5. `src/algorithms/tensorcfr_best_response`: child class of #3, some methods overriden
 
+For good introduction of understanding TensorCFR, see `src/algorithms/tensorcfr/`:
+ 1. `topdown_reach_probabilities.py`
+ 2. `bottomup_expected_values.py` 
+ 3. `counterfactual_values.py`
+ 4. `regrets.py`
+ 5. `strategy_matched_to_regrets.py`
+ 6. `update_strategies.py`
+ 7. `swap_players.py`
+ 8. `node_strategies.py`
+ 9. `uniform_strategies.py`
+10. `cfr_step.py`
+
 ## CFR + NN
 
 ![Overview of CFR integrated with an NN](./doc/cfr_nn.png)

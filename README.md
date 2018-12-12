@@ -152,11 +152,11 @@ In `src/algorithms/tensorcfr_best_response`:
 - `class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies)`
 ```python
 TensorCFR_BestResponse(
-			best_responder=PLAYER1,
-			trunk_strategies=self._trunk_strategies,
-			domain=domain,
-			trunk_depth=self._trunk_depth
-		)
+    best_responder=PLAYER1,
+    trunk_strategies=self._trunk_strategies,
+    domain=domain,
+    trunk_depth=self._trunk_depth
+)
 ```
 
 - `class ExploitabilityByTensorCFR`

@@ -7,7 +7,7 @@ an implementation of [CFR+](https://arxiv.org/abs/1407.5042) with TensorFlow ten
 
 # How to use
 
-- what's input/output, parameters
+To see what is the input, output or parameters of each functionality, see the mentioned `*.py` files.
 
 ## CFR
 

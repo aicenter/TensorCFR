@@ -23,6 +23,8 @@ Versions:
 4. `src/algorithms/tensorcfr_nn`: child class of #3, some methods overriden (see the screenshot above)
 5. `src/algorithms/tensorcfr_best_response`: child class of #3, some methods overriden
 
+For usage of TensorCFR, see files `tensorcfr_*.py` in `src/algorithms/tensorcfr*/`:
+
 For good introduction of understanding TensorCFR, see `src/algorithms/tensorcfr/`:
  1. `topdown_reach_probabilities.py`
  2. `bottomup_expected_values.py` 

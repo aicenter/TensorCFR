@@ -82,6 +82,16 @@ self.tiled_features = tf.tile(
 )
 ```
 
+For examples of usages, in `src.nn`
+- `DenseNet_IIGS6Lvl10.py` - original version with shared fully-connected layers
+- `ConvNet_IIGS6Lvl10.py` - modified version of above, 1-D convolutional layer is used instead
+- `sanity_cnn.py`
+
+To run neural nets, see
+- `AbstractNNRunner.py`
+- `Runner_CNN_IIGS6Lvl10_NPZ.py`
+- `Runner_CNN_IIGS6Lvl10_TFRecords.py`
+
 ### Overview of NN
 
 ![Overview of NN](./doc/nn.png)

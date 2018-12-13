@@ -17,6 +17,9 @@ Versions:
 1. `src/algorithms/tensorcfr`
 2. `src/algorithms/tensorcfr_flattened_domains`: rewritten #1 but for flattened domains
 3. `src/algorithms/tensorcfr_fixed_trunk_strategies`: #2 with additional functionality
+    - no updates of infoset in trunk levels
+    - storing information/statistics (reach probabilities, expected values) at boundary level (between trunk and the bottom of the tree)
+    - etc.
 4. `src/algorithms/tensorcfr_nn`: child class of #3, some methods overriden (see the screenshot above)
 5. `src/algorithms/tensorcfr_best_response`: child class of #3, some methods overriden
 

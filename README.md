@@ -65,6 +65,8 @@ Post-process dataset
 
 ## NN
 
+![Overview of NN](./doc/nn.png)
+
 - 1-hot-encoded features are replicated via `tf.tile()` in the NN. E.g. in `src/nn/ConvNet_IIGS6Lvl10.py`:
 
 ```python

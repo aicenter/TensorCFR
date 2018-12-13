@@ -20,7 +20,7 @@ Versions:
     - no updates of infoset in trunk levels
     - storing information/statistics (reach probabilities, expected values) at boundary level (between trunk and the bottom of the tree)
     - etc.
-4. `src/algorithms/tensorcfr_nn`: child class of #3, some methods overriden (see the screenshot above)
+4. `src/algorithms/tensorcfr_nn`: child class of #3, some methods overriden (see the screenshot above and the section below)
 5. `src/algorithms/tensorcfr_best_response`: child class of #3, some methods overriden
 
 For usage of TensorCFR, see files `tensorcfr_*.py` in `src/algorithms/tensorcfr*/`:
@@ -36,31 +36,6 @@ For good introduction of understanding TensorCFR, see `src/algorithms/tensorcfr/
  8. `node_strategies.py`
  9. `uniform_strategies.py`
 10. `cfr_step.py`
-
-## CFR + NN
-
-![Overview of CFR integrated with an NN](./doc/cfr_nn.png)
-
-Located at `src/algorithms/tensorcfr_nn`, the class `TensorCFR_NN(TensorCFRFixedTrunkStrategies)` implements CFR with a NN.
-
-Two ways:
-- online training: `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_online_training.py`
-- NN loaded from a checkpoint file: `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_from_ckpt.py`
-    - first traing
-    - store to `.ckpt` file
-    - load from this file (as saved model): `runner.restore_from_ckpt()`
-
-Prediction:
-- `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_from_ckpt.py`
-- `TensorCFR_NN.predict_equilibrial_values()`
-
-Permutation:
-- for grouping nodes/histories per public states <- they need to be next to each other (for `tf.reduce_mean`)
-- Pandas: `src/nn/features/goofspiel/IIGS6/sorting_permutation_by_public_states.py`
-    - radix sort/merge sort on round results: `get_permutation_by_public_states(verbose=False)`
-
-### Experiments for TensorCFR_NN
-- `experiments/tensorcfr_nn/IIGS6Lvl10_FromCkptMetacentrum/1layer_tensorcfr_cnn_iigs6_td10_from_ckpt_argparse@meta.sh`
 
 ## Dataset generation
 
@@ -79,9 +54,9 @@ Seeds:
 
 Examples:
 - `TensorCFR/src/nn/data/generate_data_of_IIGS6.py`
-/home/mathemage/beyond-deepstack/TensorCFR/src/nn/data/generate_data.py
+`/home/mathemage/beyond-deepstack/TensorCFR/src/nn/data/generate_data.py`
  - generate_dataset_single_session
- - randomize_strategiesV
+ - randomize_strategies
 
 Post-process dataset
 - Pandas: features.csv -> 1-hot encoding as tf.Constant -> concat to NN as input
@@ -105,23 +80,48 @@ self.tiled_features = tf.tile(
 )
 ```
 
+## CFR + NN
+
+![Overview of CFR integrated with an NN](./doc/cfr_nn.png)
+
+Located at `src/algorithms/tensorcfr_nn`, the class `TensorCFR_NN(TensorCFRFixedTrunkStrategies)` implements CFR with a NN.
+
+Two ways:
+- online training: `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_online_training.py`
+- NN loaded from a checkpoint file: `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_from_ckpt.py`
+    - first training
+    - store to `.ckpt` file
+    - load from this file (as saved model): `runner.restore_from_ckpt()`
+
+Prediction:
+- `src/algorithms/tensorcfr_nn/tensorcfr_CNN_IIGS6_td10_from_ckpt.py`
+- `TensorCFR_NN.predict_equilibrial_values()`
+
+Permutation (which sorts histories by public information):
+- for grouping nodes/histories per public states <- they need to be next to each other (to be used by `tf.reduce_mean`)
+- Pandas: `src/nn/features/goofspiel/IIGS6/sorting_permutation_by_public_states.py`
+    - radix sort/merge sort on round results: `get_permutation_by_public_states(verbose=False)`
+
+### Experiments for TensorCFR_NN
+- `experiments/tensorcfr_nn/IIGS6Lvl10_FromCkptMetacentrum/1layer_tensorcfr_cnn_iigs6_td10_from_ckpt_argparse@meta.sh`
+
 ## Exploitability via CFR
 
-input/output or how to run it
 In `src/algorithms/tensorcfr_best_response`:
 - `class TensorCFR_BestResponse(TensorCFRFixedTrunkStrategies)`
-```python
-TensorCFR_BestResponse(
-    best_responder=PLAYER1,
-    trunk_strategies=self._trunk_strategies,
-    domain=domain,
-    trunk_depth=self._trunk_depth
-)
-```
+
+    ```python
+    TensorCFR_BestResponse(
+        best_responder=PLAYER1,
+        trunk_strategies=self._trunk_strategies,
+        domain=domain,
+        trunk_depth=self._trunk_depth
+    )
+    ```
 
 - `class ExploitabilityByTensorCFR`
 
-Note: exploitability is average here, it is sum in gtlibrary
+Note: Exploitability is the average of best response values here. In gtlibrary, the sum is used instead of average.
 
 E.g.
 - `exploitability_IIGS3_td7.py` 

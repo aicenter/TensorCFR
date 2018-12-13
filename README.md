@@ -65,7 +65,7 @@ Post-process dataset
 
 ## NN
 
-![Overview of NN](./doc/nn.png)
+![Overview of features for the NN](./doc/cfr_nn_features.png)
 
 - 1-hot-encoded features are replicated via `tf.tile()` in the NN. E.g. in `src/nn/ConvNet_IIGS6Lvl10.py`:
 
@@ -81,6 +81,10 @@ self.tiled_features = tf.tile(
     name="tiled_1hot_features"
 )
 ```
+
+### Overview of NN
+
+![Overview of NN](./doc/nn.png)
 
 ## CFR + NN
 

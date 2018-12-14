@@ -49,14 +49,18 @@ Output of NN (per each node):
 - expected value under (almost) Nash equilibrium strategy
 
 Seeds:
-- loop over seeds: `src/algorithms/tensorcfr_fixed_trunk_strategies/TensorCFRFixedTrunkStrategies.py`
-    `for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):`
+- TensorCFR loops over seeds to generate each sample of dataset:
+
+```python
+for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
+```
+(see `src/algorithms/tensorcfr_fixed_trunk_strategies/TensorCFRFixedTrunkStrategies.py`)
 
 Examples:
-- `TensorCFR/src/nn/data/generate_data_of_IIGS6.py`
-`/home/mathemage/beyond-deepstack/TensorCFR/src/nn/data/generate_data.py`
- - generate_dataset_single_session
- - randomize_strategies
+- `src/nn/data/generate_data_of_IIGS6.py`
+- `src/nn/data/generate_data.py`
+     - generate_dataset_single_session
+     - randomize_strategies
 
 Post-process dataset
 - Pandas: features.csv -> 1-hot encoding as tf.Constant -> concat to NN as input

@@ -4,7 +4,7 @@ from src.commons.constants import PROJECT_ROOT
 from src.nn.Runner_CNN_IIGS6Lvl10_NPZ import Runner_CNN_IIGS6Lvl10_NPZ
 from src.nn.data.DatasetFromNPZ import DatasetFromNPZ
 from src.nn.sanity_cnn import SanityCNN
-from src.utils.other_utils import get_current_timestamp
+from src.utils.other_utils import get_current_timestamp, activate_script
 
 
 class SanityCNNRunner(Runner_CNN_IIGS6Lvl10_NPZ):
@@ -19,8 +19,11 @@ class SanityCNNRunner(Runner_CNN_IIGS6Lvl10_NPZ):
 		self.argparser.add_argument("--epochs", default=10, type=int, help="Number of epochs.")
 		self.argparser.add_argument("--threads", default=1, type=int, help="Maximum number of threads to use.")
 		self.argparser.add_argument("--ckpt_every", default=2, type=float, help="Checkpoint every `ckpt_every` epochs.")
-		self.argparser.add_argument("--ckpt_dir", default=None, type=str, help="Checkpoint directory with model to restore.")
-		self.argparser.add_argument("--ckpt_basename", default=None, type=str, help="Checkpoint name with model to restore.")
+		self.argparser.add_argument("--ckpt_dir", default=None, type=str,
+		                            help="Checkpoint directory with model to restore.")
+		self.argparser.add_argument("--ckpt_basename", default=None, type=str,
+		                            help="Checkpoint name with model to restore.")
+
 	@staticmethod
 	def datasets_from_npz(dataset_directory, script_directory):
 		p = os.path.join(PROJECT_ROOT, 'src', 'nn', "sanity_dataset.npz")
@@ -67,8 +70,7 @@ class SanityCNNRunner(Runner_CNN_IIGS6Lvl10_NPZ):
 		self.evaluate_testset(testset)
 		self.showcase_predictions(trainset)
 
-ACTIVATE_FILE = False
 
-if __name__ == '__main__' and ACTIVATE_FILE:
+if __name__ == '__main__' and activate_script():
 	runner = SanityCNNRunner()
 	runner.run_neural_net()

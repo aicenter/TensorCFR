@@ -3,7 +3,9 @@ import argparse
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-if __name__ == '__main__':
+from src.utils.other_utils import activate_script
+
+if __name__ == '__main__' and activate_script():
 	# Example usage is in `tensorflow_log.sh`.
 	parser = argparse.ArgumentParser(description='Plot graphs from TensorFlow\'s log files. For example usage see \'tensorflow_log.sh\'.')
 	parser.add_argument('plot_by_TF_tag', default=None, type=str, help="Tensorflow's tag in TensorBoard. E.g. 'train/loss'.")

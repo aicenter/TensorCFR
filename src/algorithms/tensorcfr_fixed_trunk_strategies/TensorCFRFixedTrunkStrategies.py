@@ -796,9 +796,9 @@ class TensorCFRFixedTrunkStrategies:
 			)
 		return ranges["combined_players"]
 
-	def get_infoset_ranges_at_level(self,level=None):  # TODO unittest
+	def get_infoset_ranges_at_level(self,level=None):
 		"""
-		Get infoset reach probabilities at the bottom of the trunk (at `self.boundary_level`).
+		Get infoset ranges at certain level.
 
 		Returns:
 			A corresponding TensorFlow operation (from the computation graph).

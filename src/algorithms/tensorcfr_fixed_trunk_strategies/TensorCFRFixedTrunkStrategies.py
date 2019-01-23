@@ -1349,6 +1349,29 @@ class TensorCFRFixedTrunkStrategies:
 					self.session.run(self.cfr_step_op)
 				self.store_trunk_info(dataset_directory, dataset_for_nodes)
 
+	def generate_dataset_multiple_sessions_cf_sep_reach(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
+	                                       dataset_for_nodes=True, dataset_size=DEFAULT_DATASET_SIZE, dataset_directory="",
+	                                       dataset_seed_to_start=0):
+		self.set_up_dataset_generation(delay, total_steps)
+
+		for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
+			with tf.variable_scope("initialization"):
+				setup_messages, feed_dictionary = self.set_up_feed_dictionary(
+					method="random",
+					seed=self.dataset_seed
+				)
+				print("{} {}".format(
+					self.get_data_generation_header(),
+					setup_messages
+				))
+
+			with tf.Session(config=get_default_config_proto()) as self.session:
+				self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
+				for _ in range(total_steps):
+					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
+					self.session.run(self.cfr_step_op)
+				self.store_trunk_info_cf_sep_reach(dataset_directory, dataset_for_nodes)
+
 	def randomize_strategies(self, seed):  # TODO unittest
 		"""
 		Reset infoset strategies to random ones.

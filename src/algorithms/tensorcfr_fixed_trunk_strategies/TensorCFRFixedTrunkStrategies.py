@@ -1196,6 +1196,33 @@ class TensorCFRFixedTrunkStrategies:
 		)
 		csv_file.close()
 
+	def store_trunk_info_of_nodes_cf_sep_reach(self, dataset_basename, dataset_directory=""):
+		self.session.run(self.assign_avg_strategies_to_current_strategies())
+
+		if not os.path.exists(dataset_directory):
+			os.makedirs(dataset_directory)
+		dataset_subdirectory = "{}/{}".format(dataset_directory, dataset_basename)
+		if not os.path.exists(dataset_subdirectory):
+			os.makedirs(dataset_subdirectory)
+		csv_filename = '{}/nodal_dataset_seed_{}.csv'.format(dataset_subdirectory, self.dataset_seed)
+		print("{} Generating dataset at the trunk-boundary and storing to '{}'...".format(
+			self.get_data_generation_header(),
+			csv_filename,
+		))
+
+		csv_file = open(csv_filename, 'ab')  # binary mode for appending
+		trunk_info_of_nodes_cfv_sep_reaches = self.get_trunk_info_of_nodes_cfv_sep_reaches()
+
+		data_to_store = self.session.run(trunk_info_of_nodes_cfv_sep_reaches)
+
+		np.savetxt(
+			csv_file,
+			data_to_store,
+			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f",
+			header="nodal_index,\t node_to_infoset,\t nodal_reach_0,\t nodal_reach_1,\t nodal_reach_2,\t nodal_cf_value"
+		)
+		csv_file.close()
+
 	def log_after_all_steps(self):
 		print_tensors(self.session, self.average_infoset_strategies)
 

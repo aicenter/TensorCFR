@@ -8,9 +8,9 @@ if __name__ == '__main__' and activate_script():
 	domain = get_domain_by_name("IIGS6_gambit_flattened")
 	tensorcfr = TensorCFRFlattenedDomains(domain)
 	average_strategies = get_cfr_strategies(
-			total_steps=1000,
+			total_steps=10,
 			tensorcfr_instance=tensorcfr,
-			quiet=True,
+			quiet=False,
 			# profiling=True,
 			delay=0,
 			register_strategies_on_step=[0, 250, 500, 750, 999]

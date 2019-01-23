@@ -1310,6 +1310,18 @@ class TensorCFRFixedTrunkStrategies:
 					dataset_directory=dataset_directory
 				)
 
+	def store_trunk_info_cf_sep_reach(self, dataset_directory, dataset_for_nodes=True):
+		if self.trunk_depth > 0:
+			if dataset_for_nodes:
+				self.store_trunk_info_of_nodes_cf_sep_reach(
+					dataset_basename=self.basename_from_cfr_parameters,
+					dataset_directory=dataset_directory
+				)
+			else:
+				self.store_trunk_info_of_infosets(
+					dataset_basename=self.basename_from_cfr_parameters,
+					dataset_directory=dataset_directory
+				)
 	def set_up_dataset_generation(self, delay, total_steps):
 		self.set_up_cfr_parameters(delay, total_steps)
 		self.cfr_step_op = self.do_cfr_step()

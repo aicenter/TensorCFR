@@ -356,6 +356,20 @@ class TensorCFRFixedTrunkStrategies:
 					name="nodal_cf_value_lvl{}".format(level)
 				) for level in range(self.levels)
 			]
+	def get_nodal_cf_values_at_trunk_depth(self, for_player=None):  # TODO verify and write a unittest
+		"""
+		Compute counterfactual values of nodes by (tensor-)multiplying reach probabilities and expected values.
+
+		:param for_player: The player for which the counterfactual values are computed. These values are usually
+		 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
+		:return: The counterfactual values of nodes based on `current_infoset_strategies`.
+		"""
+		expected_values = self.get_expected_values(for_player=for_player)
+		reach_probabilities = self.get_nodal_reach_probabilities(for_player=for_player)
+		with tf.variable_scope("nodal_counterfactual_values"):
+			return tf.multiply(reach_probabilities[self.trunk_depth],
+					expected_values[self.trunk_depth],
+					name="nodal_cf_value_lvl{}".format(self.trunk_depth))
 
 	def get_infoset_cf_values(self, for_player=None):  # TODO verify and write a unittest
 		"""

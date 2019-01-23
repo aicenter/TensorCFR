@@ -278,6 +278,10 @@ class TensorCFRFixedTrunkStrategies:
 					)
 			return nodal_reach_probabilities
 
+	def get_separate_nodal_reach_probabilities(self):
+		return self.get_nodal_reach_probabilities(self,0),self.get_nodal_reach_probabilities(self,1),self.get_nodal_reach_probabilities(self,2)
+
+
 	def get_infoset_reach_probabilities(self, for_player=None):
 		"""
 		:param for_player: The player for which the reach probabilities are computed. These probabilities are usually

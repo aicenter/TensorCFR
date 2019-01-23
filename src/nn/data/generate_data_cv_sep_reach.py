@@ -5,7 +5,7 @@ from src.domains.available_domains import get_domain_by_name
 from src.utils.other_utils import get_dataset_parameters, print_dataset_parameters, get_current_timestamp
 
 
-def generate_data(domain_name, script_directory, trunk_depth):
+def generate_data_cv_sep_reach(domain_name, script_directory, trunk_depth):
 	dataset_parameters = get_dataset_parameters(domain_name)
 	print_dataset_parameters(dataset_parameters)
 	domain = get_domain_by_name(dataset_parameters["domain_name"])

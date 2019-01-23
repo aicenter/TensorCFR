@@ -279,7 +279,7 @@ class TensorCFRFixedTrunkStrategies:
 			return nodal_reach_probabilities
 
 	def get_separate_nodal_reach_probabilities(self):
-		return self.get_nodal_reach_probabilities(self,0),self.get_nodal_reach_probabilities(self,1),self.get_nodal_reach_probabilities(self,2)
+		return self.get_nodal_reach_probabilities(for_player=0),self.get_nodal_reach_probabilities(for_player=1),self.get_nodal_reach_probabilities(for_player=2)
 
 
 	def get_infoset_reach_probabilities(self, for_player=None):

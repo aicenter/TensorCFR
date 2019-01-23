@@ -1001,6 +1001,81 @@ class TensorCFRFixedTrunkStrategies:
 
 		return self.concat_trunk_info_tensors
 
+	def get_trunk_info_of_nodes_cfv_sep_reaches(self):
+		## get 3 separate reach probabilities for each player and get cf values
+
+		if self.trunk_depth <= 0:
+			return None
+
+		if self.concat_trunk_info_tensors is None:
+			inner_node_to_infoset = tf.expand_dims(
+				tf.cast(
+					self.domain.inner_node_to_infoset[self.boundary_level],
+					dtype=FLOAT_DTYPE
+				),
+				axis=-1,
+				name="node_to_infoset_lvl{}".format(self.boundary_level)
+			)
+
+			if self.nodal_enumerations is None:
+				self.nodal_enumerations = [
+					tf.range(
+						len(action_counts_in_a_level),
+						dtype=FLOAT_DTYPE,
+						name="nodal_enumeration_lvl{}".format(level)
+					)
+					for level, action_counts_in_a_level in enumerate(self.action_counts)
+				]
+
+			if self.inner_nodal_enumerations is None:
+				self.inner_nodal_enumerations = self.domain.mask_out_values_in_terminal_nodes(
+					self.nodal_enumerations,
+					name="nodal_enumeration"
+				)
+
+			inner_nodal_indices = tf.expand_dims(
+				self.inner_nodal_enumerations[self.boundary_level],
+				axis=-1,
+				name="inner_nodal_indices_lvl{}".format(self.boundary_level)
+			)
+
+			inner_nodal_reaches_for_player0 = tf.expand_dims(
+				self.get_separate_nodal_reach_probabilities()[0],
+				axis=-1,
+				name="inner_nodal_reaches_for_player0_lvl{}".format(self.boundary_level)
+			)
+			inner_nodal_reaches_for_player1 = tf.expand_dims(
+				self.get_separate_nodal_reach_probabilities()[1],
+				axis=-1,
+				name="inner_nodal_reaches_for_player1_lvl{}".format(self.boundary_level)
+			)
+			inner_nodal_reaches_for_player2 = tf.expand_dims(
+				self.get_separate_nodal_reach_probabilities()[2],
+				axis=-1,
+				name="inner_nodal_reaches_for_player2_lvl{}".format(self.boundary_level)
+			)
+
+			inner_nodal_cf_values = tf.expand_dims(
+				self.get_nodal_cf_values_at_trunk_depth(),
+				axis=-1,
+				name="inner_nodal_cf_values_lvl{}".format(self.boundary_level)
+			)
+
+			self.concat_trunk_info_tensors = tf.concat(
+				[
+					inner_nodal_indices,
+					inner_node_to_infoset,
+					inner_nodal_reaches_for_player0,
+					inner_nodal_reaches_for_player1,
+					inner_nodal_reaches_for_player2,
+					inner_nodal_cf_values
+				],
+				axis=-1,
+				name="concat_trunk_info_tensors_lvl{}".format(self.boundary_level)
+			)
+
+		return self.concat_trunk_info_tensors
+
 	def print_debug_info(self):
 		print_tensors(self.session, [self.domain.cfr_step])
 		print_tensors(self.session, self.domain.current_infoset_strategies + self.domain.positive_cumulative_regrets

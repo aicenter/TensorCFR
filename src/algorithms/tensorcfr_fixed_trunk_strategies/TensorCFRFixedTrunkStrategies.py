@@ -1039,21 +1039,18 @@ class TensorCFRFixedTrunkStrategies:
 				name="inner_nodal_indices_lvl{}".format(self.boundary_level)
 			)
 
-			inner_nodal_reaches_for_player0 = tf.expand_dims(
-				self.get_separate_nodal_reach_probabilities()[0],
-				axis=-1,
-				name="inner_nodal_reaches_for_player0_lvl{}".format(self.boundary_level)
-			)
-			inner_nodal_reaches_for_player1 = tf.expand_dims(
-				self.get_separate_nodal_reach_probabilities()[1],
-				axis=-1,
-				name="inner_nodal_reaches_for_player1_lvl{}".format(self.boundary_level)
-			)
-			inner_nodal_reaches_for_player2 = tf.expand_dims(
-				self.get_separate_nodal_reach_probabilities()[2],
-				axis=-1,
-				name="inner_nodal_reaches_for_player2_lvl{}".format(self.boundary_level)
-			)
+			# inner_nodal_reaches_for_player0 = tf.expand_dims(
+			# 	self.get_separate_nodal_reach_probabilities()[0],
+			# 	axis=-1,
+			# 	name="inner_nodal_reaches_for_player0_lvl{}".format(self.boundary_level)
+			#)
+
+			inner_nodal_reaches_for_player0 = self.get_separate_nodal_reach_probabilities()[0]
+
+			inner_nodal_reaches_for_player1 = self.get_separate_nodal_reach_probabilities()[1]
+
+			inner_nodal_reaches_for_player2 = self.get_separate_nodal_reach_probabilities()[2]
+
 
 			inner_nodal_cf_values = tf.expand_dims(
 				self.get_nodal_cf_values_at_trunk_depth(),

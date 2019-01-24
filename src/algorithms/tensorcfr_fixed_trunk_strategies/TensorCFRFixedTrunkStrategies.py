@@ -7,7 +7,7 @@ import re
 import numpy as np
 import tensorflow as tf
 
-from src.commons.constants import PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
+from src.commons.constants import CHANCE_PLAYER,PLAYER1, PLAYER2, DEFAULT_TOTAL_STEPS, FLOAT_DTYPE, \
 	DEFAULT_AVERAGING_DELAY, INT_DTYPE, DEFAULT_DATASET_SIZE, ALL_PLAYERS
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
@@ -279,7 +279,7 @@ class TensorCFRFixedTrunkStrategies:
 			return nodal_reach_probabilities
 
 	def get_separate_nodal_reach_probabilities(self):
-		return self.get_nodal_reach_probabilities(for_player=PLAYER1)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER2)[self.trunk_depth]\
+		return self.get_nodal_reach_probabilities(for_player=PLAYER1)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER1)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER2)[self.trunk_depth]\
 			,self.get_nodal_reach_probabilities()[self.trunk_depth]
 
 

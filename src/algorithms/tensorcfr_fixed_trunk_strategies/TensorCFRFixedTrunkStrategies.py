@@ -279,7 +279,7 @@ class TensorCFRFixedTrunkStrategies:
 			return nodal_reach_probabilities
 
 	def get_separate_nodal_reach_probabilities(self):
-		return self.get_nodal_reach_probabilities(for_player=PLAYER1)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER1)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER2)[self.trunk_depth]\
+		return self.get_nodal_reach_probabilities(for_player=CHANCE_PLAYER)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER1)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER2)[self.trunk_depth]\
 			,self.get_nodal_reach_probabilities()[self.trunk_depth]
 
 
@@ -1046,16 +1046,21 @@ class TensorCFRFixedTrunkStrategies:
 			# 	name="inner_nodal_reaches_for_player0_lvl{}".format(self.boundary_level)
 			#)
 
-			inner_nodal_reaches_for_player1 = tf.expand_dims(self.get_separate_nodal_reach_probabilities()[0],
+			inner_nodal_reaches_for_player0 = tf.expand_dims(self.get_separate_nodal_reach_probabilities()[0],
+			                                                 axis=-1,
+			                                                 name="inner_nodal_reaches_p1_lvl{}".format(self.boundary_level))
+			print("chance reach prob shape:{}".format(inner_nodal_reaches_for_player0.shape))
+
+			inner_nodal_reaches_for_player1 = tf.expand_dims(self.get_separate_nodal_reach_probabilities()[1],
 			                                                 axis=-1,name="inner_nodal_reaches_p1_lvl{}".format(self.boundary_level))
 			print("p1 reach prob shape:{}".format(inner_nodal_reaches_for_player1.shape))
 
-			inner_nodal_reaches_for_player2 = tf.expand_dims(self.get_separate_nodal_reach_probabilities()[1],
+			inner_nodal_reaches_for_player2 = tf.expand_dims(self.get_separate_nodal_reach_probabilities()[2],
 			                                                 axis=-1,name="inner_nodal_reaches_p2_lvl{}".format(self.boundary_level))
 
 			print("p2 reach prob shape:{}".format(inner_nodal_reaches_for_player2.shape))
 
-			inner_nodal_reaches_for_player_total = tf.expand_dims(self.get_separate_nodal_reach_probabilities()[2],
+			inner_nodal_reaches_for_player_total = tf.expand_dims(self.get_separate_nodal_reach_probabilities()[3],
 			                                                 axis=-1,name="inner_nodal_reaches_total_lvl{}".format(self.boundary_level))
 
 			print("total reach prob shape:{}".format(inner_nodal_reaches_for_player_total.shape))
@@ -1071,6 +1076,7 @@ class TensorCFRFixedTrunkStrategies:
 				[
 					inner_nodal_indices,
 					inner_node_to_infoset,
+					inner_nodal_reaches_for_player0,
 					inner_nodal_reaches_for_player1,
 					inner_nodal_reaches_for_player2,
 					inner_nodal_reaches_for_player_total,

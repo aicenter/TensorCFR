@@ -1065,6 +1065,12 @@ class TensorCFRFixedTrunkStrategies:
 
 			print("total reach prob shape:{}".format(inner_nodal_reaches_for_player_total.shape))
 
+			inner_nodal_reaches_for_player_noacting = tf.expand_dims(self.get_separate_nodal_reach_probabilities()[4],
+			                                                      axis=-1, name="inner_nodal_reaches_total_lvl{}".format(
+					self.boundary_level))
+
+			print("noacting reach prob shape:{}".format(inner_nodal_reaches_for_player_noacting.shape))
+
 
 			inner_nodal_cf_values = tf.expand_dims(
 				self.get_nodal_cf_values_at_trunk_depth(),

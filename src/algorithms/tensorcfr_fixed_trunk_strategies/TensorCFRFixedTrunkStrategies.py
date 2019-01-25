@@ -280,7 +280,7 @@ class TensorCFRFixedTrunkStrategies:
 
 	def get_separate_nodal_reach_probabilities(self):
 		return self.get_nodal_reach_probabilities(for_player=CHANCE_PLAYER)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER1)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER2)[self.trunk_depth]\
-			,self.get_nodal_reach_probabilities(for_player=ALL_PLAYERS)[self.trunk_depth]
+			,self.get_nodal_reach_probabilities(for_player=ALL_PLAYERS)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=NO_ACTING_PLAYER)[self.trunk_depth]
 
 
 	def get_infoset_reach_probabilities(self, for_player=None):
@@ -1080,6 +1080,7 @@ class TensorCFRFixedTrunkStrategies:
 					inner_nodal_reaches_for_player1,
 					inner_nodal_reaches_for_player2,
 					inner_nodal_reaches_for_player_total,
+					inner_nodal_reaches_for_player_noacting,
 					inner_nodal_cf_values
 				],
 				axis=-1,
@@ -1230,8 +1231,8 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			data_to_store,
-			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,,\t %+.6f",
-			header="nodal_index,\t node_to_infoset,\t nodal_reach_0,\t nodal_reach_1,\t nodal_reach_2,\t nodal_reach_total,\t nodal_cf_value"
+			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f",
+			header="nodal_index,\t node_to_infoset,\t nodal_reach_0,\t nodal_reach_1,\t nodal_reach_2,\t nodal_reach_total,\t nodal_reach_noacting,\t nodal_cf_value"
 		)
 		csv_file.close()
 

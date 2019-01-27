@@ -1453,6 +1453,24 @@ class TensorCFRFixedTrunkStrategies:
 					self.session.run(self.cfr_step_op)
 				self.store_trunk_info_cf_sep_reach(dataset_directory, dataset_for_nodes)
 
+	def print_strategies_single_session_cf_sep_reach(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
+	                                     dataset_size=DEFAULT_DATASET_SIZE,
+	                                    dataset_seed_to_start=0):
+		self.set_up_dataset_generation(delay, total_steps)
+
+		global_variables_initializer_op = tf.global_variables_initializer()
+		with tf.Session(config=get_default_config_proto()) as self.session:
+			for self.dataset_seed in range(dataset_seed_to_start, dataset_seed_to_start + dataset_size):
+				self.session.run(global_variables_initializer_op)
+				print(self.get_data_generation_header())
+				self.session.run(
+					self.randomize_strategies(seed=self.dataset_seed)
+				)
+				for _ in range(total_steps):
+					# TODO replace for-loop with `tf.while_loop`: https://www.tensorflow.org/api_docs/python/tf/while_loop
+					self.session.run(self.cfr_step_op)
+				self.show_strategies()
+
 	# TODO fix this generation method:
 	#   - uncomment print_debug_info()
 	#   - run

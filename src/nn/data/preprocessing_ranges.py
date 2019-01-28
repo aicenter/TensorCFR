@@ -43,6 +43,9 @@ def load_history_identifier():
 	import os
 	return read_csv(os.getcwd()+"/src/nn/data/history_identifier.csv",index_col=0)
 
+def load_seed_from_filepath(path=""):
+	return pd.read_csv(path,index_col=False)
+
 def filter_by_public_state(df=None,public_state=""):
 	if df is not None:
 		df = df.copy()

@@ -77,40 +77,43 @@ def seed_to_ranges_per_public_state(df=None):
 		print(public_state)
 		print(df_by_public_state.shape)
 
-		for player in [1,2]:
+		#for player in [1,2]:
 
-			for cards in mask.columns[3:]:
+		for cards in mask.columns[3:122]:
+			## for player 1
 
-				cards_df = filter_by_card_combination(df_by_public_state,cards,player)
-
-				if player == 1:
-
-					if cards_df.shape[0] == 1:
-
-						mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index==cards_df.index[0],3])
-
-					elif cards_df.shape[0] > 1:
-
-						mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 3])
-
-					elif cards_df.shape[0] == 0:
-
-						mask.loc["".join(tuple(map(str,public_state))), cards] = 0
-
-				elif player == 2:
-
-					if cards_df.shape[0] == 1:
-
-						mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
+			cards_df = filter_by_card_combination(df_by_public_state,cards,1)
 
 
-					elif cards_df.shape[0] > 1:
 
-						mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
+			if cards_df.shape[0] == 1:
 
-					elif cards_df.shape[0] == 0:
+				mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index==cards_df.index[0],3])
 
-						mask.loc["".join(tuple(map(str,public_state))), cards] = 0
+			elif cards_df.shape[0] > 1:
+
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 3])
+
+			elif cards_df.shape[0] == 0:
+
+				mask.loc["".join(tuple(map(str,public_state))), cards] = 0
+
+		for cards in mask.columns[123:]:
+
+			cards_df = filter_by_card_combination(df_by_public_state, cards, 2)
+
+			if cards_df.shape[0] == 1:
+
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
+
+
+			elif cards_df.shape[0] > 1:
+
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
+
+			elif cards_df.shape[0] == 0:
+
+				mask.loc["".join(tuple(map(str,public_state))), cards] = 0
 
 	return mask
 

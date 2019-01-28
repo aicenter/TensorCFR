@@ -43,8 +43,14 @@ def load_history_identifier():
 	import os
 	return read_csv(os.getcwd()+"/src/nn/data/history_identifier.csv",index_col=0)
 
-def filter_for_public_state(df=None,public_state=""):
-	pass
+def filter_by_public_state(df=None,public_states=""):
+	if df is not None:
+		df = df.copy()
+
+		if public_states.__len__() == 3:
+			return df.loc[(df["r1"]==int(public_states[0])) & (df["r2"]== int(public_states[1])) & (df["r3"]==int(public_states[2]))]
+	else:
+		return ValueError
 
 def sum_cfv_per_infoset(df=None):
 	pass

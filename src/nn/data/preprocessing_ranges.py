@@ -21,7 +21,7 @@ empty_input_matrix.iloc[:,0:3] = np.vstack([np.array([x,y,z]) for x in [0,1,-1] 
 
 #test = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/input_mask.csv",index_col=0)
 
-#dat = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/out/IIGS6_gambit_flattened/4_datasets/IIGS6_s1_bf_ft_gambit_flattened-2019-01-25_161617-ad=250,ts=1000,td=10/nodal_dataset_seed_0.csv",index_col=False)
+dat = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/out/IIGS6_gambit_flattened/4_datasets/IIGS6_s1_bf_ft_gambit_flattened-2019-01-25_161617-ad=250,ts=1000,td=10/nodal_dataset_seed_0.csv",index_col=False)
 
 #hist = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/features/goofspiel/IIGS6/IIGS6_1_6_false_true_lvl10.csv",names=["r1c1","r1c2","r2c1","r2c2","r3c1","r3c2","r1","r2","r3"])
 
@@ -43,21 +43,89 @@ def load_history_identifier():
 	import os
 	return read_csv(os.getcwd()+"/src/nn/data/history_identifier.csv",index_col=0)
 
-def filter_by_public_state(df=None,public_states=""):
+def filter_by_public_state(df=None,public_state=""):
 	if df is not None:
 		df = df.copy()
 
-		if public_states.__len__() == 3:
-			return df.loc[(df["r1"]==int(public_states[0])) & (df["r2"]== int(public_states[1])) & (df["r3"]==int(public_states[2]))]
+		if public_state.__len__() == 3:
+			return df.loc[(df["r1"]==int(public_state[0])) & (df["r2"]== int(public_state[1])) & (df["r3"]==int(public_state[2]))]
 	else:
 		return ValueError
+
+def filter_by_card_combination(df=None,cards=None,player=None):
+
+	if player == 1:
+		return df.loc[(df["r1c1"]==int(cards[1])) & (df["r2c1"]== int(cards[4])) & (df["r3c1"]==int(cards[7]))]
+
+	if player == 2:
+		return df.loc[(df["r1c2"]==int(cards[1])) & (df["r2c2"]== int(cards[4])) & (df["r3c2"]==int(cards[7]))]
+
+
+
+
 
 def sum_cfv_per_infoset(df=None):
 	pass
 
 def seed_to_ranges_per_public_state(df=None):
-	raw = load_input_mask()
+	mask = load_input_mask()
 	hist_id = load_history_identifier()
+	public_states_list = [(x,y,z) for x in [0, 1, -1] for y in [0, 1, -1] for z in [0, 1, -1]]
+	for public_state in public_states_list:
+
+		df_by_public_state = filter_by_public_state(hist_id,public_state)
+		print(public_state)
+		print(df_by_public_state.shape)
+
+		for player in [1,2]:
+
+			for cards in mask.columns[3:]:
+
+				cards_df = filter_by_card_combination(df_by_public_state,cards,player)
+
+				if player == 1:
+
+					if cards_df.shape[0] == 1:
+
+						mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index==cards_df.index[0],3])
+
+					elif cards_df.shape[0] > 1:
+
+						mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 3])
+
+					elif cards_df.shape[0] == 0:
+
+						mask.loc["".join(tuple(map(str,public_state))), cards] = 0
+
+				elif player == 2:
+
+					if cards_df.shape[0] == 1:
+
+						mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
+
+
+					elif cards_df.shape[0] > 1:
+
+						mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
+
+					elif cards_df.shape[0] == 0:
+
+						mask.loc["".join(tuple(map(str,public_state))), cards] = 0
+
+	return mask
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def build_training_data(data_dir=""):
 	file_list = get_files_in_directory_recursively(data_dir)

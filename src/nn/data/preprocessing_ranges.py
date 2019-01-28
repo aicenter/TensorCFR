@@ -67,7 +67,8 @@ def filter_by_card_combination(df=None,cards=None,player=None):
 
 
 
-def sum_cfv_per_infoset(df=None):
+def seed_to_sum_cfv_per_infoset(df=None):
+	#TODO
 	pass
 
 def seed_to_ranges_per_public_state(df=None):
@@ -135,3 +136,9 @@ def seed_to_ranges_per_public_state(df=None):
 
 def build_training_data(data_dir=""):
 	file_list = get_files_in_directory_recursively(data_dir)
+	seed_list = [load_seed_from_filepath(seed) for seed in file_list]
+
+	## x
+
+	x = np.vstack([seed_to_ranges_per_public_state(seed) for seed in seed_list])
+	y = np.vstack([seed_to_sum_cfv_per_infoset(seed) for seed in seed_list])

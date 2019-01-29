@@ -27,6 +27,7 @@ import os
 
 #test3 = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/history_identifier.csv",index_col=0)
 def get_files_in_directory_recursively(rootdir):
+	import os
 	filenames = []
 	for root, dirs, files in os.walk(rootdir):
 		for file in files:
@@ -71,6 +72,21 @@ def filter_by_card_combination(df=None,cards=None,player=None):
 def seed_to_sum_cfv_per_infoset(df=None):
 	#TODO
 	pass
+
+def calc_append_cfv_p2(dir=""):
+	import pandas as pd
+
+	file_list = get_files_in_directory_recursively(dir)
+	seed_list = [load_seed_from_filepath(seed) for seed in file_list]
+	i = 0
+	for seed in seed_list:
+		print("seed {}".format(i+1))
+		cfv_p2 = pd.Series((seed["nodal_cf_value"]/seed["nodal_reach_1"]) * (-1) * seed["nodal_reach_2"],name="nodal_cf_value_p2")
+		seed = pd.concat([seed,cfv_p2],axis=1)
+		seed.to_csv(path_or_buf=file_list[0])
+		i+=1
+
+
 
 def seed_to_ranges_per_public_state(df=None):
 	##TODO look into if we need sum of cfv of infosets

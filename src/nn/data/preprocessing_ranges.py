@@ -73,6 +73,8 @@ def seed_to_sum_cfv_per_infoset(df=None):
 	pass
 
 def seed_to_ranges_per_public_state(df=None):
+	##TODO look into if we need sum of cfv of infosets
+	## right now its only one cfv
 	mask = load_input_mask()
 	out = load_output_mask()
 	hist_id = load_history_identifier()

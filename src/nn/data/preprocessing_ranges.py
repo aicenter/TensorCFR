@@ -7,21 +7,21 @@ import os
 
 ## prepare input format for neural network: [public state,ranges player1, ranges player] for each public state
 
-public_states_list = ["{}{}{}".format(x,y,z) for x in [0,1,-1] for y in [0,1,-1] for z in [0,1,-1]]
+#public_states_list = ["{}{}{}".format(x,y,z) for x in [0,1,-1] for y in [0,1,-1] for z in [0,1,-1]]
 
 #card_combinations_list = [[a,b,c] for a in range(0,6) for b in range(0,6)for c in range(0,6)]
 
-card_combinations_list = list(permutations(range(0,6),3))
+#card_combinations_list = list(permutations(range(0,6),3))
 
-empty_input_matrix = pd.DataFrame(index=public_states_list,columns=["r1","r2","r3"]+card_combinations_list+card_combinations_list)
+#empty_input_matrix = pd.DataFrame(index=public_states_list,columns=["r1","r2","r3"]+card_combinations_list+card_combinations_list)
 
-empty_input_matrix.iloc[:,0:3] = np.vstack([np.array([x,y,z]) for x in [0,1,-1] for y in [0,1,-1] for z in [0,1,-1]])
+#empty_input_matrix.iloc[:,0:3] = np.vstack([np.array([x,y,z]) for x in [0,1,-1] for y in [0,1,-1] for z in [0,1,-1]])
 
 #empty_input_matrix.to_csv(path_or_buf="/home/dominik/PycharmProjects/TensorCFR/src/nn/data/input_mask.csv")
 
 #test = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/input_mask.csv",index_col=0)
 
-dat = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/out/IIGS6_gambit_flattened/4_datasets/IIGS6_s1_bf_ft_gambit_flattened-2019-01-25_161617-ad=250,ts=1000,td=10/nodal_dataset_seed_0.csv",index_col=False)
+#dat = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/out/IIGS6_gambit_flattened/4_datasets/IIGS6_s1_bf_ft_gambit_flattened-2019-01-25_161617-ad=250,ts=1000,td=10/nodal_dataset_seed_0.csv",index_col=False)
 
 #hist = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/features/goofspiel/IIGS6/IIGS6_1_6_false_true_lvl10.csv",names=["r1c1","r1c2","r2c1","r2c2","r3c1","r3c2","r1","r2","r3"])
 
@@ -81,8 +81,8 @@ def seed_to_ranges_per_public_state(df=None):
 	for public_state in public_states_list:
 
 		df_by_public_state = filter_by_public_state(hist_id,public_state)
-		print(public_state)
-		print(df_by_public_state.shape)
+		#print(public_state)
+		#print(df_by_public_state.shape)
 
 		#for player in [1,2]:
 
@@ -141,26 +141,28 @@ def seed_to_ranges_per_public_state(df=None):
 
 	return mask,full_out
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 def build_training_data(data_dir=""):
+	#import numpy as np
+	import pandas as pd
 	file_list = get_files_in_directory_recursively(data_dir)
 	seed_list = [load_seed_from_filepath(seed) for seed in file_list]
 
 	## x
+	x = pd.DataFrame()
+	y= pd.DataFrame()
+	i = 1
+	for seed in seed_list:
+		print("seed:{} of {}".format(i,file_list.__len__()))
 
-	x = np.vstack([seed_to_ranges_per_public_state(seed)[0] for seed in seed_list])
-	y = np.vstack([seed_to_sum_cfv_per_infoset(seed)[1] for seed in seed_list])
+		if x.shape == (0,0):
+
+			x,y = seed_to_ranges_per_public_state(seed)
+
+		else:
+			new_x,new_y = seed_to_ranges_per_public_state(seed)
+			x = pd.concat([x,new_x],axis=0)
+			y = pd.concat([y,new_y],axis=0)
+
+		i+= 1
 
 	return x,y

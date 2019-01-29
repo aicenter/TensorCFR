@@ -83,7 +83,7 @@ def calc_append_cfv_p2(dir=""):
 		print("seed {}".format(i+1))
 		cfv_p2 = pd.Series((seed["\t nodal_cf_value"]/seed["\t nodal_reach_1"]) * (-1) * seed["\t nodal_reach_2"],name="\t nodal_cf_value_p2")
 		seed = pd.concat([seed,cfv_p2],axis=1)
-		seed.to_csv(path_or_buf=file_list[0])
+		seed.to_csv(path_or_buf=file_list[i])
 		i+=1
 
 def seed_to_ranges_per_public_state(df=None):

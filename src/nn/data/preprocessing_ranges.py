@@ -74,8 +74,10 @@ def seed_to_sum_cfv_per_infoset(df=None):
 
 def seed_to_ranges_per_public_state(df=None):
 	mask = load_input_mask()
+	out = load_output_mask()
 	hist_id = load_history_identifier()
 	public_states_list = [(x,y,z) for x in [0, 1, -1] for y in [0, 1, -1] for z in [0, 1, -1]]
+
 	for public_state in public_states_list:
 
 		df_by_public_state = filter_by_public_state(hist_id,public_state)
@@ -84,24 +86,34 @@ def seed_to_ranges_per_public_state(df=None):
 
 		#for player in [1,2]:
 
-		for cards in mask.columns[3:122]:
+		for cards in mask.columns[3:123]:
 			## for player 1
 
 			cards_df = filter_by_card_combination(df_by_public_state,cards,1)
-
+			#print("infoset {} contains {} histories".format(cards,cards_df.shape[0]))
 
 
 			if cards_df.shape[0] == 1:
 
+				# puts range of p1 in of infoset "cards" of public state "public_state" into mask
+
 				mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index==cards_df.index[0],3])
+
+				# puts cf of p1 in of infoset "cards" of public state "public_state" into out
+
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 7])
 
 			elif cards_df.shape[0] > 1:
 
 				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 3])
 
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 7])
+
 			elif cards_df.shape[0] == 0:
 
 				mask.loc["".join(tuple(map(str,public_state))), cards] = 0
+
+				out.loc["".join(tuple(map(str, public_state))), cards] = 0
 
 		for cards in mask.columns[123:]:
 
@@ -120,7 +132,14 @@ def seed_to_ranges_per_public_state(df=None):
 
 				mask.loc["".join(tuple(map(str,public_state))), cards] = 0
 
-	return mask
+
+	out_minus = -out
+
+	out_minus.columns = [column_name+".1" for column_name in out_minus.columns]
+
+	full_out = pd.concat([out,out_minus],axis=1)
+
+	return mask,full_out
 
 
 

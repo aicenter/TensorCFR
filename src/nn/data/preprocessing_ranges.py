@@ -81,7 +81,7 @@ def calc_append_cfv_p2(dir=""):
 	i = 0
 	for seed in seed_list:
 		print("seed {}".format(i+1))
-		cfv_p2 = pd.Series((seed["nodal_cf_value"]/seed["nodal_reach_1"]) * (-1) * seed["nodal_reach_2"],name="nodal_cf_value_p2")
+		cfv_p2 = pd.Series((seed["\t nodal_cf_value"]/seed["\t nodal_reach_1"]) * (-1) * seed["\t nodal_reach_2"],name="\t nodal_cf_value_p2")
 		seed = pd.concat([seed,cfv_p2],axis=1)
 		seed.to_csv(path_or_buf=file_list[0])
 		i+=1

@@ -86,8 +86,6 @@ def calc_append_cfv_p2(dir=""):
 		seed.to_csv(path_or_buf=file_list[0])
 		i+=1
 
-
-
 def seed_to_ranges_per_public_state(df=None):
 	##TODO look into if we need sum of cfv of infosets
 	## right now its only one cfv
@@ -141,23 +139,29 @@ def seed_to_ranges_per_public_state(df=None):
 
 				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
 
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 8])
+
 
 			elif cards_df.shape[0] > 1:
 
 				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
 
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 8])
+
 			elif cards_df.shape[0] == 0:
 
 				mask.loc["".join(tuple(map(str,public_state))), cards] = 0
 
+				out.loc["".join(tuple(map(str, public_state))), cards] = 0
 
-	out_minus = -out
 
-	out_minus.columns = [column_name+".1" for column_name in out_minus.columns]
+	#out_minus = -out
 
-	full_out = pd.concat([out,out_minus],axis=1)
+	#out_minus.columns = [column_name+".1" for column_name in out_minus.columns]
 
-	return mask,full_out
+	#full_out = pd.concat([out,out_minus],axis=1)
+
+	return mask,out
 
 def build_training_data(data_dir=""):
 	#import numpy as np

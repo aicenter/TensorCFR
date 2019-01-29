@@ -38,6 +38,11 @@ def load_input_mask():
 	import os
 	return read_csv(os.getcwd()+"/src/nn/data/input_mask.csv",index_col=0)
 
+def load_output_mask():
+	from pandas import read_csv
+	import os
+	return read_csv(os.getcwd()+"/src/nn/data/output_mask.csv",index_col=0)
+
 def load_history_identifier():
 	from pandas import read_csv
 	import os
@@ -62,10 +67,6 @@ def filter_by_card_combination(df=None,cards=None,player=None):
 
 	if player == 2:
 		return df.loc[(df["r1c2"]==int(cards[1])) & (df["r2c2"]== int(cards[4])) & (df["r3c2"]==int(cards[7]))]
-
-
-
-
 
 def seed_to_sum_cfv_per_infoset(df=None):
 	#TODO
@@ -140,5 +141,7 @@ def build_training_data(data_dir=""):
 
 	## x
 
-	x = np.vstack([seed_to_ranges_per_public_state(seed) for seed in seed_list])
-	y = np.vstack([seed_to_sum_cfv_per_infoset(seed) for seed in seed_list])
+	x = np.vstack([seed_to_ranges_per_public_state(seed)[0] for seed in seed_list])
+	y = np.vstack([seed_to_sum_cfv_per_infoset(seed)[1] for seed in seed_list])
+
+	return x,y

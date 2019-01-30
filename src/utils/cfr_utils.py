@@ -274,6 +274,22 @@ def distribute_strategies_to_inner_nodes(infoset_strategies, node_to_infoset, ma
 		acting_players=acting_players
 	)
 
+def distribute_range_strategies_to_inner_nodes(infoset_strategies, node_to_infoset, mask_of_inner_nodes, name,
+                                         for_player=None, acting_players=None):
+
+	inner_node_to_infoset = tf.boolean_mask(
+		node_to_infoset,
+		mask=mask_of_inner_nodes,
+		name="inner_node_to_infoset_for_{}".format(name)
+	)
+	return distribute_range_strategies_to_nodes(
+		infoset_strategies=infoset_strategies,
+		node_to_infoset=inner_node_to_infoset,
+		name=name,
+		for_player=for_player,
+		acting_players=acting_players
+	)
+
 
 if __name__ == '__main__':
 	"""

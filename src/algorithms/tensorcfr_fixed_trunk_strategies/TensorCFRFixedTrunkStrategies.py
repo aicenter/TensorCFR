@@ -12,7 +12,7 @@ from src.commons.constants import CHANCE_PLAYER,PLAYER1, PLAYER2,NO_ACTING_PLAYE
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import flatten_strategies_via_action_counts, get_action_and_infoset_values, \
-	distribute_strategies_to_inner_nodes
+	distribute_strategies_to_inner_nodes, distribute_range_strategies_to_nodes
 from src.utils.other_utils import get_current_timestamp
 from src.utils.tf_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize, \
 	get_default_config_proto
@@ -141,6 +141,28 @@ class TensorCFRFixedTrunkStrategies:
 			)
 			return flattened_node_cf_strategies
 
+	def get_node_range_strategies(self, for_player=None):
+		if for_player is None:
+			for_player = self.domain.current_updating_player
+		with tf.variable_scope("node_cf_strategies"):
+			# TODO generate node_cf_strategies_* with tf.where on node_strategies
+			node_range_strategies = [
+				distribute_range_strategies_to_nodes(
+					self.domain.current_infoset_strategies[level],
+					self.domain.node_to_infoset[level],
+					self.domain.mask_of_inner_nodes[level],
+					for_player=for_player,
+					acting_players=self.domain.infoset_acting_players[level],
+					name="node_range_strategies_lvl{}".format(level)
+				) for level in range(self.acting_depth)
+			]
+			flattened_node_range_strategies = flatten_strategies_via_action_counts(
+				node_range_strategies,
+				self.action_counts,
+				basename="nodal_cf_strategies"
+			)
+			return flattened_node_range_strategies
+
 	def show_strategies(self):
 		node_strategies = self.get_node_strategies()
 		node_cf_strategies = self.get_node_cf_strategies()
@@ -249,6 +271,37 @@ class TensorCFRFixedTrunkStrategies:
 			`current_updating_player` by default.
 		:return: The reach probabilities of nodes based on `current_infoset_strategies`.
 		"""
+		nodal_strategies = self.get_node_cf_strategies(for_player=for_player)
+		if for_player == ALL_PLAYERS:
+			nodal_strategies = self.get_node_strategies()
+			player_name = "all_players"
+		elif for_player in [PLAYER1, PLAYER2]:
+			player_name = "player{}".format(for_player)
+		else:
+			player_name = "current_player"
+
+		with tf.variable_scope("nodal_reach_probabilities_for_{}".format(player_name)):
+			nodal_reach_probabilities = [None] * self.levels
+			with tf.variable_scope("level0"):
+				nodal_reach_probabilities[0] = tf.expand_dims(
+					self.domain.reach_probability_of_root_node,
+					axis=0
+				)
+			for level in range(1, self.levels):
+				with tf.variable_scope("level{}".format(level)):
+					nodal_reach_probabilities[level] = tf.multiply(
+						tf.gather(
+							nodal_reach_probabilities[level - 1],
+							indices=self.domain.parents[level],
+							name="children_reach_probabilities_lvl{}".format(level)
+						),
+						nodal_strategies[level],
+						name="nodal_reach_probabilities_lvl{}".format(level)
+					)
+			return nodal_reach_probabilities
+
+	def get_nodal_range_probabilities(self, for_player=None):
+
 		nodal_strategies = self.get_node_cf_strategies(for_player=for_player)
 		if for_player == ALL_PLAYERS:
 			nodal_strategies = self.get_node_strategies()
@@ -1456,6 +1509,8 @@ class TensorCFRFixedTrunkStrategies:
 	def print_strategies_single_session_cf_sep_reach(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY,
 	                                     dataset_size=DEFAULT_DATASET_SIZE,
 	                                    dataset_seed_to_start=0):
+
+
 		self.set_up_dataset_generation(delay, total_steps)
 
 		global_variables_initializer_op = tf.global_variables_initializer()

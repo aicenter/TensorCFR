@@ -300,7 +300,7 @@ class TensorCFRFixedTrunkStrategies:
 					)
 			return nodal_reach_probabilities
 
-	def get_nodal_range_probabilities(self, for_player=None):
+	def get_nodal_range_probabilities(self, for_player=None,for_level=None):
 
 		nodal_strategies = self.get_node_range_strategies(for_player=for_player)
 
@@ -322,7 +322,11 @@ class TensorCFRFixedTrunkStrategies:
 						nodal_strategies[level],
 						name="nodal_range_probabilities_lvl{}".format(level)
 					)
-			return nodal_range_probabilities
+
+			if for_level is None:
+				return nodal_range_probabilities
+			else:
+				return nodal_range_probabilities[for_level]
 
 	def get_separate_nodal_reach_probabilities(self):
 		return self.get_nodal_reach_probabilities(for_player=CHANCE_PLAYER)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER1)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER2)[self.trunk_depth]\

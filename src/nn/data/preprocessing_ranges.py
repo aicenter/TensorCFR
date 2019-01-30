@@ -74,7 +74,14 @@ def seed_to_sum_cfv_per_infoset(df=None):
 	pass
 
 def calc_append_cfv_p2(dir=""):
+
+	import os
 	import pandas as pd
+
+	if not os._exists(dir):
+		raise ValueError
+
+	else:
 
 	file_list = get_files_in_directory_recursively(dir)
 	seed_list = [load_seed_from_filepath(seed) for seed in file_list]

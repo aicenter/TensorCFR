@@ -144,7 +144,7 @@ class TensorCFRFixedTrunkStrategies:
 	def get_node_range_strategies(self, for_player=None):
 		if for_player is None:
 			for_player = self.domain.current_updating_player
-		with tf.variable_scope("node_cf_strategies"):
+		with tf.variable_scope("node_range_strategies"):
 			# TODO generate node_cf_strategies_* with tf.where on node_strategies
 			node_range_strategies = [
 				distribute_range_strategies_to_nodes(
@@ -159,7 +159,7 @@ class TensorCFRFixedTrunkStrategies:
 			flattened_node_range_strategies = flatten_strategies_via_action_counts(
 				node_range_strategies,
 				self.action_counts,
-				basename="nodal_cf_strategies"
+				basename="nodal_range_strategies"
 			)
 			return flattened_node_range_strategies
 

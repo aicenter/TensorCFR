@@ -52,7 +52,7 @@ def load_history_identifier():
 def load_seed_from_filepath(path=""):
 	return pd.read_csv(path,index_col=False)
 
-def filter_by_public_state(df=None,public_state=""):
+def filter_by_public_state(df=None,public_state=None):
 	if df is not None:
 		df = df.copy()
 
@@ -83,15 +83,15 @@ def calc_append_cfv_p2(dir=""):
 
 	else:
 
-	file_list = get_files_in_directory_recursively(dir)
-	seed_list = [load_seed_from_filepath(seed) for seed in file_list]
-	i = 0
-	for seed in seed_list:
-		print("seed {}".format(i+1))
-		cfv_p2 = pd.Series((seed["\t nodal_cf_value"]/seed["\t nodal_reach_1"]) * (-1) * seed["\t nodal_reach_2"],name="\t nodal_cf_value_p2")
-		seed = pd.concat([seed,cfv_p2],axis=1)
-		seed.to_csv(path_or_buf=file_list[i])
-		i+=1
+		file_list = get_files_in_directory_recursively(dir)
+		seed_list = [load_seed_from_filepath(seed) for seed in file_list]
+		i = 0
+		for seed in seed_list:
+			print("seed {}".format(i+1))
+			cfv_p2 = pd.Series((seed["\t nodal_cf_value"]/seed["\t nodal_reach_1"]) * (-1) * seed["\t nodal_reach_2"],name="\t nodal_cf_value_p2")
+			seed = pd.concat([seed,cfv_p2],axis=1)
+			seed.to_csv(path_or_buf=file_list[i])
+			i+=1
 
 def seed_to_ranges_per_public_state(df=None):
 	##TODO look into if we need sum of cfv of infosets
@@ -120,17 +120,17 @@ def seed_to_ranges_per_public_state(df=None):
 
 				# puts range of p1 in of infoset "cards" of public state "public_state" into mask
 
-				mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index==cards_df.index[0],9])
+				mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index == cards_df.index[0],10])
 
 				# puts cf of p1 in of infoset "cards" of public state "public_state" into out
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 7])
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 8])
 
 			elif cards_df.shape[0] > 1:
 
-				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 9])
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 10])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 7])
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 8])
 
 			elif cards_df.shape[0] == 0:
 
@@ -144,16 +144,16 @@ def seed_to_ranges_per_public_state(df=None):
 
 			if cards_df.shape[0] == 1:
 
-				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 10])
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 11])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 12])
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 13])
 
 
 			elif cards_df.shape[0] > 1:
 
-				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 10])
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 11])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 12])
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 13])
 
 			elif cards_df.shape[0] == 0:
 

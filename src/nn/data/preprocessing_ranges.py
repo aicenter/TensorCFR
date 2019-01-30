@@ -113,7 +113,7 @@ def seed_to_ranges_per_public_state(df=None):
 
 				# puts range of p1 in of infoset "cards" of public state "public_state" into mask
 
-				mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index==cards_df.index[0],3])
+				mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index==cards_df.index[0],9])
 
 				# puts cf of p1 in of infoset "cards" of public state "public_state" into out
 
@@ -121,7 +121,7 @@ def seed_to_ranges_per_public_state(df=None):
 
 			elif cards_df.shape[0] > 1:
 
-				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 3])
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 9])
 
 				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 7])
 
@@ -137,16 +137,16 @@ def seed_to_ranges_per_public_state(df=None):
 
 			if cards_df.shape[0] == 1:
 
-				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 10])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 8])
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 12])
 
 
 			elif cards_df.shape[0] > 1:
 
-				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 4])
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 10])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 8])
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 12])
 
 			elif cards_df.shape[0] == 0:
 

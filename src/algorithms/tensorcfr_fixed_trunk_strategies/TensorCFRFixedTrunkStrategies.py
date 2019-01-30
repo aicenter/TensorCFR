@@ -1310,8 +1310,8 @@ class TensorCFRFixedTrunkStrategies:
 		np.savetxt(
 			csv_file,
 			data_to_store,
-			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f",
-			header="nodal_index,\t node_to_infoset,\t nodal_reach_0,\t nodal_reach_1,\t nodal_reach_2,\t nodal_reach_total,\t nodal_reach_noacting,\t nodal_cf_value"
+			fmt="%7d,\t %7d,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f,\t %+.6f",
+			header="nodal_index,\t node_to_infoset,\t nodal_reach_0,\t nodal_reach_1,\t nodal_reach_2,\t nodal_reach_total,\t nodal_reach_noacting,\t nodal_cf_value,\t reach_0,\t reach_1,\t reach_2,\t nodal_exp_value"
 		)
 		csv_file.close()
 

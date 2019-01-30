@@ -1128,15 +1128,18 @@ class TensorCFRFixedTrunkStrategies:
 				name="inner_nodal_cf_values_lvl{}".format(self.boundary_level)
 			)
 
-			inner_nodal_range_for_player0 = self.get_nodal_range_probabilities(for_player=0)[self.trunk_depth]
-			print("p20 reach prob shape:{}".format(inner_nodal_range_for_player0.shape))
+			inner_nodal_range_for_player0 = tf.expand_dims(self.get_nodal_range_probabilities(for_player=0,for_level=self.trunk_depth),
+			                                               axis=-1,name="range_p0_lvl{}".format(self.boundary_level))
+			print("p0 reach prob shape:{}".format(inner_nodal_range_for_player0.shape))
 
 
-			inner_nodal_range_for_player1 = self.get_nodal_range_probabilities(for_player=1)[self.trunk_depth]
+			inner_nodal_range_for_player1 = tf.expand_dims(self.get_nodal_range_probabilities(for_player=1,for_level=self.trunk_depth),
+			                                               axis=-1,name="range_p1_lvl{}".format(self.boundary_level))
 
 			print("p1 reach prob shape:{}".format(inner_nodal_range_for_player1.shape))
 
-			inner_nodal_range_for_player2 = self.get_nodal_range_probabilities(for_player=2)[self.trunk_depth]
+			inner_nodal_range_for_player2 = tf.expand_dims(self.get_nodal_range_probabilities(for_player=2,for_level=self.trunk_depth),
+			                                               axis=-1,name="range_p2_lvl{}".format(self.boundary_level))
 
 			print("p2 reach prob shape:{}".format(inner_nodal_range_for_player2.shape))
 

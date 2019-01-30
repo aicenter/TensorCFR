@@ -25,6 +25,8 @@ def huber_loss(y_true, y_pred, clip_delta=1.0):
 # # then you create the trainign data with
 # x,y = preprocessing_ranges.build_training_data('your directory of seeds')
 
+## TODO figure out how to save the keras model to a tensorflow graph
+
 
 
 #x,y = preprocessing_ranges.build_training_data(os.getcwd()+"/src/nn/data/out/300119_seeds")

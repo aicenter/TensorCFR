@@ -302,34 +302,27 @@ class TensorCFRFixedTrunkStrategies:
 
 	def get_nodal_range_probabilities(self, for_player=None):
 
-		nodal_strategies = self.get_node_cf_strategies(for_player=for_player)
-		if for_player == ALL_PLAYERS:
-			nodal_strategies = self.get_node_strategies()
-			player_name = "all_players"
-		elif for_player in [PLAYER1, PLAYER2]:
-			player_name = "player{}".format(for_player)
-		else:
-			player_name = "current_player"
+		nodal_strategies = self.get_node_range_strategies(for_player=for_player)
 
-		with tf.variable_scope("nodal_reach_probabilities_for_{}".format(player_name)):
-			nodal_reach_probabilities = [None] * self.levels
+		with tf.variable_scope("nodal_range_probabilities_for_{}".format(for_player)):
+			nodal_range_probabilities = [None] * self.levels
 			with tf.variable_scope("level0"):
-				nodal_reach_probabilities[0] = tf.expand_dims(
+				nodal_range_probabilities[0] = tf.expand_dims(
 					self.domain.reach_probability_of_root_node,
 					axis=0
 				)
 			for level in range(1, self.levels):
 				with tf.variable_scope("level{}".format(level)):
-					nodal_reach_probabilities[level] = tf.multiply(
+					nodal_range_probabilities[level] = tf.multiply(
 						tf.gather(
-							nodal_reach_probabilities[level - 1],
+							nodal_range_probabilities[level - 1],
 							indices=self.domain.parents[level],
-							name="children_reach_probabilities_lvl{}".format(level)
+							name="children_range_probabilities_lvl{}".format(level)
 						),
 						nodal_strategies[level],
-						name="nodal_reach_probabilities_lvl{}".format(level)
+						name="nodal_range_probabilities_lvl{}".format(level)
 					)
-			return nodal_reach_probabilities
+			return nodal_range_probabilities
 
 	def get_separate_nodal_reach_probabilities(self):
 		return self.get_nodal_reach_probabilities(for_player=CHANCE_PLAYER)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER1)[self.trunk_depth],self.get_nodal_reach_probabilities(for_player=PLAYER2)[self.trunk_depth]\

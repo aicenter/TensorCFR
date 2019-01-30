@@ -44,11 +44,7 @@ def distribute_strategies_to_nodes(infoset_strategies, node_to_infoset, name, fo
 
 def distribute_range_strategies_to_nodes(infoset_strategies, node_to_infoset, name, for_player=None, acting_players=None):
 
-
 	strategies = tf.where(condition=tf.equal(acting_players, for_player),x=infoset_strategies,y=tf.ones_like(infoset_strategies))
-
-	#strategies = tf.where(condition=tf.equal(acting_players, for_player), x=tf.ones_like(infoset_strategies),
-	                      #y=infoset_strategies)
 
 	return tf.gather(params=strategies, indices=node_to_infoset, name=name)
 

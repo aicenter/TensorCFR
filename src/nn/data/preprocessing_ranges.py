@@ -78,7 +78,6 @@ def filter_by_card_combination(df=None,cards=None,player=None):
 
 	return cards_filtered
 
-
 def seed_to_sum_cfv_per_infoset(df=None):
 	#TODO
 	pass
@@ -190,12 +189,11 @@ def build_training_data(data_dir="",num=None):
 	x = pd.DataFrame()
 	y= pd.DataFrame()
 	i = 1
+	max = seed_list.__len__()
 
 	if num is not None and num is int:
 		max = num
 
-	elif num is None:
-		max = seed_list.__len__()
 
 	for seed in seed_list[:max]:
 		print("seed:{} of {}".format(i,file_list.__len__()))

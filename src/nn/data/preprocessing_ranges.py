@@ -21,7 +21,7 @@ import os
 
 #test = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/input_mask.csv",index_col=0)
 
-#dat = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/out/IIGS6_gambit_flattened/4_datasets/IIGS6_s1_bf_ft_gambit_flattened-2019-01-25_161617-ad=250,ts=1000,td=10/nodal_dataset_seed_0.csv",index_col=False)
+#dat = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/out/IIGS6_gambit_flattened/4_datasets/IIGS6_s1_bf_ft_gambit_flattened-2019-01-25_161617-ad=250,ts=1000,td=10/nodal_dataset_seed_0.csv",index_col=0)
 
 #hist = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/features/goofspiel/IIGS6/IIGS6_1_6_false_true_lvl10.csv",names=["r1c1","r1c2","r2c1","r2c2","r3c1","r3c2","r1","r2","r3"])
 
@@ -63,11 +63,22 @@ def filter_by_public_state(df=None,public_state=None):
 
 def filter_by_card_combination(df=None,cards=None,player=None):
 
+	import pandas as pd
+
+	cards_filtered = pd.DataFrame()
+
 	if player == 1:
-		return df.loc[(df["r1c1"]==int(cards[1])) & (df["r2c1"]== int(cards[4])) & (df["r3c1"]==int(cards[7]))]
+		cards_filtered = df.loc[(df["r1c1"]==int(cards[1])) & (df["r2c1"]== int(cards[4])) & (df["r3c1"]==int(cards[7]))]
+
 
 	if player == 2:
-		return df.loc[(df["r1c2"]==int(cards[1])) & (df["r2c2"]== int(cards[4])) & (df["r3c2"]==int(cards[7]))]
+		cards_filtered = df.loc[(df["r1c2"]==int(cards[1])) & (df["r2c2"]== int(cards[4])) & (df["r3c2"]==int(cards[7]))]
+
+
+
+	return cards_filtered
+
+
 
 def seed_to_sum_cfv_per_infoset(df=None):
 	#TODO

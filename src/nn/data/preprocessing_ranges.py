@@ -79,7 +79,6 @@ def filter_by_card_combination(df=None,cards=None,player=None):
 	return cards_filtered
 
 
-
 def seed_to_sum_cfv_per_infoset(df=None):
 	#TODO
 	pass
@@ -131,17 +130,17 @@ def seed_to_ranges_per_public_state(df=None):
 
 				# puts range of p1 in of infoset "cards" of public state "public_state" into mask
 
-				mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index == cards_df.index[0],10])
+				mask.loc["".join(tuple(map(str,public_state))),cards] = float(df.iloc[df.index == cards_df.index[0],9])
 
 				# puts cf of p1 in of infoset "cards" of public state "public_state" into out
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 8])
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 7])
 
 			elif cards_df.shape[0] > 1:
 
-				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 10])
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 9])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = sum([float(df.iloc[df.index == cards_df.index[i], 8]) for i in range(0,cards_df.index.__len__())])
+				out.loc["".join(tuple(map(str, public_state))), cards] = sum([float(df.iloc[df.index == cards_df.index[i], 7]) for i in range(0,cards_df.index.__len__())])
 
 			elif cards_df.shape[0] == 0:
 
@@ -155,16 +154,16 @@ def seed_to_ranges_per_public_state(df=None):
 
 			if cards_df.shape[0] == 1:
 
-				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 11])
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 10])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 13])
+				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 12])
 
 
 			elif cards_df.shape[0] > 1:
 
-				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 11])
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 10])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = sum([float(df.iloc[df.index == cards_df.index[i], 13]) for i in range(0,cards_df.index.__len__())])
+				out.loc["".join(tuple(map(str, public_state))), cards] = sum([float(df.iloc[df.index == cards_df.index[i], 12]) for i in range(0,cards_df.index.__len__())])
 
 			elif cards_df.shape[0] == 0:
 

@@ -50,7 +50,7 @@ def load_history_identifier():
 	return read_csv(os.getcwd()+"/src/nn/data/history_identifier.csv",index_col=0)
 
 def load_seed_from_filepath(path=""):
-	return pd.read_csv(path,index_col=False)
+	return pd.read_csv(path,index_col=0)
 
 def filter_by_public_state(df=None,public_state=None):
 	if df is not None:

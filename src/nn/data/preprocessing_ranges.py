@@ -141,7 +141,7 @@ def seed_to_ranges_per_public_state(df=None):
 
 				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 10])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 8])
+				out.loc["".join(tuple(map(str, public_state))), cards] = sum([float(df.iloc[df.index == cards_df.index[i], 8]) for i in range(0,cards_df.index.__len__())])
 
 			elif cards_df.shape[0] == 0:
 
@@ -164,7 +164,7 @@ def seed_to_ranges_per_public_state(df=None):
 
 				mask.loc["".join(tuple(map(str,public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 11])
 
-				out.loc["".join(tuple(map(str, public_state))), cards] = float(df.iloc[df.index == cards_df.index[0], 13])
+				out.loc["".join(tuple(map(str, public_state))), cards] = sum([float(df.iloc[df.index == cards_df.index[i], 13]) for i in range(0,cards_df.index.__len__())])
 
 			elif cards_df.shape[0] == 0:
 

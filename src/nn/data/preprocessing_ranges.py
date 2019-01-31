@@ -84,6 +84,8 @@ def seed_to_sum_cfv_per_infoset(df=None):
 
 def calc_append_cfv_p2(dir=""):
 
+	##TODO divide by sum of cf reaches of p1 and multiply by sum of cf reach of p2
+
 	import os
 	import pandas as pd
 
@@ -103,8 +105,7 @@ def calc_append_cfv_p2(dir=""):
 			i+=1
 
 def seed_to_ranges_per_public_state(df=None):
-	##TODO look into if we need sum of cfv of infosets
-	## right now its only one cfv
+	##TODO
 	mask = load_input_mask()
 	out = load_output_mask()
 	hist_id = load_history_identifier()
@@ -191,7 +192,7 @@ def build_training_data(data_dir="",num=None):
 	i = 1
 	max = seed_list.__len__()
 
-	if num is not None and num is int:
+	if num is not None and num is int and num < seed_list.__len__():
 		max = num
 
 

@@ -180,7 +180,7 @@ def seed_to_ranges_per_public_state(df=None):
 
 	return mask,out
 
-def build_training_data(data_dir=""):
+def build_training_data(data_dir="",num=None):
 	#import numpy as np
 	import pandas as pd
 	file_list = get_files_in_directory_recursively(data_dir)
@@ -190,7 +190,14 @@ def build_training_data(data_dir=""):
 	x = pd.DataFrame()
 	y= pd.DataFrame()
 	i = 1
-	for seed in seed_list:
+
+	if num is not None and num is int:
+		max = num
+
+	elif num is None:
+		max = seed_list.__len__()
+
+	for seed in seed_list[:max]:
 		print("seed:{} of {}".format(i,file_list.__len__()))
 
 		if x.shape == (0,0):

@@ -211,3 +211,14 @@ def build_training_data(data_dir="",num=None):
 		i+= 1
 
 	return x,y
+
+
+def get_indices_hist_in_infoset(public_state=None,cards=None,player=1):
+
+	hist_id = load_history_identifier()
+
+	mypubstate = filter_by_public_state(df=hist_id,public_state=public_state)
+
+	myinfoset = filter_by_card_combination(df=mypubstate,cards=cards,player=player)
+
+	return myinfoset.index

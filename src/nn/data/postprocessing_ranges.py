@@ -10,10 +10,14 @@ nn = AbstractNN()
 inf_to_hist_zero = np.expand_dims(np.zeros(120**2),axis=1)
 
 
+def tensorcfr_to_nn_input(tensor_cfr_out=None):
+	##TODO get ranges from tensorcfrfixestrunk. bring them into format [public_state,ranges p1] for each publicstate
+	pass
 
 
-
-
+def load_nn(path_to_ckpt=None):
+	## TODO load nn from hdf5 ckpt
+	pass
 
 def infoset_to_hist_cfv_zero_padding(nn_out=None):
 

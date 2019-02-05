@@ -52,6 +52,10 @@ def load_history_identifier():
 def load_seed_from_filepath(path=""):
 	return pd.read_csv(path,index_col=0)
 
+def load_infoset_hist_ids():
+	from pandas import read_pickle
+	return read_pickle(os.getcwd() + "/src/nn/data/infoset_cfv_ids.pkl")
+
 def filter_by_public_state(df=None,public_state=None):
 	if df is not None:
 		df = df.copy()

@@ -222,3 +222,35 @@ def get_indices_hist_in_infoset(public_state=None,cards=None,player=1):
 	myinfoset = filter_by_card_combination(df=mypubstate,cards=cards,player=player)
 
 	return myinfoset.index
+
+
+def extract_first_hist_of_infoset_indices_from_seed():
+	import numpy as np
+	##TODO
+	#mask = load_input_mask()
+	out = load_output_mask()
+	hist_id = load_history_identifier()
+	public_states_list = [(x,y,z) for x in [0, 1, -1] for y in [0, 1, -1] for z in [0, 1, -1]]
+
+	mydict = {}
+
+	for public_state in public_states_list:
+
+		df_by_public_state = filter_by_public_state(hist_id,public_state)
+
+		for cards in out.columns[:120]:
+			## for player 1
+
+			cards_df = filter_by_card_combination(df_by_public_state,cards,1)
+
+			out.loc["".join(tuple(map(str, public_state))), cards] = int(cards_df.index[0]) if cards_df.shape[0] > 0 else int(-1)
+			#mydict["".join(tuple(map(str,public_state)))+cards] = list(cards_df.index)
+
+		for cards in out.columns[120:]:
+
+			cards_df = filter_by_card_combination(df_by_public_state, cards, 2)
+			out.loc["".join(tuple(map(str, public_state))), cards] = int(cards_df.index[0]) if cards_df.shape[0] > 0 else int(-1)
+			#mydict["".join(tuple(map(str,public_state)))+cards] = list(cards_df.index)
+
+
+	return out.astype(int)

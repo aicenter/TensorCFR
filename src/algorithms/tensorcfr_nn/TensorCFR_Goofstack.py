@@ -6,11 +6,12 @@ from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.nn.NNMockUp import NNMockUp
 from src.utils.tf_utils import get_default_config_proto, print_tensor, masked_assign
-
+from src.nn.data.postprocessing_ranges import tensorcfr_to_nn_input,load_nn,stack_public_state_predictions,nn_out_to_tensorcfr_in
+from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,load_infoset_list,load_infoset_hist_ids
 
 
 class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
-	def __init__(self, domain: FlattenedDomain, neural_net=None, nn_input_permutation=None, trunk_depth=0):
+	def __init__(self, domain: FlattenedDomain, neural_net=None, trunk_depth=0):
 		"""
 		Constructor for an instance of TensorCFR_NN algorithm with given parameters (as a TensorFlow computation graph).
 
@@ -26,10 +27,14 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 			acting_depth=trunk_depth
 		)
 
-		self.neural_net = neural_net if neural_net is not None else NNMockUp()
-		self.nn_input_permutation = nn_input_permutation if nn_input_permutation is not None else get_sorted_permutation()
+		self.neural_net = load_nn()
 		self.session = tf.Session(config=get_default_config_proto())
 		self.construct_computation_graph()
+		self.mask = load_input_mask()
+		self.output_mask = load_output_mask()
+		self.hist_id = load_history_identifier()
+		self.infoset_list = load_infoset_list()
+		self.infoset_hist_ids = load_infoset_hist_ids()
 		with tf.variable_scope("initialization"):
 			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 			print(setup_messages)

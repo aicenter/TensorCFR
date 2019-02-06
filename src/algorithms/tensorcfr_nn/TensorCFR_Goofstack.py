@@ -4,11 +4,11 @@ import tensorflow as tf
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
-from src.nn.NNMockUp import NNMockUp
+#from src.nn.NNMockUp import NNMockUp
 from src.utils.tf_utils import get_default_config_proto, print_tensor, masked_assign
 from src.nn.data.postprocessing_ranges import tensorcfr_to_nn_input,load_nn,stack_public_state_predictions,nn_out_to_tensorcfr_in
-from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,load_infoset_list,load_infoset_hist_ids
-
+from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,load_infoset_list,load_infoset_hist_ids,filter_by_card_combination,filter_by_public_state
+import numpy as np
 
 class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	def __init__(self, domain: FlattenedDomain, neural_net=None, trunk_depth=0):
@@ -34,7 +34,9 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		self.output_mask = load_output_mask()
 		self.hist_id = load_history_identifier()
 		self.infoset_list = load_infoset_list()
-		self.infoset_hist_ids = load_infoset_hist_ids()
+		self.infoset_hist_ids = load_infoset_hist_ids().iloc[:, :120]
+		self.public_states_list = [(x, y, z) for x in [0, 1, -1] for y in [0, 1, -1] for z in [0, 1, -1]]
+		self.tensor_cfr_in_mask = np.zeros(120 ** 2)
 		with tf.variable_scope("initialization"):
 			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 			print(setup_messages)
@@ -89,12 +91,44 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 	def construct_computation_graph(self):
 		self.cfr_step_op = self.do_cfr_step()
-		self.input_reaches = self.get_nodal_reaches_at_trunk_depth()
+		self.input_ranges = self.get_nodal_range_probabilities()
 
-	def predict_equilibrial_values(self, input_reaches=None, name="permuted_predictions"):
-		if input_reaches is None:
-			input_reaches = self.input_reaches
-		permutate_op = tf.contrib.distributions.bijectors.Permute(permutation=self.nn_input_permutation)
+	def tensorcfr_to_nn_input(self,tensor_cfr_out=None):
+
+		##TODO get ranges from tensorcfrfixestrunk. bring them into format [public_state,ranges p1] for each publicstate
+		## TODO implement range of ifnoset in tensorcfr. its easier
+
+		mask = self.mask.copy()
+		hist_id = self.hist_id.copy()
+
+		for public_state in self.public_states_list:
+
+			df_by_public_state = filter_by_public_state(hist_id, public_state)
+
+			for cards in mask.columns[3:123]:
+				## for player 1
+
+				cards_df = filter_by_card_combination(df_by_public_state, cards, 1)
+
+				if cards_df.shape[0] >= 1:
+
+					# puts range of p1 in of infoset "cards" of public state "public_state" into mask
+
+					mask.loc["".join(tuple(map(str, public_state))), cards] = float(
+						tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0], 0])
+
+				else:
+
+					mask.loc["".join(tuple(map(str, public_state))), cards] = 0
+
+			for cards in mask.columns[123:]:
+
+				cards_df = filter_by_card_combination(df_by_public_state, cards, 2)
+
+				if cards_df.shape[0] == 1:
+
+					mask.loc["".join(tuple(map(str, public_state))), cards] = float(
+						tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0], 1])
 
 		permuted_input = tf.expand_dims(
 			permutate_op.forward(input_reaches),  # permute input reach probabilities
@@ -104,12 +138,47 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		np_permuted_input = self.session.run(permuted_input)
 
-		# use neural net to predict equilibrium values
-		predicted_equilibrial_values = self.neural_net.predict(np_permuted_input)
+				elif cards_df.shape[0] > 1:
+
+					mask.loc["".join(tuple(map(str, public_state))), cards] = float(
+						tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0], 1])
+
+
+				elif cards_df.shape[0] == 0:
+
+					mask.loc["".join(tuple(map(str, public_state))), cards] = 0
+
+		return mask
+
+	def nn_out_to_tensorcfr_in(self,nn_out=None):
+
+		if nn_out.shape != (27, 120):
+			raise ValueError
+
+		else:
+			## this version is only for nns that output cfv of p1. meaning a vector of size 120 for each public state
+
+			tensor_cfr_in = self.tensor_cfr_in_mask.copy()
+
+			for id in self.infoset_list:
+
+				tensor_cfr_in[id] = nn_out.iloc[np.where(self.infoset_hist_ids == id)]
+
+			return tensor_cfr_in
+
+	def predict_equilibrial_values(self, input_ranges=None, name="predictions"):
+		if input_ranges is None:
+			input_ranges = self.input_ranges
+
+		tensorcfr_in = tensorcfr_to_nn_input(input_ranges)
+
+		nn_out = np.vstack([self.neural_net.predict(tensorcfr_in[i,:]) for i in range(tensorcfr_in.shape[0])])
+
+		predicted_equilibrial_values = nn_out_to_tensorcfr_in(nn_out)
 
 		# permute back the expected values
-		permuted_predictions = permutate_op.inverse(predicted_equilibrial_values)   # TODO make into numpy array
-		return tf.identity(permuted_predictions, name=name)
+		 # TODO make into numpy array
+		return tf.identity(predicted_equilibrial_values, name=name)
 
 	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=False,
 	            register_strategies_on_step=None):

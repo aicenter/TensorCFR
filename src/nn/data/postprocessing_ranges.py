@@ -19,7 +19,7 @@ def load_nn(path_to_ckpt=None):
 	## TODO load nn from hdf5 ckpt
 	pass
 
-def infoset_to_hist_cfv_zero_padding(nn_out=None):
+def nn_out_to_tensorcfr_in(nn_out=None):
 
 	if nn_out.shape != (27,120):
 		raise ValueError
@@ -27,31 +27,18 @@ def infoset_to_hist_cfv_zero_padding(nn_out=None):
 	else:
 		## this version is only for nns that output cfv of p1. meaning a vector of size 120 for each public state
 		##TODO solve string with negative numbers to tuple conversion in a fast way
-		import numpy as np
-		from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,filter_by_public_state,filter_by_card_combination
+		from numpy import where
+		from src.nn.data.preprocessing_ranges import load_infoset_hist_ids,load
 
-		output = load_output_mask()
-		hist_id = load_history_identifier()
+		tensor_cfr_in = np.zeros(120 ** 2)
 
-		final = np.zeros(120 ** 2)
+		inf_id_p1 = load_infoset_hist_ids().iloc[:,:120]
 
-		public_states = output.index[:27]
+		info_list = load_infoset_list()
 
-		infosets = output.columns[:120]
+		for id in info_list:
 
-		indices = hist_id.index
+			tensor_cfr_in[id] = nn_out.iloc[where(inf_id_p1 == id)]
 
-		nn_out.index = public_states
-		nn_out.columns =infosets
+		return tensor_cfr_in
 
-		for public_state in public_states:
-
-			for infoset in infosets:
-
-				infset_cfv = nn_out.loc[public_state,infoset]
-
-				infset_histories = get_indices_hist_in_infoset(public_state,infoset,1)
-
-				final[infset_histories[0]] = infset_cfv
-
-				final[infset_histories[1:]] = 0

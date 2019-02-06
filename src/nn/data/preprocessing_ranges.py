@@ -56,6 +56,14 @@ def load_infoset_hist_ids():
 	from pandas import read_pickle
 	return read_pickle(os.getcwd() + "/src/nn/data/infoset_cfv_ids.pkl")
 
+def load_infoset_list():
+	from pickle import load
+
+	with open(os.getcwd()+"/src/nn/data/infoset_list.pkl","rb") as f:
+		mylist = load(f)
+
+	return mylist
+
 def filter_by_public_state(df=None,public_state=None):
 	if df is not None:
 		df = df.copy()

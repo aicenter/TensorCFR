@@ -11,8 +11,57 @@ inf_to_hist_zero = np.expand_dims(np.zeros(120**2),axis=1)
 
 
 def tensorcfr_to_nn_input(tensor_cfr_out=None):
+
 	##TODO get ranges from tensorcfrfixestrunk. bring them into format [public_state,ranges p1] for each publicstate
-	pass
+	## TODO implement range of ifnoset in tensorcfr. its easier
+
+	mask = load_input_mask()
+	hist_id = load_history_identifier()
+	public_states_list = [(x,y,z) for x in [0, 1, -1] for y in [0, 1, -1] for z in [0, 1, -1]]
+
+	for public_state in public_states_list:
+
+		df_by_public_state = filter_by_public_state(hist_id,public_state)
+
+
+		for cards in mask.columns[3:123]:
+			## for player 1
+
+			cards_df = filter_by_card_combination(df_by_public_state,cards,1)
+
+			if cards_df.shape[0] >= 1:
+
+				# puts range of p1 in of infoset "cards" of public state "public_state" into mask
+
+				mask.loc["".join(tuple(map(str,public_state))),cards] = float(tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0],0])
+
+			else:
+
+				mask.loc["".join(tuple(map(str,public_state))), cards] = 0
+
+
+		for cards in mask.columns[123:]:
+
+			cards_df = filter_by_card_combination(df_by_public_state, cards, 2)
+
+			if cards_df.shape[0] == 1:
+
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0], 1])
+
+
+
+			elif cards_df.shape[0] > 1:
+
+				mask.loc["".join(tuple(map(str,public_state))), cards] = float(tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0], 1])
+
+
+			elif cards_df.shape[0] == 0:
+
+				mask.loc["".join(tuple(map(str,public_state))), cards] = 0
+
+
+
+	return mask
 
 
 def load_nn(path_to_ckpt=None):

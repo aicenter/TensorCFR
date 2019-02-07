@@ -2,6 +2,7 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
+#from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
 #from src.nn.NNMockUp import NNMockUp
@@ -156,7 +157,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 			for id in self.infoset_list:
 
-				tensor_cfr_in[id] = nn_out.iloc[np.where(self.infoset_hist_ids == id)]
+				tensor_cfr_in[id] = nn_out[np.where(self.infoset_hist_ids == id)]
 
 			return tensor_cfr_in
 
@@ -166,7 +167,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		tensorcfr_in = self.tensorcfr_to_nn_input(input_ranges)
 
-		nn_out = np.vstack([self.neural_net.predict(tensorcfr_in[i,:]) for i in range(tensorcfr_in.shape[0])])
+		nn_out = np.vstack([self.neural_net.predict(tensorcfr_in.values[i,:].reshape(1,243)) for i in range(tensorcfr_in.shape[0])])
 
 		predicted_equilibrial_values = self.nn_out_to_tensorcfr_in(nn_out)
 

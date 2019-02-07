@@ -27,6 +27,8 @@ GP_CARDS4X3_222 = "GP_cards4x3_222_via_gambit"
 FLATTENED_GP_CARDS4X3_222 = "GP_cards4x3_222_gambit_flattened"
 GP_CARDS4X3_224 = "GP_cards4x3_224_via_gambit"
 FLATTENED_GP_CARDS4X3_224 = "GP_cards4x3_224_gambit_flattened"
+OSHI_ZUMO = 'oshi_zumo'
+
 AVAILABLE_DOMAINS = [
 	DOMAIN01,
 	DOMAIN01_GAMBIT,
@@ -42,7 +44,8 @@ AVAILABLE_DOMAINS = [
 	FLATTENED_GOOFSPIEL2_GAMBIT,
 	GOOFSPIEL3_GAMBIT,
 	FLATTENED_GOOFSPIEL3_GAMBIT,
-	FLATTENED_GOOFSPIEL3_SCALAR_UTIL_GAMBIT
+	FLATTENED_GOOFSPIEL3_SCALAR_UTIL_GAMBIT,
+	OSHI_ZUMO
 ]
 DOMAINS_WITH_LARGE_GAMBIT_FILES = [
 	GOOFSPIEL5_GAMBIT,
@@ -140,6 +143,9 @@ def get_domain_by_name(name):
 	elif name == FLATTENED_GP_CARDS4X3_224:
 		from src.domains.flattened_GP_cards4x3_224.domain_from_gambit_loader import get_flattened_GP_cards4x3_224
 		return get_flattened_GP_cards4x3_224()
+	elif name == OSHI_ZUMO:
+		from src.domains.flattened_oshi_zumo.domain_from_gambit_file import get_flattened_oshi_zumo
+		return get_flattened_oshi_zumo()
 	else:
 		raise ValueError("Invalid name '{}' for get_domain_by_name().".format(name))
 

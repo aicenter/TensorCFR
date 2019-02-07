@@ -6,7 +6,7 @@ from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
 #from src.nn.NNMockUp import NNMockUp
 from src.utils.tf_utils import get_default_config_proto, print_tensor, masked_assign
-from src.nn.data.postprocessing_ranges import tensorcfr_to_nn_input,load_nn,stack_public_state_predictions,nn_out_to_tensorcfr_in
+from src.nn.data.postprocessing_ranges import load_nn
 from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,load_infoset_list,load_infoset_hist_ids,filter_by_card_combination,filter_by_public_state
 import numpy as np
 
@@ -27,7 +27,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 			acting_depth=trunk_depth
 		)
 
-		self.neural_net = load_nn()
+		self.neural_net =  load_nn(neural_net) if neural_net.__class__ == str else neural_net
 		self.session = tf.Session(config=get_default_config_proto())
 		self.construct_computation_graph()
 		self.mask = load_input_mask()
@@ -91,7 +91,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 	def construct_computation_graph(self):
 		self.cfr_step_op = self.do_cfr_step()
-		self.input_ranges = self.get_nodal_range_probabilities()
+		self.input_ranges = self.get_trunk_nodal_ranges_p1_p2()
 
 	def tensorcfr_to_nn_input(self,tensor_cfr_out=None):
 
@@ -130,13 +130,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 					mask.loc["".join(tuple(map(str, public_state))), cards] = float(
 						tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0], 1])
 
-		permuted_input = tf.expand_dims(
-			permutate_op.forward(input_reaches),  # permute input reach probabilities
-			axis=0,  # simulate batch size of 1 for prediction
-			name="expanded_permuted_input"
-		)
 
-		np_permuted_input = self.session.run(permuted_input)
 
 				elif cards_df.shape[0] > 1:
 
@@ -170,15 +164,13 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		if input_ranges is None:
 			input_ranges = self.input_ranges
 
-		tensorcfr_in = tensorcfr_to_nn_input(input_ranges)
+		tensorcfr_in = self.tensorcfr_to_nn_input(input_ranges)
 
 		nn_out = np.vstack([self.neural_net.predict(tensorcfr_in[i,:]) for i in range(tensorcfr_in.shape[0])])
 
-		predicted_equilibrial_values = nn_out_to_tensorcfr_in(nn_out)
+		predicted_equilibrial_values = self.nn_out_to_tensorcfr_in(nn_out)
 
-		# permute back the expected values
-		 # TODO make into numpy array
-		return tf.identity(predicted_equilibrial_values, name=name)
+		return np.array(tf.identity(predicted_equilibrial_values, name=name))
 
 	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=False,
 	            register_strategies_on_step=None):
@@ -199,13 +191,13 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 				predicted_equilibrial_values = self.predict_equilibrial_values()
 				if verbose:
 					print("Before:")
-					print_tensor(self.session, self.input_reaches)
+					print_tensor(self.session, self.input_ranges)
 					print_tensor(self.session, predicted_equilibrial_values)
 				np_predicted_equilibrial_values = self.session.run(predicted_equilibrial_values)
 				self.session.run(self.cfr_step_op, {self.predicted_equilibrial_values: np_predicted_equilibrial_values})
 				if verbose:
 					print("After:")
-					print_tensor(self.session, self.input_reaches)
+					print_tensor(self.session, self.input_ranges)
 
 				if step in register_strategies_on_step:
 					self.average_strategies_over_steps["average_strategy_step{}".format(step)] = [

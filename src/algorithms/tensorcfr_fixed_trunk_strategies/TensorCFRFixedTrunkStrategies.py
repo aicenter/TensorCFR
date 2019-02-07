@@ -1171,6 +1171,23 @@ class TensorCFRFixedTrunkStrategies:
 
 		return self.concat_trunk_info_tensors
 
+	def get_trunk_nodal_ranges_p1_p2(self):
+		## method for NN input
+
+		if self.trunk_depth <= 0:
+			return None
+
+		inner_nodal_range_for_player1 = tf.expand_dims(self.get_nodal_range_probabilities(for_player=1,for_level=self.trunk_depth),
+			                                               axis=-1,name="range_p1_lvl{}".format(self.boundary_level))
+
+		inner_nodal_range_for_player2 = tf.expand_dims(self.get_nodal_range_probabilities(for_player=2,for_level=self.trunk_depth),
+			                                               axis=-1,name="range_p2_lvl{}".format(self.boundary_level))
+
+		self.concat_trunk_ranges_to_tensor = tf.concat([inner_nodal_range_for_player1,inner_nodal_range_for_player2],axis=-1,
+				name="concat_trunk_ranges_to_tensor_lvl{}".format(self.boundary_level))
+
+		return self.concat_trunk_ranges_to_tensor
+
 	def print_debug_info(self):
 		print_tensors(self.session, [self.domain.cfr_step])
 		print_tensors(self.session, self.domain.current_infoset_strategies + self.domain.positive_cumulative_regrets

@@ -13,6 +13,7 @@ import numpy as np
 
 class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	def __init__(self, domain: FlattenedDomain, neural_net=None, trunk_depth=0):
+		##TODO investigate why it fails at trunk_depth = 0
 		"""
 		Constructor for an instance of TensorCFR_NN algorithm with given parameters (as a TensorFlow computation graph).
 
@@ -98,7 +99,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		##TODO get ranges from tensorcfrfixestrunk. bring them into format [public_state,ranges p1] for each publicstate
 		## TODO implement range of ifnoset in tensorcfr. its easier
-
+		tensor_cfr_out = tensor_cfr_out.eval(session=self.session)
 		mask = self.mask.copy()
 		hist_id = self.hist_id.copy()
 
@@ -116,7 +117,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 					# puts range of p1 in of infoset "cards" of public state "public_state" into mask
 
 					mask.loc["".join(tuple(map(str, public_state))), cards] = float(
-						tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0], 0])
+						tensor_cfr_out[cards_df.index[0], 0])
 
 				else:
 
@@ -129,14 +130,14 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 				if cards_df.shape[0] == 1:
 
 					mask.loc["".join(tuple(map(str, public_state))), cards] = float(
-						tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0], 1])
+						tensor_cfr_out[cards_df.index[0], 1])
 
 
 
 				elif cards_df.shape[0] > 1:
 
 					mask.loc["".join(tuple(map(str, public_state))), cards] = float(
-						tensor_cfr_out.iloc[tensor_cfr_out.index == cards_df.index[0], 1])
+						tensor_cfr_out[cards_df.index[0], 1])
 
 
 				elif cards_df.shape[0] == 0:
@@ -162,6 +163,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 			return tensor_cfr_in
 
 	def predict_equilibrial_values(self, input_ranges=None, name="predictions"):
+		## TODO change to actual CFV. right now is u(x) not v(x)
 		if input_ranges is None:
 			input_ranges = self.input_ranges
 
@@ -171,7 +173,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		predicted_equilibrial_values = self.nn_out_to_tensorcfr_in(nn_out)
 
-		return np.array(tf.identity(predicted_equilibrial_values, name=name))
+		return tf.identity(predicted_equilibrial_values, name=name)
 
 	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=False,
 	            register_strategies_on_step=None):

@@ -6,6 +6,7 @@ from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategi
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
 from src.domains.FlattenedDomain import FlattenedDomain
 #from src.nn.NNMockUp import NNMockUp
+from src.utils.cfr_utils import get_action_and_infoset_values
 from src.utils.tf_utils import get_default_config_proto, print_tensor, masked_assign
 from src.nn.data.postprocessing_ranges import load_nn
 from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,load_infoset_list,load_infoset_hist_ids,filter_by_card_combination,filter_by_public_state
@@ -45,19 +46,19 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		self.average_strategies_over_steps = None
 		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
-	def construct_lowest_expected_values(self, player_name, signum):
-		with tf.variable_scope("level{}".format(self.levels - 1)):
-			lowest_utilities = self.domain.utilities[self.levels - 1]
-			self.predicted_equilibrial_values = tf.placeholder_with_default(
-				lowest_utilities,
-				shape=lowest_utilities.shape,
-				name="predicted_equilibrial_values"
-			)
-			self.expected_values[self.levels - 1] = tf.multiply(
-				signum,
-				self.predicted_equilibrial_values,
-				name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
-			)
+	# def construct_lowest_expected_values(self, player_name, signum):
+	# 	with tf.variable_scope("level{}".format(self.levels - 1)):
+	# 		lowest_utilities = self.domain.utilities[self.levels - 1]
+	# 		self.predicted_equilibrial_values = tf.placeholder_with_default(
+	# 			lowest_utilities,
+	# 			shape=lowest_utilities.shape,
+	# 			name="predicted_equilibrial_values"
+	# 		)
+	# 		self.expected_values[self.levels - 1] = tf.multiply(
+	# 			signum,
+	# 			self.predicted_equilibrial_values,
+	# 			name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
+	# 		)
 
 	def update_strategy_of_updating_player(self, acting_player=None):  # override not to fix trunk
 		"""
@@ -162,7 +163,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 			return tensor_cfr_in
 
-	def predict_equilibrial_values(self, input_ranges=None, name="predictions"):
+	def predict_lvl10_cf_values(self, input_ranges=None, name="predictions"):
 		## TODO change to actual CFV. right now is u(x) not v(x)
 		if input_ranges is None:
 			input_ranges = self.input_ranges
@@ -171,9 +172,58 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		nn_out = np.vstack([self.neural_net.predict(tensorcfr_in.values[i,:].reshape(1,243)) for i in range(tensorcfr_in.shape[0])])
 
-		predicted_equilibrial_values = self.nn_out_to_tensorcfr_in(nn_out)
+		predicted_cf_values = self.nn_out_to_tensorcfr_in(nn_out)
 
-		return tf.identity(predicted_equilibrial_values, name=name)
+		return tf.identity(predicted_cf_values, name=name)
+
+	def get_nodal_cf_values(self, for_player=None):  # TODO insert nn preds at lvl 10 and should be fine
+		"""
+		Compute counterfactual values of nodes by (tensor-)multiplying reach probabilities and expected values.
+
+		:param for_player: The player for which the counterfactual values are computed. These values are usually
+		 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
+		:return: The counterfactual values of nodes based on `current_infoset_strategies`.
+		"""
+		expected_values = self.get_expected_values(for_player=for_player)
+		reach_probabilities = self.get_nodal_reach_probabilities(for_player=for_player)
+		with tf.variable_scope("nodal_counterfactual_values"):
+			return [
+				tf.multiply(
+					reach_probabilities[level],
+					expected_values[level],
+					name="nodal_cf_value_lvl{}".format(level)
+				) for level in range(self.levels)
+			]
+
+	def get_infoset_cf_values(self, for_player=None):  # TODO change this method to use predictions of network for lvl10
+		"""
+		Compute infoset(-action) counterfactual values by summing relevant counterfactual values of nodes.
+
+		:param for_player: The player for which the counterfactual values are computed. These values are usually
+		 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
+		:return: The infoset(-action) counterfactual values based on `current_infoset_strategies`.
+		"""
+		if for_player is None:
+			player_name = "current_player"
+		else:
+			player_name = "player{}".format(for_player)
+		nodal_cf_values = self.get_nodal_cf_values(for_player=for_player)
+		infoset_actions_cf_values, infoset_cf_values = [], []
+		with tf.variable_scope("infoset_actions_cf_values"):
+			for level in range(self.acting_depth):
+				with tf.variable_scope("level{}".format(level)):
+					infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
+						values_in_children=nodal_cf_values[level + 1],
+						action_counts=self.action_counts[level],
+						parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
+						infoset_strategy=self.domain.current_infoset_strategies[level],
+						name="cf_values_lvl{}_for_{}".format(level, player_name)
+					)
+					infoset_cf_values.append(infoset_cf_value)
+					infoset_actions_cf_values.append(infoset_action_cf_value)
+		return infoset_actions_cf_values, infoset_cf_values
+
+
 
 	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=False,
 	            register_strategies_on_step=None):
@@ -191,12 +241,12 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 			for step in range(total_steps):
 				print("\n########## CFR step {} ##########".format(step))
-				predicted_equilibrial_values = self.predict_equilibrial_values()
+				predicted_cf_values = self.predict_lvl10_cf_values()
 				if verbose:
 					print("Before:")
 					print_tensor(self.session, self.input_ranges)
-					print_tensor(self.session, predicted_equilibrial_values)
-				np_predicted_equilibrial_values = self.session.run(predicted_equilibrial_values)
+					print_tensor(self.session, predicted_cf_values)
+				np_predicted_equilibrial_values = self.session.run(predicted_cf_values)
 				self.session.run(self.cfr_step_op, {self.predicted_equilibrial_values: np_predicted_equilibrial_values})
 				if verbose:
 					print("After:")

@@ -46,19 +46,6 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		self.average_strategies_over_steps = None
 		self.session.run(tf.global_variables_initializer(), feed_dict=feed_dictionary)
 
-	# def construct_lowest_expected_values(self, player_name, signum):
-	# 	with tf.variable_scope("level{}".format(self.levels - 1)):
-	# 		lowest_utilities = self.domain.utilities[self.levels - 1]
-	# 		self.predicted_equilibrial_values = tf.placeholder_with_default(
-	# 			lowest_utilities,
-	# 			shape=lowest_utilities.shape,
-	# 			name="predicted_equilibrial_values"
-	# 		)
-	# 		self.expected_values[self.levels - 1] = tf.multiply(
-	# 			signum,
-	# 			self.predicted_equilibrial_values,
-	# 			name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
-	# 		)
 
 	def update_strategy_of_updating_player(self, acting_player=None):  # override not to fix trunk
 		"""
@@ -224,6 +211,31 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		return infoset_actions_cf_values, infoset_cf_values
 
 
+	def cf_values_lvl10_to_exp_values(self):
+
+		nodal_reaches_lvl_10 = self.get_nodal_reach_probabilities(for_player=1)[10]
+		cf_values_lvl_10 = self.predict_lvl10_cf_values()
+		with tf.variable_scope("level{}".format(self.levels - 1)):
+			cf_values_to_exp_values = tf.divide(cf_values_lvl_10,nodal_reaches_lvl_10,name="predictions_to_expected_values_lvl10")
+
+		return cf_values_to_exp_values
+
+
+	def construct_lowest_expected_values(self, player_name, signum):
+		with tf.variable_scope("level{}".format(self.levels - 1)):
+
+			self.expected_values[self.levels - 1] = tf.multiply(
+				signum,
+				self.cf_values_lvl10_to_exp_values(),
+				name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
+			)
+
+
+	def cf_nn_preds_to_cf_values(self):
+		##TODO put cf preds of nn in list of cf values
+		pass
+
+
 
 	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=False,
 	            register_strategies_on_step=None):
@@ -247,7 +259,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 					print_tensor(self.session, self.input_ranges)
 					print_tensor(self.session, predicted_cf_values)
 				np_predicted_equilibrial_values = self.session.run(predicted_cf_values)
-				self.session.run(self.cfr_step_op, {self.predicted_equilibrial_values: np_predicted_equilibrial_values})
+				self.session.run(self.cfr_step_op, {self.predicted_cf_values: np_predicted_equilibrial_values})
 				if verbose:
 					print("After:")
 					print_tensor(self.session, self.input_ranges)

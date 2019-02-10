@@ -163,70 +163,79 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		return tf.identity(predicted_cf_values, name=name)
 
-	def get_nodal_cf_values(self, for_player=None):  # TODO insert nn preds at lvl 10 and should be fine
-		"""
-		Compute counterfactual values of nodes by (tensor-)multiplying reach probabilities and expected values.
-
-		:param for_player: The player for which the counterfactual values are computed. These values are usually
-		 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
-		:return: The counterfactual values of nodes based on `current_infoset_strategies`.
-		"""
-		expected_values = self.get_expected_values(for_player=for_player)
-		reach_probabilities = self.get_nodal_reach_probabilities(for_player=for_player)
-		with tf.variable_scope("nodal_counterfactual_values"):
-			return [
-				tf.multiply(
-					reach_probabilities[level],
-					expected_values[level],
-					name="nodal_cf_value_lvl{}".format(level)
-				) for level in range(self.levels)
-			]
-
-	def get_infoset_cf_values(self, for_player=None):  # TODO change this method to use predictions of network for lvl10
-		"""
-		Compute infoset(-action) counterfactual values by summing relevant counterfactual values of nodes.
-
-		:param for_player: The player for which the counterfactual values are computed. These values are usually
-		 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
-		:return: The infoset(-action) counterfactual values based on `current_infoset_strategies`.
-		"""
-		if for_player is None:
-			player_name = "current_player"
-		else:
-			player_name = "player{}".format(for_player)
-		nodal_cf_values = self.get_nodal_cf_values(for_player=for_player)
-		infoset_actions_cf_values, infoset_cf_values = [], []
-		with tf.variable_scope("infoset_actions_cf_values"):
-			for level in range(self.acting_depth):
-				with tf.variable_scope("level{}".format(level)):
-					infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
-						values_in_children=nodal_cf_values[level + 1],
-						action_counts=self.action_counts[level],
-						parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
-						infoset_strategy=self.domain.current_infoset_strategies[level],
-						name="cf_values_lvl{}_for_{}".format(level, player_name)
-					)
-					infoset_cf_values.append(infoset_cf_value)
-					infoset_actions_cf_values.append(infoset_action_cf_value)
-		return infoset_actions_cf_values, infoset_cf_values
-
+	# def get_nodal_cf_values(self, for_player=None):  # TODO insert nn preds at lvl 10 and should be fine
+	# 	"""
+	# 	Compute counterfactual values of nodes by (tensor-)multiplying reach probabilities and expected values.
+	#
+	# 	:param for_player: The player for which the counterfactual values are computed. These values are usually
+	# 	 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
+	# 	:return: The counterfactual values of nodes based on `current_infoset_strategies`.
+	# 	"""
+	# 	expected_values = self.get_expected_values(for_player=for_player)
+	# 	reach_probabilities = self.get_nodal_reach_probabilities(for_player=for_player)
+	# 	with tf.variable_scope("nodal_counterfactual_values"):
+	# 		return [
+	# 			tf.multiply(
+	# 				reach_probabilities[level],
+	# 				expected_values[level],
+	# 				name="nodal_cf_value_lvl{}".format(level)
+	# 			) for level in range(self.levels)
+	# 		]
+	#
+	# def get_infoset_cf_values(self, for_player=None):  # TODO change this method to use predictions of network for lvl10
+	# 	"""
+	# 	Compute infoset(-action) counterfactual values by summing relevant counterfactual values of nodes.
+	#
+	# 	:param for_player: The player for which the counterfactual values are computed. These values are usually
+	# 	 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
+	# 	:return: The infoset(-action) counterfactual values based on `current_infoset_strategies`.
+	# 	"""
+	# 	if for_player is None:
+	# 		player_name = "current_player"
+	# 	else:
+	# 		player_name = "player{}".format(for_player)
+	# 	nodal_cf_values = self.get_nodal_cf_values(for_player=for_player)
+	# 	infoset_actions_cf_values, infoset_cf_values = [], []
+	# 	with tf.variable_scope("infoset_actions_cf_values"):
+	# 		for level in range(self.acting_depth):
+	# 			with tf.variable_scope("level{}".format(level)):
+	# 				infoset_action_cf_value, infoset_cf_value = get_action_and_infoset_values(
+	# 					values_in_children=nodal_cf_values[level + 1],
+	# 					action_counts=self.action_counts[level],
+	# 					parental_node_to_infoset=self.domain.inner_node_to_infoset[level],
+	# 					infoset_strategy=self.domain.current_infoset_strategies[level],
+	# 					name="cf_values_lvl{}_for_{}".format(level, player_name)
+	# 				)
+	# 				infoset_cf_values.append(infoset_cf_value)
+	# 				infoset_actions_cf_values.append(infoset_action_cf_value)
+	# 	return infoset_actions_cf_values, infoset_cf_values
+	#
 
 	def cf_values_lvl10_to_exp_values(self):
 
 		nodal_reaches_lvl_10 = self.get_nodal_reach_probabilities(for_player=1)[10]
 		cf_values_lvl_10 = self.predict_lvl10_cf_values()
-		with tf.variable_scope("level{}".format(self.levels - 1)):
-			cf_values_to_exp_values = tf.divide(cf_values_lvl_10,nodal_reaches_lvl_10,name="predictions_to_expected_values_lvl10")
 
-		return cf_values_to_exp_values
+		nodal_reaches_lvl_10_float64 = tf.cast(nodal_reaches_lvl_10,tf.float64,name="nodal_reaches_lvl_10")
+		self.session.run(nodal_reaches_lvl_10_float64)
+		with tf.variable_scope("level{}".format(self.levels - 1)):
+			cf_values_to_exp_values = tf.divide(cf_values_lvl_10,nodal_reaches_lvl_10_float64,name="predictions_to_expected_values_lvl10")
+
+		return tf.identity(cf_values_to_exp_values,name="cf_values_to_exp_values")
 
 
 	def construct_lowest_expected_values(self, player_name, signum):
 		with tf.variable_scope("level{}".format(self.levels - 1)):
+			lowest_utilities = self.domain.utilities[self.levels - 1]
+			self.predicted_to_exp_values = tf.placeholder_with_default(
+				lowest_utilities,
+				shape=lowest_utilities.shape,
+				name="predicted_to_exp_values"
+			)
 
 			self.expected_values[self.levels - 1] = tf.multiply(
 				signum,
-				self.cf_values_lvl10_to_exp_values(),
+				self.predicted_to_exp_values,
 				name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
 			)
 
@@ -237,7 +246,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 
 
-	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=False,
+	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=True,
 	            register_strategies_on_step=None):
 		if register_strategies_on_step is None:
 			register_strategies_on_step = [total_steps - 1]  # by default, register just the last iteration
@@ -253,13 +262,13 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 			for step in range(total_steps):
 				print("\n########## CFR step {} ##########".format(step))
-				predicted_cf_values = self.predict_lvl10_cf_values()
+				predicted_to_exp_values = self.cf_values_lvl10_to_exp_values()
 				if verbose:
 					print("Before:")
 					print_tensor(self.session, self.input_ranges)
-					print_tensor(self.session, predicted_cf_values)
-				np_predicted_equilibrial_values = self.session.run(predicted_cf_values)
-				self.session.run(self.cfr_step_op, {self.predicted_cf_values: np_predicted_equilibrial_values})
+					print_tensor(self.session, predicted_to_exp_values)
+				np_predicted_equilibrial_values = self.session.run(predicted_to_exp_values)
+				self.session.run(self.cfr_step_op, {self.predicted_to_exp_values: np_predicted_equilibrial_values})
 				if verbose:
 					print("After:")
 					print_tensor(self.session, self.input_ranges)

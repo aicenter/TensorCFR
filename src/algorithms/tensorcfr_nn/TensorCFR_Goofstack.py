@@ -219,7 +219,11 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		nodal_reaches_lvl_10_float64 = tf.cast(nodal_reaches_lvl_10,tf.float64,name="nodal_reaches_lvl_10")
 		self.session.run(nodal_reaches_lvl_10_float64)
 		with tf.variable_scope("level{}".format(self.levels - 1)):
-			cf_values_to_exp_values = tf.divide(cf_values_lvl_10,nodal_reaches_lvl_10_float64,name="predictions_to_expected_values_lvl10")
+			##TODO dont divide by 0
+			cf_values_to_exp_values = tf.where(condition=tf.equal(nodal_reaches_lvl_10_float64,0.0),
+			                                   x=tf.zeros_like(cf_values_lvl_10,dtype=tf.float64),
+			                                   y=tf.divide(cf_values_lvl_10,nodal_reaches_lvl_10_float64),
+			                                                  name="predictions_to_expected_values_lvl10")
 
 		return tf.identity(cf_values_to_exp_values,name="cf_values_to_exp_values")
 

@@ -1,14 +1,23 @@
 import pandas as pd
 import numpy as np
 import os
-from src.algorithms.tensorcfr_nn import TensorCFR_NN
+from src.algorithms.tensorcfr_nn import TensorCFR_Goofstack
 from src.nn.data.preprocessing_ranges import *
 from src.nn.AbstractNN import AbstractNN
 
-nn = AbstractNN()
+#nn = AbstractNN()
 
 inf_to_hist_zero = np.expand_dims(np.zeros(120**2),axis=1)
 
+
+def huber_loss(y_true, y_pred, clip_delta=1.0):
+  error = y_true - y_pred
+  cond  = tf.keras.backend.abs(error) < clip_delta
+
+  squared_loss = 0.5 * tf.keras.backend.square(error)
+  linear_loss  = clip_delta * (tf.keras.backend.abs(error) - 0.5 * clip_delta)
+
+  return tf.where(cond, squared_loss, linear_loss)
 
 def tensorcfr_to_nn_input(tensor_cfr_out=None):
 
@@ -64,9 +73,17 @@ def tensorcfr_to_nn_input(tensor_cfr_out=None):
 	return mask
 
 
-def load_nn(path_to_ckpt=None):
+def load_nn(path=None,custom_objects={"huber_loss":huber_loss}):
+	from keras.models import load_model
 	## TODO load nn from hdf5 ckpt
+
+	return load_model(path, custom_objects=custom_objects)
+
+
+def stack_public_state_predictions():
+	##TODO get output of nn and stack it to 27x240
 	pass
+
 
 def nn_out_to_tensorcfr_in(nn_out=None):
 

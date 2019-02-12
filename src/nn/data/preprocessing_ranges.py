@@ -28,11 +28,14 @@ import os
 #test3 = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/history_identifier.csv",index_col=0)
 def get_files_in_directory_recursively(rootdir):
 	import os
-	filenames = []
-	for root, dirs, files in os.walk(rootdir):
-		for file in files:
-			filenames += [("{}/{}".format(root, file))]
-	return filenames
+	if os._exists(rootdir):
+		filenames = []
+		for root, dirs, files in os.walk(rootdir):
+			for file in files:
+				filenames += [("{}/{}".format(root, file))]
+		return filenames
+	else:
+		print("directory does not exist")
 
 def load_input_mask():
 	from pandas import read_csv

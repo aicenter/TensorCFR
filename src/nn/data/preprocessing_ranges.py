@@ -28,7 +28,7 @@ import os
 #test3 = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/history_identifier.csv",index_col=0)
 def get_files_in_directory_recursively(rootdir):
 	import os
-	if os._exists(rootdir):
+	if os.listdir(rootdir) is not None:
 		filenames = []
 		for root, dirs, files in os.walk(rootdir):
 			for file in files:

@@ -2,7 +2,7 @@
 import pandas as pd
 import os
 from src.nn.data.postprocessing_ranges import huber_loss,load_nn,linf_loss
-from experiments.Goofstack_Experiments.layer_depth_layer_width import create_model()
+#from experiments.Goofstack_Experiments.layer_depth_layer_width import create_model()
 from keras.layers import Dense,Input
 from keras.models import Model
 from keras.optimizers import Adam

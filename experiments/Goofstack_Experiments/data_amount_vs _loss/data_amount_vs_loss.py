@@ -30,7 +30,7 @@ if __name__== "__main__" and activate_script():
 
 		model = load_nn("/home/dominik/PycharmProjects/TensorCFR/300.hdf5")
 
-		model.fit(x=x.iloc[:amount,:], y=yiloc[:amount,:], batch_size=seed_shape, epochs=100,validation_split=0.1)
+		model.fit(x=x.iloc[:amount,:], y=y.iloc[:amount,:], batch_size=seed_shape, epochs=100,validation_split=0.1)
 
 		data_amount_model_list.append(model)
 

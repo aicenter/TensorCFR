@@ -92,7 +92,7 @@ def nn_out_to_tensorcfr_in(nn_out=None):
 
 	else:
 		## this version is only for nns that output cfv of p1. meaning a vector of size 120 for each public state
-		##TODO solve string with negative numbers to tuple conversion in a fast way
+
 		from numpy import where
 		from src.nn.data.preprocessing_ranges import load_infoset_hist_ids,load_infoset_list
 

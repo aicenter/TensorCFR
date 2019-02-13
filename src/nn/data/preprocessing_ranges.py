@@ -306,3 +306,30 @@ def extract_list_first_hist_of_infoset_indices(player=1):
 
 
 	return mylist
+
+# def generate_fine_public_states(dat=):
+# 	from itertools import permutations
+# 	card_combinations_list = list(permutations(range(0, 6), 3))
+#
+# 	public_states_list = [(x,y,z) for x in [0,1,-1] for y in [0,1,-1] for z in [0,1,-1]]
+#
+# 	draws = [i for i in public_states_list if 0 in i]
+#
+# 	for i in draws:
+#
+# 		if i.count(0)==3:
+# 			hands = list(permutations(range(0, 6), 3))
+# 			drawsfilter = [i for i in draws if i.count(0) == 3]
+#
+# 		elif i.count(0)==2:
+# 			hands = list(permutations(range(0, 6), 2))
+# 			drawsfilter = [i for i in draws if i.count(0) == 2]
+#
+# 		elif i.count(0) == 1:
+# 			drawsfilter = [i for i in draws if i.count(0)==1]
+# 			for hand in range(6):
+# 				pass
+
+
+
+

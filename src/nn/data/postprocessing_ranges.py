@@ -9,6 +9,8 @@ from src.nn.AbstractNN import AbstractNN
 
 inf_to_hist_zero = np.expand_dims(np.zeros(120**2),axis=1)
 
+def linf_loss(y_true,y_predict):
+   return np.max(np.abs(y_true-y_predict))
 
 def huber_loss(y_true, y_pred, clip_delta=1.0):
   error = y_true - y_pred

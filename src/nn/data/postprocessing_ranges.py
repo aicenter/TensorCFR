@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import os
-from src.algorithms.tensorcfr_nn import TensorCFR_Goofstack
 from src.nn.data.preprocessing_ranges import *
 from src.nn.AbstractNN import AbstractNN
 

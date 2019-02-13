@@ -7,6 +7,7 @@ from src.algorithms.tensorcfr_best_response.TensorCFR_BestResponse import Tensor
 from src.domains.available_domains import get_domain_by_name
 from src.nn.data.postprocessing_ranges import load_nn
 from src.utils.other_utils import activate_script
+from src.commons.constants import PROJECT_ROOT
 from src.utils.tf_utils import print_tensors
 import numpy as np
 from src.nn.data.preprocessing_ranges import get_files_in_directory_recursively
@@ -23,7 +24,14 @@ import pickle
 domain = get_domain_by_name("IIGS6_gambit_flattened")
 
 if __name__ == '__main__' and activate_script():
-	nn = load_nn("your path to TensorCFR"+"/TensorCFR/experiments/Goofstack_Experiments/non_determinism_sanity_check/200.hdf5")
+	path_to_nn = os.path.join(
+		PROJECT_ROOT,
+		'experiments',
+		'Goofstack_Experiments',
+		'non_determinism_sanity_check',
+		'200.hdf5'
+	)
+	nn = load_nn(path_to_nn)
 
 	mysteps = 10
 
@@ -31,6 +39,9 @@ if __name__ == '__main__' and activate_script():
 
 
 	for run in range(10):
+		with tf.Session() as sess:
+			graph_ops = len(sess.graph.get_operations())
+			print('Number of operations in run ' + str(run) + ' is ' + str(graph_ops))
 
 		print("expl for {}".format(run))
 
@@ -42,7 +53,7 @@ if __name__ == '__main__' and activate_script():
 
 		final_expl= []
 
-		for player in [1,2]:
+		for player in [1, 2]:
 
 			print("bestresponse for player {}".format(player))
 

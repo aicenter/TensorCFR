@@ -26,6 +26,9 @@ import os
 #hist = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/features/goofspiel/IIGS6/IIGS6_1_6_false_true_lvl10.csv",names=["r1c1","r1c2","r2c1","r2c2","r3c1","r3c2","r1","r2","r3"])
 
 #test3 = pd.read_csv("/home/dominik/PycharmProjects/TensorCFR/src/nn/data/history_identifier.csv",index_col=0)
+from src.commons.constants import PROJECT_ROOT
+
+
 def get_files_in_directory_recursively(rootdir):
 	import os
 	if os.listdir(rootdir) is not None:
@@ -37,32 +40,71 @@ def get_files_in_directory_recursively(rootdir):
 	else:
 		print("directory does not exist")
 
+
 def load_input_mask():
 	from pandas import read_csv
 	import os
-	return read_csv(os.getcwd()+"/src/nn/data/input_mask.csv",index_col=0)
+	return read_csv(
+		os.path.join(
+			PROJECT_ROOT,
+			'src',
+			'nn',
+			'data',
+			'input_mask.csv'
+		),
+		index_col=0)
+
 
 def load_output_mask():
 	from pandas import read_csv
 	import os
-	return read_csv(os.getcwd()+"/src/nn/data/output_mask.csv",index_col=0)
+	return read_csv(
+		os.path.join(
+			PROJECT_ROOT,
+			'src',
+			'nn',
+			'data',
+			'output_mask.csv'
+		),
+		index_col=0)
+
 
 def load_history_identifier():
 	from pandas import read_csv
 	import os
-	return read_csv(os.getcwd()+"/src/nn/data/history_identifier.csv",index_col=0)
+	return read_csv(
+		os.path.join(
+			PROJECT_ROOT,
+			'src',
+			'nn',
+			'data',
+			'history_identifier.csv'
+		),
+		index_col=0)
+
 
 def load_seed_from_filepath(path=""):
-	return pd.read_csv(path,index_col=0)
+	return pd.read_csv(path, index_col=0)
 
 def load_infoset_hist_ids():
 	from pandas import read_pickle
-	return read_pickle(os.getcwd() + "/src/nn/data/infoset_cfv_ids.pkl")
+	return read_pickle(
+		os.path.join(
+			PROJECT_ROOT,
+			'src',
+			'nn',
+			'data',
+			'infoset_cfv_ids.pkl'
+		)
+	)
+
 
 def load_infoset_list():
 	from pickle import load
 
-	with open(os.getcwd()+"/src/nn/data/infoset_list.pkl","rb") as f:
+	path_infoset_list = os.path.join(PROJECT_ROOT, 'src', 'nn', 'data', 'infoset_list.pkl')
+
+	with open(path_infoset_list, 'rb') as f:
 		mylist = load(f)
 
 	return mylist
@@ -303,33 +345,4 @@ def extract_list_first_hist_of_infoset_indices(player=1):
 				cards_df = filter_by_card_combination(df_by_public_state, cards, 2)
 				out.loc["".join(tuple(map(str, public_state))), cards] = int(cards_df.index[0]) if cards_df.shape[0] > 0 else int(-1)
 
-
-
 	return mylist
-
-# def generate_fine_public_states(dat=):
-# 	from itertools import permutations
-# 	card_combinations_list = list(permutations(range(0, 6), 3))
-#
-# 	public_states_list = [(x,y,z) for x in [0,1,-1] for y in [0,1,-1] for z in [0,1,-1]]
-#
-# 	draws = [i for i in public_states_list if 0 in i]
-#
-# 	for i in draws:
-#
-# 		if i.count(0)==3:
-# 			hands = list(permutations(range(0, 6), 3))
-# 			drawsfilter = [i for i in draws if i.count(0) == 3]
-#
-# 		elif i.count(0)==2:
-# 			hands = list(permutations(range(0, 6), 2))
-# 			drawsfilter = [i for i in draws if i.count(0) == 2]
-#
-# 		elif i.count(0) == 1:
-# 			drawsfilter = [i for i in draws if i.count(0)==1]
-# 			for hand in range(6):
-# 				pass
-
-
-
-

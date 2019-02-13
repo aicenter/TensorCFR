@@ -1,7 +1,7 @@
 
 import pandas as pd
 import os
-from src.nn.data.postprocessing_ranges import huber_loss,load_nn
+from src.nn.data.postprocessing_ranges import huber_loss,load_nn,linf_loss
 from experiments.Goofstack_Experiments.layer_depth_vs_width import plot_losses
 
 from src.utils.other_utils import activate_script

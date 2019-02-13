@@ -23,7 +23,7 @@ import pickle
 domain = get_domain_by_name("IIGS6_gambit_flattened")
 
 if __name__ == '__main__' and activate_script():
-	nn = load_nn("your path to TensorCFR"+"/TensorCFR/experiments/Goofstack_Experiments/Non determinism Sanity Check/200.hdf5")
+	nn = load_nn("your path to TensorCFR"+"/TensorCFR/experiments/Goofstack_Experiments/non_determinism_sanity_check/200.hdf5")
 
 	mysteps = 10
 

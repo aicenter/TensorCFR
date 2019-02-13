@@ -1,11 +1,5 @@
-import numpy as np
+
 import pandas as pd
-import tensorflow as tf
-from src.nn.data import preprocessing_ranges
-from keras.models import Model
-from keras.layers import Input,Dense,BatchNormalization
-from keras.initializers import he_normal,lecun_normal
-from keras.optimizers import Adam
 import os
 from src.nn.data.postprocessing_ranges import huber_loss,load_nn
 from experiments.Goofstack_Experiments.layer_depth_vs_width import plot_losses
@@ -45,10 +39,6 @@ def plot_network_losses(model_list,scale="log"):
 	from numpy import arange
 
 	x = arange(200)
-	#plt.plot([arange(200) for i in range(width_model_list.__len__())],[np.array(model_list[i].history.history['loss']).shape for i in range(model_list.__len__)])
-	#plt.plot(x,[model_list[i].history.history['loss'] for i in range(model_list.__len__())])
-
-
 
 	plt.subplot(2, 1, 1)
 	plt.plot(x, model_list[0].history.history['loss'])

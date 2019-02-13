@@ -234,11 +234,11 @@ if __name__ == "__main__" and activate_script():
 	import pickle
 
 	for i in range(widthconfigs.__len__()):
-		with open(os.getcwd()+"/"+str(widthconfigs[i])+".pkl"),"wb") as f:
+		with open(os.getcwd()+"/"+str(widthconfigs[i])+".pkl","wb") as f:
 			pickle.dump(width_model_list[i].history.history,f,protocol=pickle.HIGHEST_PROTOCOL)
 
 	for i in range(depthconfigs.__len__()):
-		with open(os.getcwd() + "/" + str(depthconfigs[i]) + ".pkl"), "wb") as f:
+		with open(os.getcwd() + "/" + str(depthconfigs[i]) + ".pkl", "wb") as f:
 			pickle.dump(depth_model_list[i].history.history,f,protocol=pickle.HIGHEST_PROTOCOL)
 
 ##

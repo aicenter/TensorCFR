@@ -10,6 +10,7 @@ shape = 243
 
 seed_shape = 27
 
+##TODO test network with different amounts of data. save training and val loss dicts as pickle
 
 if __name__== "__main__" and activate_script():
 

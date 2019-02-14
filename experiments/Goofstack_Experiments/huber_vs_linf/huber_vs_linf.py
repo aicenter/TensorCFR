@@ -14,6 +14,10 @@ shape = 243
 
 seed_shape = 27
 
+##TODO run network with same architecture: n_layers=4,n_units=shape*4,relu,adam
+## one with huber and measure linf
+## the other with linf and measure huber
+
 def create_loss(loss=huber_loss):
 
 	shape = 243

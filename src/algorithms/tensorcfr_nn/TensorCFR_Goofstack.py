@@ -3,7 +3,7 @@ import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 #from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
-from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, FLOAT_DTYPE
 from src.domains.FlattenedDomain import FlattenedDomain
 #from src.nn.NNMockUp import NNMockUp
 from src.utils.cfr_utils import get_action_and_infoset_values
@@ -228,6 +228,65 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		return tf.identity(cf_values_to_exp_values,name="cf_values_to_exp_values")
 
+	def get_expected_values(self, for_player=None):
+		##TODO to get exp utilities of lvl 9 using only sum of exp utils of lower level per infoset
+		## for all nodes in lvl 9 do : sum action probs reaching into a lvl10 infoset
+		## multiply by exp value of lvl10 infoset
+		"""
+		Compute expected values of nodes using the bottom-up tree traversal.
+
+		:param for_player: The player for which the expected values are computed. These values are usually computed for the
+		 updating player when counterfactual values are computed. Therefore, by default the expected values are computed for
+		 the `current_updating_player`, i.e. multiplied with `signum` of `signum_of_current_player`.
+		:return: The expected values of nodes based on `current_infoset_strategies`.
+		"""
+		if for_player is None:
+			signum = self.domain.signum_of_current_player
+			player_name = "current_player"
+		else:
+			signum = tf.where(
+				condition=tf.equal(for_player, self.domain.player_owning_the_utilities),
+				x=tf.cast(1.0, dtype=FLOAT_DTYPE),
+				# Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
+				y=tf.cast(-1.0, dtype=FLOAT_DTYPE),
+				name="signum_of_player_{}".format(for_player),
+			)
+			player_name = "player{}".format(for_player)
+
+		node_strategies = self.get_node_strategies()
+		with tf.variable_scope("expected_values"):
+			self.construct_lowest_expected_values(player_name, signum)
+			for level in reversed(range(self.levels - 1)):
+				with tf.variable_scope("level{}".format(level)):
+					weighted_sum_of_values = tf.segment_sum(
+						data=node_strategies[level + 1] * self.expected_values[level + 1],
+						segment_ids=self.domain.parents[level + 1],
+						name="weighted_sum_of_values_lvl{}".format(level),
+					)
+					scatter_copy_indices = tf.expand_dims(
+						tf.cumsum(
+							tf.ones_like(weighted_sum_of_values, dtype=INT_DTYPE),
+							exclusive=True,
+						),
+						axis=-1,
+						name="scatter_copy_indices_lvl{}".format(level)
+					)
+					extended_weighted_sum = tf.scatter_nd(
+						indices=scatter_copy_indices,
+						updates=weighted_sum_of_values,
+						shape=self.domain.utilities[level].shape,
+						name="extended_weighted_sum_lvl{}".format(level)
+					)
+					self.expected_values[level] = tf.where(
+						condition=self.domain.mask_of_inner_nodes[level],
+						x=extended_weighted_sum,
+						y=signum * tf.reshape(
+							self.domain.utilities[level],
+							shape=[self.domain.utilities[level].shape[-1]],
+						),
+						name="expected_values_lvl{}_for_{}".format(level, player_name)
+					)
+		return self.expected_values
 
 	def construct_lowest_expected_values(self, player_name, signum):
 		with tf.variable_scope("level{}".format(self.levels - 1)):

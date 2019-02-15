@@ -85,7 +85,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 	def tensorcfr_to_nn_input(self,tensor_cfr_out=None):
 
-		##TODO get ranges from tensorcfrfixestrunk. bring them into format [public_state,ranges p1] for each publicstate
+		##TODO use tf.scatter_nd for this. Could be much faster
 		## TODO implement range of ifnoset in tensorcfr. its easier
 		tensor_cfr_out = tensor_cfr_out.eval(session=self.session)
 		mask = self.mask.copy()
@@ -135,6 +135,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		return mask
 
 	def nn_out_to_tensorcfr_in(self,nn_out=None):
+		##TODO again use tf.scatter_nd to put values by indices
 
 		if nn_out.shape != (27, 120):
 			raise ValueError

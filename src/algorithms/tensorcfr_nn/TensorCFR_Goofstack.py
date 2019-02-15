@@ -3,7 +3,7 @@ import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
 #from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
-from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, FLOAT_DTYPE
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, FLOAT_DTYPE, INT_DTYPE
 from src.domains.FlattenedDomain import FlattenedDomain
 #from src.nn.NNMockUp import NNMockUp
 from src.utils.cfr_utils import get_action_and_infoset_values

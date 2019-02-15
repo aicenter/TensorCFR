@@ -8,6 +8,7 @@ from pprint import pprint
 from src.commons import constants as common_constants
 from src.utils.gambit_flattened_domains import constants
 from src.utils.gambit_flattened_domains.parser import Parser
+from src.utils.other_utils import activate_script
 
 
 class TreeNode:
@@ -324,7 +325,7 @@ class GambitLoaderCached(GambitLoader):
 		hkl.dump(data, path_to_hkl, mode='w', compression='gzip')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' and activate_script():
 	domain01_efg = os.path.join(
 			common_constants.PROJECT_ROOT,
 			'doc',

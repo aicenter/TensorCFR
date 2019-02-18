@@ -162,7 +162,12 @@ def calc_append_cfv_p2(dir=""):
 			i+=1
 
 def seed_to_ranges_per_public_state(df=None):
-	##TODO
+	##TODO @ shuo : calculate the cfv of p2 infosets
+	## go into the second part of the loop mask.columns[:,123:] and do the calculation inside of the loop by
+	## sorting by a publicstate and cards for player 2: then you get indices of which histories in the seed have this profile
+	## now take the filtered seed (histories in seed with this augmented infoset) and multiply the expected value column
+	## by the cf reach prob of player 2
+	## then sum them up and put them into the out mask
 	mask = load_input_mask()
 	out = load_output_mask()
 	hist_id = load_history_identifier()

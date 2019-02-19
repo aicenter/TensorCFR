@@ -87,6 +87,26 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		self.input_ranges = self.get_trunk_nodal_ranges_p1_p2()
 
 	def non_zero_reach_node_of_auginfset(self):
+		reaches = self.get_nodal_reach_probabilities()
+		zero = tf.constant(0,dtype=tf.float32)
+		bool_non_zero_reaches = tf.where(tf.not_equal(reaches,zero,name="bool_non_zero_reaches_lvl10"))
+		self.session.run(bool_non_zero_reaches)
+
+		if self.domain.current_updating_player == 1:
+			infsetdict = self.infset_dict.copy()
+			for key,value in infsetdict:
+				infsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches]
+
+			return infsetdict
+
+		elif self.domain.current_updating_player == 2:
+			auginfsetdict = self.auginfset_dict.copy()
+			for key, value in auginfsetdict:
+				auginfsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches]
+
+			return  auginfsetdict
+
+
 		## TODO write method that assigns sum of cfv prediction of infoset to history
 		## TODO that has non zero reach
 		pass
@@ -145,7 +165,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		return mask
 
 	def nn_out_to_tensorcfr_in(self,nn_out=None):
-		##TODO create hashmap with keys as infset / aug infset and values the histories in it
+		##TODO use ordered dict to be able to hav i-th key of dict correspond to i-th index of output vector of nn
 		##TODO again use tf.scatter_nd to put values by indices
 
 		if nn_out.shape != (27, 120):

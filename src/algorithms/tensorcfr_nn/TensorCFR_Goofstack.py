@@ -343,10 +343,8 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 				shape=lowest_utilities.shape,
 				name="predicted_to_exp_values"
 			)
-
-			self.expected_values[self.levels - 1] = tf.multiply(
-				signum,
-				self.predicted_to_exp_values,
+	## changed signum to 1 since new network will predict for each player
+			self.expected_values[self.levels - 1] = tf.multiply(1,self.predicted_to_exp_values,
 				name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
 			)
 

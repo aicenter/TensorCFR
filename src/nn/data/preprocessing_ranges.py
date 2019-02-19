@@ -86,6 +86,31 @@ def load_history_identifier():
 def load_seed_from_filepath(path=""):
 	return pd.read_csv(path, index_col=0)
 
+
+def load_infoset_dict():
+	from pandas import read_pickle
+	return read_pickle(
+		os.path.join(
+			PROJECT_ROOT,
+			'src',
+			'nn',
+			'data',
+			'infsetdict.pkl'
+		)
+	)
+
+def load_auginfoset_dict():
+	from pandas import read_pickle
+	return read_pickle(
+		os.path.join(
+			PROJECT_ROOT,
+			'src',
+			'nn',
+			'data',
+			'auginfsetdict.pkl'
+		)
+	)
+
 def load_infoset_hist_ids():
 	from pandas import read_pickle
 	return read_pickle(
@@ -347,7 +372,49 @@ def extract_list_first_hist_of_infoset_indices(player=1):
 
 			for cards in out.columns[120:]:
 
-				cards_df = filter_by_card_combination(df_by_public_state, cards, 2)
-				out.loc["".join(tuple(map(str, public_state))), cards] = int(cards_df.index[0]) if cards_df.shape[0] > 0 else int(-1)
+				cards_df = filter_by_card_combination(df_by_public_state, cards[:-2], 2)
+				#out.loc["".join(tuple(map(str, public_state))), cards] = int(cards_df.index[0]) if cards_df.shape[0] > 0 else int(-1)
+				if cards_df.shape[0] > 0:
+					mylist.append(int(cards_df.index[0]))
+				else:
+					continue
 
 	return mylist
+
+def auginfset_hist_indices_dict(player=2):
+	import numpy as np
+	##TODO
+	#mask = load_input_mask()
+	out = load_output_mask()
+	hist_id = load_history_identifier()
+	public_states_list = [(x,y,z) for x in [0, 1, -1] for y in [0, 1, -1] for z in [0, 1, -1]]
+
+	mydict = {}
+
+	for public_state in public_states_list:
+
+		df_by_public_state = filter_by_public_state(hist_id,public_state)
+
+		if player == 1:
+
+			for cards in out.columns[:120]:
+
+
+				cards_df = filter_by_card_combination(df_by_public_state,cards,1)
+
+				mydict["{}".format(str(public_state)) + cards] = list(map(int,cards_df.index))
+
+		elif player == 2:
+
+			for cards in out.columns[120:]:
+
+				cards_df = filter_by_card_combination(df_by_public_state, cards[:-2], 2)
+
+				mydict["{}".format(str(public_state))+cards] = list(map(int,cards_df.index))
+
+
+	return mydict
+
+# import pickle
+# with open("auginfsetdict.pkl","rb") as file:
+# 	testauginfdict = pickle.load(file)

@@ -135,6 +135,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		return mask
 
 	def nn_out_to_tensorcfr_in(self,nn_out=None):
+		##TODO create hashmap with keys as infset / aug infset and values the histories in it
 		##TODO again use tf.scatter_nd to put values by indices
 
 		if nn_out.shape != (27, 120):

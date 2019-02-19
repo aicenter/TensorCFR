@@ -8,6 +8,7 @@ from src.commons.constants import CHANCE_PLAYER, PLAYER1, PLAYER2, DEFAULT_AVERA
 	REACH_PROBABILITY_OF_ROOT, PROJECT_ROOT, SEED_FOR_TESTING
 from src.utils.cfr_utils import get_parents_from_action_counts
 from src.utils.gambit_flattened_domains.loader import GambitLoader, GambitLoaderCached
+from src.utils.other_utils import activate_script
 from src.utils.tf_utils import print_tensors, normalize, get_default_config_proto
 
 
@@ -324,7 +325,7 @@ class FlattenedDomain:
 		self.print_misc_variables(session)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' and activate_script():
 	import os
 	import src.domains.flattened_hunger_games.flattened_hunger_games_as_numpy_values as fhg
 	flattened_hunger_games = FlattenedDomain(

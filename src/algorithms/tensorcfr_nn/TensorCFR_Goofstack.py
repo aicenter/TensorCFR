@@ -153,6 +153,11 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 	def predict_lvl10_cf_values(self, input_ranges=None, name="predictions"):
 		## TODO change to actual CFV. right now is u(x) not v(x)
+		## TODO output dim of network will be 240
+		## TODO create map of histories in augmented infosets lvl 10
+		## TODO choose history with non zero reach (action prob)
+		## TODO create if check which player is currently updating / cumulating
+		## TODO if current updating player = 1 do padding of 2 and vice versa
 		if input_ranges is None:
 			input_ranges = self.input_ranges
 
@@ -213,8 +218,13 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	#
 
 	def cf_values_lvl10_to_exp_values(self):
+		##TODO choose history in infoset that has non zero reach
 
-		nodal_reaches_lvl_10 = self.get_nodal_reach_probabilities(for_player=1)[10]
+		## TODO new idea. get pred of infset, split it to all nodes in infoset uniformly
+		##TODO achtung crreunt player wieder raus
+
+		nodal_reaches_lvl_10 = self.get_nodal_reach_probabilities(for_player=self.domain.current_updating_player)[10]
+		#nodal_reaches_lvl_10 = self.get_nodal_range_probabilities(for_player=2,for_level=10)
 		cf_values_lvl_10 = self.predict_lvl10_cf_values()
 
 		nodal_reaches_lvl_10_float64 = tf.cast(nodal_reaches_lvl_10,tf.float64,name="nodal_reaches_lvl_10")
@@ -259,6 +269,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 			for level in reversed(range(self.levels - 1)):
 				with tf.variable_scope("level{}".format(level)):
 					weighted_sum_of_values = tf.segment_sum(
+						##TODO sum of exp values times all action probs of parent that reach to all h in I
 						data=node_strategies[level + 1] * self.expected_values[level + 1],
 						segment_ids=self.domain.parents[level + 1],
 						name="weighted_sum_of_values_lvl{}".format(level),

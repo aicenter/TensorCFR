@@ -2,15 +2,12 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
-#from src.algorithms.tensorcfr_nn.TensorCFR_NN import TensorCFR_NN
 from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, FLOAT_DTYPE, INT_DTYPE
 from src.domains.FlattenedDomain import FlattenedDomain
-#from src.nn.NNMockUp import NNMockUp
-from src.utils.cfr_utils import get_action_and_infoset_values
 from src.utils.tf_utils import get_default_config_proto, print_tensor, masked_assign
 from src.nn.data.postprocessing_ranges import load_nn
-from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,load_infoset_list,\
-	load_infoset_hist_ids,filter_by_card_combination,filter_by_public_state,load_auginfoset_dict,load_infoset_dict
+from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,filter_by_card_combination,\
+	filter_by_public_state,load_auginfoset_dict,load_infoset_dict
 import numpy as np
 
 class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
@@ -37,8 +34,6 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		self.mask = load_input_mask()
 		self.output_mask = load_output_mask()
 		self.hist_id = load_history_identifier()
-		self.infoset_list = load_infoset_list()
-		self.infoset_hist_ids = load_infoset_hist_ids().iloc[:, :120]
 		self.public_states_list = [(x, y, z) for x in [0, 1, -1] for y in [0, 1, -1] for z in [0, 1, -1]]
 		self.tensor_cfr_in_mask = np.zeros(120 ** 2)
 		self.infset_dict = load_infoset_dict()

@@ -15,7 +15,7 @@ import numpy as np
 
 class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	def __init__(self, domain: FlattenedDomain, neural_net=None, trunk_depth=10):
-		##TODO investigate why it fails at trunk_depth = 0
+
 		"""
 		Constructor for an instance of TensorCFR_NN algorithm with given parameters (as a TensorFlow computation graph).
 
@@ -87,24 +87,25 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		self.input_ranges = self.get_trunk_nodal_ranges_p1_p2()
 
 	def non_zero_reach_node_of_auginfset(self):
-		reaches = self.get_nodal_reach_probabilities()
+
+		reaches = self.get_nodal_reaches_at_trunk_depth()
 		zero = tf.constant(0,dtype=tf.float32)
 		bool_non_zero_reaches = tf.where(tf.not_equal(reaches,zero,name="bool_non_zero_reaches_lvl10"))
 		self.session.run(bool_non_zero_reaches)
 
 		if self.domain.current_updating_player == 1:
 			infsetdict = self.infset_dict.copy()
-			for key,value in infsetdict:
+			for key,value in infsetdict.items():
 				infsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches]
 
 			return infsetdict
 
 		elif self.domain.current_updating_player == 2:
 			auginfsetdict = self.auginfset_dict.copy()
-			for key, value in auginfsetdict:
+			for key, value in auginfsetdict.items():
 				auginfsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches]
 
-			return  auginfsetdict
+			return auginfsetdict
 
 
 		## TODO write method that assigns sum of cfv prediction of infoset to history
@@ -167,20 +168,24 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	def nn_out_to_tensorcfr_in(self,nn_out=None):
 		##TODO use ordered dict to be able to hav i-th key of dict correspond to i-th index of output vector of nn
 		##TODO again use tf.scatter_nd to put values by indices
+		## this version is only for nns that output cfv of p1. meaning a vector of size 120 for each public state
 
-		if nn_out.shape != (27, 120):
-			raise ValueError
+		idxdict = self.non_zero_reach_node_of_auginfset()
 
-		else:
-			## this version is only for nns that output cfv of p1. meaning a vector of size 120 for each public state
+		tensor_cfr_in = self.tensor_cfr_in_mask.copy()
 
-			tensor_cfr_in = self.tensor_cfr_in_mask.copy()
+		for loc,idx in idxdict.items():
 
-			for id in self.infoset_list:
+			if idx.__len__() != 0:
 
-				tensor_cfr_in[id] = nn_out[np.where(self.infoset_hist_ids == id)]
+				myloctuple = tuple(map(int, loc[1:-1].split(',')))
 
-			return tensor_cfr_in
+				tensor_cfr_in[idx[0]] = nn_out.iloc[myloctuple[0],myloctuple[1]]
+
+			else:
+				continue
+
+		return tensor_cfr_in
 
 	def predict_lvl10_cf_values(self, input_ranges=None, name="predictions"):
 		## TODO change to actual CFV. right now is u(x) not v(x)

@@ -9,11 +9,12 @@ from src.domains.FlattenedDomain import FlattenedDomain
 from src.utils.cfr_utils import get_action_and_infoset_values
 from src.utils.tf_utils import get_default_config_proto, print_tensor, masked_assign
 from src.nn.data.postprocessing_ranges import load_nn
-from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,load_infoset_list,load_infoset_hist_ids,filter_by_card_combination,filter_by_public_state
+from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,load_infoset_list,\
+	load_infoset_hist_ids,filter_by_card_combination,filter_by_public_state,load_auginfoset_dict,load_infoset_dict
 import numpy as np
 
 class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
-	def __init__(self, domain: FlattenedDomain, neural_net=None, trunk_depth=0):
+	def __init__(self, domain: FlattenedDomain, neural_net=None, trunk_depth=10):
 		##TODO investigate why it fails at trunk_depth = 0
 		"""
 		Constructor for an instance of TensorCFR_NN algorithm with given parameters (as a TensorFlow computation graph).
@@ -40,6 +41,8 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		self.infoset_hist_ids = load_infoset_hist_ids().iloc[:, :120]
 		self.public_states_list = [(x, y, z) for x in [0, 1, -1] for y in [0, 1, -1] for z in [0, 1, -1]]
 		self.tensor_cfr_in_mask = np.zeros(120 ** 2)
+		self.infset_dict = load_infoset_dict()
+		self.auginfset_dict = load_auginfoset_dict()
 		with tf.variable_scope("initialization"):
 			setup_messages, feed_dictionary = self.set_up_feed_dictionary(method="by-domain")
 			print(setup_messages)
@@ -83,7 +86,14 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		self.cfr_step_op = self.do_cfr_step()
 		self.input_ranges = self.get_trunk_nodal_ranges_p1_p2()
 
+	def non_zero_reach_node_of_auginfset(self):
+		## TODO write method that assigns sum of cfv prediction of infoset to history
+		## TODO that has non zero reach
+		pass
+
+
 	def tensorcfr_to_nn_input(self,tensor_cfr_out=None):
+		##TODO check if taking index 0 of each seed is valid. maybe its sum or take one that is not 0? ask vojta
 
 		##TODO use tf.scatter_nd for this. Could be much faster
 		## TODO implement range of ifnoset in tensorcfr. its easier

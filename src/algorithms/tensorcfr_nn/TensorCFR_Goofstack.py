@@ -348,13 +348,6 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 				name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
 			)
 
-
-	def cf_nn_preds_to_cf_values(self):
-		##TODO put cf preds of nn in list of cf values
-		pass
-
-
-
 	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=True,
 	            register_strategies_on_step=None):
 		if register_strategies_on_step is None:

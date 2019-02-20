@@ -2,7 +2,7 @@
 import tensorflow as tf
 
 from src.algorithms.tensorcfr_fixed_trunk_strategies.TensorCFRFixedTrunkStrategies import TensorCFRFixedTrunkStrategies
-from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, FLOAT_DTYPE, INT_DTYPE
+from src.commons.constants import DEFAULT_TOTAL_STEPS, DEFAULT_AVERAGING_DELAY, FLOAT_DTYPE, INT_DTYPE, PLAYER1, PLAYER2
 from src.domains.FlattenedDomain import FlattenedDomain
 from src.utils.tf_utils import get_default_config_proto, print_tensor, masked_assign
 from src.nn.data.postprocessing_ranges import load_nn
@@ -92,19 +92,22 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		print_tensor(self.session,bool_non_zero_reaches)
 		#bool_non_zero_reaches = [idx for sublist in bool_non_zero_reaches for idx in sublist]
 		#print(bool_non_zero_reaches.__len__())
-		if tf.equal(self.domain.current_updating_player,tf.constant(value=1,dytpe=INT_DTYPE)):
+		if tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER1)) is not None:
 			infsetdict = self.infset_dict.copy()
 			for key,value in infsetdict.items():
 				infsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches]
 
 			return infsetdict
 
-		elif tf.equal(self.domain.current_updating_player,tf.constant(value=2,dytpe=INT_DTYPE)):
+		elif tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER2)) is not None:
 			auginfsetdict = self.auginfset_dict.copy()
 			for key, value in auginfsetdict.items():
 				auginfsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches]
 
 			return auginfsetdict
+
+		else:
+			print("was zuer hoelle")
 		## write method that assigns sum of cfv prediction of infoset to history
 		## that has non zero reach
 

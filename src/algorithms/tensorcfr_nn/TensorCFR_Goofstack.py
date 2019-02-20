@@ -94,15 +94,17 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		#print(bool_non_zero_reaches.__len__())
 		if tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER1)) is not None:
 			infsetdict = self.infset_dict.copy()
+			np_bool_non_zero_reaches = bool_non_zero_reaches.eval()
 			for key,value in infsetdict.items():
-				infsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches.eval()]
+				infsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
 
 			return infsetdict
 
 		elif tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER2)) is not None:
 			auginfsetdict = self.auginfset_dict.copy()
+			np_bool_non_zero_reaches = bool_non_zero_reaches.eval()
 			for key, value in auginfsetdict.items():
-				auginfsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches.eval()]
+				auginfsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
 
 			return auginfsetdict
 

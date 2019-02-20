@@ -92,14 +92,14 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		print_tensor(self.session,bool_non_zero_reaches)
 		#bool_non_zero_reaches = [idx for sublist in bool_non_zero_reaches for idx in sublist]
 		#print(bool_non_zero_reaches.__len__())
-		if self.domain.current_updating_player == 1:
+		if tf.equal(self.domain.current_updating_player,tf.constant(value=1,dytpe=INT_DTYPE)):
 			infsetdict = self.infset_dict.copy()
 			for key,value in infsetdict.items():
 				infsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches]
 
 			return infsetdict
 
-		elif self.domain.current_updating_player == 2:
+		elif tf.equal(self.domain.current_updating_player,tf.constant(value=2,dytpe=INT_DTYPE)):
 			auginfsetdict = self.auginfset_dict.copy()
 			for key, value in auginfsetdict.items():
 				auginfsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches]
@@ -361,6 +361,8 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 			for step in range(total_steps):
 				print("\n########## CFR step {} ##########".format(step))
+				print("current updating player is:")
+				print_tensor(self.session,self.domain.current_updating_player)
 				predicted_to_exp_values = self.cf_values_lvl10_to_exp_values()
 				if verbose:
 					print("Before:")

@@ -87,14 +87,14 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		#zero = tf.constant(0,dtype=tf.float32)
 		#print_tensor(self.domain.current_updating_player)
 		bool_non_zero_reaches = tf.reshape(tf.where(tf.not_equal(reaches,0,name="bool_non_zero_reaches_lvl10")),[-1])
-		self.session.run(bool_non_zero_reaches)
+		a = self.session.run(bool_non_zero_reaches)
 		print("boolnonzero reaches works")
 		print_tensor(self.session,bool_non_zero_reaches)
 		#bool_non_zero_reaches = [idx for sublist in bool_non_zero_reaches for idx in sublist]
 		#print(bool_non_zero_reaches.__len__())
 		if tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER1)) is not None:
 			infsetdict = self.infset_dict.copy()
-			np_bool_non_zero_reaches = bool_non_zero_reaches.eval()
+			np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
 			for key,value in infsetdict.items():
 				infsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
 
@@ -102,7 +102,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		elif tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER2)) is not None:
 			auginfsetdict = self.auginfset_dict.copy()
-			np_bool_non_zero_reaches = bool_non_zero_reaches.eval()
+			np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
 			for key, value in auginfsetdict.items():
 				auginfsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
 
@@ -182,7 +182,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 				myloctuple = tuple(map(int, loc[1:-1].split(',')))
 
-				tensor_cfr_in[idx[0]] = nn_out.iloc[myloctuple[0],myloctuple[1]]
+				tensor_cfr_in[idx[0]] = nn_out[myloctuple[0],myloctuple[1]]
 
 			else:
 				continue

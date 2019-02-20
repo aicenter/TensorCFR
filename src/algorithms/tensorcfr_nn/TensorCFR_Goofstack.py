@@ -84,32 +84,58 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	def non_zero_reach_node_of_auginfset(self):
 
 		reaches = self.get_nodal_reaches_at_trunk_depth()
-		#zero = tf.constant(0,dtype=tf.float32)
-		#print_tensor(self.domain.current_updating_player)
+		reaches_flat = self.session.run(tf.reshape(reaches, [-1]))
+		print("sumofreaches: {}".format(sum(reaches_flat)))
 		bool_non_zero_reaches = tf.reshape(tf.where(tf.not_equal(reaches,0,name="bool_non_zero_reaches_lvl10")),[-1])
 		a = self.session.run(bool_non_zero_reaches)
-		print("boolnonzero reaches works")
+		print("{} non zero reach trunk histories".format(a.shape[0]))
 		print_tensor(self.session,bool_non_zero_reaches)
-		#bool_non_zero_reaches = [idx for sublist in bool_non_zero_reaches for idx in sublist]
-		#print(bool_non_zero_reaches.__len__())
-		if tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER1)) is not None:
-			infsetdict = self.infset_dict.copy()
-			np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
-			for key,value in infsetdict.items():
-				infsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
 
-			return infsetdict
+		mydict = self.session.run(tf.cond(self.check_player(),self.inf_set_cond(bool_non_zero_reaches),self.auginf_set_cond(bool_non_zero_reaches)))
 
-		elif tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER2)) is not None:
-			auginfsetdict = self.auginfset_dict.copy()
-			np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
-			for key, value in auginfsetdict.items():
-				auginfsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
+		return mydict
 
-			return auginfsetdict
+		#if tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER1)) is not None:
 
-		else:
-			print("was zuer hoelle")
+	def check_player(self):
+		return tf.equal(self.domain.current_updating_player, tf.constant(value=PLAYER1))
+
+	def inf_set_cond(self,bool_non_zero_reaches):
+		infsetdict = self.infset_dict.copy()
+		np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
+		for key,value in infsetdict.items():
+			infsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
+
+		return infsetdict
+
+	def auginf_set_cond(self,bool_non_zero_reaches):
+		auginfsetdict = self.auginfset_dict.copy()
+		np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
+		for key, value in auginfsetdict.items():
+			auginfsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
+
+		return auginfsetdict
+
+
+
+		# if tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER1)) is not None:
+		# 	infsetdict = self.infset_dict.copy()
+		# 	np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
+		# 	for key,value in infsetdict.items():
+		# 		infsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
+		#
+		# 	return infsetdict
+		#
+		# elif tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER2)) is not None:
+		# 	auginfsetdict = self.auginfset_dict.copy()
+		# 	np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
+		# 	for key, value in auginfsetdict.items():
+		# 		auginfsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
+		#
+		# 	return auginfsetdict
+
+
+
 		## write method that assigns sum of cfv prediction of infoset to history
 		## that has non zero reach
 
@@ -173,6 +199,8 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		## this version is only for nns that output cfv of p1. meaning a vector of size 120 for each public state
 
 		idxdict = self.non_zero_reach_node_of_auginfset()
+
+		print(" {} non zero reah h in dict".format(sum([value.__len__() for key,value in idxdict.items()])))
 
 		tensor_cfr_in = self.tensor_cfr_in_mask.copy()
 
@@ -259,12 +287,14 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		##TODO choose history in infoset that has non zero reach
 
 		## TODO new idea. get pred of infset, split it to all nodes in infoset uniformly
-		##TODO achtung crreunt player wieder raus
+
+
+		#total_reaches = self.get_nodal_reaches_at_trunk_depth()
 
 		nodal_reaches_lvl_10 = self.get_nodal_reach_probabilities(for_player=self.domain.current_updating_player)[10]
 		#nodal_reaches_lvl_10 = self.get_nodal_range_probabilities(for_player=2,for_level=10)
 		cf_values_lvl_10 = self.predict_lvl10_cf_values()
-
+		#total_reaches_float64 = tf.cast(total_reaches,tf.float64,name="total_reaches_lvl_10")
 		nodal_reaches_lvl_10_float64 = tf.cast(nodal_reaches_lvl_10,tf.float64,name="nodal_reaches_lvl_10")
 		self.session.run(nodal_reaches_lvl_10_float64)
 		with tf.variable_scope("level{}".format(self.levels - 1)):
@@ -273,6 +303,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 			                                   x=tf.zeros_like(cf_values_lvl_10,dtype=tf.float64),
 			                                   y=tf.divide(cf_values_lvl_10,nodal_reaches_lvl_10_float64),
 			                                                  name="predictions_to_expected_values_lvl10")
+			#cf_values_to_exp_values = cf_values_lvl_10
 
 		return tf.identity(cf_values_to_exp_values,name="cf_values_to_exp_values")
 

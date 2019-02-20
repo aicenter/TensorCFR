@@ -84,10 +84,14 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	def non_zero_reach_node_of_auginfset(self):
 
 		reaches = self.get_nodal_reaches_at_trunk_depth()
-		zero = tf.constant(0,dtype=tf.float32)
-		bool_non_zero_reaches = tf.where(tf.not_equal(reaches,zero,name="bool_non_zero_reaches_lvl10"))
+		#zero = tf.constant(0,dtype=tf.float32)
+		#print_tensor(self.domain.current_updating_player)
+		bool_non_zero_reaches = tf.reshape(tf.where(tf.not_equal(reaches,0,name="bool_non_zero_reaches_lvl10")),[-1])
 		self.session.run(bool_non_zero_reaches)
-
+		print("boolnonzero reaches works")
+		print_tensor(self.session,bool_non_zero_reaches)
+		#bool_non_zero_reaches = [idx for sublist in bool_non_zero_reaches for idx in sublist]
+		#print(bool_non_zero_reaches.__len__())
 		if self.domain.current_updating_player == 1:
 			infsetdict = self.infset_dict.copy()
 			for key,value in infsetdict.items():
@@ -101,11 +105,9 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 				auginfsetdict[key] = [idx for idx in value if idx in bool_non_zero_reaches]
 
 			return auginfsetdict
+		## write method that assigns sum of cfv prediction of infoset to history
+		## that has non zero reach
 
-
-		## TODO write method that assigns sum of cfv prediction of infoset to history
-		## TODO that has non zero reach
-		pass
 
 
 	def tensorcfr_to_nn_input(self,tensor_cfr_out=None):
@@ -339,7 +341,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 				name="predicted_to_exp_values"
 			)
 	## changed signum to 1 since new network will predict for each player
-			self.expected_values[self.levels - 1] = tf.multiply(1,self.predicted_to_exp_values,
+			self.expected_values[self.levels - 1] = tf.multiply(1.0,self.predicted_to_exp_values,
 				name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
 			)
 

@@ -3,6 +3,7 @@ import copy
 import os
 import numpy as np
 import hickle as hkl
+import h5py
 from pprint import pprint
 
 from src.commons import constants as common_constants
@@ -259,8 +260,8 @@ class GambitLoaderCached(GambitLoader):
 		if not os.path.isfile(path):
 			raise FileNotFoundError
 
-		self.cached_dir_name = 'cached_hkl'
-		self.cached_file_suffix = 'hkl'
+		self.cached_dir_name = 'cached_hdf5'
+		self.cached_file_suffix = 'hdf5'
 
 		path_to_hkl = self._get_path_to_cached_hkl(path)
 
@@ -294,18 +295,58 @@ class GambitLoaderCached(GambitLoader):
 		return os.path.join(*path_to_gambit_file_cached_folder)
 
 	def _load_hkl(self, path_to_hkl):
-		loaded = hkl.load(path_to_hkl)
+		self.domain_name = str()
+		self.domain_parameters = list()
+		self.information_set_mapping_to_gtlibrary = dict()
 
-		self.domain_name = loaded['domain_name']
-		self.domain_parameters = loaded['domain_parameters']
-		self.information_set_mapping_to_gtlibrary = loaded['information_set_mapping_to_gtlibrary']
-		self.infoset_acting_players = loaded['infoset_acting_players']
-		self.initial_infoset_strategies = loaded['initial_infoset_strategies']
-		self.node_to_infoset = loaded['node_to_infoset']
-		self.number_of_levels = loaded['number_of_levels']
-		self.number_of_nodes_actions = loaded['number_of_nodes_actions']
-		self.number_of_players = loaded['number_of_players']
-		self.utilities = loaded['utilities']
+		self.infoset_acting_players = list()
+		self.initial_infoset_strategies = list()
+		self.node_to_infoset = list()
+		self.number_of_levels = list()
+		self.number_of_nodes_actions = list()
+		self.number_of_players = 0
+		self.utilities = list()
+
+		with h5py.File(path_to_hkl, 'r') as f:
+			grp_infoset_acting_players = f['infoset_acting_players']
+			for idx in range(len(grp_infoset_acting_players)):
+				self.infoset_acting_players.append(grp_infoset_acting_players[str(idx)][:])
+
+			grp_initial_infoset_strategies = f['initial_infoset_strategies']
+			for idx in range(len(grp_initial_infoset_strategies)):
+				self.initial_infoset_strategies.append(grp_initial_infoset_strategies[str(idx)][:])
+
+			grp_node_to_infoset = f['node_to_infoset']
+			for idx in range(len(grp_node_to_infoset)):
+				self.node_to_infoset.append(grp_node_to_infoset[str(idx)][:])
+
+			self.nodes_per_levels = f['nodes_per_levels'][:]
+
+			self.number_of_levels = f['number_of_levels'][:]
+
+			grp_number_of_nodes_actions = f['number_of_nodes_actions']
+			for idx in range(len(grp_number_of_nodes_actions)):
+				self.number_of_nodes_actions.append(grp_number_of_nodes_actions[str(idx)][:])
+
+			self.number_of_players = f['number_of_players'][:]
+
+			grp_utilities = f['utilities']
+			for idx in range(len(grp_utilities)):
+				self.utilities.append(grp_utilities[str(idx)][:])
+
+		print()
+		#loaded = hkl.load(path_to_hkl)
+
+		# self.domain_name = loaded['domain_name']
+		# self.domain_parameters = loaded['domain_parameters']
+		# self.information_set_mapping_to_gtlibrary = loaded['information_set_mapping_to_gtlibrary']
+		# self.infoset_acting_players = loaded['infoset_acting_players']
+		# self.initial_infoset_strategies = loaded['initial_infoset_strategies']
+		# self.node_to_infoset = loaded['node_to_infoset']
+		# self.number_of_levels = loaded['number_of_levels']
+		# self.number_of_nodes_actions = loaded['number_of_nodes_actions']
+		# self.number_of_players = loaded['number_of_players']
+		# self.utilities = loaded['utilities']
 
 
 	def _save_hkl(self, path_to_hkl):
@@ -321,8 +362,59 @@ class GambitLoaderCached(GambitLoader):
 			'number_of_players': self.number_of_players,
 			'utilities': self.utilities
 		}
+		print('')
 
-		hkl.dump(data, path_to_hkl, mode='w', compression='gzip')
+		#hkl.dump(data, path_to_hkl, mode='w', compression='gzip')
+
+		with h5py.File(path_to_hkl, 'w') as f:
+			grp_infoset_acting_players = f.create_group('infoset_acting_players')
+			for idx, infoset_acting_players_list in enumerate(self.infoset_acting_players):
+				if infoset_acting_players_list is not None:
+					infoset_acting_players_list = np.array(infoset_acting_players_list)
+					grp_infoset_acting_players.create_dataset(
+						str(idx),
+						shape=infoset_acting_players_list.shape,
+						data=infoset_acting_players_list)
+
+			grp_initial_infoset_strategies = f.create_group('initial_infoset_strategies')
+			for idx, initial_infoset_strategies_list in enumerate(self.initial_infoset_strategies):
+				if initial_infoset_strategies_list is not None:
+					initial_infoset_strategies_list = np.array(initial_infoset_strategies_list)
+					grp_initial_infoset_strategies.create_dataset(
+						str(idx),
+						shape=initial_infoset_strategies_list.shape,
+						data=initial_infoset_strategies_list)
+
+			grp_node_to_infoset = f.create_group('node_to_infoset')
+			for idx, node_to_infoset_list in enumerate(self.node_to_infoset):
+				if node_to_infoset_list is not None:
+					node_to_infoset_list = np.array(node_to_infoset_list)
+					grp_node_to_infoset.create_dataset(
+						str(idx),
+						shape=node_to_infoset_list.shape,
+						data=node_to_infoset_list)
+
+			nodes_per_levels_list = np.array(self.nodes_per_levels)
+			f.create_dataset('nodes_per_levels', shape=nodes_per_levels_list.shape, data=nodes_per_levels_list)
+
+			f.create_dataset('number_of_levels', shape=(1,), data=self.number_of_levels)
+
+			grp_number_of_nodes_actions = f.create_group('number_of_nodes_actions')
+			for idx, number_of_nodes_actions_list in enumerate(self.number_of_nodes_actions):
+				if number_of_nodes_actions_list is not None:
+					number_of_nodes_actions_list = np.array(number_of_nodes_actions_list)
+					grp_number_of_nodes_actions.create_dataset(
+						str(idx),
+						shape=number_of_nodes_actions_list.shape,
+						data=number_of_nodes_actions_list)
+
+			f.create_dataset('number_of_players', shape=(1,), data=self.number_of_players)
+
+			grp_utilities = f.create_group('utilities')
+			for idx, utilities_list in enumerate(self.utilities):
+				if utilities_list is not None:
+					utilities_list = np.array(utilities_list)
+					grp_utilities.create_dataset(str(idx), shape=utilities_list.shape, data=utilities_list)
 
 
 if __name__ == '__main__' and activate_script():
@@ -343,16 +435,36 @@ if __name__ == '__main__' and activate_script():
 		'hunger_games_2',
 		'hunger_games_via_gambit.efg'
 	)
+	goofspiel_5_efg = os.path.join(
+		common_constants.PROJECT_ROOT,
+		'doc',
+		'goofspiel',
+		'IIGS5_s1_bf_ft.gbt'
+	)
+	goofspiel_6_efg = os.path.join(
+		common_constants.PROJECT_ROOT,
+		'doc',
+		'goofspiel',
+		'IIGS6_s1_bf_ft.gbt'
+	)
 	efg_files = [
-		domain01_efg,
-		hunger_games_efg,
-		hunger_games_2_efg
+		# domain01_efg,
+		# goofspiel_5_efg
+		goofspiel_6_efg,
+		# hunger_games_efg,
+		# hunger_games_2_efg
 	]
 	domain_names = [
-		"domain01",
-		"hunger_games",
-		"hunger_games_2"
+		# "domain01",
+		# 'goofspiel_5',
+		'goofspiel'
+		# "hunger_games",
+		# "hunger_games_2"
 	]
-	for efg_file, domain_name in zip(efg_files, domain_names):
-		GambitLoader(efg_file, domain_name).show()
-		print("___________________________________\n")
+
+	import datetime
+	print(datetime.datetime.now())
+	#for efg_file, domain_name in zip(efg_files, domain_names):
+	GambitLoaderCached(efg_files[0], domain_names[0])
+	#	print("___________________________________\n")
+	print(datetime.datetime.now())

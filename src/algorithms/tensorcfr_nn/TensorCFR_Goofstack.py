@@ -166,7 +166,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		mask = deepcopy(self.mask)
 		hist_id = deepcopy(self.hist_id)
 
-		for public_state in self.public_states_list:
+		for public_state in deepcopy(self.public_states_list):
 
 			df_by_public_state = filter_by_public_state(hist_id, public_state)
 

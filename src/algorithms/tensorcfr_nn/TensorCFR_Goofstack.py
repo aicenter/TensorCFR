@@ -9,6 +9,7 @@ from src.nn.data.postprocessing_ranges import load_nn
 from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,load_history_identifier,filter_by_card_combination,\
 	filter_by_public_state,load_auginfoset_dict,load_infoset_dict
 import numpy as np
+from copy import deepcopy
 
 class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	def __init__(self, domain: FlattenedDomain, neural_net=None, trunk_depth=10):
@@ -98,7 +99,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		if cond:
 
 			print("infoset")
-			infsetdict = self.infset_dict.copy()
+			infsetdict = deepcopy(self.infset_dict)
 			np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
 			for key, value in infsetdict.items():
 				infsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
@@ -108,7 +109,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		else:
 
 			print("auginfoset")
-			auginfsetdict = self.auginfset_dict.copy()
+			auginfsetdict = deepcopy(self.auginfset_dict)
 			np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
 			for key, value in auginfsetdict.items():
 				auginfsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
@@ -162,8 +163,8 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		##TODO use tf.scatter_nd for this. Could be much faster
 		## TODO implement range of ifnoset in tensorcfr. its easier
 		tensor_cfr_out = tensor_cfr_out.eval(session=self.session)
-		mask = self.mask.copy()
-		hist_id = self.hist_id.copy()
+		mask = deepcopy(self.mask)
+		hist_id = deepcopy(self.hist_id)
 
 		for public_state in self.public_states_list:
 
@@ -217,7 +218,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		print(" {} non zero reah h in dict".format(sum([value.__len__() for key,value in idxdict.items()])))
 
-		tensor_cfr_in = self.tensor_cfr_in_mask.copy()
+		tensor_cfr_in = deepcopy(self.tensor_cfr_in_mask)
 
 		for loc,idx in idxdict.items():
 

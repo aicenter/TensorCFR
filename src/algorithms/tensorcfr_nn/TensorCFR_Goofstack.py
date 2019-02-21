@@ -91,30 +91,45 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		print("{} non zero reach trunk histories".format(a.shape[0]))
 		print_tensor(self.session,bool_non_zero_reaches)
 
-		mydict = self.session.run(tf.cond(self.check_player(),self.inf_set_cond(bool_non_zero_reaches),self.auginf_set_cond(bool_non_zero_reaches)))
+		#dict_operation = tf.cond(lambda : self.check_player(),lambda: self.inf_set_cond(bool_non_zero_reaches),
+		# lambda: self.auginf_set_cond(bool_non_zero_reaches))
+		cond = self.session.run(self.check_player())
+		print("player {}".format(cond))
+		if cond:
 
-		return mydict
+			print("infoset")
+			infsetdict = self.infset_dict.copy()
+			np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
+			for key, value in infsetdict.items():
+				infsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
 
+			return infsetdict
+
+		else:
+
+			print("auginfoset")
+			auginfsetdict = self.auginfset_dict.copy()
+			np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
+			for key, value in auginfsetdict.items():
+				auginfsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
+
+			return auginfsetdict
+
+
+
+		#return self.session.run(dict_operation)
+ ## TODO CHECK FOR NON GRAPH OPERATIONS
 		#if tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER1)) is not None:
 
 	def check_player(self):
+
 		return tf.equal(self.domain.current_updating_player, tf.constant(value=PLAYER1))
+	#
+	# def inf_set_cond(self,bool_non_zero_reaches):
+	#
+	#
+	# def auginf_set_cond(self,bool_non_zero_reaches):
 
-	def inf_set_cond(self,bool_non_zero_reaches):
-		infsetdict = self.infset_dict.copy()
-		np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
-		for key,value in infsetdict.items():
-			infsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
-
-		return infsetdict
-
-	def auginf_set_cond(self,bool_non_zero_reaches):
-		auginfsetdict = self.auginfset_dict.copy()
-		np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
-		for key, value in auginfsetdict.items():
-			auginfsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
-
-		return auginfsetdict
 
 
 

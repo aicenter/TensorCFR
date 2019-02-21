@@ -334,7 +334,7 @@ class GambitLoaderCached(GambitLoader):
             for idx in range(len(grp_utilities)):
                 self.utilities.append(grp_utilities[str(idx)][:])
 
-        print()
+        # print()
         #loaded = hkl.load(path_to_hkl)
 
         # self.domain_name = loaded['domain_name']
@@ -350,19 +350,19 @@ class GambitLoaderCached(GambitLoader):
 
 
     def _save_hkl(self, path_to_hkl):
-        data = {
-            'domain_name': self.domain_name,
-            'domain_parameters': self.domain_parameters,
-            'information_set_mapping_to_gtlibrary': self.information_set_mapping_to_gtlibrary,
-            'infoset_acting_players': self.infoset_acting_players,
-            'initial_infoset_strategies': self.initial_infoset_strategies,
-            'node_to_infoset': self.node_to_infoset,
-            'number_of_levels': self.number_of_levels,
-            'number_of_nodes_actions': self.number_of_nodes_actions,
-            'number_of_players': self.number_of_players,
-            'utilities': self.utilities
-        }
-        print('')
+        # data = {
+        #     'domain_name': self.domain_name,
+        #     'domain_parameters': self.domain_parameters,
+        #     'information_set_mapping_to_gtlibrary': self.information_set_mapping_to_gtlibrary,
+        #     'infoset_acting_players': self.infoset_acting_players,
+        #     'initial_infoset_strategies': self.initial_infoset_strategies,
+        #     'node_to_infoset': self.node_to_infoset,
+        #     'number_of_levels': self.number_of_levels,
+        #     'number_of_nodes_actions': self.number_of_nodes_actions,
+        #     'number_of_players': self.number_of_players,
+        #     'utilities': self.utilities
+        # }
+        # print('')
 
         #hkl.dump(data, path_to_hkl, mode='w', compression='gzip')
 

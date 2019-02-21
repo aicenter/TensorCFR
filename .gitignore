@@ -347,6 +347,7 @@ logs/
 /src/nn/data/out/
 
 cached_hkl/
+cached_hdf5/
 *.hkl
 /src/nn/features/goofspiel/IIGS3/IIGS3_1_3_false_true_lvl7_public_states_sizes.csv
 /src/showcases/hdf5/dset.h5

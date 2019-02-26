@@ -86,12 +86,12 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	def non_zero_reach_node_of_auginfset(self):
 		reaches = self.get_nodal_reach_probabilities(for_player=self.domain.current_updating_player)[self.trunk_depth]
 		#reaches = self.get_nodal_reaches_at_trunk_depth()
-		reaches_flat = self.session.run(tf.reshape(reaches, [-1]))
-		print("sumofreaches: {}".format(sum(reaches_flat)))
+		#reaches_flat = self.session.run(tf.reshape(reaches, [-1]))
+		#print("sumofreaches: {}".format(sum(reaches_flat)))
 		bool_non_zero_reaches = tf.reshape(tf.where(tf.not_equal(reaches,0,name="bool_non_zero_reaches_lvl10")),[-1])
-		a = self.session.run(bool_non_zero_reaches)
-		print("{} non zero reach trunk histories".format(a.shape[0]))
-		print_tensor(self.session,bool_non_zero_reaches)
+		#a = self.session.run(bool_non_zero_reaches)
+		#print("{} non zero reach trunk histories".format(a.shape[0]))
+		#print_tensor(self.session,bool_non_zero_reaches)
 
 		#dict_operation = tf.cond(lambda : self.check_player(),lambda: self.inf_set_cond(bool_non_zero_reaches),
 		# lambda: self.auginf_set_cond(bool_non_zero_reaches))
@@ -117,46 +117,9 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 			return auginfsetdict
 
-
-
-		#return self.session.run(dict_operation)
- ## TODO CHECK FOR NON GRAPH OPERATIONS
-		#if tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER1)) is not None:
-
 	def check_player(self):
 
 		return tf.equal(self.domain.current_updating_player, tf.constant(value=PLAYER1))
-	#
-	# def inf_set_cond(self,bool_non_zero_reaches):
-	#
-	#
-	# def auginf_set_cond(self,bool_non_zero_reaches):
-
-
-
-
-		# if tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER1)) is not None:
-		# 	infsetdict = self.infset_dict.copy()
-		# 	np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
-		# 	for key,value in infsetdict.items():
-		# 		infsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
-		#
-		# 	return infsetdict
-		#
-		# elif tf.equal(self.domain.current_updating_player,tf.constant(value=PLAYER2)) is not None:
-		# 	auginfsetdict = self.auginfset_dict.copy()
-		# 	np_bool_non_zero_reaches = bool_non_zero_reaches.eval(session=self.session)
-		# 	for key, value in auginfsetdict.items():
-		# 		auginfsetdict[key] = [idx for idx in value if idx in np_bool_non_zero_reaches]
-		#
-		# 	return auginfsetdict
-
-
-
-		## write method that assigns sum of cfv prediction of infoset to history
-		## that has non zero reach
-
-
 
 	def tensorcfr_to_nn_input(self,tensor_cfr_out=None):
 		##TODO check if taking index 0 of each seed is valid. maybe its sum or take one that is not 0? ask vojta
@@ -252,24 +215,24 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 		return tf.identity(predicted_cf_values, name=name)
 
-	# def get_nodal_cf_values(self, for_player=None):  # TODO insert nn preds at lvl 10 and should be fine
-	# 	"""
-	# 	Compute counterfactual values of nodes by (tensor-)multiplying reach probabilities and expected values.
-	#
-	# 	:param for_player: The player for which the counterfactual values are computed. These values are usually
-	# 	 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
-	# 	:return: The counterfactual values of nodes based on `current_infoset_strategies`.
-	# 	"""
-	# 	expected_values = self.get_expected_values(for_player=for_player)
-	# 	reach_probabilities = self.get_nodal_reach_probabilities(for_player=for_player)
-	# 	with tf.variable_scope("nodal_counterfactual_values"):
-	# 		return [
-	# 			tf.multiply(
-	# 				reach_probabilities[level],
-	# 				expected_values[level],
-	# 				name="nodal_cf_value_lvl{}".format(level)
-	# 			) for level in range(self.levels)
-	# 		]
+	def get_nodal_cf_values(self, for_player=None):  # TODO insert nn preds at lvl 10 and should be fine
+		"""
+		Compute counterfactual values of nodes by (tensor-)multiplying reach probabilities and expected values.
+
+		:param for_player: The player for which the counterfactual values are computed. These values are usually
+		 computed for the updating player. Therefore, `for_player` is set to `current_updating_player` by default.
+		:return: The counterfactual values of nodes based on `current_infoset_strategies`.
+		"""
+		expected_values = self.get_expected_values()
+		reach_probabilities = self.get_nodal_reach_probabilities(for_player=for_player)
+		#lowest_cf_values = self.construct_lowest_cf_values()
+		with tf.variable_scope("nodal_counterfactual_values"):
+			return [
+				tf.multiply(
+					reach_probabilities[level],
+					expected_values[level],
+					name="nodal_cf_value_lvl{}".format(level)
+				) for level in range(self.levels)]#+[lowest_cf_values]
 	#
 	# def get_infoset_cf_values(self, for_player=None):  # TODO change this method to use predictions of network for lvl10
 	# 	"""
@@ -299,40 +262,24 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	# 				infoset_actions_cf_values.append(infoset_action_cf_value)
 	# 	return infoset_actions_cf_values, infoset_cf_values
 	#
-
-	def cf_values_lvl10_to_exp_values(self):
-		##TODO choose history in infoset that has non zero reach
-
-		## TODO new idea. get pred of infset, split it to all nodes in infoset uniformly
-
-
-		#total_reaches = self.get_nodal_reaches_at_trunk_depth()
-
-		nodal_reaches_lvl_10 = self.get_nodal_reach_probabilities(for_player=self.domain.current_updating_player)[self.trunk_depth]
-		#nodal_reaches_lvl_10 = self.get_nodal_range_probabilities(for_player=2,for_level=10)
-		cf_values_lvl_10 = self.predict_lvl10_cf_values()
-		#total_reaches_float64 = tf.cast(total_reaches,tf.float64,name="total_reaches_lvl_10")
-		nodal_reaches_lvl_10_float64 = tf.cast(nodal_reaches_lvl_10,tf.float64,name="nodal_reaches_lvl_10")
-		#self.session.run(nodal_reaches_lvl_10_float64)
-		#with tf.variable_scope("level{}".format(self.levels - 1)):
-			#TODO dont divide by 0, correct this
+	def cf_values_to_exp_values(self,cfreaches,cfvalues):
 		# cf_values_to_exp_values = tf.where(condition=tf.equal(nodal_reaches_lvl_10_float64,0.0),
 		# 	                                   x=tf.zeros_like(cf_values_lvl_10,dtype=tf.float64),
 		# 	                                   y=tf.divide(cf_values_lvl_10,nodal_reaches_lvl_10_float64),
 		# 	                                                  name="predictions_to_expected_values_lvl10")
-		cf_values_to_exp_values = tf.where(condition=tf.equal(nodal_reaches_lvl_10_float64,0.0),
-			                                   x=cf_values_lvl_10,
-			                                   y=tf.divide(cf_values_lvl_10,nodal_reaches_lvl_10_float64),
-			                                                  name="predictions_to_expected_values_lvl10")
-			#cf_values_to_exp_values = cf_values_lvl_10
+		##TODO remember i put cfvalues to exp util right now if the nodal reach is 0
+		nodal_reaches_lvl_10_float64 = tf.cast(cfreaches, tf.float64)
+		return tf.where(condition=tf.equal(nodal_reaches_lvl_10_float64,0.0),x=tf.zeros_like(cfvalues,dtype=tf.float64),y=tf.divide(cfvalues,nodal_reaches_lvl_10_float64))
 
+	def cf_values_lvl10_to_exp_values(self):
 
-		return tf.identity(cf_values_to_exp_values,name="cf_values_to_exp_values")
+		nodal_reaches_lvl_10 = self.get_nodal_reach_probabilities(for_player=self.domain.current_updating_player)[self.trunk_depth]
 
-	def get_expected_values(self, for_player=None):
-		##TODO to get exp utilities of lvl 9 using only sum of exp utils of lower level per infoset
-		## for all nodes in lvl 9 do : sum action probs reaching into a lvl10 infoset
-		## multiply by exp value of lvl10 infoset
+		cf_values_lvl_10 = self.predict_lvl10_cf_values()
+
+		return tf.identity(self.cf_values_to_exp_values(nodal_reaches_lvl_10,cf_values_lvl_10),name="cf_values_to_exp_values")
+
+	def get_expected_values(self):
 		"""
 		Compute expected values of nodes using the bottom-up tree traversal.
 
@@ -341,19 +288,9 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		 the `current_updating_player`, i.e. multiplied with `signum` of `signum_of_current_player`.
 		:return: The expected values of nodes based on `current_infoset_strategies`.
 		"""
-		# if for_player is None:
-		# 	signum = self.domain.signum_of_current_player
-		# 	player_name = "current_player"
-		# else:
-		# 	signum = tf.where(
-		# 		condition=tf.equal(for_player, self.domain.player_owning_the_utilities),
-		# 		x=tf.cast(1.0, dtype=FLOAT_DTYPE),
-		# 		# Opponent's utilities in zero-sum games = (-utilities) of `player_owning_the_utilities`
-		# 		y=tf.cast(-1.0, dtype=FLOAT_DTYPE),
-		# 		name="signum_of_player_{}".format(for_player),
-		# 	)
-		player_name = "player{}".format(for_player)
 
+		#player_name = "player{}".format(self.domain.current_updating_player)
+		player_name = "current_player"
 		node_strategies = self.get_node_strategies()
 		with tf.variable_scope("expected_values"):
 			self.construct_lowest_expected_values(player_name)
@@ -398,11 +335,34 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 				shape=lowest_utilities.shape,
 				name="predicted_to_exp_values"
 			)
+			# self.predicted_to_exp_values = tf.Variable(
+			# 	lowest_utilities,
+			#
+			# 	name="predicted_to_exp_values"
+			# )
 	## changed signum to 1 since new network will predict for each player
 
 			self.expected_values[self.levels - 1] = tf.multiply(1.0,self.predicted_to_exp_values,
 				name="expected_values_lvl{}_for_{}".format(self.levels - 1, player_name)
 			)
+
+	def construct_lowest_cf_values(self):
+		with tf.variable_scope("level{}".format(self.levels - 1)):
+			lowest_utilities = self.domain.utilities[self.levels - 1]
+			self.predicted_cf_values = tf.placeholder_with_default(
+				lowest_utilities,
+				shape=lowest_utilities.shape,
+				name="predicted_cf_values"
+			)
+			# self.predicted_to_exp_values = tf.Variable(
+			# 	lowest_utilities,
+			#
+			# 	name="predicted_to_exp_values"
+			# )
+	## changed signum to 1 since new network will predict for each player
+
+			return tf.multiply(1.0,self.predicted_cf_values)
+
 
 	def run_cfr(self, total_steps=DEFAULT_TOTAL_STEPS, delay=DEFAULT_AVERAGING_DELAY, verbose=True,
 	            register_strategies_on_step=None):
@@ -417,39 +377,55 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 		}
 		self.set_up_cfr_parameters(delay, total_steps)
 		self.set_log_directory()
+		#ops_list = []
 		with tf.summary.FileWriter(self.log_directory, tf.get_default_graph()):
 			for step in range(total_steps):
 				print("\n########## CFR step {} ##########".format(step))
 				print("current updating player is:")
 				print_tensor(self.session,self.domain.current_updating_player)
-				predicted_to_exp_values = self.cf_values_lvl10_to_exp_values()
+				#predicted_to_exp_values =
 				if verbose:
-					print("player owning utilities")
-					print_tensor(self.session,self.domain.player_owning_the_utilities)
+					print("# graph ops:{}".format(len(self.session.graph.get_operations())))
+
+					#ops_list.append([self.session.graph.get_operations()])
+
+					# if step > 0:
+					# 	print([op for op in ops_list[step] if op not in ops_list[step-1]])
+
+					#print("player owning utilities")
+					#print_tensor(self.session,self.domain.player_owning_the_utilities)
 					##TODO multiply cfv by range and sum them up
 					print("Before:")
 					a = self.session.run(self.get_trunk_nodal_ranges_p1_p2())
-					print("input ranges shape:{}.".format(a.shape))
-					print_tensor(self.session, self.input_ranges)
-					print_tensor(self.session, predicted_to_exp_values)
+					print("non zero ranges p1: {}".format(np.count_nonzero(a[:,0])))
+					print("non zero ranges p2: {}".format(np.count_nonzero(a[:,1])))
+					#print("input ranges shape:{}.".format(a.shape))
+					#print_tensor(self.session, self.input_ranges)
+					#print_tensor(self.session, predicted_to_exp_values)
 
-					cfv_pred = self.session.run(self.predict_lvl10_cf_values())
-					bool_non_zero_cfv = tf.reshape(tf.where(tf.not_equal(cfv_pred, 0, name="bool_non_zero_cfv_lvl10")),[-1])
-					c = self.session.run(bool_non_zero_cfv)
-					print("{} non zero cfv trunk histories".format(c.shape[0]))
-					bool_non_zero_utils = tf.reshape(tf.where(tf.not_equal(predicted_to_exp_values, 0, name="bool_non_zero_util_lvl10")),[-1])
-					b = self.session.run(bool_non_zero_utils)
-					print("{} non zero exp util trunk histories".format(b.shape[0]))
-					print("current updating player:")
-					print_tensor(self.session, self.domain.current_updating_player)
-					print("with sign:")
-					print_tensor(self.session, self.domain.signum_of_current_player)
-				np_predicted_equilibrial_values = self.session.run(predicted_to_exp_values)
-				print("sum of exp values for both players: {}".format(sum(np_predicted_equilibrial_values)))
-				self.session.run(self.cfr_step_op, {self.predicted_to_exp_values: np_predicted_equilibrial_values})
-				if verbose:
-					print("After:")
-					print_tensor(self.session, self.input_ranges)
+					#cfv_pred = self.session.run(self.predict_lvl10_cf_values())
+					#bool_non_zero_cfv = tf.reshape(tf.where(tf.not_equal(cfv_pred, 0, name="bool_non_zero_cfv_lvl10")),[-1])
+					#c = self.session.run(bool_non_zero_cfv)
+					#print("{} non zero cfv trunk histories".format(c.shape[0]))
+					#bool_non_zero_utils = tf.reshape(tf.where(tf.not_equal(predicted_to_exp_values, 0, name="bool_non_zero_util_lvl10")),[-1])
+					#b = self.session.run(bool_non_zero_utils)
+					#print("{} non zero exp util trunk histories".format(b.shape[0]))
+					#print("current updating player:")
+					#print_tensor(self.session, self.domain.current_updating_player)
+					#print("with sign:")
+					#print_tensor(self.session, self.domain.signum_of_current_player)
+				np_predicted_cf_values = self.session.run(self.predict_lvl10_cf_values())
+				#np_predicted_equilibrial_values = self.session.run(self.cf_values_lvl10_to_exp_values())
+
+				#cf_preds = self.session.run(self.predict_lvl10_cf_values())
+				#print("sum of exp values for both players: {}".format(np.count_nonzero(np_predicted_equilibrial_values)))
+				self.session.run(self.cfr_step_op, feed_dict={self.predicted_to_exp_values: np_predicted_cf_values})
+				#print(np.count_nonzero(self.session.run(self.predicted_to_exp_values)))
+				#self.session.run(self.cfr_step_op, {self.predicted_to_exp_values:tf.assign(self.predicted_to_exp_values, np_predicted_equilibrial_values)})
+				#print(np.count_nonzero(self.session.run(self.expected_values[10])))
+				# if verbose:
+				# 	print("After:")
+				# 	print_tensor(self.session, self.input_ranges)
 
 				if step in register_strategies_on_step:
 					self.average_strategies_over_steps["average_strategy_step{}".format(step)] = [

@@ -402,7 +402,9 @@ def auginfset_hist_indices_dict(player=2):
 
 				cards_df = filter_by_card_combination(df_by_public_state,cards,1)
 
-				mydict["{}".format(str(public_state)) + cards] = list(map(int,cards_df.index))
+				#mydict["{}".format(str(public_state)) + "+"+cards] = list(map(int,cards_df.index))
+
+				mydict["({},{})".format(out.index.get_loc("".join(tuple(map(str, public_state)))),out.columns.get_loc(cards))] = list(map(int, cards_df.index))
 
 		elif player == 2:
 
@@ -410,11 +412,13 @@ def auginfset_hist_indices_dict(player=2):
 
 				cards_df = filter_by_card_combination(df_by_public_state, cards[:-2], 2)
 
-				mydict["{}".format(str(public_state))+cards] = list(map(int,cards_df.index))
+				#mydict["{}".format(str(public_state))+"+"+cards] = list(map(int,cards_df.index))
+
+				mydict["({},{})".format(out.index.get_loc("".join(tuple(map(str, public_state)))), out.columns.get_loc(cards))] = list(map(int, cards_df.index))
 
 
 	return mydict
 
 # import pickle
 # with open("auginfsetdict.pkl","rb") as file:
-# 	testauginfdict = pickle.load(file)
+# 	bla = pickle.load(file)

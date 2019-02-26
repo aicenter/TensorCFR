@@ -11,6 +11,7 @@ from src.commons.constants import PLAYER1, PLAYER2, TERMINAL_NODE, IMAGINARY_NOD
 from src.domains.Domain import Domain
 from src.domains.available_domains import get_domain_by_name
 from src.utils.cfr_utils import distribute_strategies_to_nodes
+from src.utils.other_utils import activate_script
 from src.utils.tf_utils import print_tensors, expanded_multiply, scatter_nd_sum, masked_assign, normalize
 
 
@@ -727,7 +728,7 @@ def get_cfr_strategies(tensorcfr_instance: TensorCFR, total_steps=DEFAULT_TOTAL_
 			return return_average_strategies
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' and activate_script():
 	# domain = get_domain_by_name("domain01")
 	# domain = get_domain_by_name("matching_pennies")
 	# domain = get_domain_by_name("invalid domain name test")

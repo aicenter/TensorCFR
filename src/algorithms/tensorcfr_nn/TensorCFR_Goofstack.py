@@ -10,6 +10,7 @@ from src.nn.data.preprocessing_ranges import load_input_mask,load_output_mask,lo
 	filter_by_public_state,load_auginfoset_dict,load_infoset_dict
 import numpy as np
 from copy import deepcopy
+from random import choice
 
 class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 	def __init__(self, domain: FlattenedDomain, neural_net=None, trunk_depth=10):
@@ -190,7 +191,7 @@ class TensorCFR_Goofstack(TensorCFRFixedTrunkStrategies):
 
 				myloctuple = tuple(map(int, loc[1:-1].split(',')))
 
-				tensor_cfr_in[idx[0]] = nn_out[myloctuple[0],myloctuple[1]]
+				tensor_cfr_in[choice(idx)] = nn_out[myloctuple[0],myloctuple[1]]
 
 			else:
 				continue

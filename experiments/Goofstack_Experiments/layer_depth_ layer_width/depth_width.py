@@ -7,7 +7,8 @@ from keras.layers import Input,Dense,BatchNormalization
 from keras.initializers import he_normal,lecun_normal
 from keras.optimizers import Adam
 import os
-
+import pickle
+from src.commons.constants import PROJECT_ROOT
 from src.utils.other_utils import activate_script
 
 
@@ -42,6 +43,8 @@ def create_model(width=None):
 def create_model_n_layers(n_layers=2):
 
 	shape = 243
+
+	width = shape *3
 
 	if n_layers == 2:
 		input = Input(shape=(shape,))
@@ -112,6 +115,9 @@ def create_model_n_layers(n_layers=2):
 		model = Model(inputs=input, outputs=out)
 
 		model.compile(optimizer=Adam(), loss=huber_loss)
+
+
+
 
 		return model
 
@@ -211,10 +217,10 @@ if __name__ == "__main__" and activate_script():
 
 	width_model_list = []
 
-	for width in [shape*mult for mult in range(1,6)]:
+	for width in [shape*mult for mult in range(2,6)]:
 		model = create_model(width)
 
-		model.fit(x=x, y=y, batch_size=seed_shape, epochs=200,validation_split=0.1)
+		model.fit(x=x, y=y, batch_size=seed_shape, epochs=100,validation_split=0.1,verbose=2)
 
 		width_model_list.append(model)
 
@@ -223,7 +229,7 @@ if __name__ == "__main__" and activate_script():
 	for depth in [depth for depth in range(2, 7)]:
 		model = create_model_n_layers(depth)
 
-		model.fit(x=x, y=y, batch_size=seed_shape, epochs=200, validation_split=0.1)
+		model.fit(x=x, y=y, batch_size=seed_shape, epochs=100, validation_split=0.1,verbose=2)
 
 		depth_model_list.append(model)
 
@@ -231,7 +237,7 @@ if __name__ == "__main__" and activate_script():
 
 	depthconfigs = [depth for depth in range(2, 7)]
 
-	import pickle
+
 
 	for i in range(widthconfigs.__len__()):
 		with open(os.getcwd()+"/"+str(widthconfigs[i])+".pkl","wb") as f:
@@ -241,5 +247,5 @@ if __name__ == "__main__" and activate_script():
 		with open(os.getcwd() + "/" + str(depthconfigs[i]) + ".pkl", "wb") as f:
 			pickle.dump(depth_model_list[i].history.history,f,protocol=pickle.HIGHEST_PROTOCOL)
 
-##
+#
 
